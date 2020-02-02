@@ -7,5 +7,5 @@ Welcome to the online textbook! Don't worry about donwloading or running anythin
 
 # Contributors
 
-Kitty Harris <\br>
+Kitty Harris </br>
 Mary Span
