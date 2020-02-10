@@ -17,7 +17,9 @@ Run `idyll build`. The output will appear in the top-level `build` folder. To ch
 
 ## Deploying
 
-Make sure your post has been built, then deploy the docs folder via any static hosting service.
+Make sure your post has been built, then deploy the build folder via any static hosting service.  Note that if "build" is in the .gitignore you may want to remove it.
+
+This page will be available at https://phys2331.github.io/idyll-material/maple-syrup/build/index.html.
 
 ## Dependencies
 
