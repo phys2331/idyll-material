@@ -69,7 +69,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     For example, the standard ratio between the isotopes 13C and 12C is:
 
     [p]
-    [Equation]
+    [Equation display:"true"]
       (\frac{^{13}C}{^{12}C})_{standard} = 0,0112372011237
     [/Equation]
     [/p]
@@ -79,7 +79,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     For example, a given plant might have an isotopic ratio of:
 
     [p]
-    [Equation]
+    [Equation display:"true"]
       \frac{^{13}C}{^{12}C} = 0,0115850109
     [/Equation]
     [/p]
@@ -88,7 +88,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     The isotopic signature of this substance is then calculated from its isotopic ratio and the standard ratio, using the following formula:
 
     [p]
-    [Equation]
+    [Equation display:"true"]
       \delta^{13} = 
       \frac{(\frac{^{13}C}{^{12}C})_{standard} - \frac{^{13}C}{^{12}C}}{\frac{^{13}C}{^{12}C}} * 1000\delta^{13}C = 
       \frac{\frac{^{13}C}{^{12}C} - (\frac{^{13}C}{^{12}C})_{standard}}{(\frac{^{13}C}{^{12}C})_{standard}} * 1000 = 
@@ -174,7 +174,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 
   [Step]
 
-    ## High-Resolution Spectrum                                                                                             Calculate the range of voltages, ΔV[sub]s[/sub], required for an accurate analysis of the carbon-12 and -13 isotope$
+    ## High-Resolution Spectrum
 
     Calculate the range of voltages, ΔV[sub]s[/sub], required for an accurate analysis of the carbon-12 and -13 isotopes.
 
@@ -188,6 +188,31 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 
     *Note: The quantity of ions detected for a specific mass is proportional to the area under the curve of the corresponding peak.*
 
+
+  [/Step]
+
+  [Step]
+  ## Setup
+    Now we are going to review the diagram and work on the basic aspects of setup --
+    namely, we will determine in a general sense what the charge on each plate should be.
+
+    **Before you continue:** Which of the following is true for a pair of parallel plates? [br /]
+    **a)** The plates must have identical charges (both positive or both negative, same magnitude). [br /]
+    **b)** The plates can have different charge magnitudes, but the signs must be the same. [br /]
+    **c)** The plates must have the same magnitude of charge, but opposite signs. [br /]
+    **d)** The plates must have the same magnitude of charge, but the signs don't matter.
+
+//    [input type:"radio" id:"a" name:"quiz" /] The plates must have identical charges (both positive or both negative, same magnitude). [br /]
+//    [input type:"radio" id:"b" name:"quiz" /] The plates can have different charge magnitudes, but the signs must be the same. [br /]
+//    [input type:"radio" id:"c" name:"quiz" /] The plates must have the same magnitude of charge, but opposite signs. [br /]
+//    [input type:"radio" id:"d" name:"quiz" /] The plates must have the same magnitude of charge, but the signs don't matter. [br /]
+//    [input type:"button" value:"Submit" /]
+
+// document.getElementById("c").checked = false; // apparently this is how I would check, but I don't know how to use that.
+
+    In the simplified diagram below, the magnetic field is still pointing out of the screen.
+    The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
+    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
 
   [/Step]
 
@@ -215,6 +240,8 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     [br /][br /]
     *Simulation coming soon!*(TM)
     
+    
+
   [/Step]
 
 [/Scroller]
