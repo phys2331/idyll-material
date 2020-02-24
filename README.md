@@ -20,4 +20,4 @@ Kitty Harris
 
 Mary Span
 
-*This page was last update 23 Feb 2020*
+*This page was last updated 23 Feb 2020*
