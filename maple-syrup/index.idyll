@@ -40,10 +40,6 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 
 [Scroller currentStep:state]
 
-  [Graphic className:"d3-component-container"]
-    [CustomD3Component className:"d3-component" state:`state+1` /]
-  [/Graphic]
-  
   [Step]
     ### Three-Step Cycle 
 
@@ -90,9 +86,9 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     [p]
     [Equation display:"true"]
       \delta^{13} = 
-      \frac{(\frac{^{13}C}{^{12}C})_{standard} - \frac{^{13}C}{^{12}C}}{\frac{^{13}C}{^{12}C}} * 1000\delta^{13}C = 
-      \frac{\frac{^{13}C}{^{12}C} - (\frac{^{13}C}{^{12}C})_{standard}}{(\frac{^{13}C}{^{12}C})_{standard}} * 1000 = 
-      0,0115850109
+      \frac{(\frac{^{13}C}{^{12}C})_{standard} - \frac{^{13}C}{^{12}C}}{\frac{^{13}C}{^{12}C}} * 1000\delta^{13}C 
+    [/Equation][Equation display:"true"] = \frac{\frac{^{13}C}{^{12}C} - (\frac{^{13}C}{^{12}C})_{standard}}{(\frac{^{13}C}{^{12}C})_{standard}} * 1000 
+    [/Equation][Equation display:"true"]= 0,0115850109
     [/Equation]
     [/p]
 
@@ -238,10 +234,13 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     ## Simulation
     This simulation will allow you to change the voltages and see where your carbon atom ends up.
     [br /][br /]
-    *Simulation coming soon!*(TM)
-    
-    
+    *Simulation coming soon!*(TM)    
 
   [/Step]
 
 [/Scroller]
+
+## Summary
+Here I would like to generate a recap of some kind, possibly including expected equations used.
+However, I would like for there to be some way to restrict this only to people who have the right answers;
+it doesn't make sense to lead them through with questions only to have the answer directly provided at the very end.
