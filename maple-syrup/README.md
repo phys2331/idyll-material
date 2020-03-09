@@ -21,6 +21,7 @@ Make sure your post has been built, then deploy the build folder via any static 
 
 ## Dependencies
 
-Currently, there are no custom dependencies for this idyll post; the text below exists only for possible future reference.
-
 You can install custom dependencies by running `npm install <package-name> --save`. Note that any collaborators will also need download the package locally by running `npm install` after pulling the changes.
+
+Current Dependencies list:
+- IdyllApparatusComponent (package name is `idyll-apparatus-component`)

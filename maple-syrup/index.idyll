@@ -8,14 +8,14 @@
   date: `(new Date()).toDateString()`
   background:"#222222"
   color:"#ffffff"
-   /]
+/]
 
 [p] // Formatting text messes with spacing, and I can't figure out how to mimic </br>, so these are necessary.
-*This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver.* 
+  *This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver.* 
 [/p]
 
 [p]
-*Original date of creation unknown; date listed is last update of this adaptation.*
+  *Original date of creation unknown; date listed is last update of this adaptation.*
 [/p]
 
 [hr /]
@@ -27,14 +27,23 @@ It's okay if you need to go back and re-read to answer some of these questions.
 
 ## Background
 
-In Québec, the return of the warm weather at the end of winter also signals sugaring off time. The maple syrup produced in our good old sugar shacks is one of our most treasured traditions. And in fact, about 75% of all the maple syrup consumed in the entire world is produced right here in Québec.
+In Québec, the return of the warm weather at the end of winter also signals sugaring off time. 
+The maple syrup produced in our good old sugar shacks is one of our most treasured traditions. 
+And in fact, about 75% of all the maple syrup consumed in the entire world is produced right here in Québec.
 
-But with the high demand and drive for expansion and quick profits, some maple culturists sometimes dilute their maple syrup with other, less expensive sugar syrups, like corn syrup. This adulteration process is illegal, since it misleads the consumer and hurts the maple culture industry. And yet this alteration of our national syrup is hard to detect, since it generally changes neither the flavour nor the colour of the syrup. Our maple syrup is therefore subject to frequent controls to certify its quality.
+But with the high demand and drive for expansion and quick profits, some maple culturists sometimes dilute their maple syrup with other, less expensive sugar syrups, like corn syrup. 
+This adulteration process is illegal, since it misleads the consumer and hurts the maple culture industry. 
+And yet this alteration of our national syrup is hard to detect, since it generally changes neither the flavour nor the colour of the syrup. 
+Our maple syrup is therefore subject to frequent controls to certify its quality.
 
-One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. In brief, this technique measures the relative concentrations of different carbon isotopes in various substances. Since corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a 13C ratio that is lower than normal. This isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers.
+One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. 
+In brief, this technique measures the relative concentrations of different carbon isotopes in various substances. 
+Since corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a 13C ratio that is lower than normal. 
+This isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers.
 
-Your role is to analyse a maple syrup sample using mass spectrometry. To do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. A detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse.
-
+Your role is to analyse a maple syrup sample using mass spectrometry. 
+To do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. 
+A detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse.
 
 [var name:"state" value:0 /]
 
@@ -111,7 +120,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 
     Here is a scale diagram of the mass spectrometer that will be used for the analysis.
 
-    ![A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector.](static/images/Spectrometer_Diagram.png)
+    ![A diagram on graph paper with the legend in both French and English. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector.](static/images/Spectrometer_Diagram.png)
  
     ### Technical Detail
 
@@ -177,13 +186,12 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 1. Do these values correspond to one of the peaks in the low-resolution graph?
 2. Which elements correspond to the other peaks?
 
-    ![A graph much like the one before, but it now has a grid and is numbered differently. The new title is "High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes." There is a peak 1 high at 150 and a peak 25 high at 163.](static/images/HighRes_Sample.png)
+    ![A graph much like the one before, but it now has a grid and is numbered differently. The new title is 'High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes.' There is a peak 1 high at 150 and a peak 25 high at 163.](static/images/HighRes_Sample.png)
 
     Based on the high-resolution graph, determine the isotopic ratio δ[sup]13[/sup] C of carbon-13.
     According to these measurements, does the quality of the maple syrup analysed meet the regulations?
 
     *Note: The quantity of ions detected for a specific mass is proportional to the area under the curve of the corresponding peak.*
-
 
   [/Step]
 
@@ -210,6 +218,17 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
 
+    [div]
+      [IdyllApparatusComponent
+        _url: "static/SimplifiedSim.json"
+        _regionOfInterest: { x: [-2, 2], y: [-1, 1] }
+        _width: '100%'
+        _height: 300
+      /]
+    [/div]
+
+    *This simulation is still under construction!*
+
   [/Step]
 
   [Step]
@@ -235,7 +254,6 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
     This simulation will allow you to change the voltages and see where your carbon atom ends up.
     [br /][br /]
     *Simulation coming soon!*(TM)    
-
   [/Step]
 
 [/Scroller]
