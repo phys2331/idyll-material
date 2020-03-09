@@ -1,0 +1,83 @@
+[meta title:"Idyll: Trinket.io" description:"Using trinket.io with Idyll Lang" /]
+
+[var name:"currentSlide" value:0 /]
+[var name:"numSlides" value:0 /]
+
+[Slideshow currentSlide:currentSlide numSlides:numSlides fullWidth:true]
+
+
+  [Slide]
+    [Header
+      title:"Trinkets in Idyll"
+      subtitle:"Using trinket.io to embed programs into an idyll page."
+      author:"Kitty Harris"
+      fullWidth:true color:"#222" background:"#fff" /]
+  [/Slide]
+
+  [Slide]
+    ## Project Overview
+
+* We want to use Idyll to make our interactive texts, but it (by itself) isn't capable of embedding everything we want.
+* It is possible to embed interactive widgets designed for web use in an idyll page.
+* [Trinkets](https://trinket.io) are designed for interactive programs to be written in an existing language and embedded to a web page.
+* Therefore, we can use trinkets to embed arbitrary programs in our Idyll pages. (Sounds dangerous.)
+  [/Slide]
+
+  [Slide]
+    ## Example Trinket
+
+Here is an example of a trinket with the code and the interactive panel side-by-side.
+
+[iframe src:"https://trinket.io/embed/python/48ba1cf9b8" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
+
+  [/Slide]
+
+  [Slide]
+    ## No-Code Trinket
+
+And here's another example with only the interactible:
+
+[iframe src:"https://trinket.io/embed/python/48ba1cf9b8?outputOnly=true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
+
+Note that setting trinkets to run automatically upon loading the page may have unintended consequences.
+
+  [/Slide]
+
+  [Slide]
+    ## Altering the Embed Code
+
+    Unfortunately, the code provided is written for html and will not work without some modification.
+    The code provided is:
+
+```
+<iframe src="https://trinket.io/embed/python/48ba1cf9b8" width="100%" height="600" frameborder="0" marginwidth="0" 
+marginheight="0" allowfullscreen>
+</iframe>
+```
+
+    The code we need to use is:
+
+```
+[iframe src:"https://trinket.io/embed/python/48ba1cf9b8?outputOnly=true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" 
+marginheight:"0"]
+[/iframe]
+```
+
+*(Line breaks added to help readability)*
+
+There are three differences here:
+* All of the <> change to \[\]
+* All of the = change to :
+* The argument `allowfullscreen` had to be removed entirely
+
+   [/Slide]
+
+[Slide]
+    ## Cat!
+
+This is a pre-generated slide that I kept because it had a kitten.
+
+    ![placekitten](http://placekitten.com/800/600)
+  [/Slide]
+
+[/Slideshow]
