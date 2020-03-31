@@ -54,11 +54,11 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 * What We Know
 * To Determine
 * Summary
-  
+
   [/Step]
 
   [Step]
-  
+
     ### Isotopic Ratios – Standards and Definitions
 
     The isotopic signature of a substance is established using the concentration ratios of certain stable isotopes found in the substance. 
@@ -177,7 +177,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 1. Do these values correspond to one of the peaks in the low-resolution graph?
 2. Which elements correspond to the other peaks?
 
-    ![A graph much like the one before, but it now has a grid and is numbered differently. The new title is "High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes." There is a peak 1 high at 150 and a peak 25 high at 163.](static/images/HighRes_Sample.png)
+    ![A graph much like the one before, but it now has a grid and is numbered differently. The new title is "High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes. There is a peak 1 high at 150 and a peak 25 high at 163."](static/images/HighRes_Sample.png) // " to kill weird coloration
 
     Based on the high-resolution graph, determine the isotopic ratio δ[sup]13[/sup] C of carbon-13.
     According to these measurements, does the quality of the maple syrup analysed meet the regulations?
@@ -202,9 +202,26 @@ Your role is to analyse a maple syrup sample using mass spectrometry. To do this
 //    [input type:"radio" id:"b" name:"quiz" /] The plates can have different charge magnitudes, but the signs must be the same. [br /]
 //    [input type:"radio" id:"c" name:"quiz" /] The plates must have the same magnitude of charge, but opposite signs. [br /]
 //    [input type:"radio" id:"d" name:"quiz" /] The plates must have the same magnitude of charge, but the signs don't matter. [br /]
-//    [input type:"button" value:"Submit" /]
+//    [input type:"button" value:"Submit" onClick:"JavaScript:CheckAnswer"/]
 
-// document.getElementById("c").checked = false; // apparently this is how I would check, but I don't know how to use that.
+[var name:"radioVal" value:"test1" /]
+[var name:"showAnswer" value:false /]
+[Radio value:radioVal options:`["test1", "test2"]` onClick:`showAnswer = false` /]
+
+[Button onClick:`showAnswer = true`]
+  Submit
+[/Button]
+
+[Conditional if:`showAnswer && radioVal === "test1"`]
+  You answered [Display value:`radioVal`/]. This is correct!
+[/Conditional]
+[Conditional if:`showAnswer && radioVal === "test2"`]
+  You answered [Display value:`radioVal`/]. Please consider x. This is incorrect.
+[/Conditional]
+
+
+
+// CheckAnswer = (document.getElementById("c").checked == false); // apparently this is how I would check, but I don't know how to use that.
 
     In the simplified diagram below, the magnetic field is still pointing out of the screen.
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
