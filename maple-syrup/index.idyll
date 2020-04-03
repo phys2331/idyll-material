@@ -38,8 +38,12 @@ Our maple syrup is therefore subject to frequent controls to certify its quality
 
 One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. 
 In brief, this technique measures the relative concentrations of different carbon isotopes in various substances. 
-Since corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a 13C ratio that is lower than normal. 
+Since corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a [sup]13[/sup]C ratio that is lower than normal. 
 This isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers.
+
+Your role is to analyse a maple syrup sample using mass spectrometry. 
+To do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. 
+A detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse.
 
 Your role is to analyse a maple syrup sample using mass spectrometry. 
 To do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. 
@@ -63,11 +67,11 @@ A detailed description of the spectrometer will be given to you, along with a ba
 * What We Know
 * To Determine
 * Summary
-  
+
   [/Step]
 
   [Step]
-  
+
     ### Isotopic Ratios – Standards and Definitions
 
     The isotopic signature of a substance is established using the concentration ratios of certain stable isotopes found in the substance. 
@@ -210,21 +214,39 @@ A detailed description of the spectrometer will be given to you, along with a ba
 //    [input type:"radio" id:"b" name:"quiz" /] The plates can have different charge magnitudes, but the signs must be the same. [br /]
 //    [input type:"radio" id:"c" name:"quiz" /] The plates must have the same magnitude of charge, but opposite signs. [br /]
 //    [input type:"radio" id:"d" name:"quiz" /] The plates must have the same magnitude of charge, but the signs don't matter. [br /]
-//    [input type:"button" value:"Submit" /]
+//    [input type:"button" value:"Submit" onClick:"JavaScript:CheckAnswer"/]
 
-// document.getElementById("c").checked = false; // apparently this is how I would check, but I don't know how to use that.
+[var name:"radioVal" value:"test1" /]
+[var name:"showAnswer" value:false /]
+[Radio value:radioVal options:`["test1", "test2"]` onClick:`showAnswer = false` /]
+
+[Button onClick:`showAnswer = true`]
+  Submit
+[/Button]
+
+[Conditional if:`showAnswer && radioVal === "test1"`]
+  You answered [Display value:`radioVal`/]. This is correct!
+[/Conditional]
+[Conditional if:`showAnswer && radioVal === "test2"`]
+  You answered [Display value:`radioVal`/]. Please consider x. This is incorrect.
+[/Conditional]
+
+
+
+// CheckAnswer = (document.getElementById("c").checked == false); // apparently this is how I would check, but I don't know how to use that.
 
     In the simplified diagram below, the magnetic field is still pointing out of the screen.
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
 
     [div]
-      [IdyllApparatusComponent
-        _url: "static/SimplifiedSim.json"
-        _regionOfInterest: { x: [-2, 2], y: [-1, 1] }
-        _width: '100%'
-        _height: 300
-      /]
+    //  [IdyllApparatusComponent
+    //    _url: "static/SimplifiedSim.json"
+    //    _regionOfInterest: { x: [-2, 2], y: [-1, 1] }
+    //    _width: '100%'
+    //    _height: 300
+    //  /]
+    // Causing strange errors. Tried commenting args; this was not the issue.
     [/div]
 
     *This simulation is still under construction!*
