@@ -204,11 +204,7 @@ A detailed description of the spectrometer will be given to you, along with a ba
     Now we are going to review the diagram and work on the basic aspects of setup --
     namely, we will determine in a general sense what the charge on each plate should be.
 
-    **Before you continue:** Which of the following is always true for a parallel plate capacitor? [br /]
-    **a)** The plates must have identical charges (both positive or both negative, same magnitude). [br /]
-    **b)** The plates can have different charge magnitudes, but the signs must be the same. [br /]
-    **c)** The plates must have the same magnitude of charge, but opposite signs. [br /]
-    **d)** The plates must have the same magnitude of charge, but the signs don't matter.
+    **Before you continue:** Which of the following are always true for a parallel plate capacitor? You may check as many or as few boxes as you like, including choosing all or none of them. [br /]
 
 //    [input type:"radio" id:"a" name:"quiz" /] The plates must have identical charges (both positive or both negative, same magnitude). [br /]
 //    [input type:"radio" id:"b" name:"quiz" /] The plates can have different charge magnitudes, but the signs must be the same. [br /]
@@ -216,25 +212,40 @@ A detailed description of the spectrometer will be given to you, along with a ba
 //    [input type:"radio" id:"d" name:"quiz" /] The plates must have the same magnitude of charge, but the signs don't matter. [br /]
 //    [input type:"button" value:"Submit" onClick:"JavaScript:CheckAnswer"/]
 
-[var name:"radioVal" value:"test1" /]
+//[var name:"radioVal" value:"test1" /]
 [var name:"showAnswer" value:false /]
-[Radio value:radioVal options:`["test1", "test2"]` onClick:`showAnswer = false` /]
+
+[var name:"samemag" value:false /]
+[var name:"diffmag" value:false /]
+[var name:"samesign" value:false /]
+[var name:"diffsign" value:false /]
+
+//[Radio value:radioVal options:`[
+//  {value: "a", label: "a) The plates must have identical charges (both positive or both negative and the same magnitude)."},  
+//  {value: "b", label: "b) The plates can have different charge magnitudes, but the signs must be the same."}
+//  {value: "c", label: "c) The plates must have the same magnitude of charge, but opposite signs."}
+//  {value: "d", label: "d) The plates must have the same magnitude of charge, but the signs don't matter."}]` 
+//onClick:`showAnswer = false`/]
+//I think this would be easier to understand as checkboxes.
+
+[Boolean value:"samemag" /] The charges must have the same magnitude. [br /]
+[Boolean value:"diffmag" /] The charges cannot have the same magnitude. [br /]
+[Boolean value:"samesign"/] The charges must have the same sign (both positive or both negative). [br /]
+[Boolean value:"diffsign"/] The charges must have opposite signs (one positive and one negative). [br /]
+
 
 [Button onClick:`showAnswer = true`]
   Submit
 [/Button]
 
-[Conditional if:`showAnswer && radioVal === "test1"`]
-  You answered [Display value:`radioVal`/]. This is correct!
+[Conditional if:`showAnswer===true && samemag===true && diffmag===false && samesign===false && diffsign===true`]
+  You answered correctly!
 [/Conditional]
 [Conditional if:`showAnswer && radioVal === "test2"`]
   You answered [Display value:`radioVal`/]. Please consider x. This is incorrect.
 [/Conditional]
 
-
-
-// CheckAnswer = (document.getElementById("c").checked == false); // apparently this is how I would check, but I don't know how to use that.
-
+    [br /]
     In the simplified diagram below, the magnetic field is still pointing out of the screen.
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
