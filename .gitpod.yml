@@ -3,3 +3,5 @@ tasks:
     command: cd maple-syrup && npm install
 image:
   file: .gitpod.Dockerfile
+ports:
+  - port: 3000
