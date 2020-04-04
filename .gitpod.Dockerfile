@@ -1,4 +1,4 @@
-FROM node
+FROM gitpod/workspace-full
                     
 USER gitpod
 
