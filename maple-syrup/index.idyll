@@ -250,11 +250,95 @@ A detailed description of the spectrometer will be given to you, along with a ba
         [Conditional if:`!(smans && dmans) && !(ssans && dsans)`]
           [Button onClick:`showAnswer = true`]Show Correct Answer[/Button]
           [Conditional if:`showAnswer`]
-            A parallel plate capacitor consists of two capacitors with opposite charges but the same magnitude.
+            A parallel plate capacitor consists of two capacitors with **opposite charges** but the **same magnitude**.
           [/Conditional]  
         [/Conditional]
       [/Conditional]
     [/Conditional]
+
+  [/Step]
+
+  [Step]
+    // Use new values each time to prevent weirdness from scrolling up.
+    [var name:"showResult2" value:false /]
+    [var name:"showAnswer2" value:false /]
+
+    The result of a cross-product is a vector whose direction is determined by the two original vectors. 
+    Which of the following best describes the angle between the resulting vector and either of the original vectors?
+    [var name:"radioVal" value:"null" /] // Define value
+    // Set up radio buttons. If they are not separate entries the spacing is wrong.
+    [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"a",label:"a) The resulting vector is perpindicular to both original vectors."}]`/]
+    [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"b",label:"b) The resulting vector is parallel to both of the original vectors."}]`/]
+    [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"c",label:"c) The resulting vector is antiparallel to both of the original vectors."}]`/]
+    [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"d",label:"d) The resulting vector is at an obtuse angle to both of the original vectors."}]`/]
+    [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"e",label:"e) The resulting vector is at an acute angle to both of the original vectors."}]`/]
+
+    [Button onClick:`showResult2 = true`]
+      Check Answer
+    [/Button]
+
+    [Conditional if:`showResult2`]
+      [Conditional if:`radioVal === "a"`]
+        Correct!
+      [/Conditional]
+      [Conditional if:`radioVal != "a"`]
+        Your answer is incorrect. [br/]
+        [Conditional if:`radioVal==="b" || radioVal==="c"`]
+          Is this always possible? (What happens if the original vectors are always pointing in opposite directions?)
+        [/Conditional]
+        [Button onClick:`showAnswer2 = true`]Show Correct Answer[/Button]
+        [Conditional if:`showAnswer2`]
+          The result must be **perpendicular** to the original vectors.
+        [/Conditional]  
+      [/Conditional]
+    [/Conditional]
+
+  [/Step]
+
+  [Step]
+    [var name:"showResult3" value:false /]
+    [var name:"showAnswer3" value:false /]
+
+    In our setup, the magnetic field points out of the page and the particle starts out moving to the right.
+    Which direction is
+    [Equation]
+      \boldsymbol{v} \times \boldsymbol{B}
+    [/Equation]
+    ?
+
+    [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"a",label:"a) Up"}]`/]
+    [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"b",label:"b) Down"}]`/]
+    [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"c",label:"c) Left"}]`/]
+    [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"d",label:"d) Right"}]`/]
+    [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"e",label:"e) Into the page"}]`/]
+    [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"f",label:"f) Out of the page"}]`/]
+
+    // Be nice to have one of those arrow graphics here.
+
+    [Button onClick:`showResult3 = true`]
+      Check Answer
+    [/Button]
+
+    [Conditional if:`showResult3`]
+      [Conditional if:`radioVal === "b"`]
+        Correct!
+      [/Conditional]
+      [Conditional if:`radioVal != "b"`]
+        Your answer is incorrect. [br/]
+        [Conditional if:`radioVal==="c" || radioVal==="d" || radioVal==="e" || radioVal==="f"`]
+          *Keep in mind from the previous question that your answer must be perpendicular both to the velocity and the field.*
+        [/Conditional]
+        [Conditional if:`radioVal==="a"`]
+          If you used the right hand rule, check that you are using it correctly. 
+          Also keep in mind that the cross product is not commutative; flipping **v** and **B** will give you a different answer.
+        [/Conditional]
+        [Button onClick:`showAnswer3 = true`]Show Correct Answer[/Button]
+        [Conditional if:`showAnswer3`]
+          The cross product should point **down**.
+        [/Conditional]  
+      [/Conditional]
+    [/Conditional]
+
   [/Step]
 
 [/Scroller]
