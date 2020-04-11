@@ -352,12 +352,12 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
 
     [div]
-    //  [IdyllApparatusComponent
-    //    _url: "static/SimplifiedSim.json"
-    //    _regionOfInterest: { x: [-2, 2], y: [-1, 1] }
-    //    _width: '100%'
-    //    _height: 300
-    //  /]
+      [IdyllApparatusComponent
+        _url: "static/SimplifiedSim.json"
+        _regionOfInterest: { x: [-2, 2], y: [-1, 1] }
+        _width: '100%'
+        _height: 300
+      /]
     // Causing strange errors. Tried commenting args; this was not the issue.
     [/div]
 
