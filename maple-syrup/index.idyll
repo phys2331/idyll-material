@@ -45,9 +45,7 @@ Your role is to analyse a maple syrup sample using mass spectrometry.
 To do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. 
 A detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse.
 
-Your role is to analyse a maple syrup sample using mass spectrometry. 
-To do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. 
-A detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse.
+Our goal as physicists is to learn how we can apply our knowledge of electric and magnetic fields to set up our mass spectrometer.
 
 [var name:"state" value:0 /]
 
@@ -349,9 +347,6 @@ A detailed description of the spectrometer will be given to you, along with a ba
     Now we are going to review the diagram and work on the basic aspects of setup --
     namely, we will determine in a general sense what the charge on each plate should be.
 
-    **Before you continue:** 
-
-    [br /]
     In the simplified diagram below, the magnetic field is still pointing out of the screen.
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
@@ -392,7 +387,7 @@ A detailed description of the spectrometer will be given to you, along with a ba
     ## Simulation
     This simulation will allow you to change the voltages and see where your carbon atom ends up.
     [br /][br /]
-    *Simulation coming soon!*(TM)    
+    *Simulation coming soon!*(TM)
   [/Step]
 
 [/Scroller]
@@ -401,3 +396,31 @@ A detailed description of the spectrometer will be given to you, along with a ba
 Here I would like to generate a recap of some kind, possibly including expected equations used.
 However, I would like for there to be some way to restrict this only to people who have the right answers;
 it doesn't make sense to lead them through with questions only to have the answer directly provided at the very end.
+
+*Draft Below*
+
+Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.
+This required us to understand and apply various relationships, as well as determine where these relationships applied.
+Some relationships you likely used are those between voltage and energy, energy and velocity, velocity and magnetic force, and a central force and the radius of motion that force causes.
+
+First we had to determine the basics, such as which plates were positive or negative, the distances travelled under certain forces, and where equilibrium had to occur.
+Then we started to determine the specifics, relating magnetic and central forces to determine what the velocity must be:
+
+[Equation display:"true"]
+\boldsymbol{F}_{central} = \boldsymbol{F}_{magnetic} = q\boldsymbol{v}\times\boldsymbol{B} = -m\frac{v^2}{r}\hat{r}
+[/Equation]
+
+By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.
+Determining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:
+
+[Equation display:"true"]
+\boldsymbol{F}_{magnetic} = -\boldsymbol{F}_{electric} = -q\boldsymbol{E}
+[/Equation]
+
+While determining the energy allowed us to determine the voltage across the two vertical plates:
+
+[Equation display:"true"]
+KE_{final} = \Delta KE + KE_{initial} = \Delta KE = -\Delta U = -q\Delta V
+[/Equation]
+
+This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis.
