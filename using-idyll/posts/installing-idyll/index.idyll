@@ -1,0 +1,75 @@
+[meta title:"Installing Idyll" description:"How to get Idyll installed so you can start developing" /]
+
+[Header
+  fullWidth:true
+  title:"Installing Idyll"
+  subtitle:"(And possibly some other stuff)"
+  author:"Kitty Harris"
+  authorLink:"https://github.com/phys2331/idyll-material/tree/master/using-idyll/posts/installing-idyll"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+*This Idyll post was made using the template provided for sub-posts within the multipage template.*
+*It was started with the commnad `idyll create --template ../template/`, run from inside the `posts` directory.*
+
+### Looking for a Mac User to Contribute!
+
+I have run Idyll on both Windows and Linux (Xubuntu). 
+Unfortunately, I am currently unable to write instructions for Mac because I don't have any experience with the operating system.
+If you'd like to write instructions for Mac, but don't have access to this repository, please feel free to make a push request or contact us.  
+(Contact information will go here if I get Amy's permission.)
+
+# (Windows Users Only) Installing a "Linux Terminal"
+
+If you are a Windows user, plan on getting at least somewhat used to Linux commands, because we will be installing a Windows app that gives us access to Linux commands. 
+[Here](https://github.com/det-lab/doc-linux) is a repository in progress written with the goal of helping you learn your way around the terminal.
+
+The application we are going to install is called "Windows Subsystem for Linux." 
+It is implemented in part by Microsoft and is availale in the Microsoft Store.
+There are various distributions of Linux available; 
+because Ubuntu is the one I am most familiar with, that is what I will be writing my instructions for.
+The Ubuntu version of WSL is available [here](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab).
+
+// I would like to give the full and proper instructions but I'm not sure how to do that again without losing all of my data.
+After you have installed WSL, the first time you launch it, you will be given some instructions or a link to those instructions by the application.
+Follow them, and then restart your computer.
+Once your computer is booted back up, you should be able to create a username and password for your WSL user.
+
+# Installing Idyll
+
+(If you are not on a Debian-based system such as Ubuntu, some of your commands may differ slightly.)
+
+Before we start, run the following two commands to update your system:  
+1. `sudo apt-get update`
+2. `sudo apt-get upgrade`  
+The command `sudo` essentially runs the following command with elevated permissions.
+It may ask for your password.
+
+Idyll is installed via npm. To install npm, use: [br /]
+`sudo apt-get install npm`
+
+And to install Idyll, you can now use: [br /]
+`sudo npm install idyll`
+
+And you should be good to start using Idyll!
+
+# (Optional) Editing Idyll in Visual Studio Code
+
+Visual Studio Code is a generic IDE (integrated development environment).
+If you have not used an IDE before, think of VSCode as a text editor that is written to help you with programming and markup.
+It can be downloaded for Windows, Mac, or Linux from [the Visual Studio website](https://code.visualstudio.com/).
+There is also a [more powerful version of Visual Studio](https://visualstudio.microsoft.com/vs/) available on Windows only if you feel the need;
+personally I have found VSCode to be fine for Idyll.
+
+VSCode allows users to install extensions. Below, you can see that I have multiple extensions installed, including an extension called `idyll-syntax`.
+![A sidebar on the left of the VSCode interface. The last of six icons on the far left is the "Extensions" option, which has been selected. To the right of the six icons is the "EXTENSIONS" menu with a search bar at the top that says "Search Extensions in the Marketplace." There is a collapsable section, currently opened, titled "Enabled (5)." Among these is an extension called "idyll-syntax" which is version 0.0.2. The description says "Syntax support for idyll-lang" and the author of the extension is "mathisonian."](static/images/extensions.png)
+By using the search bar, which will allow you to install the alpha version of the idyll language support.
+
+Installing an extension for a language has several benefits. 
+The extension for Idyll will color-code the text you see in the editor based on how it expects it to be interpreted;
+for instance, titles may appear in blue, comments in green, and terms in quotes in brown.
+It will also try to close anything that has to be closed; 
+for example, typing one quote will automatically make another appear, and typing a \[ will generate a ` /]` to end it.
+This can make it easier to spot and avoid errors in your code/markup.
