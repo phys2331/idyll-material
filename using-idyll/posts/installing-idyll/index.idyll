@@ -44,8 +44,11 @@ Once your computer is booted back up, you should be able to create a username an
 Before we start, run the following two commands to update your system:  
 1. `sudo apt-get update`
 2. `sudo apt-get upgrade`  
-The command `sudo` essentially runs the following command with elevated permissions.
-It may ask for your password.
+The command `sudo` essentially runs the following command with elevated permissions, so it may ask for your password. [br /]
+Other things that may come up during updating:
+* Keep in mind that your update, especially if it is your first time updating or the first time in a good while, may take quite some time. If time is a concern, it is probably okay to skip this step, but you should come back to it if you run into version issues.
+* It may ask you about disk space. Unless you have a very limited amount of space for files, you probably want to say yes (type `y` and then press `Enter`.)
+* If you are in the middle of something, the update may also ask you about restarting services. If you say yes, it will close anything that needs to be updated (or depends on something that needs to be updated). Be sure to save any important data before starting an update.
 
 Idyll is installed via npm. To install npm, use: [br /]
 `sudo apt-get install npm`
