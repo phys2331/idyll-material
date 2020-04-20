@@ -54,7 +54,7 @@ Idyll is installed via npm. To install npm, use: [br /]
 `sudo apt-get install npm`
 
 And to install Idyll, you can now use: [br /]
-`sudo npm install idyll`
+`sudo npm install -g idyll`
 
 And you should be good to start using Idyll!
 
