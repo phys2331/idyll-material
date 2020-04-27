@@ -304,15 +304,19 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     [/Equation]
     ?
 
+
+    [Float position:"right"]
+    ![A graphic aid for the answers to the left, in which arrows in each direction are labelled with the letter corresponding to one of the answers.](static/images/directions.png)
+    [/Float]
+
     [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"a",label:"a) Up"}]`/]
     [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"b",label:"b) Down"}]`/]
     [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"c",label:"c) Left"}]`/]
     [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"d",label:"d) Right"}]`/]
     [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"e",label:"e) Into the page"}]`/]
     [Radio value:radioVal onClick:`showResult3=false,showAnswer3=false` options:`[{value:"f",label:"f) Out of the page"}]`/]
-
-    // Be nice to have one of those arrow graphics here.
-
+    
+    
     [Button onClick:`showResult3 = true`]
       Check Answer
     [/Button]
@@ -328,7 +332,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
         [/Conditional]
         [Conditional if:`radioVal==="a"`]
           If you used the right hand rule, check that you are using it correctly. 
-          Also keep in mind that the cross product is not commutative; flipping **v** and **B** will give you a different answer.
+          Also keep in mind that the cross product is not commutative; flipping v and B will give you a different answer.
         [/Conditional]
         [Button onClick:`showAnswer3 = true`]Show Correct Answer[/Button]
         [Conditional if:`showAnswer3`]
