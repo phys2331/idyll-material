@@ -355,12 +355,23 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
 
+
+    [var name:particleSign value:0 /]
+    [var name:leftSign value:0 /]
+    [var name:rightSign value:0 /]
+    [var name:topSign value:0 /]
+    [var name:bottomSign value:0 /]
     [div]
       [IdyllApparatusComponent
         _url: "static/SimplifiedSim.json"
         _regionOfInterest: `{ x: [-2, 4], y: [-3, 3] }`
         _width: '100%'
         _height: 300
+        particleSign:particleSign
+        leftSign:leftSign
+        rightSign:rightSign
+        topSign:topSign
+        bottomSign:bottomSign
       /]
     // Causing strange errors. Tried commenting args; this was not the issue.
     [/div]
