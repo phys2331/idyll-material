@@ -358,7 +358,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     [div]
       [IdyllApparatusComponent
         _url: "static/SimplifiedSim.json"
-        _regionOfInterest: `{ x: [-2, 4], y: [-4, 3] }`
+        _regionOfInterest: `{ x: [-2, 4], y: [-3, 3] }`
         _width: '100%'
         _height: 300
       /]
