@@ -353,8 +353,8 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
 
     [div]
       [IdyllApparatusComponent
-        _url: "static/test.json"
-        _regionOfInterest: `{ x: [-2, 2], y: [-1, 1] }`
+        _url: "static/SimplifiedSim.json"
+        _regionOfInterest: `{ x: [-2, 4], y: [-4, 3] }`
         _width: '100%'
         _height: 300
       /]
@@ -423,8 +423,4 @@ While determining the energy allowed us to determine the voltage across the two 
 KE_{final} = \Delta KE + KE_{initial} = \Delta KE = -\Delta U = -q\Delta V
 [/Equation]
 
-<<<<<<< HEAD
 This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis.
-=======
-This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis.
->>>>>>> develop
