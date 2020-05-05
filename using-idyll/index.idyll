@@ -35,15 +35,16 @@ Idyll's own documentation can be found at [their website](https://idyll-lang.org
 # Table of Contents
 *These posts are still in development.*
 
-* [Installing Idyll](./posts/installing-idyll)\* - incomplete
-* [Creating a new Idyll post](./posts/create-post)\* - placeholder
+* [Installing Idyll](https://phys2331.github.io/idyll-material/using-idyll/docs/installing-idyll/index.html)* (Optional; see Using GitPod) - incomplete
+* [Using GitPod](./posts/using-gitpod)* (Alternate to Installation)* - placeholder
+* [Creating a new Idyll post](./posts/create-post)* - placeholder
 * [Running and updating an existing post](./posts/running-posts) - placeholder
 * [Deploying a post](./posts/deploying) - placeholder
 * [Basic syntax](./posts/syntax) - placeholder
 * [Interactivity](./posts/interactivity) - placeholder
 * [File Organization](./posts/organization) - placeholder
 
-\*If you are an experienced Linux user, 
+*If you are an experienced Linux user, 
 [this page](https://idyll-lang.org/docs/getting-started) should have everything you need to get started with installing Idyll and creating projects.
 
 ## Directory layout
