@@ -13,6 +13,7 @@
 
 *This Idyll post was made using the template provided for sub-posts within the multipage template.*
 *It was started with the commnad `idyll create --template ../template/`, run from inside the `posts` directory.*
+*This will ONLY work for adding to an existing multi-page template. You cannot use it to create an entirely new post.*
 
 ### Looking for a Mac User to Contribute!
 
