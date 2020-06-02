@@ -1,142 +1,104 @@
-[meta title:"Using Gitpod" description:"Short description of your project" /]
+[meta title:"Using Gitpod" description:"A quick guide to using GitPod" /]
 
 [Header
   fullWidth:true
   title:"Using Gitpod"
-  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
-  author:"Your Name Here"
-  authorLink:"https://idyll-lang.org"
+  subtitle:"Work on this repository without installing Idyll"
+  author:"Kitty Harris"
+  authorLink:"https://github.com/phys2331/idyll-material/tree/master/using-idyll/"
   date:`(new Date()).toDateString()`
   background:"#222222"
   color:"#ffffff"
    /]
 
+*This page was made using the command `idyll create` and, when prompted, using the "Article" template.*
 
-## Introduction
+## What is GitPod?
 
-This is an Idyll post. It is generated via
-the file `index.idyll`. To compile this post using
-idyll, run the command `idyll` inside of this directory.
+GitPod is a web-based service which allows editing of files in a GitHub repository without the need to clone the repository and download relevant tools. 
+If you don't have any experience with installing programs through a terminal, this is the recommended way to go.
+It's also a good option if you can't or don't want to install Idyll locally for one reason or another.
+The GitPod we have set up will already include Idyll, its dependencies, and a VSCode environment with the Idyll extension, so that you don't have to set anything up.
 
+## Accessing GitPod
 
-Idyll posts are designed to support interaction and
-data-driven graphics.
+On the [repository's main page](https://github.com/phys2331/idyll-material/), if you scroll down, you should see a button that looks like this (but is clickable):
 
-[var name:"state" value:0 /]
-[CustomD3Component className:"d3-component" state:state /]
-[button onClick:`state++`]
-  Click Me.
-[/button]
+// [button onclick=https://gitpod.io/#https://github.com/phys2331/idyll-material]
+![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)
+// [/button]
+// neither this, the regular html link, nor the regular markdown method for the button seem to work?
+That button will take you to [GitPod](https://gitpod.io/#https://github.com/phys2331/idyll-material).
+Log in with your GitHub account. 
+You will need access to edit this repository; contact Dr. Amy Roberts (amy.roberts@ucdenver.edu) if you can't do that yet.
+If you don't have one yet, you can create a GitHub account [here](https://github.com/join).
 
-Configuration can be done via the `idyll` field in `package.json`.
+## Layout
 
-## Markup
+GitPod relies heavily on the application *Visual Studio Code*, and their interfaces are therefore very similar.
 
-Idyll is based on Markdown.
+![An image of the GitPod window. The top bar is as is typical for Windows applications, having options for "File," "Edit," etc. On the far left are several icons; the first is highlighted, which pulls up a left menu displaying a collapsed file tree. In the top of the main portion of the window are two tabs, the selected one showing a color-coded text editor with line numbers which takes up the majority of the screen. Beneath the main area of the screen are three more tabs. The selected tab is a terminal, which fills the remaining bottom portion of the screen. At the very bottom is a bar with some quick-access helpful information.](static/images/interface.png)
 
-You can use familiar syntax
-to create **bold** (`**bold**` ) and *italic* (``*italic*` ) styles,
+### Editor
+The main window is the VSCode editor. 
+VSCode uses color-coding, line numbers, and tab-completion to help you with editing.
+You can use this just as you would any other IDE or text editor.  
+If you are editing a markdown (.md) file, you can click the button at the top right to open the preview.
+(There is also a preview for Idyll, but it's different, so we'll get to that later.)
+![A cropped view just of the top portion of the editor region. The tab "README.md" is selected. At the top right of the editor, in line with the tabs, is a small button that, when hovered over, says "Open Preview to Side."](static/images/open_preview.png)
 
-* lists
-* of
-* items,
+This area of the window is also highly customizable, and can be expanded and shrunk to make room for whichever area you need most.
+![A gif showing off the ability to create new sub-windows and expand the editor.](static/images/resize.gif)
 
-```
-* lists
-* of
-* items,
-```
-
-1. and numbered
-2. lists
-3. of items,
-
-
-```
-1. and numbered
-2. lists
-3. of items,
-```
-
-in addition to [hyperlinks](https://idyll-lang.org) and images:
-
-![quill](static/images/quill.svg)
-
-```
-![quill](static/images/quill.svg)
-```
-
-## Components
-
-Components can be embedded using a bracket syntax:
-
-```
-[Range /]
-```
-
-and can contain nested content:
-
-```
-[Equation]e = mc^{2}[/Equation]
-```
-
-Components accept properties:
-
-```
-[Range value:x min:0 max:1 /]
-```
-
-that can be bound to variables to achieve interactivity (more in next section).
-
-
-A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
-
-To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+### Terminal
+The Terminal is found at the bottom of the interface, under the tab labelled `>_/workspace/idyll-material`. 
+Here, you can run various Linux commands.
+(For those with some experience, the shell is bash and the operating system is Ubuntu.)
+![A cropped view of the terminal, with some commands recently run.](static/images/terminal.png)
+There are three main commands you will want to run:
+* `idyll` will generate the Idyll page in the current directory, verifying that it will build successfully and allowing you to access a preview.
+* `cd` will change to a specified directory. (`cd ../` will move up one level, so if you are in `idyll-material/maple-syrup`, it will take you to `idyll-material/`)
+* `ls` will list every (visible) file in the current directory
+The blue text to the left of $ will tell you where you are; in the image above, the user is in the `/workspace/idyll-material/maple-syrup` directory.
+`/workspace/idyll-material/` is the top level of the repository.
+You probably should not edit files that are outside of this directory.
 
 
 
-## Interactivity
+### Sidebar
 
-Here is how you can instantiate a variable and bind it to a component:
 
-[var name:"exampleVar" value:5 /]
+------------------------
 
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
+8lah6lah
 
-```
-[var name:"exampleVar" value:5 /]
+link to commands
 
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-```
+what is vscode, what is terminal
 
-## Learn More
+## Using Git
 
-To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
-join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
+8lah6lah
 
-[hr /]
+what is push/pull
+* how to do that
 
-# Technical Details
+link to a more advanced guide
+* maybe make one?
 
-## Installation
+## First-Time Setup
 
-- Make sure you have `idyll` installed (`npm i -g idyll`).
-- Clone this repo and run `npm install`.
+The first time you log in, you will be able to edit, but if you try to push...
 
-## Developing a post locally
+![An error message at the bottom right of the window that says "The command 'git push' requires additional permissions: public_repo Please try again after updating the permissions." and has a button labelled "Grant Permissions".](static/images/gitpod_permissions1.png)
+[br /]
 
-Run `idyll`.
+You will receive a permission error, so your edits will not be particularly useful until you change this.
+If we click the button that pops up, it will take us to this menu:
 
-## Building a post for production
+![A menu titled "Access Control" with two columns, each with several checkboxes. The left column is labelled "GitHub" while the right column is labelled "GitLab." In the GitHub column, the first item "read public email addresses" is checked in grey, while the second item "write public resources" is checked in blue. At the bottom of each column is an "Update" button.](static/images/gitpod_permissions.png)
+[br /]
 
-Run `idyll build`. The output will appear in the top-level `build` folder. To change the output location, change the `output` option in `package.json`.
-
-## Deploying
-
-Make sure your post has been built, then deploy the docs folder via any static hosting service.
-
-## Dependencies
-
-You can install custom dependencies by running `npm install <package-name> --save`. Note that any collaborators will also need download the package locally by running `npm install` after pulling the changes.
+Under "GitHub", select the option `write public repos` and click `Update`.
+This should configure your permissions so that you can now push to our repository.
+(Required permissions may vary for other repositories.)
