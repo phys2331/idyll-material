@@ -12,6 +12,7 @@
    /]
 
 *This page was made using the command `idyll create` and, when prompted, using the "Article" template.*
+*I have since realized that combining the multipage template with other templates has made my life harder; I will not be doing this again.*
 
 ## What is GitPod?
 
@@ -44,47 +45,115 @@ The main window is the VSCode editor.
 VSCode uses color-coding, line numbers, and tab-completion to help you with editing.
 You can use this just as you would any other IDE or text editor.  
 If you are editing a markdown (.md) file, you can click the button at the top right to open the preview.
-(There is also a preview for Idyll, but it's different, so we'll get to that later.)
+(There is also a preview for Idyll, but it's different, so we'll get to that [later](#terminal).)
 ![A cropped view just of the top portion of the editor region. The tab "README.md" is selected. At the top right of the editor, in line with the tabs, is a small button that, when hovered over, says "Open Preview to Side."](static/images/open_preview.png)
 
 This area of the window is also highly customizable, and can be expanded and shrunk to make room for whichever area you need most.
 ![A gif showing off the ability to create new sub-windows and expand the editor.](static/images/resize.gif)
 
+Double-clicking one of the tabs in the editor will expand the editor to take up the entire browser tab; double-clicking again will return everything to how it was before.
+F11 will make your browser window full-screen.
+
 ### Terminal
 The Terminal is found at the bottom of the interface, under the tab labelled `>_/workspace/idyll-material`. 
 Here, you can run various Linux commands.
 (For those with some experience, the shell is bash and the operating system is Ubuntu.)
+
 ![A cropped view of the terminal, with some commands recently run.](static/images/terminal.png)
+
 There are three main commands you will want to run:
 * `idyll` will generate the Idyll page in the current directory, verifying that it will build successfully and allowing you to access a preview.
 * `cd` will change to a specified directory. (`cd ../` will move up one level, so if you are in `idyll-material/maple-syrup`, it will take you to `idyll-material/`)
 * `ls` will list every (visible) file in the current directory
+
 The blue text to the left of $ will tell you where you are; in the image above, the user is in the `/workspace/idyll-material/maple-syrup` directory.
 `/workspace/idyll-material/` is the top level of the repository.
 You probably should not edit files that are outside of this directory.
 
+Resources for more information on commands:
+* [Idyll Commands](https://phys2331.github.io/idyll-material/using-idyll/posts/idyll-commands/build/) (the next page for this guide!) // link currently fake
+* [Introduction to Linux](https://github.com/det-lab/doc-linux), especially commands in Unix-based systems.
+* [Idyll Documentation](https://idyll-lang.org/docs) - in particular, [Getting Started](https://idyll-lang.org/docs/getting-started), [Deploying to the Web](https://idyll-lang.org/docs/publishing/deploying-to-the-web), and [NPM](https://idyll-lang.org/docs/components/npm)
+// Can't figure out sub-bullets, wonder if it's a difference in how indentation is read? Tried tab and 4 spaces as well as changing the * to -,+,**.
 
 
 ### Sidebar
 
+On the left sidebar are five icons. 
 
-------------------------
+The first is the Explorer (the file icon), which opens a collapsible file tree. 
+This filetree is independent of what files you currently have open or where the terminal is currently looking.
 
-8lah6lah
+The second is the Search menu.
+You can use this to search for a term in all files available, regardless of whether they are currently open.
 
-link to commands
+The third is the Git menu (the icon with the branching line).
+We'll discuss more about using git [later](#using-git).
 
-what is vscode, what is terminal
+The fourth is the Debug menu.
+I haven't needed this menu for Idyll; usually the preview and the error messages that may appear in the terminal are sufficient.
+It also isn't needed for basic markup.
+
+The fifth is the extensions manager.
+Please do not remove any extensions.
+If you need an extension that is missing, you will need to find the source `*.vsix` file and drag it into the window to install; you cannot search for extensions in GitPod.
 
 ## Using Git
 
-8lah6lah
+Git is not a webiste (although there are websites designed to help with its use, such as GitHub) but a protocol that can be used in a variety of ways.
+The purpose of git is to help control versions of files, especially when working collaboratively -- unlike other collaboration tools such as GoogleDoc or OneDrive, users must confirm their changes and send their changes all at once.
+When two people have changed the same file, git can automatically merge those changes and will ask for user input if two people have changed, for example, the same line of code -- something that *shouldn't* be automatically merged.
 
-what is push/pull
-* how to do that
+For now, we are going to focus on the most basic aspects of Git: [staging, commiting](#commit), [pushing, and pulling](#push).
+The easiest way to manage git within GitPod will be to use the git tab in the sidebar. 
 
-link to a more advanced guide
-* maybe make one?
+**Git Resources**
+* A more in-depth guide to using git in VSCode can be found [here](https://code.visualstudio.com/Docs/editor/versioncontrol#_git-support). [br /]
+* Full git documentation can be found [here](https://git-scm.com/book/en/v2).
+
+### Commit
+
+Commiting your changes tells git that you want to confirm the changes you have made so far.
+When you commit, git will ask you for a "commit message."
+This is a brief summary of the changes you made, so that anyone else -- or your future self -- can look back at that commit and easily tell what you did and possibly why you did it.
+
+Before you commit a change, you will need to stage it.
+To do so, hover over the file you want to stage and select the plus button (Stage changes)
+
+![A cropped view of the git menu with some changes and some not. A file is moused over, giving it and only it three buttons, a counterclockwise arrow, a file with an arrow, and a plus. The plus is moused over, giving the text "Stage Changes."](static/images/gitpod_stage.png)
+
+Once you have staged all changes you want to commit, type your commit message in the text box toward the top of the git menu, then choose the checkmark above it to commit your changes.
+
+![A cropped view of the git menu with four files staged. Above the staged changes is a fillable text box which currently says "Minor formatting changes." Above that are four icons, a checkmark, a refresh symbol, an edit symbol, and ellipses. The checkmark is hovered over, creating text that says "Commit."/](static/images/gitpod_commit.png)
+
+Congratulations, your changes have been committed!
+This doesn't mean they are present in the repository, however; we still need to push our changes.
+
+### Push 
+### (and pull)
+
+Once your changes have been committed, you will need to push them in order to "sync" your changes to the repository.
+At the bottom of your window, there should be a blue bar. On the left side are several indicators.
+The first indicator has the github icon and `repository_owner/repository_name`. The second has branching arrows and `branch_name`.
+Don't worry too much about branches for now; the default branch is `master` and that's the one you should be working on for now.
+
+The third icon is the one we are interested in; it has a sync or refresh symbol and two numbers, one followed by a down arrow and one followed by an up arrow.
+The down arrow indicates how many commits that the repository has that we don't and the up arrow indicates how many commits we have that the repository doesn't have.
+If you click this icon, it will attempt to pull any changes you are missing and push any changes you have committed.
+
+The last icons are used for debugging; we'll be largely ignoring them because they are not particularly helpful for markup or for Idyll.
+
+Go ahead and click on the sync icon.
+
+![An image depicting everything what was described above, with the Sync button moused over and text saying "idyll-material (Git) - Synchronize Changes".](static/images/gitpod_sync.png)
+
+You should get an option at the top of the window asking how you want to synchronize your changes; you want to pick the first option, "Pull and push commits from and to 'origin/master.'"
+![A cropped view of the top of the browser tab. There is a dropdown menu "Pick how changes should be syncrhonized:" and the first option is selected. Two more options are available below.](static/images/gitpod_confirm.png)
+// " kill mismatched highlighting
+Once you've selected this, git will push and pull any necessary commits!
+
+
+
 
 ## First-Time Setup
 
