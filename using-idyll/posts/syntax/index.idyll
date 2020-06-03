@@ -1,0 +1,81 @@
+[meta title:"Basic Syntax" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Basic Syntax"
+  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
+  author:"Your Name Here"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+## Introduction
+
+Idyll is based primarily on markdown and also contains most html features, which in turn allows the implementation of css and javascript.
+
+For basic markup, see the Idyll docs page on [markup syntax](https://idyll-lang.org/docs/syntax).
+Creating a new page will also give you several examples that you can follow and adapt.
+The purpose of this page is to outline key differences between Idyll and markdown/html as well as some notes about javascript use when embedding components.
+
+## Differences from HTML
+
+The main difference between Idyll and HTML is that Idyll uses `[]` instead of `<>`.
+For things that do not have an open/close, such as `</br>`, move the / to the end [br /] (`[br /]`).
+
+![quill](static/images/quill.svg)
+
+```
+![quill](static/images/quill.svg)
+```
+
+## Components
+
+Components can be embedded using a bracket syntax:
+
+```
+[Range /]
+```
+
+and can contain nested content:
+
+```
+[Equation]e = mc^{2}[/Equation]
+```
+
+Components accept properties:
+
+```
+[Range value:x min:0 max:1 /]
+```
+
+that can be bound to variables to achieve interactivity (more in next section).
+
+
+A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
+
+To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+
+
+
+## Interactivity
+
+Here is how you can instantiate a variable and bind it to a component:
+
+[var name:"exampleVar" value:5 /]
+
+[Range min:0 max:10 value:exampleVar /]
+[Display value:exampleVar /]
+
+```
+[var name:"exampleVar" value:5 /]
+
+[Range min:0 max:10 value:exampleVar /]
+[Display value:exampleVar /]
+```
+
+## Learn More
+
+To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
+join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).

@@ -1,0 +1,24 @@
+{
+  "name": "basic-syntax",
+  "version": "1.0.0",
+  "license": "MIT",
+  "idyll": {
+    "theme": "default",
+    "layout": "centered",
+    "css": "styles.css",
+    "authorView": false,
+    "output": "../../docs/basic-syntax/",
+    "components": [
+      "../../components/",
+      "components"
+    ]
+  },
+  "dependencies": {
+    "d3": "^4.0.0",
+    "idyll": "^4.12.0",
+    "idyll-d3-component": "^2.1.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^0.12.0"
+  }
+}

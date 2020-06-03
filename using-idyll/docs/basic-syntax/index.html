@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+    />
+    <title>Basic Syntax</title>
+    <meta property="og:title" content="Basic Syntax" />
+    <meta charset="utf-8" />
+    <meta property="og:type" content="article" />
+
+    <meta property="og:description" content="Short description of your project" />
+    <meta property="description" content="Short description of your project" />
+
+    <link rel="stylesheet" href="static/idyll_styles.css" />
+  </head>
+  <body>
+    <div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div class=" idyll-text-container"></div><div class="article-header" style="background:#222222;color:#ffffff"><h1 class="hed">Basic Syntax</h1><h2 class="dek">Welcome to Idyll. Open index.idyll to start writing</h2><div class="byline">By: <a href="https://idyll-lang.org">Your Name Here</a></div><div class="idyll-pub-date">Wed Jun 03 2020</div></div><div class=" idyll-text-container"><h2 id="introduction">Introduction</h2><p>Idyll is based primarily on markdown and also contains most html features, which in turn allows the implementation of css and javascript.</p><p>For basic markup, see the Idyll docs page on <a href="https://idyll-lang.org/docs/syntax">markup syntax</a>.
+Creating a new page will also give you several examples that you can follow and adapt.
+The purpose of this page is to outline key differences between Idyll and markdown/html as well as some notes about javascript use when embedding components.</p><h2 id="differences-from-html">Differences from HTML</h2><p>The main difference between Idyll and HTML is that Idyll uses <code>[]</code> instead of <code>&lt;&gt;</code>.
+For things that do not have an open/close, such as <code>&lt;/br&gt;</code>, move the / to the end <br/> (<code>[br /]</code>).</p><img src="static/images/quill.svg" alt="quill"/><pre><code>![quill](static/images/quill.svg)</code></pre><h2 id="components">Components</h2><p>Components can be embedded using a bracket syntax:</p><pre><code>[Range /]</code></pre><p>and can contain nested content:</p><pre><code>[Equation]e = mc^{2}[/Equation]</code></pre><p>Components accept properties:</p><pre><code>[Range value:x min:0 max:1 /]</code></pre><p>that can be bound to variables to achieve interactivity (more in next section).</p><p>A variety of components are included by default. See <a href="https://idyll-lang.org/docs/components/">all the available components</a>. You can also use any html tag, for example: <code>[div] A div! [/div]</code>.</p><p>To create your own, add it to the <code>components/</code> folder. There are examples of how to use Idyll with React and D3 based components already included.</p><h2 id="interactivity">Interactivity</h2><p>Here is how you can instantiate a variable and bind it to a component:</p><input type="range" value="5" min="0" max="10" step="1"/><span class="idyll-display">5.00</span><pre><code>[var name:&quot;exampleVar&quot; value:5 /]
+
+[Range min:0 max:10 value:exampleVar /]
+[Display value:exampleVar /]</code></pre><h2 id="learn-more">Learn More</h2><p>To learn more see the documentation at <a href="https://idyll-lang.org/docs/">https://idyll-lang.org/docs/</a>,
+join our <a href="https://gitter.im/idyll-lang/Lobby">chatroom</a>, or see the project on <a href="https://github.com/idyll-lang/idyll">GitHub</a>.</p></div></div></div></div>
+    <script src="static/idyll_index.js"></script>
+  </body>
+</html>
