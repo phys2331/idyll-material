@@ -1,0 +1,144 @@
+[meta title:"Vectors_Guide" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"The Physics II Student's Guide to Vectors"
+  subtitle:""
+  author:"Mary Span"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+In three dimensions, a **vector** is a set of three numbers: <x, y, z>.
+
+This is different than **scalar**, which is a single number that represents a quantity.
+
+**Position** and **Velocity** can both be vector quantities.
+
+## Vector Operations
+
+There are *legal* and *illegal* ways of using vectors. Follow the legal operations to travel farther in this course!
+
+## Legal Operations
+
+With vectors, you **CAN**:
+
+  1. Multiply and divide by a scalar
+
+  2. Take the magnitude
+
+  3. Have a unit vector give direction
+
+  4. Add and subtract other vectors
+
+  5. Differentiate
+
+  6. Take the dot product and cross product
+
+## Illegal Operations
+
+Vectors **CANNOT**:
+
+  1. Be equal to a scalar.
+
+  2. Be added to or subtracted from a scalar.
+
+  3. Be in the denominator of an expression (In this case, take the magnitude, which is a scalar!)
+
+  4. Be added to or subtracted from other vectors with conflicting units.
+
+## Position Vectors
+
+A **position vector** describes a position in 3D space.
+
+Points from the *origin* to the *location*.
+
+Can use the right-hand rule:
+
+  * Thumb = +x
+
+  * Pointer = +y
+
+  * Middle = +z
+
+Each number in the vector (x, y, z) is a **component** of the vector.
+
+  * Components can't be vectors by themselves (as they are only 1 number).
+
+[Equation]
+  \vec{0}
+[/Equation] is a legal vector.
+
+  * This is the position of an object at the origin or the velocity of an object at rest.
+
+## Unit Vectors
+
+A **unit vector** is a vector that has a magnitude of 1 in some direction.
+
+  * If a unit vector = 1, every component in that vector must be *less* than 1.
+
+There are 3 unit vectors in the Cartesian system that are along the thress axes:
+
+  * i-hat [Equation] \hat{i} = \lt1, 0, 0\gt [/Equation]
+
+  * j-hat [Equation] \hat{j} = \lt0,1,0\gt [/Equation]
+
+  * k-hat [Equation] \hat{k} = \lt0,0,1\gt [/Equation]
+
+  * Example: [Equation] 0.05\hat{i} + (-1.2)\hat{j} + 20\hat{k} [/Equation]
+
+Not all vectors point along the axis. 
+
+How to find a unit vector:
+
+[Equation]
+  \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x,y,z \gt}{\sqrt{x^{2}+y^{2}+z^{2}}}
+[/Equation]
+
+A vector = another vector if all the components are equal.
+
+A vector may be factored into the product of a unit vector, multiplied by a scalar equal to the magnitude.
+
+  * Example: [Equation] \lt0, 5, 0\gt = 5 \lt0, 1, 0\gt [/Equation]
+
+## Drawing Vectors
+
+For position vectors, the tail is always at the *origin* of a coordinate system.
+
+The x component of a vector is the difference between the x-coordinate of the tail and the x-coordinate of the tip.
+
+Length of arrow = distance from origin.
+
+Direction of arrow = direction of the path from the *initial* position to the *final* position...**displacement**
+
+## Fun Things to do with Vectors
+
+The magnitude of a vector [Equation] \neq [/Equation] the sum of the magnitudes of the two original vectors.
+
+Vector addition is commutative
+
+[Equation]
+  \vec{A} + \vec{B} = \vec{B} + \vec{A}
+[/Equation]
+
+Vector subtraction is *not* commutative
+
+[Equation]
+  \vec{A} - \vec{B} \neq \vec{B} - \vec{A}
+[/Equation]
+
+Vector addition and substraction are associative
+
+[Equation]
+  (\vec{A} + \vec{B}) - \vec{C} = \vec{A} + (\vec{B} - \vec{C})
+[/Equation]
+
+Application of vector subtraction:
+
+[Equation] \Delta \vec{r} [/Equation] = change in quantity = final - intial
+
+[Equation]
+  \Delta \vec{r} = \vec{r_{f}} = \vec{r_{i}}
+[/Equation]
