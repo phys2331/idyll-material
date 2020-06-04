@@ -2,10 +2,10 @@
 
 [Header
   fullWidth:true
-  title:"Basic Syntax"
-  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
-  author:"Your Name Here"
-  authorLink:"https://idyll-lang.org"
+  title:"Syntax"
+  subtitle:"How Idyll Syntax Differs from Markdown"
+  author:"Kitty Harris"
+  authorLink:"https://github.com/phys2331/idyll-material/tree/master/using-idyll/"
   date:`(new Date()).toDateString()`
   background:"#222222"
   color:"#ffffff"
@@ -28,7 +28,6 @@ For things that do not have an open/close, such as `</br>`, move the / to the en
 
 Generally speaking, there are no major differences from markdown. 
 However, there are some commands that (at time of writing) were either missing a functionality available in markdown or have a different (undetermined) syntax, such as sub-bullets.
-
 
 ## Components and JavaScript
 

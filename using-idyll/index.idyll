@@ -18,7 +18,7 @@ It is based on a combination of markdown, html, and javascript,
 and outputs a combination of html, javascript, and css files so that an idyll post can be run in any browser without the user needing to download software.
 This is a guide targeted at other undergraduate students who are getting into Idyll, especially those who may not have experience with coding.
 If you are already experienced with programming, 
-or even if you are only experienced with markup and terminal use, I would recommend starting with documentation on [the Idyll website](https://idyll-lang.org/)
+or even if you are only experienced with markup and terminal use, I would recommend starting with documentation on [the Idyll website](https://idyll-lang.org/).
 
 This particular idyll post uses Idyll's multipage template. 
 If you click on the author name on any page within this post, 
@@ -30,19 +30,17 @@ Idyll also provides various templates to start from.
 I try to use each template at least once so that you can see the features of each of them; 
 each post will state which template it uses.
 
-Idyll's own documentation can be found at [their website](https://idyll-lang.org/) along with many examples and useful links.
-
 # Table of Contents
 *These posts are still in development.*
 
-* [Installing Idyll](https://phys2331.github.io/idyll-material/using-idyll/docs/installing-idyll/index.html)* (Optional; see Using GitPod) - Draft, 1st test complete, needs 2nd test.
+* [Installing Idyll](https://phys2331.github.io/idyll-material/using-idyll/docs/installing-idyll/index.html)* (Optional; see *Using GitPod*) - Draft, 1st test complete, needs 2nd test.
 * [Using GitPod](https://phys2331.github.io/idyll-material/using-idyll/posts/using-gitpod/build/index.html)* (Alternate to Installation)* - Draft, untested
 * [Idyll Commands](./posts/idyll-commands)* - placeholder
 // These are gonna be sections, not their own pages.
 // * [Creating a new Idyll post](./posts/create-post)* - placeholder
 // * [Running and updating an existing post](./posts/running-posts) - placeholder
 // * [Deploying a post](./posts/deploying) - placeholder
-* [Basic syntax](./posts/syntax) - placeholder
+* [Basic syntax](https://phys2331.github.io/idyll-material/using-idyll/docs/basic-syntax/index.html) - Draft, untested
 * [Interactivity](./posts/interactivity) - placeholder
 * [File Organization](./posts/organization) - placeholder // Might just link to idyll doc instead?
 
