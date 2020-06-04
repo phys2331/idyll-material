@@ -24,58 +24,23 @@ The purpose of this page is to outline key differences between Idyll and markdow
 The main difference between Idyll and HTML is that Idyll uses `[]` instead of `<>`.
 For things that do not have an open/close, such as `</br>`, move the / to the end [br /] (`[br /]`).
 
-![quill](static/images/quill.svg)
+## Differences from Markdown
+
+Generally speaking, there are no major differences from markdown. 
+However, there are some commands that (at time of writing) were either missing a functionality available in markdown or have a different (undetermined) syntax, such as sub-bullets.
+
+
+## Components and JavaScript
+
+When embedding a component, you will often be using javascript-like syntax.
+While you will still use `[]` surround everything, variables will go in 
+`
+`backticks`
+`
+, unlike the "`quotes`" used for most variables in html-like syntax.
+
+Here is an example from the Idyll documentation:
 
 ```
-![quill](static/images/quill.svg)
+[Component propName:`2 * 2 * 2 * 2`/]
 ```
-
-## Components
-
-Components can be embedded using a bracket syntax:
-
-```
-[Range /]
-```
-
-and can contain nested content:
-
-```
-[Equation]e = mc^{2}[/Equation]
-```
-
-Components accept properties:
-
-```
-[Range value:x min:0 max:1 /]
-```
-
-that can be bound to variables to achieve interactivity (more in next section).
-
-
-A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
-
-To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
-
-
-
-## Interactivity
-
-Here is how you can instantiate a variable and bind it to a component:
-
-[var name:"exampleVar" value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-
-```
-[var name:"exampleVar" value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-```
-
-## Learn More
-
-To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
-join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
