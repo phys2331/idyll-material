@@ -10,23 +10,24 @@
     <meta charset="utf-8" />
     <meta property="og:type" content="article" />
 
-    <meta property="og:description" content="Deciding what to do" />
-    <meta property="description" content="Deciding what to do" />
+    <meta property="og:description" content="How I decide what to do." />
+    <meta property="description" content="How I decide what to do." />
 
     <link rel="stylesheet" href="static/idyll_styles.css" />
   </head>
   <body>
-    <div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div class=" idyll-text-container"></div><div class="article-header" style="background:#222222;color:#ffffff"><h1 class="hed">The Process</h1><h2 class="dek">Deciding How to Build Your Document</h2><div class="byline">By: <a href="https://idyll-lang.org">Your Name Here</a></div><div class="idyll-pub-date">Wed Jun 03 2020</div></div><div class=" idyll-text-container"><h2 id="preamble">Preamble</h2><p>There is no one “correct” way of building an Idyll document; the purpose of this document is to outline my own process to help give you ideas.</p><h2 id="step-zero---choosing-a-template">Step Zero - Choosing a Template</h2><p>When you run <code>idyll create</code>, after choosing a name for your project you will be asked what template you want to use.
+    <div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div class=" idyll-text-container"></div><div class="article-header" style="background:#222222;color:#ffffff"><h1 class="hed">The Process</h1><h2 class="dek">Deciding How to Build Your Document</h2><div class="byline">By: <a href="https://idyll-lang.org">Your Name Here</a></div><div class="idyll-pub-date">Thu Jun 04 2020</div></div><div class=" idyll-text-container"><h2 id="preamble">Preamble</h2><p>There is no one “correct” way of building an Idyll document; the purpose of this document is to outline my own process to help give you ideas.</p><h2 id="step-zero---choosing-a-template">Step Zero - Choosing a Template</h2><p>When you run <code>idyll create</code>, after choosing a name for your project you will be asked what template you want to use.
 If you don’t know which one is best for your project, don’t worry!
 You can always change the layout to match one of the other templates later.</p><pre><code>? In which directory would you like your project? test
 ? What would you like to name your project? test
 ? Which template would you like to use? (Use arrow keys)
+
 ❯ Article
   Multipage
   Scrollytelling
   Slideshow
   Custom</code></pre><p>
-The <strong>Article</strong> template is the most basic - this will create a single-page, single-column article much like this one. 
+The <a><strong>Article</strong></a> template is the most basic - this will create a single-page, single-column article much like this one. 
 If you’re not sure what template to use, this is an excellent choice.</p><pre><code>  Article
 ❯ Multipage
   Scrollytelling
@@ -38,11 +39,27 @@ Multipage is best for complex projects that you know will be hard to follow on a
 ❯ Scrollytelling
   Slideshow
   Custom</code></pre><p>The <strong>Storytelling</strong> template seems, at first, to be laid out like Article, but as you scroll down you will notice a key difference - the page is divided into cards.
-If you are familiar with Jupyter, the cards can be used to compartmentalize ideas in very similar ways.</p><h2 id="components">Components</h2><p>Components can be embedded using a bracket syntax:</p><pre><code>[Range /]</code></pre><p>and can contain nested content:</p><pre><code>[Equation]e = mc^{2}[/Equation]</code></pre><p>Components accept properties:</p><pre><code>[Range value:x min:0 max:1 /]</code></pre><p>that can be bound to variables to achieve interactivity (more in next section).</p><p>A variety of components are included by default. See <a href="https://idyll-lang.org/docs/components/">all the available components</a>. You can also use any html tag, for example: <code>[div] A div! [/div]</code>.</p><p>To create your own, add it to the <code>components/</code> folder. There are examples of how to use Idyll with React and D3 based components already included.</p><h2 id="interactivity">Interactivity</h2><p>Here is how you can instantiate a variable and bind it to a component:</p><input type="range" value="5" min="0" max="10" step="1"/><span class="idyll-display">5.00</span><pre><code>[var name:&quot;exampleVar&quot; value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]</code></pre><h2 id="learn-more">Learn More</h2><p>To learn more see the documentation at <a href="https://idyll-lang.org/docs/">https://idyll-lang.org/docs/</a>,
-join our <a href="https://gitter.im/idyll-lang/Lobby">chatroom</a>, or see the project on <a href="https://github.com/idyll-lang/idyll">GitHub</a>.</p></div></div></div></div>
+If you are familiar with Jupyter, the cards can be used to compartmentalize ideas in very similar ways.
+Personally, this is my favorite for most applications because it gives a very concrete separation between ideas.</p><pre><code>  Article
+  Multipage
+  Scrollytelling
+❯ Slideshow
+  Custom</code></pre><p>The <strong>Slideshow</strong> template is just that - a slideshow. 
+Anything that would work well in a presentation format could be put together in Slideshow.</p><pre><code>  Article
+  Multipage
+  Scrollytelling
+  Slideshow
+❯ Custom</code></pre><p>
+The <strong>Custom</strong> option will let you choose a path for a template that you, the user have created.
+After selecting this, you will be prompted for the location of the template you wish to use.
+Select a directory, not an idyll.index; this will copy more or less everything in the template, generating a clone of it for you to build off of.</p><p>If you have a lot of projects that should have similar layout,
+or a single project which will have many separate pages that should have similar layouts,
+creating your own template for use is a good option.</p><h2 id="the-actual-writing">The Actual Writing</h2><p>Now that we’ve chosen a template, we’re on to the actual writing of the project.
+I generally start by approaching this as if I’m writing a regular text, markdown, or similar document.</p><ol><li><strong>Body Text</strong> <!-- -->- This is the bulk of your explanation. Keep other steps in mind as you go, of course, but the first run through typically focuses on getting your thoughts on the topic down.</li><li><strong>Images, Equations, Code Blocks</strong> <!-- -->- Equations and diagrams are often crucial to understanding physics concepts. Sometimes I will even start by collecting images before I’ve written anything.</li><li><strong>Interactables</strong> <!-- -->- Re-read everything you’ve done so far. Where would understanding be improved if you could play with the variables in an equation and see how the result changes? Where would it be fun if you could click on the diagram and see something move? These are good candidates for interactive components.</li><li><strong>Organization, Formatting</strong> <!-- -->- Now that you’ve got all of your content, look for ways to make it flow better. Where is your writing difficult to understand, and why? What would make the ideas flow better?</li><li><strong>Final Tweaks</strong> <!-- -->- Re-read everything to check for typos, spelling and grammar, etc.</li><li><strong>Testing</strong> <!-- -->- Have someone else read your page and try to follow the concept it is teaching or process it is walking them through. Adjust based on feedback.</li></ol><h2 id="using-components">Using Components</h2><p>What makes Idyll really stand out is the dynamic way in which data is presented.
+When choosing and using a component, 
+think about what information should be presented to the user and what subset of that information should be interactable.</p><ul><li><strong>Does the way the information is drawn add to the reader’s understanding?</strong> <!-- -->Is a full drawing of the tree you mentioned in your last paragraph distracting, or does it help the user map the diagram to the situation you just described?</li><li><strong>Realistically, could this variable be changed?</strong> <!-- -->Changing the mass of a falling particle can help your explanation, but changing the mass of an electron in an electric field will probably overwhelm your reader with superfluous information. On the other hand, maybe a common red herring is what you need to get your point across.</li><li><strong>Is this easy to look at?</strong> <!-- -->Choose fonts, color schemes, and line widths that are easy on the eye. Reading your material shouldn’t be an unpleasant experience.</li></ul><p>
+When trying to choose a particular component, it may be helpful to look for examples. 
+There is an official Idyll <a href="https://idyll-lang.org/gallery">gallery</a> - browsing this might give you ideas.<a href="https://parametric.press/issue-01/">Parametric Press</a> also presents a variety of articles written in the Idyll language.</p></div></div></div></div>
     <script src="static/idyll_index.js"></script>
   </body>
 </html>
