@@ -79,7 +79,7 @@ A **unit vector** is a vector that has a magnitude of 1 in some direction.
 
   * If a unit vector = 1, every component in that vector must be *less* than 1.
 
-There are 3 unit vectors in the Cartesian system that are along the thress axes:
+There are 3 unit vectors in the Cartesian system that are along the three axes:
 
   * i-hat [Equation] \hat{i} = \lt1, 0, 0\gt [/Equation]
 
@@ -89,7 +89,7 @@ There are 3 unit vectors in the Cartesian system that are along the thress axes:
 
   * Example: [Equation] 0.05\hat{i} + (-1.2)\hat{j} + 20\hat{k} [/Equation]
 
-Not all vectors point along the axis. 
+Not all vectors point along the axis.
 
 How to find a unit vector:
 
@@ -114,6 +114,8 @@ Length of arrow = distance from origin.
 Direction of arrow = direction of the path from the *initial* position to the *final* position...**displacement**
 
 ## Fun Things to do with Vectors
+
+### Addition and Subtraction
 
 The magnitude of a vector [Equation] \neq [/Equation] the sum of the magnitudes of the two original vectors.
 
@@ -142,3 +144,68 @@ Application of vector subtraction:
 [Equation]
   \Delta \vec{r} = \vec{r_{f}} = \vec{r_{i}}
 [/Equation]
+
+Graphical addition of vectors:
+
+  1. Draw the first vector.
+
+  2. Add the second vector (without rotating) so the tail is at the tip of the first vector.
+
+  3. Draw a new vector from the tail of the first vector to the tip of the second vector.
+
+Graphical subtraction of vectors:
+
+  1. Draw the first vector.
+
+  2. Add the second vector (without rotating) so the tail is at the tail of the first vector.
+
+  3. Draw a new vector from the tip of the first vector to the tip of the second vector.
+
+Equations:
+
+[Equation]
+  \vec{A} + \vec{B} = \lt (A_{x} + B_{x}), (A_{y} + B_{y}), (A_{z} + B_{z}) \gt
+[/Equation]
+
+[Equation]
+  \vec{A} - \vec{B} = \lt (A_{x} - B_{x}), (A_{y} - B_{y}), (A_{z} - B_{z}) \gt
+[/Equation]
+
+###  Multiplying a Vector by a Scalar
+
+* If a vector is multiplied by a scalar, *each* of the components of the vector is multiplied by the scalar.
+
+  * This scales the vector.
+
+    * Keeps the directions the same, but makes the magnitude larger or smaller.
+
+* Multiplying by a *negative* scalar reverses the direction of the vector.
+
+###  Magnitude
+
+* The magnitude of a vector = a scalar.
+
+* Note that the magnitude is always a positive number (remember the absolute value!).
+
+* How to find the magnitude:
+
+[Equation]
+|\vec{r}| = \sqrt{r^{2_{x}} + r^{2_{y}} + r^{2_{z}}}
+[/Equation]
+
+## Scalars
+
+Do not have direction.
+
+  * Examples: Mass of an object, temperature
+
+Cannot be equal to a vector.
+
+Cannot be added to a vector.
+
+Can be positive, negative, or zero.
+
+
+References
+
+Chabay, R., & Sherwood, B.A. (2015). Matter and Interactions (4th ed.). John Wiley & Sons.
