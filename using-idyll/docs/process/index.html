@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0"
+    />
+    <title>The Process</title>
+    <meta property="og:title" content="The Process" />
+    <meta charset="utf-8" />
+    <meta property="og:type" content="article" />
+
+    <meta property="og:description" content="Deciding what to do" />
+    <meta property="description" content="Deciding what to do" />
+
+    <link rel="stylesheet" href="static/idyll_styles.css" />
+  </head>
+  <body>
+    <div id="idyll-mount"><div data-reactroot=""><div class="idyll-root"><div class=" idyll-text-container"></div><div class="article-header" style="background:#222222;color:#ffffff"><h1 class="hed">The Process</h1><h2 class="dek">Deciding How to Build Your Document</h2><div class="byline">By: <a href="https://idyll-lang.org">Your Name Here</a></div><div class="idyll-pub-date">Wed Jun 03 2020</div></div><div class=" idyll-text-container"><h2 id="preamble">Preamble</h2><p>There is no one “correct” way of building an Idyll document; the purpose of this document is to outline my own process to help give you ideas.</p><h2 id="step-zero---choosing-a-template">Step Zero - Choosing a Template</h2><p>When you run <code>idyll create</code>, after choosing a name for your project you will be asked what template you want to use.
+If you don’t know which one is best for your project, don’t worry!
+You can always change the layout to match one of the other templates later.</p><pre><code>? In which directory would you like your project? test
+? What would you like to name your project? test
+? Which template would you like to use? (Use arrow keys)
+❯ Article
+  Multipage
+  Scrollytelling
+  Slideshow
+  Custom</code></pre><p>
+The <strong>Article</strong> template is the most basic - this will create a single-page, single-column article much like this one. 
+If you’re not sure what template to use, this is an excellent choice.</p><pre><code>  Article
+❯ Multipage
+  Scrollytelling
+  Slideshow
+  Custom</code></pre><p>The <strong>Multipage</strong> template is similar to Article in layout, but is designed for multiple pages to exist within the same project.
+This project uses Multipage.
+Multipage is best for complex projects that you know will be hard to follow on a single page or will benefit from having multiple, separate entries.</p><pre><code>  Article
+  Multipage
+❯ Scrollytelling
+  Slideshow
+  Custom</code></pre><p>The <strong>Storytelling</strong> template seems, at first, to be laid out like Article, but as you scroll down you will notice a key difference - the page is divided into cards.
+If you are familiar with Jupyter, the cards can be used to compartmentalize ideas in very similar ways.</p><h2 id="components">Components</h2><p>Components can be embedded using a bracket syntax:</p><pre><code>[Range /]</code></pre><p>and can contain nested content:</p><pre><code>[Equation]e = mc^{2}[/Equation]</code></pre><p>Components accept properties:</p><pre><code>[Range value:x min:0 max:1 /]</code></pre><p>that can be bound to variables to achieve interactivity (more in next section).</p><p>A variety of components are included by default. See <a href="https://idyll-lang.org/docs/components/">all the available components</a>. You can also use any html tag, for example: <code>[div] A div! [/div]</code>.</p><p>To create your own, add it to the <code>components/</code> folder. There are examples of how to use Idyll with React and D3 based components already included.</p><h2 id="interactivity">Interactivity</h2><p>Here is how you can instantiate a variable and bind it to a component:</p><input type="range" value="5" min="0" max="10" step="1"/><span class="idyll-display">5.00</span><pre><code>[var name:&quot;exampleVar&quot; value:5 /]
+
+[Range min:0 max:10 value:exampleVar /]
+[Display value:exampleVar /]</code></pre><h2 id="learn-more">Learn More</h2><p>To learn more see the documentation at <a href="https://idyll-lang.org/docs/">https://idyll-lang.org/docs/</a>,
+join our <a href="https://gitter.im/idyll-lang/Lobby">chatroom</a>, or see the project on <a href="https://github.com/idyll-lang/idyll">GitHub</a>.</p></div></div></div></div>
+    <script src="static/idyll_index.js"></script>
+  </body>
+</html>

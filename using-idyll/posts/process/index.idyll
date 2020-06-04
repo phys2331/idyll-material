@@ -1,0 +1,109 @@
+[meta title:"The Process" description:"Deciding what to do" /]
+
+[Header
+  fullWidth:true
+  title:"The Process"
+  subtitle:"Deciding How to Build Your Document"
+  author:"Your Name Here"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+## Preamble
+
+There is no one "correct" way of building an Idyll document; the purpose of this document is to outline my own process to help give you ideas.
+
+## Step Zero - Choosing a Template
+
+When you run `idyll create`, after choosing a name for your project you will be asked what template you want to use.
+If you don't know which one is best for your project, don't worry!
+You can always change the layout to match one of the other templates later.
+
+```
+? In which directory would you like your project? test
+? What would you like to name your project? test
+? Which template would you like to use? (Use arrow keys)
+❯ Article
+  Multipage
+  Scrollytelling
+  Slideshow
+  Custom
+```
+The **Article** template is the most basic - this will create a single-page, single-column article much like this one. 
+If you're not sure what template to use, this is an excellent choice.
+
+```
+  Article
+❯ Multipage
+  Scrollytelling
+  Slideshow
+  Custom
+```
+
+The **Multipage** template is similar to Article in layout, but is designed for multiple pages to exist within the same project.
+This project uses Multipage.
+Multipage is best for complex projects that you know will be hard to follow on a single page or will benefit from having multiple, separate entries.
+
+```
+  Article
+  Multipage
+❯ Scrollytelling
+  Slideshow
+  Custom
+```
+
+The **Storytelling** template seems, at first, to be laid out like Article, but as you scroll down you will notice a key difference - the page is divided into cards.
+If you are familiar with Jupyter, the cards can be used to compartmentalize ideas in very similar ways.
+
+
+## Components
+
+Components can be embedded using a bracket syntax:
+
+```
+[Range /]
+```
+
+and can contain nested content:
+
+```
+[Equation]e = mc^{2}[/Equation]
+```
+
+Components accept properties:
+
+```
+[Range value:x min:0 max:1 /]
+```
+
+that can be bound to variables to achieve interactivity (more in next section).
+
+
+A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
+
+To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+
+
+
+## Interactivity
+
+Here is how you can instantiate a variable and bind it to a component:
+
+[var name:"exampleVar" value:5 /]
+
+[Range min:0 max:10 value:exampleVar /]
+[Display value:exampleVar /]
+
+```
+[var name:"exampleVar" value:5 /]
+
+[Range min:0 max:10 value:exampleVar /]
+[Display value:exampleVar /]
+```
+
+## Learn More
+
+To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
+join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
