@@ -1,4 +1,4 @@
-[meta title:"The Process" description:"Deciding what to do" /]
+[meta title:"The Process" description:"How I decide what to do." /]
 
 [Header
   fullWidth:true
@@ -25,13 +25,14 @@ You can always change the layout to match one of the other templates later.
 ? In which directory would you like your project? test
 ? What would you like to name your project? test
 ? Which template would you like to use? (Use arrow keys)
+
 ❯ Article
   Multipage
   Scrollytelling
   Slideshow
   Custom
 ```
-The **Article** template is the most basic - this will create a single-page, single-column article much like this one. 
+The [a]**Article**[/a] template is the most basic - this will create a single-page, single-column article much like this one. 
 If you're not sure what template to use, this is an excellent choice.
 
 ```
@@ -56,54 +57,55 @@ Multipage is best for complex projects that you know will be hard to follow on a
 
 The **Storytelling** template seems, at first, to be laid out like Article, but as you scroll down you will notice a key difference - the page is divided into cards.
 If you are familiar with Jupyter, the cards can be used to compartmentalize ideas in very similar ways.
-
-
-## Components
-
-Components can be embedded using a bracket syntax:
+Personally, this is my favorite for most applications because it gives a very concrete separation between ideas.
 
 ```
-[Range /]
+  Article
+  Multipage
+  Scrollytelling
+❯ Slideshow
+  Custom
 ```
 
-and can contain nested content:
+The **Slideshow** template is just that - a slideshow. 
+Anything that would work well in a presentation format could be put together in Slideshow.
 
 ```
-[Equation]e = mc^{2}[/Equation]
+  Article
+  Multipage
+  Scrollytelling
+  Slideshow
+❯ Custom
 ```
+The **Custom** option will let you choose a path for a template that you, the user have created.
+After selecting this, you will be prompted for the location of the template you wish to use.
+Select a directory, not an idyll.index; this will copy more or less everything in the template, generating a clone of it for you to build off of.
 
-Components accept properties:
+If you have a lot of projects that should have similar layout,
+or a single project which will have many separate pages that should have similar layouts,
+creating your own template for use is a good option.
 
-```
-[Range value:x min:0 max:1 /]
-```
+## The Actual Writing
 
-that can be bound to variables to achieve interactivity (more in next section).
+Now that we've chosen a template, we're on to the actual writing of the project.
+I generally start by approaching this as if I'm writing a regular text, markdown, or similar document.
 
+1. **Body Text** - This is the bulk of your explanation. Keep other steps in mind as you go, of course, but the first run through typically focuses on getting your thoughts on the topic down.
+1. **Images, Equations, Code Blocks** - Equations and diagrams are often crucial to understanding physics concepts. Sometimes I will even start by collecting images before I've written anything.
+3. **Interactables** - Re-read everything you've done so far. Where would understanding be improved if you could play with the variables in an equation and see how the result changes? Where would it be fun if you could click on the diagram and see something move? These are good candidates for interactive components.
+4. **Organization, Formatting** - Now that you've got all of your content, look for ways to make it flow better. Where is your writing difficult to understand, and why? What would make the ideas flow better?
+5. **Final Tweaks** - Re-read everything to check for typos, spelling and grammar, etc.
+6. **Testing** - Have someone else read your page and try to follow the concept it is teaching or process it is walking them through. Adjust based on feedback.
 
-A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
+## Using Components
 
-To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+What makes Idyll really stand out is the dynamic way in which data is presented.
+When choosing and using a component, 
+think about what information should be presented to the user and what subset of that information should be interactable.
+* **Does the way the information is drawn add to the reader's understanding?** Is a full drawing of the tree you mentioned in your last paragraph distracting, or does it help the user map the diagram to the situation you just described?
+* **Realistically, could this variable be changed?** Changing the mass of a falling particle can help your explanation, but changing the mass of an electron in an electric field will probably overwhelm your reader with superfluous information. On the other hand, maybe a common red herring is what you need to get your point across.
+* **Is this easy to look at?** Choose fonts, color schemes, and line widths that are easy on the eye. Reading your material shouldn't be an unpleasant experience.
 
-
-
-## Interactivity
-
-Here is how you can instantiate a variable and bind it to a component:
-
-[var name:"exampleVar" value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-
-```
-[var name:"exampleVar" value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-```
-
-## Learn More
-
-To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
-join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
+When trying to choose a particular component, it may be helpful to look for examples. 
+There is an official Idyll [gallery](https://idyll-lang.org/gallery) - browsing this might give you ideas.
+[Parametric Press](https://parametric.press/issue-01/) also presents a variety of articles written in the Idyll language.

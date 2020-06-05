@@ -35,14 +35,14 @@ each post will state which template it uses.
 
 * [Installing Idyll](https://phys2331.github.io/idyll-material/using-idyll/docs/installing-idyll/index.html)* (Optional; see *Using GitPod*) - Draft, 1st test complete, needs 2nd test.
 * [Using GitPod](https://phys2331.github.io/idyll-material/using-idyll/posts/using-gitpod/build/index.html)* (Alternate to Installation)* - Draft, untested
-* [Idyll Commands](./posts/idyll-commands)* - placeholder
-// These are gonna be sections, not their own pages.
+// * [Idyll Commands](./posts/idyll-commands)* - placeholder
+// v These are gonna be sections, not their own pages.
 // * [Creating a new Idyll post](./posts/create-post)* - placeholder
 // * [Running and updating an existing post](./posts/running-posts) - placeholder
 // * [Deploying a post](./posts/deploying) - placeholder
 * [Basic syntax](https://phys2331.github.io/idyll-material/using-idyll/docs/basic-syntax/index.html) - Draft, untested
-* [Interactivity](./posts/interactivity) - placeholder
-* [File Organization](./posts/organization) - placeholder // Might just link to idyll doc instead?
+// * [Interactivity](./posts/interactivity) - placeholder
+// * [File Organization](./posts/organization) - placeholder // Might just link to idyll doc instead?
 
 *If you are an experienced Linux user, 
 [this page](https://idyll-lang.org/docs/getting-started) should have everything you need to get started with installing Idyll and creating projects.
