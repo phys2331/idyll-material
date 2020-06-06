@@ -1,4 +1,4 @@
-require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/acorn/dist/acorn.js":[function(require,module,exports){
+require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/acorn/dist/acorn.js":[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -5100,7 +5100,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
 })));
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/ajv.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/ajv.js":[function(require,module,exports){
 'use strict';
 
 var compileSchema = require('./compile')
@@ -5608,7 +5608,7 @@ function setLogger(self) {
 
 function noop() {}
 
-},{"./cache":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/cache.js","./compile":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/index.js","./compile/async":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/async.js","./compile/error_classes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/error_classes.js","./compile/formats":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/formats.js","./compile/resolve":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/resolve.js","./compile/rules":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/rules.js","./compile/schema_obj":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/schema_obj.js","./compile/util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js","./data":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/data.js","./keyword":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/keyword.js","./refs/data.json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/data.json","./refs/json-schema-draft-07.json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/json-schema-draft-07.json","fast-json-stable-stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-json-stable-stringify/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/cache.js":[function(require,module,exports){
+},{"./cache":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/cache.js","./compile":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/index.js","./compile/async":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/async.js","./compile/error_classes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/error_classes.js","./compile/formats":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/formats.js","./compile/resolve":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/resolve.js","./compile/rules":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/rules.js","./compile/schema_obj":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/schema_obj.js","./compile/util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js","./data":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/data.js","./keyword":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/keyword.js","./refs/data.json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/data.json","./refs/json-schema-draft-07.json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/json-schema-draft-07.json","fast-json-stable-stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-json-stable-stringify/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/cache.js":[function(require,module,exports){
 'use strict';
 
 
@@ -5636,7 +5636,7 @@ Cache.prototype.clear = function Cache_clear() {
   this._cache = {};
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/async.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/async.js":[function(require,module,exports){
 'use strict';
 
 var MissingRefError = require('./error_classes').MissingRef;
@@ -5728,7 +5728,7 @@ function compileAsync(schema, meta, callback) {
   }
 }
 
-},{"./error_classes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/error_classes.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/error_classes.js":[function(require,module,exports){
+},{"./error_classes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/error_classes.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/error_classes.js":[function(require,module,exports){
 'use strict';
 
 var resolve = require('./resolve');
@@ -5764,7 +5764,7 @@ function errorSubclass(Subclass) {
   return Subclass;
 }
 
-},{"./resolve":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/resolve.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/formats.js":[function(require,module,exports){
+},{"./resolve":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/resolve.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/formats.js":[function(require,module,exports){
 'use strict';
 
 var util = require('./util');
@@ -5908,7 +5908,7 @@ function regex(str) {
   }
 }
 
-},{"./util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/index.js":[function(require,module,exports){
+},{"./util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/index.js":[function(require,module,exports){
 'use strict';
 
 var resolve = require('./resolve')
@@ -6297,7 +6297,7 @@ function vars(arr, statement) {
   return code;
 }
 
-},{"../dotjs/validate":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/validate.js","./error_classes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/error_classes.js","./resolve":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/resolve.js","./util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-deep-equal/index.js","fast-json-stable-stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-json-stable-stringify/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/resolve.js":[function(require,module,exports){
+},{"../dotjs/validate":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/validate.js","./error_classes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/error_classes.js","./resolve":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/resolve.js","./util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-deep-equal/index.js","fast-json-stable-stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-json-stable-stringify/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/resolve.js":[function(require,module,exports){
 'use strict';
 
 var URI = require('uri-js')
@@ -6569,7 +6569,7 @@ function resolveIds(schema) {
   return localRefs;
 }
 
-},{"./schema_obj":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/schema_obj.js","./util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-deep-equal/index.js","json-schema-traverse":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/json-schema-traverse/index.js","uri-js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/uri-js/dist/es5/uri.all.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/rules.js":[function(require,module,exports){
+},{"./schema_obj":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/schema_obj.js","./util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-deep-equal/index.js","json-schema-traverse":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/json-schema-traverse/index.js","uri-js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/uri-js/dist/es5/uri.all.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/rules.js":[function(require,module,exports){
 'use strict';
 
 var ruleModules = require('../dotjs')
@@ -6637,7 +6637,7 @@ module.exports = function rules() {
   return RULES;
 };
 
-},{"../dotjs":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/index.js","./util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/schema_obj.js":[function(require,module,exports){
+},{"../dotjs":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/index.js","./util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/schema_obj.js":[function(require,module,exports){
 'use strict';
 
 var util = require('./util');
@@ -6648,7 +6648,7 @@ function SchemaObject(obj) {
   util.copy(obj, this);
 }
 
-},{"./util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/ucs2length.js":[function(require,module,exports){
+},{"./util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/ucs2length.js":[function(require,module,exports){
 'use strict';
 
 // https://mathiasbynens.be/notes/javascript-encoding
@@ -6670,7 +6670,7 @@ module.exports = function ucs2length(str) {
   return length;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/util.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/util.js":[function(require,module,exports){
 'use strict';
 
 
@@ -6946,7 +6946,7 @@ function unescapeJsonPointer(str) {
   return str.replace(/~1/g, '/').replace(/~0/g, '~');
 }
 
-},{"./ucs2length":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/compile/ucs2length.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-deep-equal/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/data.js":[function(require,module,exports){
+},{"./ucs2length":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/compile/ucs2length.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-deep-equal/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/data.js":[function(require,module,exports){
 'use strict';
 
 var KEYWORDS = [
@@ -6997,7 +6997,7 @@ module.exports = function (metaSchema, keywordsJsonPointers) {
   return metaSchema;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/definition_schema.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/definition_schema.js":[function(require,module,exports){
 'use strict';
 
 var metaSchema = require('./refs/json-schema-draft-07.json');
@@ -7036,7 +7036,7 @@ module.exports = {
   }
 };
 
-},{"./refs/json-schema-draft-07.json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/json-schema-draft-07.json"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limit.js":[function(require,module,exports){
+},{"./refs/json-schema-draft-07.json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/json-schema-draft-07.json"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limit.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate__limit(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7195,7 +7195,7 @@ module.exports = function generate__limit(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limitItems.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limitItems.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate__limitItems(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7274,7 +7274,7 @@ module.exports = function generate__limitItems(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limitLength.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limitLength.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate__limitLength(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7358,7 +7358,7 @@ module.exports = function generate__limitLength(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limitProperties.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limitProperties.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate__limitProperties(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7437,7 +7437,7 @@ module.exports = function generate__limitProperties(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/allOf.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/allOf.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_allOf(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7482,7 +7482,7 @@ module.exports = function generate_allOf(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/anyOf.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/anyOf.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_anyOf(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7558,7 +7558,7 @@ module.exports = function generate_anyOf(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/comment.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/comment.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_comment(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7574,7 +7574,7 @@ module.exports = function generate_comment(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/const.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/const.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_const(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7632,7 +7632,7 @@ module.exports = function generate_const(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/contains.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/contains.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_contains(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7716,7 +7716,7 @@ module.exports = function generate_contains(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/custom.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/custom.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_custom(it, $keyword, $ruleType) {
   var out = ' ';
@@ -7946,7 +7946,7 @@ module.exports = function generate_custom(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/dependencies.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/dependencies.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_dependencies(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8116,7 +8116,7 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/enum.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/enum.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_enum(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8184,7 +8184,7 @@ module.exports = function generate_enum(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/format.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/format.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_format(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8336,7 +8336,7 @@ module.exports = function generate_format(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/if.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/if.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_if(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8442,7 +8442,7 @@ module.exports = function generate_if(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/index.js":[function(require,module,exports){
 'use strict';
 
 //all requires must be explicit because browserify won't work with dynamic requires
@@ -8477,7 +8477,7 @@ module.exports = {
   validate: require('./validate')
 };
 
-},{"./_limit":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limit.js","./_limitItems":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limitItems.js","./_limitLength":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limitLength.js","./_limitProperties":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/_limitProperties.js","./allOf":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/allOf.js","./anyOf":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/anyOf.js","./comment":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/comment.js","./const":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/const.js","./contains":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/contains.js","./dependencies":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/dependencies.js","./enum":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/enum.js","./format":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/format.js","./if":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/if.js","./items":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/items.js","./multipleOf":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/multipleOf.js","./not":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/not.js","./oneOf":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/oneOf.js","./pattern":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/pattern.js","./properties":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/properties.js","./propertyNames":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/propertyNames.js","./ref":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/ref.js","./required":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/required.js","./uniqueItems":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/uniqueItems.js","./validate":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/validate.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/items.js":[function(require,module,exports){
+},{"./_limit":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limit.js","./_limitItems":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limitItems.js","./_limitLength":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limitLength.js","./_limitProperties":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/_limitProperties.js","./allOf":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/allOf.js","./anyOf":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/anyOf.js","./comment":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/comment.js","./const":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/const.js","./contains":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/contains.js","./dependencies":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/dependencies.js","./enum":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/enum.js","./format":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/format.js","./if":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/if.js","./items":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/items.js","./multipleOf":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/multipleOf.js","./not":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/not.js","./oneOf":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/oneOf.js","./pattern":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/pattern.js","./properties":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/properties.js","./propertyNames":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/propertyNames.js","./ref":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/ref.js","./required":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/required.js","./uniqueItems":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/uniqueItems.js","./validate":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/validate.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/items.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_items(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8620,7 +8620,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/multipleOf.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/multipleOf.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_multipleOf(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8699,7 +8699,7 @@ module.exports = function generate_multipleOf(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/not.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/not.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_not(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8785,7 +8785,7 @@ module.exports = function generate_not(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/oneOf.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/oneOf.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_oneOf(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8860,7 +8860,7 @@ module.exports = function generate_oneOf(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/pattern.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/pattern.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_pattern(it, $keyword, $ruleType) {
   var out = ' ';
@@ -8937,7 +8937,7 @@ module.exports = function generate_pattern(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/properties.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/properties.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_properties(it, $keyword, $ruleType) {
   var out = ' ';
@@ -9269,7 +9269,7 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/propertyNames.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/propertyNames.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_propertyNames(it, $keyword, $ruleType) {
   var out = ' ';
@@ -9353,7 +9353,7 @@ module.exports = function generate_propertyNames(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/ref.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/ref.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_ref(it, $keyword, $ruleType) {
   var out = ' ';
@@ -9479,7 +9479,7 @@ module.exports = function generate_ref(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/required.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/required.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_required(it, $keyword, $ruleType) {
   var out = ' ';
@@ -9751,7 +9751,7 @@ module.exports = function generate_required(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/uniqueItems.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/uniqueItems.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_uniqueItems(it, $keyword, $ruleType) {
   var out = ' ';
@@ -9839,7 +9839,7 @@ module.exports = function generate_uniqueItems(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/validate.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/validate.js":[function(require,module,exports){
 'use strict';
 module.exports = function generate_validate(it, $keyword, $ruleType) {
   var out = '';
@@ -10335,7 +10335,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
   return out;
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/keyword.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/keyword.js":[function(require,module,exports){
 'use strict';
 
 var IDENTIFIER = /^[a-z_$][a-z0-9_$-]*$/i;
@@ -10483,7 +10483,7 @@ function validateKeyword(definition, throwError) {
     return false;
 }
 
-},{"./definition_schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/definition_schema.js","./dotjs/custom":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/dotjs/custom.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/data.json":[function(require,module,exports){
+},{"./definition_schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/definition_schema.js","./dotjs/custom":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/dotjs/custom.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/data.json":[function(require,module,exports){
 module.exports={
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#",
@@ -10502,7 +10502,7 @@ module.exports={
     "additionalProperties": false
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/json-schema-draft-06.json":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/json-schema-draft-06.json":[function(require,module,exports){
 module.exports={
     "$schema": "http://json-schema.org/draft-06/schema#",
     "$id": "http://json-schema.org/draft-06/schema#",
@@ -10658,7 +10658,7 @@ module.exports={
     "default": {}
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/json-schema-draft-07.json":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/json-schema-draft-07.json":[function(require,module,exports){
 module.exports={
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://json-schema.org/draft-07/schema#",
@@ -10828,7 +10828,7 @@ module.exports={
     "default": true
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/base64-js/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/base64-js/index.js":[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -10982,9 +10982,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/browser-resolve/empty.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/browser-resolve/empty.js":[function(require,module,exports){
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js":[function(require,module,exports){
 (function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
@@ -12765,7 +12765,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"base64-js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/base64-js/index.js","buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js","ieee754":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ieee754/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/camel-case/camel-case.js":[function(require,module,exports){
+},{"base64-js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/base64-js/index.js","buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js","ieee754":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ieee754/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/camel-case/camel-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 var noCase = require('no-case')
 
@@ -12790,7 +12790,7 @@ module.exports = function (value, locale, mergeNumbers) {
   })
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/change-case/change-case.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/change-case/change-case.js":[function(require,module,exports){
 exports.no = exports.noCase = require('no-case')
 exports.dot = exports.dotCase = require('dot-case')
 exports.swap = exports.swapCase = require('swap-case')
@@ -12812,7 +12812,7 @@ exports.isLower = exports.isLowerCase = require('is-lower-case')
 exports.ucFirst = exports.upperCaseFirst = require('upper-case-first')
 exports.lcFirst = exports.lowerCaseFirst = require('lower-case-first')
 
-},{"camel-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/camel-case/camel-case.js","constant-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/constant-case/constant-case.js","dot-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/dot-case/dot-case.js","header-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/header-case/header-case.js","is-lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-lower-case/is-lower-case.js","is-upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-upper-case/is-upper-case.js","lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case/lower-case.js","lower-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case-first/lower-case-first.js","no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js","param-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/param-case/param-case.js","pascal-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/pascal-case/pascal-case.js","path-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/path-case/path-case.js","sentence-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/sentence-case/sentence-case.js","snake-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/snake-case/snake-case.js","swap-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/swap-case/swap-case.js","title-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/title-case/title-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js","upper-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case-first/upper-case-first.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/constant-case/constant-case.js":[function(require,module,exports){
+},{"camel-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/camel-case/camel-case.js","constant-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/constant-case/constant-case.js","dot-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/dot-case/dot-case.js","header-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/header-case/header-case.js","is-lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-lower-case/is-lower-case.js","is-upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-upper-case/is-upper-case.js","lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case/lower-case.js","lower-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case-first/lower-case-first.js","no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js","param-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/param-case/param-case.js","pascal-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/pascal-case/pascal-case.js","path-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/path-case/path-case.js","sentence-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/sentence-case/sentence-case.js","snake-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/snake-case/snake-case.js","swap-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/swap-case/swap-case.js","title-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/title-case/title-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js","upper-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case-first/upper-case-first.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/constant-case/constant-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 var snakeCase = require('snake-case')
 
@@ -12827,7 +12827,7 @@ module.exports = function (value, locale) {
   return upperCase(snakeCase(value, locale), locale)
 }
 
-},{"snake-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/snake-case/snake-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
+},{"snake-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/snake-case/snake-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12938,7 +12938,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
+},{"../../is-buffer/index.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
 (function (Buffer){
 "use strict";
 
@@ -13019,7 +13019,7 @@ var ResizeableBuffer = /*#__PURE__*/function () {
 
 module.exports = ResizeableBuffer;
 }).call(this,require("buffer").Buffer)
-},{"buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/csv-parse/lib/es5/index.js":[function(require,module,exports){
+},{"buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/csv-parse/lib/es5/index.js":[function(require,module,exports){
 (function (Buffer,setImmediate){
 "use strict";
 
@@ -14413,7 +14413,7 @@ var normalizeColumnsArray = function normalizeColumnsArray(columns) {
   return normalizedColumns;
 };
 }).call(this,require("buffer").Buffer,require("timers").setImmediate)
-},{"./ResizeableBuffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/csv-parse/lib/es5/ResizeableBuffer.js","buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js","stream":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/stream-browserify/index.js","timers":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/timers-browserify/main.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/csv-parse/lib/es5/sync.js":[function(require,module,exports){
+},{"./ResizeableBuffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/csv-parse/lib/es5/ResizeableBuffer.js","buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js","stream":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/stream-browserify/index.js","timers":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/timers-browserify/main.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/csv-parse/lib/es5/sync.js":[function(require,module,exports){
 (function (Buffer){
 "use strict";
 
@@ -14449,7 +14449,7 @@ module.exports = function (data) {
   return records;
 };
 }).call(this,require("buffer").Buffer)
-},{".":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/csv-parse/lib/es5/index.js","buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/define-properties/index.js":[function(require,module,exports){
+},{".":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/csv-parse/lib/es5/index.js","buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/define-properties/index.js":[function(require,module,exports){
 'use strict';
 
 var keys = require('object-keys');
@@ -14509,7 +14509,7 @@ defineProperties.supportsDescriptors = !!supportsDescriptors;
 
 module.exports = defineProperties;
 
-},{"object-keys":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/dot-case/dot-case.js":[function(require,module,exports){
+},{"object-keys":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/dot-case/dot-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 
 /**
@@ -14523,12 +14523,12 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '.')
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/2019/RequireObjectCoercible.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/2019/RequireObjectCoercible.js":[function(require,module,exports){
 'use strict';
 
 module.exports = require('../5/CheckObjectCoercible');
 
-},{"../5/CheckObjectCoercible":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/5/CheckObjectCoercible.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/5/CheckObjectCoercible.js":[function(require,module,exports){
+},{"../5/CheckObjectCoercible":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/5/CheckObjectCoercible.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/5/CheckObjectCoercible.js":[function(require,module,exports){
 'use strict';
 
 var GetIntrinsic = require('../GetIntrinsic');
@@ -14544,7 +14544,7 @@ module.exports = function CheckObjectCoercible(value, optMessage) {
 	return value;
 };
 
-},{"../GetIntrinsic":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/GetIntrinsic.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/GetIntrinsic.js":[function(require,module,exports){
+},{"../GetIntrinsic":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/GetIntrinsic.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/GetIntrinsic.js":[function(require,module,exports){
 'use strict';
 
 /* globals
@@ -14764,7 +14764,7 @@ module.exports = function GetIntrinsic(name, allowMissing) {
 	return value;
 };
 
-},{"function-bind":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/function-bind/index.js","has-symbols":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has-symbols/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/helpers/callBind.js":[function(require,module,exports){
+},{"function-bind":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/function-bind/index.js","has-symbols":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has-symbols/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/helpers/callBind.js":[function(require,module,exports){
 'use strict';
 
 var bind = require('function-bind');
@@ -14783,7 +14783,7 @@ module.exports.apply = function applyBind() {
 	return bind.apply($apply, arguments);
 };
 
-},{"../GetIntrinsic":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/GetIntrinsic.js","function-bind":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/function-bind/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/helpers/callBound.js":[function(require,module,exports){
+},{"../GetIntrinsic":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/GetIntrinsic.js","function-bind":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/function-bind/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/helpers/callBound.js":[function(require,module,exports){
 'use strict';
 
 var GetIntrinsic = require('../GetIntrinsic');
@@ -14800,7 +14800,7 @@ module.exports = function callBoundIntrinsic(name, allowMissing) {
 	return intrinsic;
 };
 
-},{"../GetIntrinsic":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/GetIntrinsic.js","./callBind":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/helpers/callBind.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/events/events.js":[function(require,module,exports){
+},{"../GetIntrinsic":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/GetIntrinsic.js","./callBind":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/helpers/callBind.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -15325,7 +15325,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/falafel/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/falafel/index.js":[function(require,module,exports){
 var acorn = require('acorn');
 var isArray = require('isarray');
 var objectKeys = require('object-keys');
@@ -15410,14 +15410,14 @@ function insertHelpers (node, parent, chunks) {
     }
 }
 
-},{"acorn":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/acorn/dist/acorn.js","foreach":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/foreach/index.js","isarray":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/falafel/node_modules/isarray/index.js","object-keys":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/index.js","util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/falafel/node_modules/isarray/index.js":[function(require,module,exports){
+},{"acorn":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/acorn/dist/acorn.js","foreach":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/foreach/index.js","isarray":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/falafel/node_modules/isarray/index.js","object-keys":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/index.js","util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util/util.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/falafel/node_modules/isarray/index.js":[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-deep-equal/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-deep-equal/index.js":[function(require,module,exports){
 'use strict';
 
 // do not edit .js files directly - edit src/index.jst
@@ -15465,7 +15465,7 @@ module.exports = function equal(a, b) {
   return a!==a && b!==b;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/fast-json-stable-stringify/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/fast-json-stable-stringify/index.js":[function(require,module,exports){
 'use strict';
 
 module.exports = function (data, opts) {
@@ -15526,7 +15526,7 @@ module.exports = function (data, opts) {
     })(data);
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/foreach/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/foreach/index.js":[function(require,module,exports){
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
@@ -15550,7 +15550,7 @@ module.exports = function forEach (obj, fn, ctx) {
 };
 
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/function-bind/implementation.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/function-bind/implementation.js":[function(require,module,exports){
 'use strict';
 
 /* eslint no-invalid-this: 1 */
@@ -15604,14 +15604,14 @@ module.exports = function bind(that) {
     return bound;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/function-bind/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/function-bind/index.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
 
 module.exports = Function.prototype.bind || implementation;
 
-},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/function-bind/implementation.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/index.js":[function(require,module,exports){
+},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/function-bind/implementation.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/index.js":[function(require,module,exports){
 'use strict';
 
 
@@ -15820,7 +15820,7 @@ matter.language = function(str, options) {
 
 module.exports = matter;
 
-},{"./lib/defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/defaults.js","./lib/engines":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/engines.js","./lib/excerpt":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/excerpt.js","./lib/parse":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/parse.js","./lib/stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/stringify.js","./lib/to-file":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/to-file.js","./lib/utils":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/utils.js","extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/extend-shallow/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/defaults.js":[function(require,module,exports){
+},{"./lib/defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/defaults.js","./lib/engines":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/engines.js","./lib/excerpt":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/excerpt.js","./lib/parse":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/parse.js","./lib/stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/stringify.js","./lib/to-file":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/to-file.js","./lib/utils":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/utils.js","extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/extend-shallow/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/defaults.js":[function(require,module,exports){
 'use strict';
 
 var extend = require('extend-shallow');
@@ -15841,7 +15841,7 @@ module.exports = function(options) {
   return opts;
 };
 
-},{"./engines":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/engines.js","./utils":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/utils.js","extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/extend-shallow/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/engine.js":[function(require,module,exports){
+},{"./engines":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/engines.js","./utils":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/utils.js","extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/extend-shallow/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/engine.js":[function(require,module,exports){
 'use strict';
 
 module.exports = function(name, options) {
@@ -15873,7 +15873,7 @@ function aliase(name) {
   }
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/engines.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/engines.js":[function(require,module,exports){
 'use strict';
 
 var extend = require('extend-shallow');
@@ -15930,7 +15930,7 @@ engines.javascript = {
   }
 };
 
-},{"extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/extend-shallow/index.js","js-yaml":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/excerpt.js":[function(require,module,exports){
+},{"extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/extend-shallow/index.js","js-yaml":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/excerpt.js":[function(require,module,exports){
 'use strict';
 
 var defaults = require('./defaults');
@@ -15965,7 +15965,7 @@ module.exports = function(file, options) {
   return file;
 };
 
-},{"./defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/defaults.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/parse.js":[function(require,module,exports){
+},{"./defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/defaults.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/parse.js":[function(require,module,exports){
 'use strict';
 
 var getEngine = require('./engine');
@@ -15980,7 +15980,7 @@ module.exports = function(language, str, options) {
   return engine.parse(str, opts);
 };
 
-},{"./defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/defaults.js","./engine":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/engine.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/stringify.js":[function(require,module,exports){
+},{"./defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/defaults.js","./engine":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/engine.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/stringify.js":[function(require,module,exports){
 'use strict';
 
 var extend = require('extend-shallow');
@@ -16041,7 +16041,7 @@ function newline(str) {
   return str.slice(-1) !== '\n' ? str + '\n' : str;
 }
 
-},{"./defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/defaults.js","./engine":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/engine.js","extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/extend-shallow/index.js","kind-of":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/to-file.js":[function(require,module,exports){
+},{"./defaults":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/defaults.js","./engine":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/engine.js","extend-shallow":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/extend-shallow/index.js","kind-of":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/to-file.js":[function(require,module,exports){
 'use strict';
 
 var typeOf = require('kind-of');
@@ -16105,7 +16105,7 @@ module.exports = function(file) {
   return file;
 };
 
-},{"./stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/stringify.js","./utils":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/utils.js","kind-of":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
+},{"./stringify":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/stringify.js","./utils":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/utils.js","kind-of":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -16171,7 +16171,7 @@ exports.startsWith = function(str, substr, len) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js","kind-of":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/kind-of/index.js","strip-bom-string":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/strip-bom-string/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/extend-shallow/index.js":[function(require,module,exports){
+},{"buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js","kind-of":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/kind-of/index.js","strip-bom-string":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/strip-bom-string/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/extend-shallow/index.js":[function(require,module,exports){
 'use strict';
 
 var isObject = require('is-extendable');
@@ -16206,7 +16206,7 @@ function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-},{"is-extendable":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-extendable/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/node_modules/kind-of/index.js":[function(require,module,exports){
+},{"is-extendable":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-extendable/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/node_modules/kind-of/index.js":[function(require,module,exports){
 var toString = Object.prototype.toString;
 
 /**
@@ -16355,7 +16355,7 @@ function isBuffer(val) {
     && val.constructor.isBuffer(val);
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has-symbols/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has-symbols/index.js":[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -16372,7 +16372,7 @@ module.exports = function hasNativeSymbols() {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./shams":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has-symbols/shams.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has-symbols/shams.js":[function(require,module,exports){
+},{"./shams":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has-symbols/shams.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has-symbols/shams.js":[function(require,module,exports){
 'use strict';
 
 /* eslint complexity: [2, 18], max-statements: [2, 33] */
@@ -16416,14 +16416,14 @@ module.exports = function hasSymbols() {
 	return true;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has/src/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has/src/index.js":[function(require,module,exports){
 'use strict';
 
 var bind = require('function-bind');
 
 module.exports = bind.call(Function.call, Object.prototype.hasOwnProperty);
 
-},{"function-bind":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/function-bind/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/header-case/header-case.js":[function(require,module,exports){
+},{"function-bind":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/function-bind/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/header-case/header-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 var upperCase = require('upper-case')
 
@@ -16440,7 +16440,7 @@ module.exports = function (value, locale) {
   })
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/ast.schema.json":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/ast.schema.json":[function(require,module,exports){
 module.exports={
   "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "AST Schema V1",
@@ -16620,7 +16620,7 @@ module.exports={
   "required": ["id", "type"]
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/converters/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/converters/index.js":[function(require,module,exports){
 'use strict';
 
 /*
@@ -16756,7 +16756,7 @@ module.exports = {
   convertV1ToV2: convertV1ToV2,
   convertV2ToV1: convertV2ToV1
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/error.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/error.js":[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -16805,7 +16805,7 @@ exports.MalformedAstError = function (_ExtendableError2) {
 
   return MalformedAstError;
 }(ExtendableError);
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -17774,7 +17774,7 @@ module.exports = {
   walkNodesBreadthFirst: walkNodesBreadthFirst,
   toMarkup: toMarkup
 };
-},{"./ast.schema.json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/ast.schema.json","./converters":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/converters/index.js","./error":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/error.js","ajv":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/ajv.js","ajv/lib/refs/json-schema-draft-06.json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ajv/lib/refs/json-schema-draft-06.json"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/v1/dist/cjs/index.js":[function(require,module,exports){
+},{"./ast.schema.json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/ast.schema.json","./converters":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/converters/index.js","./error":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/error.js","ajv":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/ajv.js","ajv/lib/refs/json-schema-draft-06.json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ajv/lib/refs/json-schema-draft-06.json"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/v1/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 /**
@@ -18081,7 +18081,7 @@ module.exports = {
   walkNodes: walkNodes,
   findNodes: findNodes
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/grammar.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/grammar.js":[function(require,module,exports){
 "use strict";
 
 // Generated automatically by nearley, version 2.16.0
@@ -18407,7 +18407,7 @@ module.exports = {
     window.grammar = grammar;
   }
 })();
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 var parse = require('./parser');
@@ -18491,7 +18491,7 @@ module.exports = function (input, options, alias, callback) {
     }) : astTransform;
   }
 };
-},{"./lexer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/lexer.js","./parser":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/parser.js","./processors":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/processors/index.js","./processors/post":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/processors/post.js","./processors/pre":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/processors/pre.js","gray-matter":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/gray-matter/index.js","idyll-ast":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/lexer.js":[function(require,module,exports){
+},{"./lexer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/lexer.js","./parser":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/parser.js","./processors":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/processors/index.js","./processors/post":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/processors/post.js","./processors/pre":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/processors/pre.js","gray-matter":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/gray-matter/index.js","idyll-ast":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/lexer.js":[function(require,module,exports){
 'use strict';
 
 var _templateObject = _taggedTemplateLiteralLoose(['[s*(', ')s*([^/]]*)s*][\ns\t]*(((?!([s*/(', ')s*])).\n?)*)[\ns\t]*[s*/s*(', ')s*]'], ['\\[\\s*(', ')\\s*([^\\/\\]]*)\\s*\\][\\n\\s\\t]*(((?!(\\[\\s*\\/(', ')\\s*\\])).\\n?)*)[\\n\\s\\t]*\\[\\s*\\/\\s*(', ')\\s*\\]']);
@@ -18878,7 +18878,7 @@ var lex = function lex(options) {
 };
 
 module.exports = lex;
-},{"lex":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lex/lexer.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/parser.js":[function(require,module,exports){
+},{"lex":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lex/lexer.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/parser.js":[function(require,module,exports){
 'use strict';
 
 var grammar = require('./grammar');
@@ -18917,7 +18917,7 @@ module.exports = function (input, tokens, positions, options) {
 
   throw new Error('No parse results');
 };
-},{"./grammar":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/grammar.js","nearley":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/nearley/lib/nearley.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/processors/index.js":[function(require,module,exports){
+},{"./grammar":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/grammar.js","nearley":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/nearley/lib/nearley.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/processors/index.js":[function(require,module,exports){
 "use strict";
 
 module.exports = function (input, options) {
@@ -18933,7 +18933,7 @@ module.exports = function (input, options) {
 
   return processor;
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/processors/post.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/processors/post.js":[function(require,module,exports){
 'use strict';
 
 var smartquotes = require('smartquotes');
@@ -19186,7 +19186,7 @@ module.exports = {
   seperateTextAndHyperLink: seperateTextAndHyperLink,
   getHyperLinksFromText: getHyperLinksFromText
 };
-},{"idyll-ast/v1":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/v1/dist/cjs/index.js","smartquotes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/smartquotes/dist/smartquotes.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/processors/pre.js":[function(require,module,exports){
+},{"idyll-ast/v1":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/v1/dist/cjs/index.js","smartquotes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/smartquotes/dist/smartquotes.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/processors/pre.js":[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -19194,7 +19194,7 @@ module.exports = {
     return input.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   }
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/generateHeaders.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/generateHeaders.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19237,7 +19237,47 @@ var GenerateHeaders = function GenerateHeaders(props) {
 };
 
 exports.default = GenerateHeaders;
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h1.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H1 = function (_React$PureComponent) {
+  _inherits(H1, _React$PureComponent);
+
+  function H1() {
+    _classCallCheck(this, H1);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H1.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '1' }, this.props));
+  };
+
+  return H1;
+}(_react2.default.PureComponent);
+
+exports.default = H1;
+},{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19277,7 +19317,7 @@ var H2 = function (_React$PureComponent) {
 }(_react2.default.PureComponent);
 
 exports.default = H2;
-},{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
+},{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19448,76 +19488,7 @@ Header._idyll = {
 };
 
 exports.default = Header;
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Link = function (_React$PureComponent) {
-  _inherits(Link, _React$PureComponent);
-
-  function Link(props) {
-    _classCallCheck(this, Link);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
-  }
-
-  Link.prototype.render = function render() {
-    var _props = this.props,
-        idyll = _props.idyll,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps']);
-
-    var passProps = _extends({}, props);
-    if (passProps.url) {
-      passProps.href = passProps.url;
-    }
-    return _react2.default.createElement(
-      'a',
-      passProps,
-      props.text || props.children
-    );
-  };
-
-  return Link;
-}(_react2.default.PureComponent);
-
-Link._idyll = {
-  name: 'Link',
-  tagType: 'closed',
-  displayType: 'inline',
-  props: [{
-    name: 'text',
-    type: 'string',
-    example: '"Link Text"',
-    description: 'The text to display'
-  }, {
-    name: 'url',
-    type: 'string',
-    example: '"https://some.url/"',
-    description: 'The URL to open when the link is clicked'
-  }]
-};
-
-exports.default = Link;
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19580,7 +19551,7 @@ TextContainer._idyll = {
   tagType: "open"
 };
 exports.default = TextContainer;
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/components/author-tool.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/components/author-tool.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19867,7 +19838,7 @@ var AuthorTool = function (_React$PureComponent) {
 }(_react2.default.PureComponent);
 
 exports.default = AuthorTool;
-},{"react":"react","react-tooltip":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-tooltip/dist/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/components/placeholder.js":[function(require,module,exports){
+},{"react":"react","react-tooltip":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-tooltip/dist/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/components/placeholder.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -19914,7 +19885,7 @@ var generatePlaceholder = function generatePlaceholder(name) {
   }(_react2.default.PureComponent);
 };
 exports.generatePlaceholder = generatePlaceholder;
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/index.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20089,7 +20060,7 @@ var IdyllDocument = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = IdyllDocument;
-},{"./runtime":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/runtime.js","idyll-compiler":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-compiler/dist/cjs/index.js","idyll-layouts":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/index.js","idyll-themes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/index.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/runtime.js":[function(require,module,exports){
+},{"./runtime":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/runtime.js","idyll-compiler":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-compiler/dist/cjs/index.js","idyll-layouts":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/index.js","idyll-themes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/index.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/runtime.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20692,7 +20663,7 @@ IdyllRuntime.defaultProps = {
 };
 
 exports.default = IdyllRuntime;
-},{"./components/author-tool":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/components/author-tool.js","./components/placeholder":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/components/placeholder.js","./utils":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/utils/index.js","./utils/schema2element":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/utils/schema2element.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/node_modules/fast-deep-equal/index.js","idyll-ast":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/index.js","idyll-layouts":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/index.js","idyll-themes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/index.js","object.entries":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/index.js","object.values":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/index.js","react":"react","react-dom":"react-dom","scrollmonitor":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scrollmonitor/scrollMonitor.js","scrollparent":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scrollparent/scrollparent.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/utils/index.js":[function(require,module,exports){
+},{"./components/author-tool":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/components/author-tool.js","./components/placeholder":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/components/placeholder.js","./utils":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/utils/index.js","./utils/schema2element":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/utils/schema2element.js","fast-deep-equal":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/node_modules/fast-deep-equal/index.js","idyll-ast":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/index.js","idyll-layouts":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/index.js","idyll-themes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/index.js","object.entries":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/index.js","object.values":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/index.js","react":"react","react-dom":"react-dom","scrollmonitor":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scrollmonitor/scrollMonitor.js","scrollparent":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scrollparent/scrollparent.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/utils/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21111,7 +21082,7 @@ var findWrapTargets = function findWrapTargets(schema, state, components) {
   return targets;
 };
 exports.findWrapTargets = findWrapTargets;
-},{"csv-parse/lib/es5/sync":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/csv-parse/lib/es5/sync.js","falafel":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/falafel/index.js","idyll-ast":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-ast/dist/cjs/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/utils/schema2element.js":[function(require,module,exports){
+},{"csv-parse/lib/es5/sync":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/csv-parse/lib/es5/sync.js","falafel":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/falafel/index.js","idyll-ast":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-ast/dist/cjs/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/utils/schema2element.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21268,7 +21239,7 @@ var ReactJsonSchema = function () {
 }();
 
 exports.default = ReactJsonSchema;
-},{"change-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/change-case/change-case.js","react":"react","react-dom-factories":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-dom-factories/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/node_modules/fast-deep-equal/index.js":[function(require,module,exports){
+},{"change-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/change-case/change-case.js","react":"react","react-dom-factories":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-dom-factories/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/node_modules/fast-deep-equal/index.js":[function(require,module,exports){
 'use strict';
 
 var isArray = Array.isArray;
@@ -21325,7 +21296,7 @@ module.exports = function equal(a, b) {
   return a!==a && b!==b;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/blog/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/blog/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21349,7 +21320,7 @@ var config = {
 exports.default = _extends({}, config, {
   styles: (0, _styles2.default)(config)
 });
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/blog/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/blog/styles.js":[function(require,module,exports){
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/blog/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/blog/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21358,7 +21329,7 @@ exports.default = function (_ref) {
   var maxWidth = _ref.maxWidth;
   return "\n\nbody {\n  margin: 0;\n}\n\n.idyll-root {\n  box-sizing: border-box;\n  margin: 0 auto;\n  padding: 60px 0;\n  margin-bottom: 60px;\n}\n\n.idyll-text-container {\n  max-width: 600px;\n  margin-top: 0;\n  margin-right: 0;\n  margin-bottom: 0;\n  margin-left: 50px;\n}\n\n.section {\n  padding: 0 10px;\n  margin: 0 auto;\n}\n\n.article-header {\n  text-align: left;\n  padding-left: 50px;\n  margin-bottom: 45px;\n}\n\n.inset {\n  max-width: 400px;\n  margin: 0 auto;\n}\n\ninput {\n  cursor: pointer;\n}\n\n.relative {\n  position: relative;\n}\n.aside-container {\n  position: relative;\n  display: block;\n}\n.aside {\n  display: block;\n  position: absolute;\n  width: 300px;\n  right: calc((10vw + 600px + 150px) / -2);\n}\n\n.fixed {\n  position: fixed;\n  display: flex;\n  align-self: center;\n  flex-direction: column;\n  align-items: center;\n  right: 25px;\n  top: 0;\n  bottom: 0;\n  width: calc((80vw - 600px) - 50px);\n  justify-content: center;\n}\n\n.fixed div {\n  width: 100%;\n}\n\n.idyll-scroll-graphic {\n  position: -webkit-sticky;\n  position: sticky;\n}\n\n.idyll-scroll-graphic img {\n  max-height: 100vh;\n}\n\n.component-debug-view {\n  position: relative;\n  transition: background-color 0.3s ease-in;\n  box-shadow: 5px 5px 10px 1px lightGray;\n}\n\n.author-view-button {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  opacity: .38;\n  background-color: #E7E3D0;\n  background-image: url('https://idyll-lang.org/static/images/quill-icon.png');\n  background-repeat: no-repeat;\n  background-size: contain;\n  width: 24px;\n  height: 24px;\n  margin-right: 10px;\n  box-sizing: border-box;\n  border-radius: 12px;\n  cursor: pointer;\n}\n\n.author-view-button:focus {\n  outline: none;\n}\n\n.component-debug-view:hover > .author-view-button {\n  opacity: 0.87;\n  transition: opacity 600ms linear;\n}\n\n.author-component-view {\n  display: flex;\n  flex-direction: column;\n  overflow-x: scroll;\n}\n\n.author-component-view h2, .author-component-view h3 {\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.props-table {\n  width: 90%;\n  min-width: 500px;\n  display: table;\n  border: 1px solid #A4A2A2;\n  border-radius: 20px;\n  margin: 0 auto;\n}\n\n.props-table-type {\n  font-family: 'Courier-New';\n}\n\n.props-table-row {\n  text-align: center;\n}\n\n.debug-collapse {\n  overflow: hidden;\n  overflow-y: scroll;\n  transition: height 0.3s ease-in;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.icon-links {\n  margin-top: 13px;\n  text-align: center;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.icon-link {\n  color: inherit;\n}\n\n.icon-link:hover {\n  text-decoration: none;\n}\n\n.icon-link-image {\n  cursor: pointer;\n}\n\n.button-tooltip {\n  background-color: black !important;\n  padding: 0 5px;\n}\n\n.button-tooltip.place-top:after {\n  border-top-color: black !important;\n}\n\n.button-tooltip.place-right:after {\n  border-right-color: black !important;\n}\n\n.button-tooltip.place-bottom:after {\n  border-bottom-color: black !important;\n}\n\n.button-tooltip.place-left:after {\n  border-left-color: black !important;\n}\n\n.tooltip-header {\n  line-height: 1;\n  margin: 6px 0;\n  font-size: 18px;\n}\n\n.tooltip-subtitle {\n  font-style: italic;\n}\n\n@media all and (max-width: 1600px) {\n  .fixed {\n    width: calc((85vw - 600px) - 50px);\n  }\n}\n\n@media all and (max-width: 1000px) {\n  /* put your css styles in here */\n  .desktop {\n    display: none;\n  }\n  .relative {\n    position: static;\n  }\n  .aside {\n    position: static;\n    width: 100%;\n    right: 0;\n  }\n  .idyll-text-container {\n    max-width: calc(100% - 2em);\n    margin-top: 0;\n    margin-right: 1em;\n    margin-bottom: 0;\n    margin-left: 1em;\n  }\n  .hed {\n    width: 100%;\n  }\n\n  .idyll-root {\n    padding: 15px 0;\n  }\n\n  .idyll-root {\n    margin: 0 auto;\n    padding-bottom: 80vh;\n  }\n  .article-header {\n    margin: 0 auto;\n    padding-left: 1em;\n  }\n  .fixed {\n    position: fixed;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    width: 100vw;\n    top: initial;\n    background: white;\n    padding: 20px 0;\n    border-top: solid 2px black;\n  }\n}\n";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/centered/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/centered/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21382,7 +21353,7 @@ var config = {
 exports.default = _extends({}, config, {
   styles: (0, _styles2.default)(config)
 });
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/centered/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/centered/styles.js":[function(require,module,exports){
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/centered/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/centered/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21390,7 +21361,7 @@ exports.__esModule = true;
 exports.default = function () {
   return "\nbody {\n  margin: 0;\n}\n\n.idyll-root {\n  box-sizing: border-box;\n  padding: 60px 0;\n  margin-bottom: 60px;\n}\n\n.idyll-text-container {\n  max-width: 600px;\n  margin: 0 auto;\n}\n.article-header {\n  margin-bottom: 45px;\n  text-align: center;\n}\n\n.inset {\n  max-width: 400px;\n  margin: 0 auto;\n}\n\ninput {\n  cursor: pointer;\n}\n\n.relative {\n  position: relative;\n}\n\n.aside-container {\n  position: relative;\n  display: block;\n}\n.aside {\n  display: block;\n  position: absolute;\n  width: 300px;\n  right: calc((10vw + 350px + 150px) / -2);\n}\n\n.idyll-scroll-graphic {\n  position: -webkit-sticky;\n  position: sticky;\n  overflow: hidden;\n}\n\n.idyll-scroll-graphic img {\n  max-height: 100vh;\n}\n\n.idyll-scroll-graphic > * {\n  display: block;\n}\n\n.component-debug-view {\n  position: relative;\n  transition: background-color 0.3s ease-in;\n}\n\n.author-view-button {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  opacity: .38;\n  background-color: #E7E3D0;\n  background-image: url('https://idyll-lang.org/static/images/quill-icon.png');\n  background-repeat: no-repeat;\n  background-size: contain;\n  width: 24px;\n  height: 24px;\n  margin-right: 10px;\n  box-sizing: border-box;\n  border-radius: 12px;\n  cursor: pointer;\n}\n\n.author-view-button:focus {\n  outline: none;\n}\n\n.component-debug-view:hover > .author-view-button {\n  opacity: 0.87;\n  transition: opacity 600ms linear;\n}\n\n.author-component-view {\n  display: flex;\n  flex-direction: column;\n  overflow-x: scroll;\n}\n\n.author-component-view h2, .author-component-view h3 {\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.props-table {\n  width: 90%;\n  min-width: 500px;\n  display: table;\n  border: 1px solid #A4A2A2;\n  border-radius: 20px;\n  margin: 0 auto;\n}\n\n.props-table-type {\n  font-family: 'Courier-New';\n}\n\n.props-table-row {\n  text-align: center;\n}\n\n.debug-collapse {\n  overflow: hidden;\n  overflow-y: scroll;\n  transition: height 0.3s ease-in;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.icon-links {\n  margin-top: 13px;\n  text-align: center;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.icon-link {\n  color: inherit;\n}\n\n.icon-link:hover {\n  text-decoration: none;\n}\n\n.icon-link-image {\n  cursor: pointer;\n}\n\n.button-tooltip {\n  background-color: black !important;\n  padding: 0 5px;\n}\n\n.button-tooltip.place-top:after {\n  border-top-color: black !important;\n}\n\n.button-tooltip.place-right:after {\n  border-right-color: black !important;\n}\n\n.button-tooltip.place-bottom:after {\n  border-bottom-color: black !important;\n}\n\n.button-tooltip.place-left:after {\n  border-left-color: black !important;\n}\n\n.tooltip-header {\n  line-height: 1;\n  margin: 6px 0;\n  font-size: 18px;\n}\n\n.tooltip-subtitle {\n  font-style: italic;\n}\n\n@media all and (max-width: 1000px) {\n\n  .idyll-root {\n    max-width: 600px;\n    margin: 0 auto;\n    padding: 60px 20px;\n    margin-bottom: 60px;\n    width: 100%;\n  }\n  .idyll-text-container {\n    max-width: calc(100% - 2em);\n    margin: 0 1em;\n  }\n  .desktop {\n    display: none;\n  }\n  .relative {\n    position: static;\n  }\n  .aside {\n    position: static;\n    width: 100%;\n    right: 0;\n  }\n\n}\n\n";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21423,7 +21394,7 @@ Object.defineProperty(exports, 'none', {
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./blog":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/blog/index.js","./centered":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/centered/index.js","./none":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/none/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/none/index.js":[function(require,module,exports){
+},{"./blog":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/blog/index.js","./centered":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/centered/index.js","./none":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/none/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/none/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21443,7 +21414,7 @@ var config = {
 exports.default = _extends({}, config, {
   styles: (0, _styles2.default)(config)
 });
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/none/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/none/styles.js":[function(require,module,exports){
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/none/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/none/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21451,7 +21422,7 @@ exports.__esModule = true;
 exports.default = function () {
   return "";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21469,7 +21440,7 @@ var config = {};
 exports.default = _extends({}, config, {
   styles: (0, _styles2.default)(config)
 });
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/styles.js":[function(require,module,exports){
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21477,9 +21448,9 @@ exports.__esModule = true;
 exports.default = function () {
   return "\n@font-face {\n  font-family: octicons-link;\n  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n\n* {\n  box-sizing: border-box;\n}\nbody {\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%;\n  line-height: 1.5;\n  color: #24292e;\n  font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n  font-size: 16px;\n  line-height: 1.5;\n  word-wrap: break-word;\n}\n\n.pl-c {\n  color: #969896;\n}\n\n.pl-c1,\n.pl-s .pl-v {\n  color: #0086b3;\n}\n\n.pl-e,\n.pl-en {\n  color: #795da3;\n}\n\n.pl-smi,\n.pl-s .pl-s1 {\n  color: #333;\n}\n\n.pl-ent {\n  color: #63a35c;\n}\n\n.pl-k {\n  color: #a71d5d;\n}\n\n.pl-s,\n.pl-pds,\n.pl-s .pl-pse .pl-s1,\n.pl-sr,\n.pl-sr .pl-cce,\n.pl-sr .pl-sre,\n.pl-sr .pl-sra {\n  color: #183691;\n}\n\n.pl-v,\n.pl-smw {\n  color: #ed6a43;\n}\n\n.pl-bu {\n  color: #b52a1d;\n}\n\n.pl-ii {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2 {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2::before {\n  content: \"\\000d\";\n}\n\n.pl-sr .pl-cce {\n  font-weight: bold;\n  color: #63a35c;\n}\n\n.pl-ml {\n  color: #693a17;\n}\n\n.pl-mh,\n.pl-mh .pl-en,\n.pl-ms {\n  font-weight: bold;\n  color: #1d3e81;\n}\n\n.pl-mq {\n  color: #008080;\n}\n\n.pl-mi {\n  font-style: italic;\n  color: #333;\n}\n\n.pl-mb {\n  font-weight: bold;\n  color: #333;\n}\n\n.pl-md {\n  color: #bd2c00;\n  background-color: #ffecec;\n}\n\n.pl-mi1 {\n  color: #55a532;\n  background-color: #eaffea;\n}\n\n.pl-mc {\n  color: #ef9700;\n  background-color: #ffe3b4;\n}\n\n.pl-mi2 {\n  color: #d8d8d8;\n  background-color: #808080;\n}\n\n.pl-mdr {\n  font-weight: bold;\n  color: #795da3;\n}\n\n.pl-mo {\n  color: #1d3e81;\n}\n\n.pl-ba {\n  color: #595e62;\n}\n\n.pl-sg {\n  color: #c0c0c0;\n}\n\n.pl-corl {\n  text-decoration: underline;\n  color: #183691;\n}\n\n.octicon {\n  display: inline-block;\n  vertical-align: text-top;\n  fill: currentColor;\n}\n\na {\n  background-color: transparent;\n  -webkit-text-decoration-skip: objects;\n}\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\nstrong {\n  font-weight: inherit;\n}\n\nstrong {\n  font-weight: bolder;\n}\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\nimg {\n  border-style: none;\n}\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\ncode,\nkbd,\npre {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\ninput {\n  font: inherit;\n  margin: 10px 10px 20px 0;\n}\n\ninput {\n  overflow: visible;\n}\n\n[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\n\ninput {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\na {\n  color: #0366d6;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\nstrong {\n  font-weight: 600;\n}\n\nhr {\n  height: 0;\n  margin: 15px 0;\n  overflow: hidden;\n  background: transparent;\n  border: 0;\n  border-bottom: 1px solid #dfe2e5;\n}\n\nhr::before {\n  display: table;\n  content: \"\";\n}\n\nhr::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\n\ntd,\nth {\n  padding: 0;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nh1 {\n  font-size: 32px;\n  font-weight: 600;\n}\n\nh2 {\n  font-size: 24px;\n  font-weight: 600;\n}\n\nh3 {\n  font-size: 20px;\n  font-weight: 600;\n}\n\nh4 {\n  font-size: 16px;\n  font-weight: 600;\n}\n\nh5 {\n  font-size: 14px;\n  font-weight: 600;\n}\n\nh6 {\n  font-size: 12px;\n  font-weight: 600;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\n\nblockquote {\n  margin: 0;\n}\n\nul,\nol {\n  padding-left: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nol ol,\nul ol {\n  list-style-type: lower-roman;\n}\n\nul ul ol,\nul ol ol,\nol ul ol,\nol ol ol {\n  list-style-type: lower-alpha;\n}\n\ndd {\n  margin-left: 0;\n}\n\ncode {\n  font-family: \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  font-size: 12px;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 0;\n  font: 12px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n}\n\n.octicon {\n  vertical-align: text-bottom;\n}\n\n.pl-0 {\n  padding-left: 0 !important;\n}\n\n.pl-1 {\n  padding-left: 4px !important;\n}\n\n.pl-2 {\n  padding-left: 8px !important;\n}\n\n.pl-3 {\n  padding-left: 16px !important;\n}\n\n.pl-4 {\n  padding-left: 24px !important;\n}\n\n.pl-5 {\n  padding-left: 32px !important;\n}\n\n.pl-6 {\n  padding-left: 40px !important;\n}\n\n.idyll-root::before {\n  display: table;\n  content: \"\";\n}\n\n.idyll-root::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\n.idyll-root>*:first-child {\n  margin-top: 0 !important;\n}\n\n.idyll-root>*:last-child {\n  margin-bottom: 0 !important;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\n.anchor {\n  float: left;\n  padding-right: 4px;\n  margin-left: -20px;\n  line-height: 1;\n}\n\n.anchor:focus {\n  outline: none;\n}\n\np,\nblockquote,\nul,\nol,\ndl,\ntable,\npre {\n  margin-top: 0;\n  margin-bottom: 16px;\n}\n\nhr {\n  height: 0.25em;\n  padding: 0;\n  margin: 24px 0;\n  background-color: #e1e4e8;\n  border: 0;\n}\n\nblockquote {\n  padding: 0 1em;\n  color: #6a737d;\n  border-left: 0.25em solid #dfe2e5;\n}\n\nblockquote>:first-child {\n  margin-top: 0;\n}\n\nblockquote>:last-child {\n  margin-bottom: 0;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font-size: 11px;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fafbfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25;\n}\n\nh1 .octicon-link,\nh2 .octicon-link,\nh3 .octicon-link,\nh4 .octicon-link,\nh5 .octicon-link,\nh6 .octicon-link {\n  color: #1b1f23;\n  vertical-align: middle;\n  visibility: hidden;\n}\n\nh1:hover .anchor,\nh2:hover .anchor,\nh3:hover .anchor,\nh4:hover .anchor,\nh5:hover .anchor,\nh6:hover .anchor {\n  text-decoration: none;\n}\n\nh1:hover .anchor .octicon-link,\nh2:hover .anchor .octicon-link,\nh3:hover .anchor .octicon-link,\nh4:hover .anchor .octicon-link,\nh5:hover .anchor .octicon-link,\nh6:hover .anchor .octicon-link {\n  visibility: visible;\n}\n\nh1 {\n  padding-bottom: 0.3em;\n  font-size: 2em;\n}\n\nh2 {\n  padding-bottom: 0.3em;\n  font-size: 1.5em;\n}\n\nh3 {\n  font-size: 1.25em;\n}\n\nh4 {\n  font-size: 1em;\n}\n\nh5 {\n  font-size: 0.875em;\n}\n\nh6 {\n  font-size: 0.85em;\n  color: #6a737d;\n}\n\nh1.hed,\nh2.dek {\n  border-bottom: none;\n  padding-bottom: 0;\n  margin-top: 12px;\n}\n\nul,\nol {\n  padding-left: 2em;\n}\n\nul ul,\nul ol,\nol ol,\nol ul {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nli>p {\n  margin-top: 16px;\n}\n\nli+li {\n  margin-top: 0.25em;\n}\n\ndl {\n  padding: 0;\n}\n\ndl dt {\n  padding: 0;\n  margin-top: 16px;\n  font-size: 1em;\n  font-style: italic;\n  font-weight: 600;\n}\n\ndl dd {\n  padding: 0 16px;\n  margin-bottom: 16px;\n}\n\ntable {\n  display: block;\n  width: 100%;\n  overflow: auto;\n}\n\ntable th {\n  font-weight: 600;\n}\n\ntable th,\ntable td {\n  padding: 6px 13px;\n  border: 1px solid #dfe2e5;\n}\n\ntable tr {\n  background-color: #fff;\n  border-top: 1px solid #c6cbd1;\n}\n\ntable tr:nth-child(2n) {\n  background-color: #f6f8fa;\n}\n\nimg {\n  max-width: 100%;\n  box-sizing: content-box;\n  background-color: #fff;\n}\n\ncode {\n  padding: 0;\n  padding-top: 0.2em;\n  padding-bottom: 0.2em;\n  margin: 0;\n  font-size: 85%;\n  background-color: rgba(27,31,35,0.05);\n  border-radius: 3px;\n}\n\ncode::before,\ncode::after {\n  letter-spacing: -0.2em;\n  content: \"\\00a0\";\n}\n\npre {\n  word-wrap: normal;\n}\n\npre>code {\n  padding: 0;\n  margin: 0;\n  font-size: 100%;\n  word-break: normal;\n  white-space: pre;\n  background: transparent;\n  border: 0;\n}\n\n.highlight {\n  margin-bottom: 16px;\n}\n\n.highlight pre {\n  margin-bottom: 0;\n  word-break: normal;\n}\n\n.highlight pre,\npre {\n  padding: 16px;\n  overflow: auto;\n  font-size: 85%;\n  line-height: 1.45;\n  background-color: #f6f8fa;\n  border-radius: 3px;\n}\n\npre code {\n  display: inline;\n  max-width: auto;\n  padding: 0;\n  margin: 0;\n  overflow: visible;\n  line-height: inherit;\n  word-wrap: normal;\n  background-color: transparent;\n  border: 0;\n}\n\npre code::before,\npre code::after {\n  content: normal;\n}\n\n.full-commit .btn-outline:not(:disabled):hover {\n  color: #005cc5;\n  border-color: #005cc5;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font: 11px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fcfcfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\n:checked+.radio-label {\n  position: relative;\n  z-index: 1;\n  border-color: #0366d6;\n}\n\n.task-list-item {\n  list-style-type: none;\n}\n\n.task-list-item+.task-list-item {\n  margin-top: 3px;\n}\n\n.task-list-item input {\n  margin: 0 0.2em 0.25em -1.6em;\n  vertical-align: middle;\n}\n\nhr {\n  border-bottom-color: #eee;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: white;\n  border: solid 1px #333;\n  box-shadow: #ddd 2px 2px 3px;\n}\n\n.idyll-root {\n  padding-top: 0;\n}\n\nbutton {\n  display: block;\n  margin: 1em auto;\n}\n\nh1, h2, h3, h4, h5 {\n  border-bottom: none;\n}\n\npre {\n  max-width: 960px;\n  margin: 2em auto;\n}\n\nh1.hed {\n  font-size: 4em;\n  margin-top: 0;\n}\nh2.dek {\n  font-size: 2em;\n  margin: 0.5em auto;\n  font-weight: lighter;\n}\n.article-header {\n  background: #222;\n  color: white;\n  padding-top: 8em;\n  padding-bottom: 4em;\n  margin-bottom: 4em;\n}\n.article-header a {\n  color: white;\n  text-decoration: underline;\n}\n.idyll-dynamic {\n  cursor: ew-resize;\n  font-family: monospace;\n}\n.idyll-display {\n  font-family: monospace;\n}\nimg {\n  display: block;\n  margin: 0 auto;\n}\n\n@media all and (max-width: 1000px) {\n  .idyll-root {\n    max-width: none;\n    padding: 0;\n  }\n\n  h1.hed {\n    font-size: 2em;\n  }\n  h2.dek {\n    font-size: 1em;\n  }\n}\n\n";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/github/index.js":[function(require,module,exports){
-arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/github/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/github/styles.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/github/index.js":[function(require,module,exports){
+arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/github/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/github/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21487,9 +21458,9 @@ exports.__esModule = true;
 exports.default = function () {
   return "\n@font-face {\n  font-family: octicons-link;\n  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%;\n  line-height: 1.5;\n  color: #24292e;\n  font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n  font-size: 16px;\n  line-height: 1.5;\n  word-wrap: break-word;\n}\n\n.pl-c {\n  color: #969896;\n}\n\n.pl-c1,\n.pl-s .pl-v {\n  color: #0086b3;\n}\n\n.pl-e,\n.pl-en {\n  color: #795da3;\n}\n\n.pl-smi,\n.pl-s .pl-s1 {\n  color: #333;\n}\n\n.pl-ent {\n  color: #63a35c;\n}\n\n.pl-k {\n  color: #a71d5d;\n}\n\n.pl-s,\n.pl-pds,\n.pl-s .pl-pse .pl-s1,\n.pl-sr,\n.pl-sr .pl-cce,\n.pl-sr .pl-sre,\n.pl-sr .pl-sra {\n  color: #183691;\n}\n\n.pl-v,\n.pl-smw {\n  color: #ed6a43;\n}\n\n.pl-bu {\n  color: #b52a1d;\n}\n\n.pl-ii {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2 {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2::before {\n  content: \"\\000d\";\n}\n\n.pl-sr .pl-cce {\n  font-weight: bold;\n  color: #63a35c;\n}\n\n.pl-ml {\n  color: #693a17;\n}\n\n.pl-mh,\n.pl-mh .pl-en,\n.pl-ms {\n  font-weight: bold;\n  color: #1d3e81;\n}\n\n.pl-mq {\n  color: #008080;\n}\n\n.pl-mi {\n  font-style: italic;\n  color: #333;\n}\n\n.pl-mb {\n  font-weight: bold;\n  color: #333;\n}\n\n.pl-md {\n  color: #bd2c00;\n  background-color: #ffecec;\n}\n\n.pl-mi1 {\n  color: #55a532;\n  background-color: #eaffea;\n}\n\n.pl-mc {\n  color: #ef9700;\n  background-color: #ffe3b4;\n}\n\n.pl-mi2 {\n  color: #d8d8d8;\n  background-color: #808080;\n}\n\n.pl-mdr {\n  font-weight: bold;\n  color: #795da3;\n}\n\n.pl-mo {\n  color: #1d3e81;\n}\n\n.pl-ba {\n  color: #595e62;\n}\n\n.pl-sg {\n  color: #c0c0c0;\n}\n\n.pl-corl {\n  text-decoration: underline;\n  color: #183691;\n}\n\n.octicon {\n  display: inline-block;\n  vertical-align: text-top;\n  fill: currentColor;\n}\n\na {\n  background-color: transparent;\n  -webkit-text-decoration-skip: objects;\n}\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\nstrong {\n  font-weight: inherit;\n}\n\nstrong {\n  font-weight: bolder;\n}\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\nimg {\n  border-style: none;\n}\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\ncode,\nkbd,\npre {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\ninput {\n  font: inherit;\n  margin: 10px 10px 20px 0;\n}\n\ninput {\n  overflow: visible;\n}\n\n[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\n\ninput {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\na {\n  color: #0366d6;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\nstrong {\n  font-weight: 600;\n}\n\nhr {\n  height: 0;\n  margin: 15px 0;\n  overflow: hidden;\n  background: transparent;\n  border: 0;\n  border-bottom: 1px solid #dfe2e5;\n}\n\nhr::before {\n  display: table;\n  content: \"\";\n}\n\nhr::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\n\ntd,\nth {\n  padding: 0;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nh1 {\n  font-size: 32px;\n  font-weight: 600;\n}\n\nh2 {\n  font-size: 24px;\n  font-weight: 600;\n}\n\nh3 {\n  font-size: 20px;\n  font-weight: 600;\n}\n\nh4 {\n  font-size: 16px;\n  font-weight: 600;\n}\n\nh5 {\n  font-size: 14px;\n  font-weight: 600;\n}\n\nh6 {\n  font-size: 12px;\n  font-weight: 600;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\n\nblockquote {\n  margin: 0;\n}\n\nul,\nol {\n  padding-left: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nol ol,\nul ol {\n  list-style-type: lower-roman;\n}\n\nul ul ol,\nul ol ol,\nol ul ol,\nol ol ol {\n  list-style-type: lower-alpha;\n}\n\ndd {\n  margin-left: 0;\n}\n\ncode {\n  font-family: \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  font-size: 12px;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 0;\n  font: 12px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n}\n\n.octicon {\n  vertical-align: text-bottom;\n}\n\n.pl-0 {\n  padding-left: 0 !important;\n}\n\n.pl-1 {\n  padding-left: 4px !important;\n}\n\n.pl-2 {\n  padding-left: 8px !important;\n}\n\n.pl-3 {\n  padding-left: 16px !important;\n}\n\n.pl-4 {\n  padding-left: 24px !important;\n}\n\n.pl-5 {\n  padding-left: 32px !important;\n}\n\n.pl-6 {\n  padding-left: 40px !important;\n}\n\n.idyll-root::before {\n  display: table;\n  content: \"\";\n}\n\n.idyll-root::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\n.idyll-root>*:first-child {\n  margin-top: 0 !important;\n}\n\n.idyll-root>*:last-child {\n  margin-bottom: 0 !important;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\n.anchor {\n  float: left;\n  padding-right: 4px;\n  margin-left: -20px;\n  line-height: 1;\n}\n\n.anchor:focus {\n  outline: none;\n}\n\np,\nblockquote,\nul,\nol,\ndl,\ntable,\npre {\n  margin-top: 0;\n  margin-bottom: 16px;\n}\n\nhr {\n  height: 0.25em;\n  padding: 0;\n  margin: 24px 0;\n  background-color: #e1e4e8;\n  border: 0;\n}\n\nblockquote {\n  padding: 0 1em;\n  color: #6a737d;\n  border-left: 0.25em solid #dfe2e5;\n}\n\nblockquote>:first-child {\n  margin-top: 0;\n}\n\nblockquote>:last-child {\n  margin-bottom: 0;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font-size: 11px;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fafbfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25;\n}\n\nh1 .octicon-link,\nh2 .octicon-link,\nh3 .octicon-link,\nh4 .octicon-link,\nh5 .octicon-link,\nh6 .octicon-link {\n  color: #1b1f23;\n  vertical-align: middle;\n  visibility: hidden;\n}\n\nh1:hover .anchor,\nh2:hover .anchor,\nh3:hover .anchor,\nh4:hover .anchor,\nh5:hover .anchor,\nh6:hover .anchor {\n  text-decoration: none;\n}\n\nh1:hover .anchor .octicon-link,\nh2:hover .anchor .octicon-link,\nh3:hover .anchor .octicon-link,\nh4:hover .anchor .octicon-link,\nh5:hover .anchor .octicon-link,\nh6:hover .anchor .octicon-link {\n  visibility: visible;\n}\n\nh1 {\n  padding-bottom: 0.3em;\n  font-size: 2em;\n  border-bottom: 1px solid #eaecef;\n}\n\nh2 {\n  padding-bottom: 0.3em;\n  font-size: 1.5em;\n  border-bottom: 1px solid #eaecef;\n}\n\nh3 {\n  font-size: 1.25em;\n}\n\nh4 {\n  font-size: 1em;\n}\n\nh5 {\n  font-size: 0.875em;\n}\n\nh6 {\n  font-size: 0.85em;\n  color: #6a737d;\n}\n\nh1.hed,\nh2.dek {\n  border-bottom: none;\n  padding-bottom: 0;\n  margin-top: 12px;\n}\n\nul,\nol {\n  padding-left: 2em;\n}\n\nul ul,\nul ol,\nol ol,\nol ul {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nli>p {\n  margin-top: 16px;\n}\n\nli+li {\n  margin-top: 0.25em;\n}\n\ndl {\n  padding: 0;\n}\n\ndl dt {\n  padding: 0;\n  margin-top: 16px;\n  font-size: 1em;\n  font-style: italic;\n  font-weight: 600;\n}\n\ndl dd {\n  padding: 0 16px;\n  margin-bottom: 16px;\n}\n\ntable {\n  display: block;\n  width: 100%;\n  overflow: auto;\n}\n\ntable th {\n  font-weight: 600;\n}\n\ntable th,\ntable td {\n  padding: 6px 13px;\n  border: 1px solid #dfe2e5;\n}\n\ntable tr {\n  background-color: #fff;\n  border-top: 1px solid #c6cbd1;\n}\n\ntable tr:nth-child(2n) {\n  background-color: #f6f8fa;\n}\n\nimg {\n  max-width: 100%;\n  box-sizing: content-box;\n  background-color: #fff;\n}\n\ncode {\n  padding: 0;\n  padding-top: 0.2em;\n  padding-bottom: 0.2em;\n  margin: 0;\n  font-size: 85%;\n  background-color: rgba(27,31,35,0.05);\n  border-radius: 3px;\n}\n\ncode::before,\ncode::after {\n  letter-spacing: -0.2em;\n  content: \"\\00a0\";\n}\n\npre {\n  word-wrap: normal;\n}\n\npre>code {\n  padding: 0;\n  margin: 0;\n  font-size: 100%;\n  word-break: normal;\n  white-space: pre;\n  background: transparent;\n  border: 0;\n}\n\n.highlight {\n  margin-bottom: 16px;\n}\n\n.highlight pre {\n  margin-bottom: 0;\n  word-break: normal;\n}\n\n.highlight pre,\npre {\n  padding: 16px;\n  overflow: auto;\n  font-size: 85%;\n  line-height: 1.45;\n  background-color: #f6f8fa;\n  border-radius: 3px;\n}\n\npre code {\n  display: inline;\n  max-width: auto;\n  padding: 0;\n  margin: 0;\n  overflow: visible;\n  line-height: inherit;\n  word-wrap: normal;\n  background-color: transparent;\n  border: 0;\n}\n\npre code::before,\npre code::after {\n  content: normal;\n}\n\n.full-commit .btn-outline:not(:disabled):hover {\n  color: #005cc5;\n  border-color: #005cc5;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font: 11px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fcfcfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\n:checked+.radio-label {\n  position: relative;\n  z-index: 1;\n  border-color: #0366d6;\n}\n\n.task-list-item {\n  list-style-type: none;\n}\n\n.task-list-item+.task-list-item {\n  margin-top: 3px;\n}\n\n.task-list-item input {\n  margin: 0 0.2em 0.25em -1.6em;\n  vertical-align: middle;\n}\n\nhr {\n  border-bottom-color: #eee;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: white;\n}\n\n";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/idyll/index.js":[function(require,module,exports){
-arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/idyll/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/idyll/styles.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/idyll/index.js":[function(require,module,exports){
+arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/idyll/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/idyll/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21497,7 +21468,7 @@ exports.__esModule = true;
 exports.default = function () {
   return "\n* {\n  box-sizing: border-box;\n}\n\nhtml {\n  margin: 0;\n  padding: 0;\n}\n\nimg {\n  display: block;\n  width: 100%;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n}\n\nh1,h2,h3,h4,h5,h6{\n  margin: 40px 0 20px 0;\n  font-weight: bold;\n}\n\n\nbody {\n  color: black;\n}\n\np, .article-body {\n  font-size: 1.15rem;\n  line-height: 1.75rem;\n}\n\n.byline a {\n  color: black;\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n.hed {\n  font-size: 3rem;\n  line-height: 3rem;\n  margin: 20px 0 20px;\n  font-weight: bold;\n  width: 150%;\n  max-width: 90vw;\n}\n\n.dek {\n  margin: 0;\n  display: block;\n  font-size: 1.5rem;\n  line-height: 2.2rem;\n  color: black;\n  margin-top: 1rem;\n  max-width: 90vw;\n}\n\n.byline {\n  font-size: .95rem;\n  line-height: 1rem;\n  color: black;\n  margin-top: 1rem;\n}\n\na, a:visited, a:hover {\n  color: black;\n  cursor: pointer;\n  text-decoration: none;\n  /*border-bottom: 1px solid #EAE7D6;*/\n  box-shadow: inset 0 -4px 0 #EAE7D6;\n  transition: box-shadow 0.25s ease-out;\n}\n\na:hover {\n  color: black;\n  /*background: #EAE7D6;*/\n  box-shadow: inset 0 -20px 0 #EAE7D6;\n}\n\npre {\n  margin-top: 25px;\n  margin-bottom: 25px;\n}\n\npre code {\n  background: #F2F3F2;\n  color: black;\n  padding: 20px 15px;\n  width: 100%;\n  display: block;\n  overflow-x: auto;\n  font-size: 12px;\n  text-align: initial;\n  font-style: normal;\n}\ncode {\n  background: #F2F3F2;\n  color: black;\n  padding: 1px 5px;\n}\n\n\n\nspan.action {\n  border-color: #5601FF;\n  border-width: 2px;\n  border-style: none none solid none;\n  color: #5601FF;\n  /*font-size: 0.9em;*/\n  padding: -4px 5px;\n  margin: 0 5px;\n  cursor: pointer;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: white;\n}\n\n\n";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21548,13 +21519,13 @@ Object.defineProperty(exports, 'tufte', {
 });
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./default":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/index.js","./github":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/github/index.js","./idyll":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/idyll/index.js","./none":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/none/index.js","./tufte":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/tufte/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/none/index.js":[function(require,module,exports){
-arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/none/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/none/styles.js":[function(require,module,exports){
-arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-layouts/dist/cjs/none/styles.js"][0].apply(exports,arguments)
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/tufte/index.js":[function(require,module,exports){
-arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
-},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/tufte/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-themes/dist/cjs/tufte/styles.js":[function(require,module,exports){
+},{"./default":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/index.js","./github":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/github/index.js","./idyll":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/idyll/index.js","./none":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/none/index.js","./tufte":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/tufte/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/none/index.js":[function(require,module,exports){
+arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/none/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/none/styles.js":[function(require,module,exports){
+arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-layouts/dist/cjs/none/styles.js"][0].apply(exports,arguments)
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/tufte/index.js":[function(require,module,exports){
+arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
+},{"./styles":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/tufte/styles.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-themes/dist/cjs/tufte/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -21562,7 +21533,7 @@ exports.__esModule = true;
 exports.default = function () {
   return "\n@charset \"UTF-8\";\n\n/* Import ET Book styles\n   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: italic; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: bold;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book-roman-old-style\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n\n             .ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n             ReactTable .-pagination .-btn {\n              margin: 0;\n            }\n/* Tufte CSS styles */\n\nhtml {\n  font-size: 15px;\n}\n\nbody {\n  background-color: #fffff8;\n}\n\nbody { font-family: et-book, Palatino, \"Palatino Linotype\", \"Palatino LT STD\", \"Book Antiqua\", Georgia, serif;\n       background-color: #fffff8;\n       color: #111;\n       counter-reset: sidenote-counter; }\n\n\n.idyll-root { position: relative;\n          padding: 5rem 0rem;\n          margin-left: 0;\n          width: auto;\n          margin: auto; }\n\nh1, .hed { font-weight: 400;\n     margin-top: 4rem;\n     margin-bottom: 1.5rem;\n     font-size: 3.2rem;\n     line-height: 1; }\n\nh2 { font-style: italic;\n     font-weight: 400;\n     margin-top: 2.1rem;\n     margin-bottom: 0;\n     font-size: 2.2rem;\n     line-height: 1; }\n\nh3 { font-style: italic;\n     font-weight: 400;\n     font-size: 1.7rem;\n     margin-top: 2rem;\n     margin-bottom: 0;\n     line-height: 1; }\n\nhr { display: block;\n     height: 1px;\n     width: 55%;\n     border: 0;\n     border-top: 1px solid #ccc;\n     margin: 1em 0;\n     padding: 0; }\n\np.subtitle,\n.dek { font-style: italic;\n             margin-top: 1rem;\n             margin-bottom: 1rem;\n             font-size: 1.8rem;\n             display: block;\n             line-height: 1; }\n\n.numeral { font-family: et-book-roman-old-style; }\n\n.danger { color: red; }\n\nsection { padding-top: 1rem;\n          padding-bottom: 1rem; }\n\np, ol, ul { font-size: 1.4rem; }\n\np { line-height: 2rem;\n    margin-top: 1.4rem;\n    margin-bottom: 1.4rem;\n    padding-right: 0;\n    vertical-align: baseline; }\n\n/* Chapter Epigraphs */\ndiv.epigraph { margin: 5em 0; }\n\ndiv.epigraph > blockquote { margin-top: 3em;\n                            margin-bottom: 3em; }\n\ndiv.epigraph > blockquote, div.epigraph > blockquote > p { font-style: italic; }\n\ndiv.epigraph > blockquote > footer { font-style: normal; }\n\ndiv.epigraph > blockquote > footer > cite { font-style: italic; }\n/* end chapter epigraphs styles */\n\nblockquote { font-size: 1.4rem; }\n\nblockquote p { width: 55%;\n               margin-right: 40px; }\n\nblockquote footer { width: 55%;\n                    font-size: 1.1rem;\n                    text-align: right; }\n\nsection>ol, section>ul { width: 45%;\n                         -webkit-padding-start: 5%;\n                         -webkit-padding-end: 5%; }\n\nli { padding: 0.5rem 0; }\n\nfigure { padding: 0;\n         border: 0;\n         font-size: 100%;\n         font: inherit;\n         vertical-align: baseline;\n         max-width: 55%;\n         -webkit-margin-start: 0;\n         -webkit-margin-end: 0;\n         margin: 0 0 3em 0; }\n\nfigcaption { float: right;\n             clear: right;\n             margin-top: 0;\n             margin-bottom: 0;\n             font-size: 1.1rem;\n             line-height: 1.6;\n             vertical-align: baseline;\n             position: relative;\n             max-width: 40%; }\n\nfigure.fullwidth figcaption { margin-right: 24%; }\n\n/* Links: replicate underline that clears descenders */\na:link, a:visited { color: inherit; }\n\n@media screen and (-webkit-min-device-pixel-ratio: 0) { a:link { background-position-y: 87%, 87%, 87%; } }\n\n\na:link::-moz-selection { text-shadow: 0.03em 0 #b4d5fe, -0.03em 0 #b4d5fe, 0 0.03em #b4d5fe, 0 -0.03em #b4d5fe, 0.06em 0 #b4d5fe, -0.06em 0 #b4d5fe, 0.09em 0 #b4d5fe, -0.09em 0 #b4d5fe, 0.12em 0 #b4d5fe, -0.12em 0 #b4d5fe, 0.15em 0 #b4d5fe, -0.15em 0 #b4d5fe;\n                         background: #b4d5fe; }\n\n/* Sidenotes, margin notes, figures, captions */\nimg { max-width: 100%; }\n\n.aside, .sidenote, .marginnote { float: right;\n                         clear: right;\n                         margin-right: -60%;\n                         width: 50%;\n                         margin-top: 0;\n                         margin-bottom: 0;\n                         font-size: 1.1rem;\n                         line-height: 1.3;\n                         vertical-align: baseline;\n                         position: relative; }\n\n.sidenote-number { counter-increment: sidenote-counter; }\n\n.sidenote-number:after, .sidenote:before { content: counter(sidenote-counter) \" \";\n                                           font-family: et-book-roman-old-style;\n                                           position: relative;\n                                           vertical-align: baseline; }\n\n.sidenote-number:after { content: counter(sidenote-counter);\n                         font-size: 1rem;\n                         top: -0.5rem;\n                         left: 0.1rem; }\n\n.sidenote:before { content: counter(sidenote-counter) \" \";\n                   top: -0.5rem; }\n\nblockquote .sidenote, blockquote .marginnote, blockquote .aside { margin-right: -82%;\n                                               min-width: 59%;\n                                               text-align: left; }\n\n.aside-container {\n  position: static;\n  width: 55%;\n}\ndiv.fullwidth, table.fullwidth { width: 100%; }\n\ndiv.table-wrapper { overflow-x: auto;\n                    font-family: \"Trebuchet MS\", \"Gill Sans\", \"Gill Sans MT\", sans-serif; }\n\n.sans { font-family: \"Gill Sans\", \"Gill Sans MT\", Calibri, sans-serif;\n        letter-spacing: .03em; }\n\ncode { font-family: Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n       font-size: 1.0rem;\n       line-height: 1.42; }\n\n.sans > code { font-size: 1.2rem; }\n\nh1 > code, h2 > code, h3 > code { font-size: 0.80em; }\n\n.marginnote > code, .sidenote > code { font-size: 1rem; }\n\npre.code { font-size: 0.9rem;\n           width: 52.5%;\n           margin-left: 2.5%;\n           overflow-x: auto; }\n\npre.code.fullwidth { width: 90%; }\n\n.fullwidth { max-width: 90%;\n             clear:both; }\n\nspan.newthought { font-variant: small-caps;\n                  font-size: 1.2em; }\n\ninput.margin-toggle { display: none; }\n\nlabel.sidenote-number { display: inline; }\n\nlabel.margin-toggle:not(.sidenote-number) { display: none; }\n\n@media (max-width: 760px) { p, footer { width: 100%; }\n                            pre.code { width: 97%; }\n                            ul { width: 85%; }\n                            figure { max-width: 90%; }\n                            figcaption, figure.fullwidth figcaption { margin-right: 0%;\n                                                                      max-width: none; }\n                            blockquote { margin-left: 1.5em;\n                                         margin-right: 0em; }\n                            blockquote p, blockquote footer { width: 100%; }\n                            label.margin-toggle:not(.sidenote-number) { display: inline; }\n                            .sidenote, .marginnote { display: none; }\n                            .margin-toggle:checked + .sidenote,\n                            .margin-toggle:checked + .marginnote { display: block;\n                                                                   float: left;\n                                                                   left: 1rem;\n                                                                   clear: both;\n                                                                   width: 95%;\n                                                                   margin: 1rem 2.5%;\n                                                                   vertical-align: baseline;\n                                                                   position: relative; }\n                            label { cursor: pointer; }\n                            div.table-wrapper, table { width: 85%; }\n                            img { width: 100%; } }\n\n\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: #fff;\n  border: solid 1px #111;\n}\n\n.idyll-scroll-text .idyll-step h2 {\n  margin-top: 0;\n}\n\npre {\n  background: #f3f3f3;\n  padding: 15px;\n  overflow-x: auto;\n}\n\n";
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll/src/client/build.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll/src/client/build.js":[function(require,module,exports){
 /**
  * NOTE - this file does not get compiled from
  * ES6 --> ES5. Everything in here should be
@@ -21606,7 +21577,7 @@ ReactDOM[mountMethod](
   mountNode
 );
 
-},{"__IDYLL_AST__":"__IDYLL_AST__","__IDYLL_COMPONENTS__":"__IDYLL_COMPONENTS__","__IDYLL_CONTEXT__":"__IDYLL_CONTEXT__","__IDYLL_DATA__":"__IDYLL_DATA__","__IDYLL_OPTS__":"__IDYLL_OPTS__","__IDYLL_SYNTAX_HIGHLIGHT__":"__IDYLL_SYNTAX_HIGHLIGHT__","idyll-document":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-document/dist/cjs/index.js","react":"react","react-dom":"react-dom","regenerator-runtime/runtime":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/regenerator-runtime/runtime.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/ieee754/index.js":[function(require,module,exports){
+},{"__IDYLL_AST__":"__IDYLL_AST__","__IDYLL_COMPONENTS__":"__IDYLL_COMPONENTS__","__IDYLL_CONTEXT__":"__IDYLL_CONTEXT__","__IDYLL_DATA__":"__IDYLL_DATA__","__IDYLL_OPTS__":"__IDYLL_OPTS__","__IDYLL_SYNTAX_HIGHLIGHT__":"__IDYLL_SYNTAX_HIGHLIGHT__","idyll-document":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-document/dist/cjs/index.js","react":"react","react-dom":"react-dom","regenerator-runtime/runtime":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/regenerator-runtime/runtime.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/ieee754/index.js":[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -21692,7 +21663,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -21721,7 +21692,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-buffer/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-buffer/index.js":[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -21744,7 +21715,7 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-extendable/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-extendable/index.js":[function(require,module,exports){
 /*!
  * is-extendable <https://github.com/jonschlinkert/is-extendable>
  *
@@ -21759,7 +21730,7 @@ module.exports = function isExtendable(val) {
     && (typeof val === 'object' || typeof val === 'function');
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-lower-case/is-lower-case.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-lower-case/is-lower-case.js":[function(require,module,exports){
 var lowerCase = require('lower-case')
 
 /**
@@ -21773,7 +21744,7 @@ module.exports = function (string, locale) {
   return lowerCase(string, locale) === string
 }
 
-},{"lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case/lower-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/is-upper-case/is-upper-case.js":[function(require,module,exports){
+},{"lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case/lower-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/is-upper-case/is-upper-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 
 /**
@@ -21787,9 +21758,9 @@ module.exports = function (string, locale) {
   return upperCase(string, locale) === string
 }
 
-},{"upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/isarray/index.js":[function(require,module,exports){
-arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/falafel/node_modules/isarray/index.js"][0].apply(exports,arguments)
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/index.js":[function(require,module,exports){
+},{"upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/isarray/index.js":[function(require,module,exports){
+arguments[4]["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/falafel/node_modules/isarray/index.js"][0].apply(exports,arguments)
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/index.js":[function(require,module,exports){
 'use strict';
 
 
@@ -21798,7 +21769,7 @@ var yaml = require('./lib/js-yaml.js');
 
 module.exports = yaml;
 
-},{"./lib/js-yaml.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml.js":[function(require,module,exports){
+},{"./lib/js-yaml.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml.js":[function(require,module,exports){
 'use strict';
 
 
@@ -21839,7 +21810,7 @@ module.exports.parse          = deprecated('parse');
 module.exports.compose        = deprecated('compose');
 module.exports.addConstructor = deprecated('addConstructor');
 
-},{"./js-yaml/dumper":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/dumper.js","./js-yaml/exception":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/exception.js","./js-yaml/loader":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/loader.js","./js-yaml/schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js","./js-yaml/schema/core":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/core.js","./js-yaml/schema/default_full":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_full.js","./js-yaml/schema/default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js","./js-yaml/schema/failsafe":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/failsafe.js","./js-yaml/schema/json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/json.js","./js-yaml/type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js":[function(require,module,exports){
+},{"./js-yaml/dumper":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/dumper.js","./js-yaml/exception":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/exception.js","./js-yaml/loader":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/loader.js","./js-yaml/schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js","./js-yaml/schema/core":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/core.js","./js-yaml/schema/default_full":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_full.js","./js-yaml/schema/default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js","./js-yaml/schema/failsafe":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/failsafe.js","./js-yaml/schema/json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/json.js","./js-yaml/type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js":[function(require,module,exports){
 'use strict';
 
 
@@ -21900,7 +21871,7 @@ module.exports.repeat         = repeat;
 module.exports.isNegativeZero = isNegativeZero;
 module.exports.extend         = extend;
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/dumper.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/dumper.js":[function(require,module,exports){
 'use strict';
 
 /*eslint-disable no-use-before-define*/
@@ -22752,7 +22723,7 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js","./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/exception.js","./schema/default_full":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_full.js","./schema/default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/exception.js":[function(require,module,exports){
+},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js","./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/exception.js","./schema/default_full":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_full.js","./schema/default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/exception.js":[function(require,module,exports){
 // YAML error class. http://stackoverflow.com/questions/8458984
 //
 'use strict';
@@ -22797,7 +22768,7 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/loader.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/loader.js":[function(require,module,exports){
 'use strict';
 
 /*eslint-disable max-len,no-use-before-define*/
@@ -24443,7 +24414,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js","./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/exception.js","./mark":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/mark.js","./schema/default_full":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_full.js","./schema/default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/mark.js":[function(require,module,exports){
+},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js","./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/exception.js","./mark":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/mark.js","./schema/default_full":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_full.js","./schema/default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/mark.js":[function(require,module,exports){
 'use strict';
 
 
@@ -24521,7 +24492,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js":[function(require,module,exports){
+},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js":[function(require,module,exports){
 'use strict';
 
 /*eslint-disable max-len*/
@@ -24631,7 +24602,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js","./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/exception.js","./type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/core.js":[function(require,module,exports){
+},{"./common":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js","./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/exception.js","./type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/core.js":[function(require,module,exports){
 // Standard YAML's Core schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2804923
 //
@@ -24651,7 +24622,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js","./json":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/json.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_full.js":[function(require,module,exports){
+},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js","./json":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/json.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_full.js":[function(require,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -24678,7 +24649,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js","../type/js/function":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/js/function.js","../type/js/regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/js/regexp.js","../type/js/undefined":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/js/undefined.js","./default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js":[function(require,module,exports){
+},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js","../type/js/function":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/js/function.js","../type/js/regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/js/regexp.js","../type/js/undefined":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/js/undefined.js","./default_safe":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/default_safe.js":[function(require,module,exports){
 // JS-YAML's default schema for `safeLoad` function.
 // It is not described in the YAML specification.
 //
@@ -24708,7 +24679,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js","../type/binary":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/binary.js","../type/merge":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/merge.js","../type/omap":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/omap.js","../type/pairs":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/pairs.js","../type/set":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/set.js","../type/timestamp":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/timestamp.js","./core":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/core.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/failsafe.js":[function(require,module,exports){
+},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js","../type/binary":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/binary.js","../type/merge":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/merge.js","../type/omap":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/omap.js","../type/pairs":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/pairs.js","../type/set":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/set.js","../type/timestamp":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/timestamp.js","./core":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/core.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/failsafe.js":[function(require,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -24727,7 +24698,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js","../type/map":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/map.js","../type/seq":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/seq.js","../type/str":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/str.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/json.js":[function(require,module,exports){
+},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js","../type/map":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/map.js","../type/seq":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/seq.js","../type/str":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/str.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/json.js":[function(require,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -24754,7 +24725,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema.js","../type/bool":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/bool.js","../type/float":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/float.js","../type/int":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/int.js","../type/null":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/null.js","./failsafe":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/schema/failsafe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js":[function(require,module,exports){
+},{"../schema":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema.js","../type/bool":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/bool.js","../type/float":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/float.js","../type/int":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/int.js","../type/null":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/null.js","./failsafe":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/schema/failsafe.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js":[function(require,module,exports){
 'use strict';
 
 var YAMLException = require('./exception');
@@ -24817,7 +24788,7 @@ function Type(tag, options) {
 
 module.exports = Type;
 
-},{"./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/exception.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/binary.js":[function(require,module,exports){
+},{"./exception":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/exception.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/binary.js":[function(require,module,exports){
 'use strict';
 
 /*eslint-disable no-bitwise*/
@@ -24957,7 +24928,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
   represent: representYamlBinary
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/bool.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/bool.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -24994,7 +24965,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   defaultStyle: 'lowercase'
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/float.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/float.js":[function(require,module,exports){
 'use strict';
 
 var common = require('../common');
@@ -25112,7 +25083,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   defaultStyle: 'lowercase'
 });
 
-},{"../common":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js","../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/int.js":[function(require,module,exports){
+},{"../common":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js","../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/int.js":[function(require,module,exports){
 'use strict';
 
 var common = require('../common');
@@ -25287,7 +25258,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
   }
 });
 
-},{"../common":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/common.js","../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/js/function.js":[function(require,module,exports){
+},{"../common":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/common.js","../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/js/function.js":[function(require,module,exports){
 'use strict';
 
 var esprima;
@@ -25382,7 +25353,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   represent: representJavascriptFunction
 });
 
-},{"../../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/js/regexp.js":[function(require,module,exports){
+},{"../../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/js/regexp.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../../type');
@@ -25444,7 +25415,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
   represent: representJavascriptRegExp
 });
 
-},{"../../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/js/undefined.js":[function(require,module,exports){
+},{"../../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/js/undefined.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../../type');
@@ -25474,7 +25445,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   represent: representJavascriptUndefined
 });
 
-},{"../../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/map.js":[function(require,module,exports){
+},{"../../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/map.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25484,7 +25455,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   construct: function (data) { return data !== null ? data : {}; }
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/merge.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/merge.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25498,7 +25469,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   resolve: resolveYamlMerge
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/null.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/null.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25534,7 +25505,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   defaultStyle: 'lowercase'
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/omap.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/omap.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25580,7 +25551,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   construct: constructYamlOmap
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/pairs.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/pairs.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25635,7 +25606,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   construct: constructYamlPairs
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/seq.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/seq.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25645,7 +25616,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   construct: function (data) { return data !== null ? data : []; }
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/set.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/set.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25676,7 +25647,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   construct: constructYamlSet
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/str.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/str.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25686,7 +25657,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   construct: function (data) { return data !== null ? data : ''; }
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type/timestamp.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type/timestamp.js":[function(require,module,exports){
 'use strict';
 
 var Type = require('../type');
@@ -25776,7 +25747,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   represent: representYamlTimestamp
 });
 
-},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/json-schema-traverse/index.js":[function(require,module,exports){
+},{"../type":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/js-yaml/lib/js-yaml/type.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/json-schema-traverse/index.js":[function(require,module,exports){
 'use strict';
 
 var traverse = module.exports = function (schema, opts, cb) {
@@ -25867,7 +25838,7 @@ function escapeJsonPtr(str) {
   return str.replace(/~/g, '~0').replace(/\//g, '~1');
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lex/lexer.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lex/lexer.js":[function(require,module,exports){
 if (typeof module === "object" && typeof module.exports === "object") module.exports = Lexer;
 
 Lexer.defunct = function (chr) {
@@ -26015,7 +25986,7 @@ function Lexer(defunct) {
     }
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case-first/lower-case-first.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case-first/lower-case-first.js":[function(require,module,exports){
 var lowerCase = require('lower-case')
 
 /**
@@ -26034,7 +26005,7 @@ module.exports = function (str, locale) {
   return lowerCase(str.charAt(0), locale) + str.substr(1)
 }
 
-},{"lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case/lower-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case/lower-case.js":[function(require,module,exports){
+},{"lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case/lower-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case/lower-case.js":[function(require,module,exports){
 /**
  * Special language-specific overrides.
  *
@@ -26090,7 +26061,7 @@ module.exports = function (str, locale) {
   return str.toLowerCase()
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/nearley/lib/nearley.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/nearley/lib/nearley.js":[function(require,module,exports){
 (function(root, factory) {
     if (typeof module === 'object' && module.exports) {
         module.exports = factory();
@@ -26579,7 +26550,7 @@ module.exports = function (str, locale) {
 
 }));
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js":[function(require,module,exports){
 var lowerCase = require('lower-case')
 
 var NON_WORD_REGEXP = require('./vendor/non-word-regexp')
@@ -26621,16 +26592,16 @@ module.exports = function (str, locale, replacement) {
   return lowerCase(str, locale)
 }
 
-},{"./vendor/camel-case-regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/vendor/camel-case-regexp.js","./vendor/camel-case-upper-regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/vendor/camel-case-upper-regexp.js","./vendor/non-word-regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/vendor/non-word-regexp.js","lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case/lower-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/vendor/camel-case-regexp.js":[function(require,module,exports){
+},{"./vendor/camel-case-regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/vendor/camel-case-regexp.js","./vendor/camel-case-upper-regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/vendor/camel-case-upper-regexp.js","./vendor/non-word-regexp":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/vendor/non-word-regexp.js","lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case/lower-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/vendor/camel-case-regexp.js":[function(require,module,exports){
 module.exports = /([a-z\xB5\xDF-\xF6\xF8-\xFF\u0101\u0103\u0105\u0107\u0109\u010B\u010D\u010F\u0111\u0113\u0115\u0117\u0119\u011B\u011D\u011F\u0121\u0123\u0125\u0127\u0129\u012B\u012D\u012F\u0131\u0133\u0135\u0137\u0138\u013A\u013C\u013E\u0140\u0142\u0144\u0146\u0148\u0149\u014B\u014D\u014F\u0151\u0153\u0155\u0157\u0159\u015B\u015D\u015F\u0161\u0163\u0165\u0167\u0169\u016B\u016D\u016F\u0171\u0173\u0175\u0177\u017A\u017C\u017E-\u0180\u0183\u0185\u0188\u018C\u018D\u0192\u0195\u0199-\u019B\u019E\u01A1\u01A3\u01A5\u01A8\u01AA\u01AB\u01AD\u01B0\u01B4\u01B6\u01B9\u01BA\u01BD-\u01BF\u01C6\u01C9\u01CC\u01CE\u01D0\u01D2\u01D4\u01D6\u01D8\u01DA\u01DC\u01DD\u01DF\u01E1\u01E3\u01E5\u01E7\u01E9\u01EB\u01ED\u01EF\u01F0\u01F3\u01F5\u01F9\u01FB\u01FD\u01FF\u0201\u0203\u0205\u0207\u0209\u020B\u020D\u020F\u0211\u0213\u0215\u0217\u0219\u021B\u021D\u021F\u0221\u0223\u0225\u0227\u0229\u022B\u022D\u022F\u0231\u0233-\u0239\u023C\u023F\u0240\u0242\u0247\u0249\u024B\u024D\u024F-\u0293\u0295-\u02AF\u0371\u0373\u0377\u037B-\u037D\u0390\u03AC-\u03CE\u03D0\u03D1\u03D5-\u03D7\u03D9\u03DB\u03DD\u03DF\u03E1\u03E3\u03E5\u03E7\u03E9\u03EB\u03ED\u03EF-\u03F3\u03F5\u03F8\u03FB\u03FC\u0430-\u045F\u0461\u0463\u0465\u0467\u0469\u046B\u046D\u046F\u0471\u0473\u0475\u0477\u0479\u047B\u047D\u047F\u0481\u048B\u048D\u048F\u0491\u0493\u0495\u0497\u0499\u049B\u049D\u049F\u04A1\u04A3\u04A5\u04A7\u04A9\u04AB\u04AD\u04AF\u04B1\u04B3\u04B5\u04B7\u04B9\u04BB\u04BD\u04BF\u04C2\u04C4\u04C6\u04C8\u04CA\u04CC\u04CE\u04CF\u04D1\u04D3\u04D5\u04D7\u04D9\u04DB\u04DD\u04DF\u04E1\u04E3\u04E5\u04E7\u04E9\u04EB\u04ED\u04EF\u04F1\u04F3\u04F5\u04F7\u04F9\u04FB\u04FD\u04FF\u0501\u0503\u0505\u0507\u0509\u050B\u050D\u050F\u0511\u0513\u0515\u0517\u0519\u051B\u051D\u051F\u0521\u0523\u0525\u0527\u0529\u052B\u052D\u052F\u0561-\u0587\u13F8-\u13FD\u1D00-\u1D2B\u1D6B-\u1D77\u1D79-\u1D9A\u1E01\u1E03\u1E05\u1E07\u1E09\u1E0B\u1E0D\u1E0F\u1E11\u1E13\u1E15\u1E17\u1E19\u1E1B\u1E1D\u1E1F\u1E21\u1E23\u1E25\u1E27\u1E29\u1E2B\u1E2D\u1E2F\u1E31\u1E33\u1E35\u1E37\u1E39\u1E3B\u1E3D\u1E3F\u1E41\u1E43\u1E45\u1E47\u1E49\u1E4B\u1E4D\u1E4F\u1E51\u1E53\u1E55\u1E57\u1E59\u1E5B\u1E5D\u1E5F\u1E61\u1E63\u1E65\u1E67\u1E69\u1E6B\u1E6D\u1E6F\u1E71\u1E73\u1E75\u1E77\u1E79\u1E7B\u1E7D\u1E7F\u1E81\u1E83\u1E85\u1E87\u1E89\u1E8B\u1E8D\u1E8F\u1E91\u1E93\u1E95-\u1E9D\u1E9F\u1EA1\u1EA3\u1EA5\u1EA7\u1EA9\u1EAB\u1EAD\u1EAF\u1EB1\u1EB3\u1EB5\u1EB7\u1EB9\u1EBB\u1EBD\u1EBF\u1EC1\u1EC3\u1EC5\u1EC7\u1EC9\u1ECB\u1ECD\u1ECF\u1ED1\u1ED3\u1ED5\u1ED7\u1ED9\u1EDB\u1EDD\u1EDF\u1EE1\u1EE3\u1EE5\u1EE7\u1EE9\u1EEB\u1EED\u1EEF\u1EF1\u1EF3\u1EF5\u1EF7\u1EF9\u1EFB\u1EFD\u1EFF-\u1F07\u1F10-\u1F15\u1F20-\u1F27\u1F30-\u1F37\u1F40-\u1F45\u1F50-\u1F57\u1F60-\u1F67\u1F70-\u1F7D\u1F80-\u1F87\u1F90-\u1F97\u1FA0-\u1FA7\u1FB0-\u1FB4\u1FB6\u1FB7\u1FBE\u1FC2-\u1FC4\u1FC6\u1FC7\u1FD0-\u1FD3\u1FD6\u1FD7\u1FE0-\u1FE7\u1FF2-\u1FF4\u1FF6\u1FF7\u210A\u210E\u210F\u2113\u212F\u2134\u2139\u213C\u213D\u2146-\u2149\u214E\u2184\u2C30-\u2C5E\u2C61\u2C65\u2C66\u2C68\u2C6A\u2C6C\u2C71\u2C73\u2C74\u2C76-\u2C7B\u2C81\u2C83\u2C85\u2C87\u2C89\u2C8B\u2C8D\u2C8F\u2C91\u2C93\u2C95\u2C97\u2C99\u2C9B\u2C9D\u2C9F\u2CA1\u2CA3\u2CA5\u2CA7\u2CA9\u2CAB\u2CAD\u2CAF\u2CB1\u2CB3\u2CB5\u2CB7\u2CB9\u2CBB\u2CBD\u2CBF\u2CC1\u2CC3\u2CC5\u2CC7\u2CC9\u2CCB\u2CCD\u2CCF\u2CD1\u2CD3\u2CD5\u2CD7\u2CD9\u2CDB\u2CDD\u2CDF\u2CE1\u2CE3\u2CE4\u2CEC\u2CEE\u2CF3\u2D00-\u2D25\u2D27\u2D2D\uA641\uA643\uA645\uA647\uA649\uA64B\uA64D\uA64F\uA651\uA653\uA655\uA657\uA659\uA65B\uA65D\uA65F\uA661\uA663\uA665\uA667\uA669\uA66B\uA66D\uA681\uA683\uA685\uA687\uA689\uA68B\uA68D\uA68F\uA691\uA693\uA695\uA697\uA699\uA69B\uA723\uA725\uA727\uA729\uA72B\uA72D\uA72F-\uA731\uA733\uA735\uA737\uA739\uA73B\uA73D\uA73F\uA741\uA743\uA745\uA747\uA749\uA74B\uA74D\uA74F\uA751\uA753\uA755\uA757\uA759\uA75B\uA75D\uA75F\uA761\uA763\uA765\uA767\uA769\uA76B\uA76D\uA76F\uA771-\uA778\uA77A\uA77C\uA77F\uA781\uA783\uA785\uA787\uA78C\uA78E\uA791\uA793-\uA795\uA797\uA799\uA79B\uA79D\uA79F\uA7A1\uA7A3\uA7A5\uA7A7\uA7A9\uA7B5\uA7B7\uA7FA\uAB30-\uAB5A\uAB60-\uAB65\uAB70-\uABBF\uFB00-\uFB06\uFB13-\uFB17\uFF41-\uFF5A0-9\xB2\xB3\xB9\xBC-\xBE\u0660-\u0669\u06F0-\u06F9\u07C0-\u07C9\u0966-\u096F\u09E6-\u09EF\u09F4-\u09F9\u0A66-\u0A6F\u0AE6-\u0AEF\u0B66-\u0B6F\u0B72-\u0B77\u0BE6-\u0BF2\u0C66-\u0C6F\u0C78-\u0C7E\u0CE6-\u0CEF\u0D66-\u0D75\u0DE6-\u0DEF\u0E50-\u0E59\u0ED0-\u0ED9\u0F20-\u0F33\u1040-\u1049\u1090-\u1099\u1369-\u137C\u16EE-\u16F0\u17E0-\u17E9\u17F0-\u17F9\u1810-\u1819\u1946-\u194F\u19D0-\u19DA\u1A80-\u1A89\u1A90-\u1A99\u1B50-\u1B59\u1BB0-\u1BB9\u1C40-\u1C49\u1C50-\u1C59\u2070\u2074-\u2079\u2080-\u2089\u2150-\u2182\u2185-\u2189\u2460-\u249B\u24EA-\u24FF\u2776-\u2793\u2CFD\u3007\u3021-\u3029\u3038-\u303A\u3192-\u3195\u3220-\u3229\u3248-\u324F\u3251-\u325F\u3280-\u3289\u32B1-\u32BF\uA620-\uA629\uA6E6-\uA6EF\uA830-\uA835\uA8D0-\uA8D9\uA900-\uA909\uA9D0-\uA9D9\uA9F0-\uA9F9\uAA50-\uAA59\uABF0-\uABF9\uFF10-\uFF19])([A-Z\xC0-\xD6\xD8-\xDE\u0100\u0102\u0104\u0106\u0108\u010A\u010C\u010E\u0110\u0112\u0114\u0116\u0118\u011A\u011C\u011E\u0120\u0122\u0124\u0126\u0128\u012A\u012C\u012E\u0130\u0132\u0134\u0136\u0139\u013B\u013D\u013F\u0141\u0143\u0145\u0147\u014A\u014C\u014E\u0150\u0152\u0154\u0156\u0158\u015A\u015C\u015E\u0160\u0162\u0164\u0166\u0168\u016A\u016C\u016E\u0170\u0172\u0174\u0176\u0178\u0179\u017B\u017D\u0181\u0182\u0184\u0186\u0187\u0189-\u018B\u018E-\u0191\u0193\u0194\u0196-\u0198\u019C\u019D\u019F\u01A0\u01A2\u01A4\u01A6\u01A7\u01A9\u01AC\u01AE\u01AF\u01B1-\u01B3\u01B5\u01B7\u01B8\u01BC\u01C4\u01C7\u01CA\u01CD\u01CF\u01D1\u01D3\u01D5\u01D7\u01D9\u01DB\u01DE\u01E0\u01E2\u01E4\u01E6\u01E8\u01EA\u01EC\u01EE\u01F1\u01F4\u01F6-\u01F8\u01FA\u01FC\u01FE\u0200\u0202\u0204\u0206\u0208\u020A\u020C\u020E\u0210\u0212\u0214\u0216\u0218\u021A\u021C\u021E\u0220\u0222\u0224\u0226\u0228\u022A\u022C\u022E\u0230\u0232\u023A\u023B\u023D\u023E\u0241\u0243-\u0246\u0248\u024A\u024C\u024E\u0370\u0372\u0376\u037F\u0386\u0388-\u038A\u038C\u038E\u038F\u0391-\u03A1\u03A3-\u03AB\u03CF\u03D2-\u03D4\u03D8\u03DA\u03DC\u03DE\u03E0\u03E2\u03E4\u03E6\u03E8\u03EA\u03EC\u03EE\u03F4\u03F7\u03F9\u03FA\u03FD-\u042F\u0460\u0462\u0464\u0466\u0468\u046A\u046C\u046E\u0470\u0472\u0474\u0476\u0478\u047A\u047C\u047E\u0480\u048A\u048C\u048E\u0490\u0492\u0494\u0496\u0498\u049A\u049C\u049E\u04A0\u04A2\u04A4\u04A6\u04A8\u04AA\u04AC\u04AE\u04B0\u04B2\u04B4\u04B6\u04B8\u04BA\u04BC\u04BE\u04C0\u04C1\u04C3\u04C5\u04C7\u04C9\u04CB\u04CD\u04D0\u04D2\u04D4\u04D6\u04D8\u04DA\u04DC\u04DE\u04E0\u04E2\u04E4\u04E6\u04E8\u04EA\u04EC\u04EE\u04F0\u04F2\u04F4\u04F6\u04F8\u04FA\u04FC\u04FE\u0500\u0502\u0504\u0506\u0508\u050A\u050C\u050E\u0510\u0512\u0514\u0516\u0518\u051A\u051C\u051E\u0520\u0522\u0524\u0526\u0528\u052A\u052C\u052E\u0531-\u0556\u10A0-\u10C5\u10C7\u10CD\u13A0-\u13F5\u1E00\u1E02\u1E04\u1E06\u1E08\u1E0A\u1E0C\u1E0E\u1E10\u1E12\u1E14\u1E16\u1E18\u1E1A\u1E1C\u1E1E\u1E20\u1E22\u1E24\u1E26\u1E28\u1E2A\u1E2C\u1E2E\u1E30\u1E32\u1E34\u1E36\u1E38\u1E3A\u1E3C\u1E3E\u1E40\u1E42\u1E44\u1E46\u1E48\u1E4A\u1E4C\u1E4E\u1E50\u1E52\u1E54\u1E56\u1E58\u1E5A\u1E5C\u1E5E\u1E60\u1E62\u1E64\u1E66\u1E68\u1E6A\u1E6C\u1E6E\u1E70\u1E72\u1E74\u1E76\u1E78\u1E7A\u1E7C\u1E7E\u1E80\u1E82\u1E84\u1E86\u1E88\u1E8A\u1E8C\u1E8E\u1E90\u1E92\u1E94\u1E9E\u1EA0\u1EA2\u1EA4\u1EA6\u1EA8\u1EAA\u1EAC\u1EAE\u1EB0\u1EB2\u1EB4\u1EB6\u1EB8\u1EBA\u1EBC\u1EBE\u1EC0\u1EC2\u1EC4\u1EC6\u1EC8\u1ECA\u1ECC\u1ECE\u1ED0\u1ED2\u1ED4\u1ED6\u1ED8\u1EDA\u1EDC\u1EDE\u1EE0\u1EE2\u1EE4\u1EE6\u1EE8\u1EEA\u1EEC\u1EEE\u1EF0\u1EF2\u1EF4\u1EF6\u1EF8\u1EFA\u1EFC\u1EFE\u1F08-\u1F0F\u1F18-\u1F1D\u1F28-\u1F2F\u1F38-\u1F3F\u1F48-\u1F4D\u1F59\u1F5B\u1F5D\u1F5F\u1F68-\u1F6F\u1FB8-\u1FBB\u1FC8-\u1FCB\u1FD8-\u1FDB\u1FE8-\u1FEC\u1FF8-\u1FFB\u2102\u2107\u210B-\u210D\u2110-\u2112\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u2130-\u2133\u213E\u213F\u2145\u2183\u2C00-\u2C2E\u2C60\u2C62-\u2C64\u2C67\u2C69\u2C6B\u2C6D-\u2C70\u2C72\u2C75\u2C7E-\u2C80\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0\u2CE2\u2CEB\u2CED\u2CF2\uA640\uA642\uA644\uA646\uA648\uA64A\uA64C\uA64E\uA650\uA652\uA654\uA656\uA658\uA65A\uA65C\uA65E\uA660\uA662\uA664\uA666\uA668\uA66A\uA66C\uA680\uA682\uA684\uA686\uA688\uA68A\uA68C\uA68E\uA690\uA692\uA694\uA696\uA698\uA69A\uA722\uA724\uA726\uA728\uA72A\uA72C\uA72E\uA732\uA734\uA736\uA738\uA73A\uA73C\uA73E\uA740\uA742\uA744\uA746\uA748\uA74A\uA74C\uA74E\uA750\uA752\uA754\uA756\uA758\uA75A\uA75C\uA75E\uA760\uA762\uA764\uA766\uA768\uA76A\uA76C\uA76E\uA779\uA77B\uA77D\uA77E\uA780\uA782\uA784\uA786\uA78B\uA78D\uA790\uA792\uA796\uA798\uA79A\uA79C\uA79E\uA7A0\uA7A2\uA7A4\uA7A6\uA7A8\uA7AA-\uA7AD\uA7B0-\uA7B4\uA7B6\uFF21-\uFF3A])/g
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/vendor/camel-case-upper-regexp.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/vendor/camel-case-upper-regexp.js":[function(require,module,exports){
 module.exports = /([A-Z\xC0-\xD6\xD8-\xDE\u0100\u0102\u0104\u0106\u0108\u010A\u010C\u010E\u0110\u0112\u0114\u0116\u0118\u011A\u011C\u011E\u0120\u0122\u0124\u0126\u0128\u012A\u012C\u012E\u0130\u0132\u0134\u0136\u0139\u013B\u013D\u013F\u0141\u0143\u0145\u0147\u014A\u014C\u014E\u0150\u0152\u0154\u0156\u0158\u015A\u015C\u015E\u0160\u0162\u0164\u0166\u0168\u016A\u016C\u016E\u0170\u0172\u0174\u0176\u0178\u0179\u017B\u017D\u0181\u0182\u0184\u0186\u0187\u0189-\u018B\u018E-\u0191\u0193\u0194\u0196-\u0198\u019C\u019D\u019F\u01A0\u01A2\u01A4\u01A6\u01A7\u01A9\u01AC\u01AE\u01AF\u01B1-\u01B3\u01B5\u01B7\u01B8\u01BC\u01C4\u01C7\u01CA\u01CD\u01CF\u01D1\u01D3\u01D5\u01D7\u01D9\u01DB\u01DE\u01E0\u01E2\u01E4\u01E6\u01E8\u01EA\u01EC\u01EE\u01F1\u01F4\u01F6-\u01F8\u01FA\u01FC\u01FE\u0200\u0202\u0204\u0206\u0208\u020A\u020C\u020E\u0210\u0212\u0214\u0216\u0218\u021A\u021C\u021E\u0220\u0222\u0224\u0226\u0228\u022A\u022C\u022E\u0230\u0232\u023A\u023B\u023D\u023E\u0241\u0243-\u0246\u0248\u024A\u024C\u024E\u0370\u0372\u0376\u037F\u0386\u0388-\u038A\u038C\u038E\u038F\u0391-\u03A1\u03A3-\u03AB\u03CF\u03D2-\u03D4\u03D8\u03DA\u03DC\u03DE\u03E0\u03E2\u03E4\u03E6\u03E8\u03EA\u03EC\u03EE\u03F4\u03F7\u03F9\u03FA\u03FD-\u042F\u0460\u0462\u0464\u0466\u0468\u046A\u046C\u046E\u0470\u0472\u0474\u0476\u0478\u047A\u047C\u047E\u0480\u048A\u048C\u048E\u0490\u0492\u0494\u0496\u0498\u049A\u049C\u049E\u04A0\u04A2\u04A4\u04A6\u04A8\u04AA\u04AC\u04AE\u04B0\u04B2\u04B4\u04B6\u04B8\u04BA\u04BC\u04BE\u04C0\u04C1\u04C3\u04C5\u04C7\u04C9\u04CB\u04CD\u04D0\u04D2\u04D4\u04D6\u04D8\u04DA\u04DC\u04DE\u04E0\u04E2\u04E4\u04E6\u04E8\u04EA\u04EC\u04EE\u04F0\u04F2\u04F4\u04F6\u04F8\u04FA\u04FC\u04FE\u0500\u0502\u0504\u0506\u0508\u050A\u050C\u050E\u0510\u0512\u0514\u0516\u0518\u051A\u051C\u051E\u0520\u0522\u0524\u0526\u0528\u052A\u052C\u052E\u0531-\u0556\u10A0-\u10C5\u10C7\u10CD\u13A0-\u13F5\u1E00\u1E02\u1E04\u1E06\u1E08\u1E0A\u1E0C\u1E0E\u1E10\u1E12\u1E14\u1E16\u1E18\u1E1A\u1E1C\u1E1E\u1E20\u1E22\u1E24\u1E26\u1E28\u1E2A\u1E2C\u1E2E\u1E30\u1E32\u1E34\u1E36\u1E38\u1E3A\u1E3C\u1E3E\u1E40\u1E42\u1E44\u1E46\u1E48\u1E4A\u1E4C\u1E4E\u1E50\u1E52\u1E54\u1E56\u1E58\u1E5A\u1E5C\u1E5E\u1E60\u1E62\u1E64\u1E66\u1E68\u1E6A\u1E6C\u1E6E\u1E70\u1E72\u1E74\u1E76\u1E78\u1E7A\u1E7C\u1E7E\u1E80\u1E82\u1E84\u1E86\u1E88\u1E8A\u1E8C\u1E8E\u1E90\u1E92\u1E94\u1E9E\u1EA0\u1EA2\u1EA4\u1EA6\u1EA8\u1EAA\u1EAC\u1EAE\u1EB0\u1EB2\u1EB4\u1EB6\u1EB8\u1EBA\u1EBC\u1EBE\u1EC0\u1EC2\u1EC4\u1EC6\u1EC8\u1ECA\u1ECC\u1ECE\u1ED0\u1ED2\u1ED4\u1ED6\u1ED8\u1EDA\u1EDC\u1EDE\u1EE0\u1EE2\u1EE4\u1EE6\u1EE8\u1EEA\u1EEC\u1EEE\u1EF0\u1EF2\u1EF4\u1EF6\u1EF8\u1EFA\u1EFC\u1EFE\u1F08-\u1F0F\u1F18-\u1F1D\u1F28-\u1F2F\u1F38-\u1F3F\u1F48-\u1F4D\u1F59\u1F5B\u1F5D\u1F5F\u1F68-\u1F6F\u1FB8-\u1FBB\u1FC8-\u1FCB\u1FD8-\u1FDB\u1FE8-\u1FEC\u1FF8-\u1FFB\u2102\u2107\u210B-\u210D\u2110-\u2112\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u2130-\u2133\u213E\u213F\u2145\u2183\u2C00-\u2C2E\u2C60\u2C62-\u2C64\u2C67\u2C69\u2C6B\u2C6D-\u2C70\u2C72\u2C75\u2C7E-\u2C80\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0\u2CE2\u2CEB\u2CED\u2CF2\uA640\uA642\uA644\uA646\uA648\uA64A\uA64C\uA64E\uA650\uA652\uA654\uA656\uA658\uA65A\uA65C\uA65E\uA660\uA662\uA664\uA666\uA668\uA66A\uA66C\uA680\uA682\uA684\uA686\uA688\uA68A\uA68C\uA68E\uA690\uA692\uA694\uA696\uA698\uA69A\uA722\uA724\uA726\uA728\uA72A\uA72C\uA72E\uA732\uA734\uA736\uA738\uA73A\uA73C\uA73E\uA740\uA742\uA744\uA746\uA748\uA74A\uA74C\uA74E\uA750\uA752\uA754\uA756\uA758\uA75A\uA75C\uA75E\uA760\uA762\uA764\uA766\uA768\uA76A\uA76C\uA76E\uA779\uA77B\uA77D\uA77E\uA780\uA782\uA784\uA786\uA78B\uA78D\uA790\uA792\uA796\uA798\uA79A\uA79C\uA79E\uA7A0\uA7A2\uA7A4\uA7A6\uA7A8\uA7AA-\uA7AD\uA7B0-\uA7B4\uA7B6\uFF21-\uFF3A])([A-Z\xC0-\xD6\xD8-\xDE\u0100\u0102\u0104\u0106\u0108\u010A\u010C\u010E\u0110\u0112\u0114\u0116\u0118\u011A\u011C\u011E\u0120\u0122\u0124\u0126\u0128\u012A\u012C\u012E\u0130\u0132\u0134\u0136\u0139\u013B\u013D\u013F\u0141\u0143\u0145\u0147\u014A\u014C\u014E\u0150\u0152\u0154\u0156\u0158\u015A\u015C\u015E\u0160\u0162\u0164\u0166\u0168\u016A\u016C\u016E\u0170\u0172\u0174\u0176\u0178\u0179\u017B\u017D\u0181\u0182\u0184\u0186\u0187\u0189-\u018B\u018E-\u0191\u0193\u0194\u0196-\u0198\u019C\u019D\u019F\u01A0\u01A2\u01A4\u01A6\u01A7\u01A9\u01AC\u01AE\u01AF\u01B1-\u01B3\u01B5\u01B7\u01B8\u01BC\u01C4\u01C7\u01CA\u01CD\u01CF\u01D1\u01D3\u01D5\u01D7\u01D9\u01DB\u01DE\u01E0\u01E2\u01E4\u01E6\u01E8\u01EA\u01EC\u01EE\u01F1\u01F4\u01F6-\u01F8\u01FA\u01FC\u01FE\u0200\u0202\u0204\u0206\u0208\u020A\u020C\u020E\u0210\u0212\u0214\u0216\u0218\u021A\u021C\u021E\u0220\u0222\u0224\u0226\u0228\u022A\u022C\u022E\u0230\u0232\u023A\u023B\u023D\u023E\u0241\u0243-\u0246\u0248\u024A\u024C\u024E\u0370\u0372\u0376\u037F\u0386\u0388-\u038A\u038C\u038E\u038F\u0391-\u03A1\u03A3-\u03AB\u03CF\u03D2-\u03D4\u03D8\u03DA\u03DC\u03DE\u03E0\u03E2\u03E4\u03E6\u03E8\u03EA\u03EC\u03EE\u03F4\u03F7\u03F9\u03FA\u03FD-\u042F\u0460\u0462\u0464\u0466\u0468\u046A\u046C\u046E\u0470\u0472\u0474\u0476\u0478\u047A\u047C\u047E\u0480\u048A\u048C\u048E\u0490\u0492\u0494\u0496\u0498\u049A\u049C\u049E\u04A0\u04A2\u04A4\u04A6\u04A8\u04AA\u04AC\u04AE\u04B0\u04B2\u04B4\u04B6\u04B8\u04BA\u04BC\u04BE\u04C0\u04C1\u04C3\u04C5\u04C7\u04C9\u04CB\u04CD\u04D0\u04D2\u04D4\u04D6\u04D8\u04DA\u04DC\u04DE\u04E0\u04E2\u04E4\u04E6\u04E8\u04EA\u04EC\u04EE\u04F0\u04F2\u04F4\u04F6\u04F8\u04FA\u04FC\u04FE\u0500\u0502\u0504\u0506\u0508\u050A\u050C\u050E\u0510\u0512\u0514\u0516\u0518\u051A\u051C\u051E\u0520\u0522\u0524\u0526\u0528\u052A\u052C\u052E\u0531-\u0556\u10A0-\u10C5\u10C7\u10CD\u13A0-\u13F5\u1E00\u1E02\u1E04\u1E06\u1E08\u1E0A\u1E0C\u1E0E\u1E10\u1E12\u1E14\u1E16\u1E18\u1E1A\u1E1C\u1E1E\u1E20\u1E22\u1E24\u1E26\u1E28\u1E2A\u1E2C\u1E2E\u1E30\u1E32\u1E34\u1E36\u1E38\u1E3A\u1E3C\u1E3E\u1E40\u1E42\u1E44\u1E46\u1E48\u1E4A\u1E4C\u1E4E\u1E50\u1E52\u1E54\u1E56\u1E58\u1E5A\u1E5C\u1E5E\u1E60\u1E62\u1E64\u1E66\u1E68\u1E6A\u1E6C\u1E6E\u1E70\u1E72\u1E74\u1E76\u1E78\u1E7A\u1E7C\u1E7E\u1E80\u1E82\u1E84\u1E86\u1E88\u1E8A\u1E8C\u1E8E\u1E90\u1E92\u1E94\u1E9E\u1EA0\u1EA2\u1EA4\u1EA6\u1EA8\u1EAA\u1EAC\u1EAE\u1EB0\u1EB2\u1EB4\u1EB6\u1EB8\u1EBA\u1EBC\u1EBE\u1EC0\u1EC2\u1EC4\u1EC6\u1EC8\u1ECA\u1ECC\u1ECE\u1ED0\u1ED2\u1ED4\u1ED6\u1ED8\u1EDA\u1EDC\u1EDE\u1EE0\u1EE2\u1EE4\u1EE6\u1EE8\u1EEA\u1EEC\u1EEE\u1EF0\u1EF2\u1EF4\u1EF6\u1EF8\u1EFA\u1EFC\u1EFE\u1F08-\u1F0F\u1F18-\u1F1D\u1F28-\u1F2F\u1F38-\u1F3F\u1F48-\u1F4D\u1F59\u1F5B\u1F5D\u1F5F\u1F68-\u1F6F\u1FB8-\u1FBB\u1FC8-\u1FCB\u1FD8-\u1FDB\u1FE8-\u1FEC\u1FF8-\u1FFB\u2102\u2107\u210B-\u210D\u2110-\u2112\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u2130-\u2133\u213E\u213F\u2145\u2183\u2C00-\u2C2E\u2C60\u2C62-\u2C64\u2C67\u2C69\u2C6B\u2C6D-\u2C70\u2C72\u2C75\u2C7E-\u2C80\u2C82\u2C84\u2C86\u2C88\u2C8A\u2C8C\u2C8E\u2C90\u2C92\u2C94\u2C96\u2C98\u2C9A\u2C9C\u2C9E\u2CA0\u2CA2\u2CA4\u2CA6\u2CA8\u2CAA\u2CAC\u2CAE\u2CB0\u2CB2\u2CB4\u2CB6\u2CB8\u2CBA\u2CBC\u2CBE\u2CC0\u2CC2\u2CC4\u2CC6\u2CC8\u2CCA\u2CCC\u2CCE\u2CD0\u2CD2\u2CD4\u2CD6\u2CD8\u2CDA\u2CDC\u2CDE\u2CE0\u2CE2\u2CEB\u2CED\u2CF2\uA640\uA642\uA644\uA646\uA648\uA64A\uA64C\uA64E\uA650\uA652\uA654\uA656\uA658\uA65A\uA65C\uA65E\uA660\uA662\uA664\uA666\uA668\uA66A\uA66C\uA680\uA682\uA684\uA686\uA688\uA68A\uA68C\uA68E\uA690\uA692\uA694\uA696\uA698\uA69A\uA722\uA724\uA726\uA728\uA72A\uA72C\uA72E\uA732\uA734\uA736\uA738\uA73A\uA73C\uA73E\uA740\uA742\uA744\uA746\uA748\uA74A\uA74C\uA74E\uA750\uA752\uA754\uA756\uA758\uA75A\uA75C\uA75E\uA760\uA762\uA764\uA766\uA768\uA76A\uA76C\uA76E\uA779\uA77B\uA77D\uA77E\uA780\uA782\uA784\uA786\uA78B\uA78D\uA790\uA792\uA796\uA798\uA79A\uA79C\uA79E\uA7A0\uA7A2\uA7A4\uA7A6\uA7A8\uA7AA-\uA7AD\uA7B0-\uA7B4\uA7B6\uFF21-\uFF3A][a-z\xB5\xDF-\xF6\xF8-\xFF\u0101\u0103\u0105\u0107\u0109\u010B\u010D\u010F\u0111\u0113\u0115\u0117\u0119\u011B\u011D\u011F\u0121\u0123\u0125\u0127\u0129\u012B\u012D\u012F\u0131\u0133\u0135\u0137\u0138\u013A\u013C\u013E\u0140\u0142\u0144\u0146\u0148\u0149\u014B\u014D\u014F\u0151\u0153\u0155\u0157\u0159\u015B\u015D\u015F\u0161\u0163\u0165\u0167\u0169\u016B\u016D\u016F\u0171\u0173\u0175\u0177\u017A\u017C\u017E-\u0180\u0183\u0185\u0188\u018C\u018D\u0192\u0195\u0199-\u019B\u019E\u01A1\u01A3\u01A5\u01A8\u01AA\u01AB\u01AD\u01B0\u01B4\u01B6\u01B9\u01BA\u01BD-\u01BF\u01C6\u01C9\u01CC\u01CE\u01D0\u01D2\u01D4\u01D6\u01D8\u01DA\u01DC\u01DD\u01DF\u01E1\u01E3\u01E5\u01E7\u01E9\u01EB\u01ED\u01EF\u01F0\u01F3\u01F5\u01F9\u01FB\u01FD\u01FF\u0201\u0203\u0205\u0207\u0209\u020B\u020D\u020F\u0211\u0213\u0215\u0217\u0219\u021B\u021D\u021F\u0221\u0223\u0225\u0227\u0229\u022B\u022D\u022F\u0231\u0233-\u0239\u023C\u023F\u0240\u0242\u0247\u0249\u024B\u024D\u024F-\u0293\u0295-\u02AF\u0371\u0373\u0377\u037B-\u037D\u0390\u03AC-\u03CE\u03D0\u03D1\u03D5-\u03D7\u03D9\u03DB\u03DD\u03DF\u03E1\u03E3\u03E5\u03E7\u03E9\u03EB\u03ED\u03EF-\u03F3\u03F5\u03F8\u03FB\u03FC\u0430-\u045F\u0461\u0463\u0465\u0467\u0469\u046B\u046D\u046F\u0471\u0473\u0475\u0477\u0479\u047B\u047D\u047F\u0481\u048B\u048D\u048F\u0491\u0493\u0495\u0497\u0499\u049B\u049D\u049F\u04A1\u04A3\u04A5\u04A7\u04A9\u04AB\u04AD\u04AF\u04B1\u04B3\u04B5\u04B7\u04B9\u04BB\u04BD\u04BF\u04C2\u04C4\u04C6\u04C8\u04CA\u04CC\u04CE\u04CF\u04D1\u04D3\u04D5\u04D7\u04D9\u04DB\u04DD\u04DF\u04E1\u04E3\u04E5\u04E7\u04E9\u04EB\u04ED\u04EF\u04F1\u04F3\u04F5\u04F7\u04F9\u04FB\u04FD\u04FF\u0501\u0503\u0505\u0507\u0509\u050B\u050D\u050F\u0511\u0513\u0515\u0517\u0519\u051B\u051D\u051F\u0521\u0523\u0525\u0527\u0529\u052B\u052D\u052F\u0561-\u0587\u13F8-\u13FD\u1D00-\u1D2B\u1D6B-\u1D77\u1D79-\u1D9A\u1E01\u1E03\u1E05\u1E07\u1E09\u1E0B\u1E0D\u1E0F\u1E11\u1E13\u1E15\u1E17\u1E19\u1E1B\u1E1D\u1E1F\u1E21\u1E23\u1E25\u1E27\u1E29\u1E2B\u1E2D\u1E2F\u1E31\u1E33\u1E35\u1E37\u1E39\u1E3B\u1E3D\u1E3F\u1E41\u1E43\u1E45\u1E47\u1E49\u1E4B\u1E4D\u1E4F\u1E51\u1E53\u1E55\u1E57\u1E59\u1E5B\u1E5D\u1E5F\u1E61\u1E63\u1E65\u1E67\u1E69\u1E6B\u1E6D\u1E6F\u1E71\u1E73\u1E75\u1E77\u1E79\u1E7B\u1E7D\u1E7F\u1E81\u1E83\u1E85\u1E87\u1E89\u1E8B\u1E8D\u1E8F\u1E91\u1E93\u1E95-\u1E9D\u1E9F\u1EA1\u1EA3\u1EA5\u1EA7\u1EA9\u1EAB\u1EAD\u1EAF\u1EB1\u1EB3\u1EB5\u1EB7\u1EB9\u1EBB\u1EBD\u1EBF\u1EC1\u1EC3\u1EC5\u1EC7\u1EC9\u1ECB\u1ECD\u1ECF\u1ED1\u1ED3\u1ED5\u1ED7\u1ED9\u1EDB\u1EDD\u1EDF\u1EE1\u1EE3\u1EE5\u1EE7\u1EE9\u1EEB\u1EED\u1EEF\u1EF1\u1EF3\u1EF5\u1EF7\u1EF9\u1EFB\u1EFD\u1EFF-\u1F07\u1F10-\u1F15\u1F20-\u1F27\u1F30-\u1F37\u1F40-\u1F45\u1F50-\u1F57\u1F60-\u1F67\u1F70-\u1F7D\u1F80-\u1F87\u1F90-\u1F97\u1FA0-\u1FA7\u1FB0-\u1FB4\u1FB6\u1FB7\u1FBE\u1FC2-\u1FC4\u1FC6\u1FC7\u1FD0-\u1FD3\u1FD6\u1FD7\u1FE0-\u1FE7\u1FF2-\u1FF4\u1FF6\u1FF7\u210A\u210E\u210F\u2113\u212F\u2134\u2139\u213C\u213D\u2146-\u2149\u214E\u2184\u2C30-\u2C5E\u2C61\u2C65\u2C66\u2C68\u2C6A\u2C6C\u2C71\u2C73\u2C74\u2C76-\u2C7B\u2C81\u2C83\u2C85\u2C87\u2C89\u2C8B\u2C8D\u2C8F\u2C91\u2C93\u2C95\u2C97\u2C99\u2C9B\u2C9D\u2C9F\u2CA1\u2CA3\u2CA5\u2CA7\u2CA9\u2CAB\u2CAD\u2CAF\u2CB1\u2CB3\u2CB5\u2CB7\u2CB9\u2CBB\u2CBD\u2CBF\u2CC1\u2CC3\u2CC5\u2CC7\u2CC9\u2CCB\u2CCD\u2CCF\u2CD1\u2CD3\u2CD5\u2CD7\u2CD9\u2CDB\u2CDD\u2CDF\u2CE1\u2CE3\u2CE4\u2CEC\u2CEE\u2CF3\u2D00-\u2D25\u2D27\u2D2D\uA641\uA643\uA645\uA647\uA649\uA64B\uA64D\uA64F\uA651\uA653\uA655\uA657\uA659\uA65B\uA65D\uA65F\uA661\uA663\uA665\uA667\uA669\uA66B\uA66D\uA681\uA683\uA685\uA687\uA689\uA68B\uA68D\uA68F\uA691\uA693\uA695\uA697\uA699\uA69B\uA723\uA725\uA727\uA729\uA72B\uA72D\uA72F-\uA731\uA733\uA735\uA737\uA739\uA73B\uA73D\uA73F\uA741\uA743\uA745\uA747\uA749\uA74B\uA74D\uA74F\uA751\uA753\uA755\uA757\uA759\uA75B\uA75D\uA75F\uA761\uA763\uA765\uA767\uA769\uA76B\uA76D\uA76F\uA771-\uA778\uA77A\uA77C\uA77F\uA781\uA783\uA785\uA787\uA78C\uA78E\uA791\uA793-\uA795\uA797\uA799\uA79B\uA79D\uA79F\uA7A1\uA7A3\uA7A5\uA7A7\uA7A9\uA7B5\uA7B7\uA7FA\uAB30-\uAB5A\uAB60-\uAB65\uAB70-\uABBF\uFB00-\uFB06\uFB13-\uFB17\uFF41-\uFF5A])/g
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/vendor/non-word-regexp.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/vendor/non-word-regexp.js":[function(require,module,exports){
 module.exports = /[^A-Za-z\xAA\xB5\xBA\xC0-\xD6\xD8-\xF6\xF8-\u02C1\u02C6-\u02D1\u02E0-\u02E4\u02EC\u02EE\u0370-\u0374\u0376\u0377\u037A-\u037D\u037F\u0386\u0388-\u038A\u038C\u038E-\u03A1\u03A3-\u03F5\u03F7-\u0481\u048A-\u052F\u0531-\u0556\u0559\u0561-\u0587\u05D0-\u05EA\u05F0-\u05F2\u0620-\u064A\u066E\u066F\u0671-\u06D3\u06D5\u06E5\u06E6\u06EE\u06EF\u06FA-\u06FC\u06FF\u0710\u0712-\u072F\u074D-\u07A5\u07B1\u07CA-\u07EA\u07F4\u07F5\u07FA\u0800-\u0815\u081A\u0824\u0828\u0840-\u0858\u08A0-\u08B4\u0904-\u0939\u093D\u0950\u0958-\u0961\u0971-\u0980\u0985-\u098C\u098F\u0990\u0993-\u09A8\u09AA-\u09B0\u09B2\u09B6-\u09B9\u09BD\u09CE\u09DC\u09DD\u09DF-\u09E1\u09F0\u09F1\u0A05-\u0A0A\u0A0F\u0A10\u0A13-\u0A28\u0A2A-\u0A30\u0A32\u0A33\u0A35\u0A36\u0A38\u0A39\u0A59-\u0A5C\u0A5E\u0A72-\u0A74\u0A85-\u0A8D\u0A8F-\u0A91\u0A93-\u0AA8\u0AAA-\u0AB0\u0AB2\u0AB3\u0AB5-\u0AB9\u0ABD\u0AD0\u0AE0\u0AE1\u0AF9\u0B05-\u0B0C\u0B0F\u0B10\u0B13-\u0B28\u0B2A-\u0B30\u0B32\u0B33\u0B35-\u0B39\u0B3D\u0B5C\u0B5D\u0B5F-\u0B61\u0B71\u0B83\u0B85-\u0B8A\u0B8E-\u0B90\u0B92-\u0B95\u0B99\u0B9A\u0B9C\u0B9E\u0B9F\u0BA3\u0BA4\u0BA8-\u0BAA\u0BAE-\u0BB9\u0BD0\u0C05-\u0C0C\u0C0E-\u0C10\u0C12-\u0C28\u0C2A-\u0C39\u0C3D\u0C58-\u0C5A\u0C60\u0C61\u0C85-\u0C8C\u0C8E-\u0C90\u0C92-\u0CA8\u0CAA-\u0CB3\u0CB5-\u0CB9\u0CBD\u0CDE\u0CE0\u0CE1\u0CF1\u0CF2\u0D05-\u0D0C\u0D0E-\u0D10\u0D12-\u0D3A\u0D3D\u0D4E\u0D5F-\u0D61\u0D7A-\u0D7F\u0D85-\u0D96\u0D9A-\u0DB1\u0DB3-\u0DBB\u0DBD\u0DC0-\u0DC6\u0E01-\u0E30\u0E32\u0E33\u0E40-\u0E46\u0E81\u0E82\u0E84\u0E87\u0E88\u0E8A\u0E8D\u0E94-\u0E97\u0E99-\u0E9F\u0EA1-\u0EA3\u0EA5\u0EA7\u0EAA\u0EAB\u0EAD-\u0EB0\u0EB2\u0EB3\u0EBD\u0EC0-\u0EC4\u0EC6\u0EDC-\u0EDF\u0F00\u0F40-\u0F47\u0F49-\u0F6C\u0F88-\u0F8C\u1000-\u102A\u103F\u1050-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081\u108E\u10A0-\u10C5\u10C7\u10CD\u10D0-\u10FA\u10FC-\u1248\u124A-\u124D\u1250-\u1256\u1258\u125A-\u125D\u1260-\u1288\u128A-\u128D\u1290-\u12B0\u12B2-\u12B5\u12B8-\u12BE\u12C0\u12C2-\u12C5\u12C8-\u12D6\u12D8-\u1310\u1312-\u1315\u1318-\u135A\u1380-\u138F\u13A0-\u13F5\u13F8-\u13FD\u1401-\u166C\u166F-\u167F\u1681-\u169A\u16A0-\u16EA\u16F1-\u16F8\u1700-\u170C\u170E-\u1711\u1720-\u1731\u1740-\u1751\u1760-\u176C\u176E-\u1770\u1780-\u17B3\u17D7\u17DC\u1820-\u1877\u1880-\u18A8\u18AA\u18B0-\u18F5\u1900-\u191E\u1950-\u196D\u1970-\u1974\u1980-\u19AB\u19B0-\u19C9\u1A00-\u1A16\u1A20-\u1A54\u1AA7\u1B05-\u1B33\u1B45-\u1B4B\u1B83-\u1BA0\u1BAE\u1BAF\u1BBA-\u1BE5\u1C00-\u1C23\u1C4D-\u1C4F\u1C5A-\u1C7D\u1CE9-\u1CEC\u1CEE-\u1CF1\u1CF5\u1CF6\u1D00-\u1DBF\u1E00-\u1F15\u1F18-\u1F1D\u1F20-\u1F45\u1F48-\u1F4D\u1F50-\u1F57\u1F59\u1F5B\u1F5D\u1F5F-\u1F7D\u1F80-\u1FB4\u1FB6-\u1FBC\u1FBE\u1FC2-\u1FC4\u1FC6-\u1FCC\u1FD0-\u1FD3\u1FD6-\u1FDB\u1FE0-\u1FEC\u1FF2-\u1FF4\u1FF6-\u1FFC\u2071\u207F\u2090-\u209C\u2102\u2107\u210A-\u2113\u2115\u2119-\u211D\u2124\u2126\u2128\u212A-\u212D\u212F-\u2139\u213C-\u213F\u2145-\u2149\u214E\u2183\u2184\u2C00-\u2C2E\u2C30-\u2C5E\u2C60-\u2CE4\u2CEB-\u2CEE\u2CF2\u2CF3\u2D00-\u2D25\u2D27\u2D2D\u2D30-\u2D67\u2D6F\u2D80-\u2D96\u2DA0-\u2DA6\u2DA8-\u2DAE\u2DB0-\u2DB6\u2DB8-\u2DBE\u2DC0-\u2DC6\u2DC8-\u2DCE\u2DD0-\u2DD6\u2DD8-\u2DDE\u2E2F\u3005\u3006\u3031-\u3035\u303B\u303C\u3041-\u3096\u309D-\u309F\u30A1-\u30FA\u30FC-\u30FF\u3105-\u312D\u3131-\u318E\u31A0-\u31BA\u31F0-\u31FF\u3400-\u4DB5\u4E00-\u9FD5\uA000-\uA48C\uA4D0-\uA4FD\uA500-\uA60C\uA610-\uA61F\uA62A\uA62B\uA640-\uA66E\uA67F-\uA69D\uA6A0-\uA6E5\uA717-\uA71F\uA722-\uA788\uA78B-\uA7AD\uA7B0-\uA7B7\uA7F7-\uA801\uA803-\uA805\uA807-\uA80A\uA80C-\uA822\uA840-\uA873\uA882-\uA8B3\uA8F2-\uA8F7\uA8FB\uA8FD\uA90A-\uA925\uA930-\uA946\uA960-\uA97C\uA984-\uA9B2\uA9CF\uA9E0-\uA9E4\uA9E6-\uA9EF\uA9FA-\uA9FE\uAA00-\uAA28\uAA40-\uAA42\uAA44-\uAA4B\uAA60-\uAA76\uAA7A\uAA7E-\uAAAF\uAAB1\uAAB5\uAAB6\uAAB9-\uAABD\uAAC0\uAAC2\uAADB-\uAADD\uAAE0-\uAAEA\uAAF2-\uAAF4\uAB01-\uAB06\uAB09-\uAB0E\uAB11-\uAB16\uAB20-\uAB26\uAB28-\uAB2E\uAB30-\uAB5A\uAB5C-\uAB65\uAB70-\uABE2\uAC00-\uD7A3\uD7B0-\uD7C6\uD7CB-\uD7FB\uF900-\uFA6D\uFA70-\uFAD9\uFB00-\uFB06\uFB13-\uFB17\uFB1D\uFB1F-\uFB28\uFB2A-\uFB36\uFB38-\uFB3C\uFB3E\uFB40\uFB41\uFB43\uFB44\uFB46-\uFBB1\uFBD3-\uFD3D\uFD50-\uFD8F\uFD92-\uFDC7\uFDF0-\uFDFB\uFE70-\uFE74\uFE76-\uFEFC\uFF21-\uFF3A\uFF41-\uFF5A\uFF66-\uFFBE\uFFC2-\uFFC7\uFFCA-\uFFCF\uFFD2-\uFFD7\uFFDA-\uFFDC0-9\xB2\xB3\xB9\xBC-\xBE\u0660-\u0669\u06F0-\u06F9\u07C0-\u07C9\u0966-\u096F\u09E6-\u09EF\u09F4-\u09F9\u0A66-\u0A6F\u0AE6-\u0AEF\u0B66-\u0B6F\u0B72-\u0B77\u0BE6-\u0BF2\u0C66-\u0C6F\u0C78-\u0C7E\u0CE6-\u0CEF\u0D66-\u0D75\u0DE6-\u0DEF\u0E50-\u0E59\u0ED0-\u0ED9\u0F20-\u0F33\u1040-\u1049\u1090-\u1099\u1369-\u137C\u16EE-\u16F0\u17E0-\u17E9\u17F0-\u17F9\u1810-\u1819\u1946-\u194F\u19D0-\u19DA\u1A80-\u1A89\u1A90-\u1A99\u1B50-\u1B59\u1BB0-\u1BB9\u1C40-\u1C49\u1C50-\u1C59\u2070\u2074-\u2079\u2080-\u2089\u2150-\u2182\u2185-\u2189\u2460-\u249B\u24EA-\u24FF\u2776-\u2793\u2CFD\u3007\u3021-\u3029\u3038-\u303A\u3192-\u3195\u3220-\u3229\u3248-\u324F\u3251-\u325F\u3280-\u3289\u32B1-\u32BF\uA620-\uA629\uA6E6-\uA6EF\uA830-\uA835\uA8D0-\uA8D9\uA900-\uA909\uA9D0-\uA9D9\uA9F0-\uA9F9\uAA50-\uAA59\uABF0-\uABF9\uFF10-\uFF19]+/g
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-assign/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-assign/index.js":[function(require,module,exports){
 /*
 object-assign
 (c) Sindre Sorhus
@@ -26722,7 +26693,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 	return to;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/implementation.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/implementation.js":[function(require,module,exports){
 'use strict';
 
 var keysShim;
@@ -26846,7 +26817,7 @@ if (!Object.keys) {
 }
 module.exports = keysShim;
 
-},{"./isArguments":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/isArguments.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/index.js":[function(require,module,exports){
+},{"./isArguments":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/isArguments.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/index.js":[function(require,module,exports){
 'use strict';
 
 var slice = Array.prototype.slice;
@@ -26880,7 +26851,7 @@ keysShim.shim = function shimObjectKeys() {
 
 module.exports = keysShim;
 
-},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/implementation.js","./isArguments":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/isArguments.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-keys/isArguments.js":[function(require,module,exports){
+},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/implementation.js","./isArguments":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/isArguments.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-keys/isArguments.js":[function(require,module,exports){
 'use strict';
 
 var toStr = Object.prototype.toString;
@@ -26899,7 +26870,7 @@ module.exports = function isArguments(value) {
 	return isArgs;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/implementation.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/implementation.js":[function(require,module,exports){
 'use strict';
 
 var RequireObjectCoercible = require('es-abstract/2019/RequireObjectCoercible');
@@ -26918,7 +26889,7 @@ module.exports = function entries(O) {
 	return entrys;
 };
 
-},{"es-abstract/2019/RequireObjectCoercible":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/helpers/callBound.js","has":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has/src/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/index.js":[function(require,module,exports){
+},{"es-abstract/2019/RequireObjectCoercible":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/helpers/callBound.js","has":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has/src/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/index.js":[function(require,module,exports){
 'use strict';
 
 var define = require('define-properties');
@@ -26938,7 +26909,7 @@ define(polyfill, {
 
 module.exports = polyfill;
 
-},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/implementation.js","./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/polyfill.js","./shim":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/shim.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/define-properties/index.js","es-abstract/helpers/callBind":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/helpers/callBind.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/polyfill.js":[function(require,module,exports){
+},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/implementation.js","./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/polyfill.js","./shim":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/shim.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/define-properties/index.js","es-abstract/helpers/callBind":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/helpers/callBind.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/polyfill.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -26947,7 +26918,7 @@ module.exports = function getPolyfill() {
 	return typeof Object.entries === 'function' ? Object.entries : implementation;
 };
 
-},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/implementation.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/shim.js":[function(require,module,exports){
+},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/implementation.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/shim.js":[function(require,module,exports){
 'use strict';
 
 var getPolyfill = require('./polyfill');
@@ -26963,7 +26934,7 @@ module.exports = function shimEntries() {
 	return polyfill;
 };
 
-},{"./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.entries/polyfill.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/define-properties/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/implementation.js":[function(require,module,exports){
+},{"./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.entries/polyfill.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/define-properties/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/implementation.js":[function(require,module,exports){
 'use strict';
 
 var has = require('has');
@@ -26983,7 +26954,7 @@ module.exports = function values(O) {
 	return vals;
 };
 
-},{"es-abstract/2019/RequireObjectCoercible":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/es-abstract/helpers/callBound.js","has":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/has/src/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/index.js":[function(require,module,exports){
+},{"es-abstract/2019/RequireObjectCoercible":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/es-abstract/helpers/callBound.js","has":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/has/src/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/index.js":[function(require,module,exports){
 'use strict';
 
 var define = require('define-properties');
@@ -27002,7 +26973,7 @@ define(polyfill, {
 
 module.exports = polyfill;
 
-},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/implementation.js","./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/polyfill.js","./shim":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/shim.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/define-properties/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/polyfill.js":[function(require,module,exports){
+},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/implementation.js","./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/polyfill.js","./shim":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/shim.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/define-properties/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/polyfill.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -27011,7 +26982,7 @@ module.exports = function getPolyfill() {
 	return typeof Object.values === 'function' ? Object.values : implementation;
 };
 
-},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/implementation.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/shim.js":[function(require,module,exports){
+},{"./implementation":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/implementation.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/shim.js":[function(require,module,exports){
 'use strict';
 
 var getPolyfill = require('./polyfill');
@@ -27027,7 +26998,7 @@ module.exports = function shimValues() {
 	return polyfill;
 };
 
-},{"./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object.values/polyfill.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/define-properties/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/param-case/param-case.js":[function(require,module,exports){
+},{"./polyfill":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object.values/polyfill.js","define-properties":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/define-properties/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/param-case/param-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 
 /**
@@ -27041,7 +27012,7 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '-')
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/pascal-case/pascal-case.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/pascal-case/pascal-case.js":[function(require,module,exports){
 var camelCase = require('camel-case')
 var upperCaseFirst = require('upper-case-first')
 
@@ -27057,7 +27028,7 @@ module.exports = function (value, locale, mergeNumbers) {
   return upperCaseFirst(camelCase(value, locale, mergeNumbers), locale)
 }
 
-},{"camel-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/camel-case/camel-case.js","upper-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case-first/upper-case-first.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/path-case/path-case.js":[function(require,module,exports){
+},{"camel-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/camel-case/camel-case.js","upper-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case-first/upper-case-first.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/path-case/path-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 
 /**
@@ -27071,7 +27042,7 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '/')
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process-nextick-args/index.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process-nextick-args/index.js":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -27120,7 +27091,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-},{"_process":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js":[function(require,module,exports){
+},{"_process":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -27306,7 +27277,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/prop-types/checkPropTypes.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/prop-types/checkPropTypes.js":[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -27410,7 +27381,7 @@ checkPropTypes.resetWarningCache = function() {
 
 module.exports = checkPropTypes;
 
-},{"./lib/ReactPropTypesSecret":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/prop-types/lib/ReactPropTypesSecret.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/prop-types/lib/ReactPropTypesSecret.js":[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/prop-types/lib/ReactPropTypesSecret.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/prop-types/lib/ReactPropTypesSecret.js":[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -27424,7 +27395,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-dom-factories/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-dom-factories/index.js":[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -27623,7 +27594,7 @@ module.exports = ReactPropTypesSecret;
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-dom/cjs/react-dom.development.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-dom/cjs/react-dom.development.js":[function(require,module,exports){
 /** @license React v16.13.1
  * react-dom.development.js
  *
@@ -52637,7 +52608,7 @@ exports.version = ReactVersion;
   })();
 }
 
-},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/prop-types/checkPropTypes.js","react":"react","scheduler":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/index.js","scheduler/tracing":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/tracing.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-dom/cjs/react-dom.production.min.js":[function(require,module,exports){
+},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/prop-types/checkPropTypes.js","react":"react","scheduler":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/index.js","scheduler/tracing":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/tracing.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-dom/cjs/react-dom.production.min.js":[function(require,module,exports){
 /** @license React v16.13.1
  * react-dom.production.min.js
  *
@@ -52931,7 +52902,7 @@ exports.flushSync=function(a,b){if((W&(fj|gj))!==V)throw Error(u(187));var c=W;W
 exports.unmountComponentAtNode=function(a){if(!gk(a))throw Error(u(40));return a._reactRootContainer?(Nj(function(){ik(null,null,a,!1,function(){a._reactRootContainer=null;a[Od]=null})}),!0):!1};exports.unstable_batchedUpdates=Mj;exports.unstable_createPortal=function(a,b){return kk(a,b,2<arguments.length&&void 0!==arguments[2]?arguments[2]:null)};
 exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.13.1";
 
-},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-assign/index.js","react":"react","scheduler":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-tooltip/dist/index.js":[function(require,module,exports){
+},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-assign/index.js","react":"react","scheduler":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-tooltip/dist/index.js":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -55450,7 +55421,7 @@ module.exports = ReactTooltip;
 
 
 }).call(this,require('_process'))
-},{"_process":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react/cjs/react.development.js":[function(require,module,exports){
+},{"_process":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react/cjs/react.development.js":[function(require,module,exports){
 /** @license React v16.13.1
  * react.development.js
  *
@@ -57364,7 +57335,7 @@ exports.version = ReactVersion;
   })();
 }
 
-},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/prop-types/checkPropTypes.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react/cjs/react.production.min.js":[function(require,module,exports){
+},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/prop-types/checkPropTypes.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react/cjs/react.production.min.js":[function(require,module,exports){
 /** @license React v16.13.1
  * react.production.min.js
  *
@@ -57391,10 +57362,10 @@ key:d,ref:g,props:e,_owner:k}};exports.createContext=function(a,b){void 0===b&&(
 exports.lazy=function(a){return{$$typeof:A,_ctor:a,_status:-1,_result:null}};exports.memo=function(a,b){return{$$typeof:z,type:a,compare:void 0===b?null:b}};exports.useCallback=function(a,b){return Z().useCallback(a,b)};exports.useContext=function(a,b){return Z().useContext(a,b)};exports.useDebugValue=function(){};exports.useEffect=function(a,b){return Z().useEffect(a,b)};exports.useImperativeHandle=function(a,b,c){return Z().useImperativeHandle(a,b,c)};
 exports.useLayoutEffect=function(a,b){return Z().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return Z().useMemo(a,b)};exports.useReducer=function(a,b,c){return Z().useReducer(a,b,c)};exports.useRef=function(a){return Z().useRef(a)};exports.useState=function(a){return Z().useState(a)};exports.version="16.13.1";
 
-},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/object-assign/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/duplex-browser.js":[function(require,module,exports){
+},{"object-assign":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/object-assign/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/duplex-browser.js":[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
 
-},{"./lib/_stream_duplex.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_duplex.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_duplex.js":[function(require,module,exports){
+},{"./lib/_stream_duplex.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_duplex.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_duplex.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -57526,7 +57497,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_writable.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js","process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process-nextick-args/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
+},{"./_stream_readable":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_writable.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js","process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process-nextick-args/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -57574,7 +57545,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
+},{"./_stream_transform":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -58596,7 +58567,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/BufferList":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/BufferList.js","./internal/streams/destroy":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/core-util-is/lib/util.js","events":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/events/events.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js","isarray":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/isarray/index.js","process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process-nextick-args/index.js","safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/safe-buffer/index.js","string_decoder/":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/string_decoder/lib/string_decoder.js","util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/browser-resolve/empty.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
+},{"./_stream_duplex":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/BufferList":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/BufferList.js","./internal/streams/destroy":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/core-util-is/lib/util.js","events":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/events/events.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js","isarray":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/isarray/index.js","process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process-nextick-args/index.js","safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/safe-buffer/index.js","string_decoder/":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/string_decoder/lib/string_decoder.js","util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/browser-resolve/empty.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -58811,7 +58782,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
+},{"./_stream_duplex":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
 (function (process,global,setImmediate){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -59501,7 +59472,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/destroy":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js","process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process-nextick-args/index.js","safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/safe-buffer/index.js","timers":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/timers-browserify/main.js","util-deprecate":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util-deprecate/browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/BufferList.js":[function(require,module,exports){
+},{"./_stream_duplex":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/destroy":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js","core-util-is":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/core-util-is/lib/util.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js","process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process-nextick-args/index.js","safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/safe-buffer/index.js","timers":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/timers-browserify/main.js","util-deprecate":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util-deprecate/browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/BufferList.js":[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -59581,7 +59552,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/safe-buffer/index.js","util":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/browser-resolve/empty.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/destroy.js":[function(require,module,exports){
+},{"safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/safe-buffer/index.js","util":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/browser-resolve/empty.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/destroy.js":[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -59656,13 +59627,13 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process-nextick-args/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/internal/streams/stream-browser.js":[function(require,module,exports){
+},{"process-nextick-args":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process-nextick-args/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/internal/streams/stream-browser.js":[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/events/events.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/passthrough.js":[function(require,module,exports){
+},{"events":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/events/events.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/passthrough.js":[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
-},{"./readable":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/readable-browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/readable-browser.js":[function(require,module,exports){
+},{"./readable":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/readable-browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/readable-browser.js":[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -59671,13 +59642,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_duplex.js","./lib/_stream_passthrough.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_passthrough.js","./lib/_stream_readable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_readable.js","./lib/_stream_transform.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_transform.js","./lib/_stream_writable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_writable.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/transform.js":[function(require,module,exports){
+},{"./lib/_stream_duplex.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_duplex.js","./lib/_stream_passthrough.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_passthrough.js","./lib/_stream_readable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_readable.js","./lib/_stream_transform.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_transform.js","./lib/_stream_writable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_writable.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/transform.js":[function(require,module,exports){
 module.exports = require('./readable').Transform
 
-},{"./readable":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/readable-browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/writable-browser.js":[function(require,module,exports){
+},{"./readable":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/readable-browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/writable-browser.js":[function(require,module,exports){
 module.exports = require('./lib/_stream_writable.js');
 
-},{"./lib/_stream_writable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/lib/_stream_writable.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/regenerator-runtime/runtime.js":[function(require,module,exports){
+},{"./lib/_stream_writable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/lib/_stream_writable.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/regenerator-runtime/runtime.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -60408,7 +60379,7 @@ try {
   Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/safe-buffer/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/safe-buffer/index.js":[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -60472,7 +60443,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler-tracing.development.js":[function(require,module,exports){
+},{"buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler-tracing.development.js":[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler-tracing.development.js
  *
@@ -60823,7 +60794,7 @@ exports.unstable_wrap = unstable_wrap;
   })();
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler-tracing.production.min.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler-tracing.production.min.js":[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler-tracing.production.min.js
  *
@@ -60835,7 +60806,7 @@ exports.unstable_wrap = unstable_wrap;
 
 'use strict';var b=0;exports.__interactionsRef=null;exports.__subscriberRef=null;exports.unstable_clear=function(a){return a()};exports.unstable_getCurrent=function(){return null};exports.unstable_getThreadID=function(){return++b};exports.unstable_subscribe=function(){};exports.unstable_trace=function(a,d,c){return c()};exports.unstable_unsubscribe=function(){};exports.unstable_wrap=function(a){return a};
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler.development.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler.development.js":[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler.development.js
  *
@@ -61695,7 +61666,7 @@ exports.unstable_wrapCallback = unstable_wrapCallback;
   })();
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler.production.min.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler.production.min.js":[function(require,module,exports){
 /** @license React v0.19.1
  * scheduler.production.min.js
  *
@@ -61718,7 +61689,7 @@ exports.unstable_getCurrentPriorityLevel=function(){return R};exports.unstable_g
 exports.unstable_scheduleCallback=function(a,b,c){var d=exports.unstable_now();if("object"===typeof c&&null!==c){var e=c.delay;e="number"===typeof e&&0<e?d+e:d;c="number"===typeof c.timeout?c.timeout:Y(a)}else c=Y(a),e=d;c=e+c;a={id:P++,callback:b,priorityLevel:a,startTime:e,expirationTime:c,sortIndex:-1};e>d?(a.sortIndex=e,J(O,a),null===L(N)&&a===L(O)&&(U?h():U=!0,g(W,e-d))):(a.sortIndex=c,J(N,a),T||S||(T=!0,f(X)));return a};
 exports.unstable_shouldYield=function(){var a=exports.unstable_now();V(a);var b=L(N);return b!==Q&&null!==Q&&null!==b&&null!==b.callback&&b.startTime<=a&&b.expirationTime<Q.expirationTime||k()};exports.unstable_wrapCallback=function(a){var b=R;return function(){var c=R;R=b;try{return a.apply(this,arguments)}finally{R=c}}};
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/index.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/index.js":[function(require,module,exports){
 'use strict';
 
 if ("development" === 'production') {
@@ -61727,7 +61698,7 @@ if ("development" === 'production') {
   module.exports = require('./cjs/scheduler.development.js');
 }
 
-},{"./cjs/scheduler.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler.development.js","./cjs/scheduler.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler.production.min.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/tracing.js":[function(require,module,exports){
+},{"./cjs/scheduler.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler.development.js","./cjs/scheduler.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler.production.min.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/tracing.js":[function(require,module,exports){
 'use strict';
 
 if ("development" === 'production') {
@@ -61736,10 +61707,10 @@ if ("development" === 'production') {
   module.exports = require('./cjs/scheduler-tracing.development.js');
 }
 
-},{"./cjs/scheduler-tracing.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler-tracing.development.js","./cjs/scheduler-tracing.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scheduler/cjs/scheduler-tracing.production.min.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scrollmonitor/scrollMonitor.js":[function(require,module,exports){
+},{"./cjs/scheduler-tracing.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler-tracing.development.js","./cjs/scheduler-tracing.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scheduler/cjs/scheduler-tracing.production.min.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scrollmonitor/scrollMonitor.js":[function(require,module,exports){
 !function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define("scrollMonitor",[],e):"object"==typeof exports?exports.scrollMonitor=e():t.scrollMonitor=e()}(this,function(){return function(t){function e(o){if(i[o])return i[o].exports;var s=i[o]={exports:{},id:o,loaded:!1};return t[o].call(s.exports,s,s.exports,e),s.loaded=!0,s.exports}var i={};return e.m=t,e.c=i,e.p="",e(0)}([function(t,e,i){"use strict";var o=i(1),s=o.isInBrowser,n=i(2),r=new n(s?document.body:null);r.setStateFromDOM(null),r.listenToDOM(),s&&(window.scrollMonitor=r),t.exports=r},function(t,e){"use strict";e.VISIBILITYCHANGE="visibilityChange",e.ENTERVIEWPORT="enterViewport",e.FULLYENTERVIEWPORT="fullyEnterViewport",e.EXITVIEWPORT="exitViewport",e.PARTIALLYEXITVIEWPORT="partiallyExitViewport",e.LOCATIONCHANGE="locationChange",e.STATECHANGE="stateChange",e.eventTypes=[e.VISIBILITYCHANGE,e.ENTERVIEWPORT,e.FULLYENTERVIEWPORT,e.EXITVIEWPORT,e.PARTIALLYEXITVIEWPORT,e.LOCATIONCHANGE,e.STATECHANGE],e.isOnServer="undefined"==typeof window,e.isInBrowser=!e.isOnServer,e.defaultOffsets={top:0,bottom:0}},function(t,e,i){"use strict";function o(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function s(t){return c?0:t===document.body?window.innerHeight||document.documentElement.clientHeight:t.clientHeight}function n(t){return c?0:t===document.body?Math.max(document.body.scrollHeight,document.documentElement.scrollHeight,document.body.offsetHeight,document.documentElement.offsetHeight,document.documentElement.clientHeight):t.scrollHeight}function r(t){return c?0:t===document.body?window.pageYOffset||document.documentElement&&document.documentElement.scrollTop||document.body.scrollTop:t.scrollTop}var h=i(1),c=h.isOnServer,a=h.isInBrowser,l=h.eventTypes,p=i(3),u=!1;if(a)try{var w=Object.defineProperty({},"passive",{get:function(){u=!0}});window.addEventListener("test",null,w)}catch(t){}var d=!!u&&{capture:!1,passive:!0},f=function(){function t(e,i){function h(){if(a.viewportTop=r(e),a.viewportBottom=a.viewportTop+a.viewportHeight,a.documentHeight=n(e),a.documentHeight!==p){for(u=a.watchers.length;u--;)a.watchers[u].recalculateLocation();p=a.documentHeight}}function c(){for(w=a.watchers.length;w--;)a.watchers[w].update();for(w=a.watchers.length;w--;)a.watchers[w].triggerCallbacks()}o(this,t);var a=this;this.item=e,this.watchers=[],this.viewportTop=null,this.viewportBottom=null,this.documentHeight=n(e),this.viewportHeight=s(e),this.DOMListener=function(){t.prototype.DOMListener.apply(a,arguments)},this.eventTypes=l,i&&(this.containerWatcher=i.create(e));var p,u,w;this.update=function(){h(),c()},this.recalculateLocations=function(){this.documentHeight=0,this.update()}}return t.prototype.listenToDOM=function(){a&&(window.addEventListener?(this.item===document.body?window.addEventListener("scroll",this.DOMListener,d):this.item.addEventListener("scroll",this.DOMListener,d),window.addEventListener("resize",this.DOMListener)):(this.item===document.body?window.attachEvent("onscroll",this.DOMListener):this.item.attachEvent("onscroll",this.DOMListener),window.attachEvent("onresize",this.DOMListener)),this.destroy=function(){window.addEventListener?(this.item===document.body?(window.removeEventListener("scroll",this.DOMListener,d),this.containerWatcher.destroy()):this.item.removeEventListener("scroll",this.DOMListener,d),window.removeEventListener("resize",this.DOMListener)):(this.item===document.body?(window.detachEvent("onscroll",this.DOMListener),this.containerWatcher.destroy()):this.item.detachEvent("onscroll",this.DOMListener),window.detachEvent("onresize",this.DOMListener))})},t.prototype.destroy=function(){},t.prototype.DOMListener=function(t){this.setStateFromDOM(t)},t.prototype.setStateFromDOM=function(t){var e=r(this.item),i=s(this.item),o=n(this.item);this.setState(e,i,o,t)},t.prototype.setState=function(t,e,i,o){var s=e!==this.viewportHeight||i!==this.contentHeight;if(this.latestEvent=o,this.viewportTop=t,this.viewportHeight=e,this.viewportBottom=t+e,this.contentHeight=i,s)for(var n=this.watchers.length;n--;)this.watchers[n].recalculateLocation();this.updateAndTriggerWatchers(o)},t.prototype.updateAndTriggerWatchers=function(t){for(var e=this.watchers.length;e--;)this.watchers[e].update();for(e=this.watchers.length;e--;)this.watchers[e].triggerCallbacks(t)},t.prototype.createCustomContainer=function(){return new t},t.prototype.createContainer=function(e){"string"==typeof e?e=document.querySelector(e):e&&e.length>0&&(e=e[0]);var i=new t(e,this);return i.setStateFromDOM(),i.listenToDOM(),i},t.prototype.create=function(t,e){"string"==typeof t?t=document.querySelector(t):t&&t.length>0&&(t=t[0]);var i=new p(this,t,e);return this.watchers.push(i),i},t.prototype.beget=function(t,e){return this.create(t,e)},t}();t.exports=f},function(t,e,i){"use strict";function o(t,e,i){function o(t,e){if(0!==t.length)for(E=t.length;E--;)y=t[E],y.callback.call(s,e,s),y.isOne&&t.splice(E,1)}var s=this;this.watchItem=e,this.container=t,i?i===+i?this.offsets={top:i,bottom:i}:this.offsets={top:i.top||w.top,bottom:i.bottom||w.bottom}:this.offsets=w,this.callbacks={};for(var d=0,f=u.length;d<f;d++)s.callbacks[u[d]]=[];this.locked=!1;var m,v,b,I,E,y;this.triggerCallbacks=function(t){switch(this.isInViewport&&!m&&o(this.callbacks[r],t),this.isFullyInViewport&&!v&&o(this.callbacks[h],t),this.isAboveViewport!==b&&this.isBelowViewport!==I&&(o(this.callbacks[n],t),v||this.isFullyInViewport||(o(this.callbacks[h],t),o(this.callbacks[a],t)),m||this.isInViewport||(o(this.callbacks[r],t),o(this.callbacks[c],t))),!this.isFullyInViewport&&v&&o(this.callbacks[a],t),!this.isInViewport&&m&&o(this.callbacks[c],t),this.isInViewport!==m&&o(this.callbacks[n],t),!0){case m!==this.isInViewport:case v!==this.isFullyInViewport:case b!==this.isAboveViewport:case I!==this.isBelowViewport:o(this.callbacks[p],t)}m=this.isInViewport,v=this.isFullyInViewport,b=this.isAboveViewport,I=this.isBelowViewport},this.recalculateLocation=function(){if(!this.locked){var t=this.top,e=this.bottom;if(this.watchItem.nodeName){var i=this.watchItem.style.display;"none"===i&&(this.watchItem.style.display="");for(var s=0,n=this.container;n.containerWatcher;)s+=n.containerWatcher.top-n.containerWatcher.container.viewportTop,n=n.containerWatcher.container;var r=this.watchItem.getBoundingClientRect();this.top=r.top+this.container.viewportTop-s,this.bottom=r.bottom+this.container.viewportTop-s,"none"===i&&(this.watchItem.style.display=i)}else this.watchItem===+this.watchItem?this.watchItem>0?this.top=this.bottom=this.watchItem:this.top=this.bottom=this.container.documentHeight-this.watchItem:(this.top=this.watchItem.top,this.bottom=this.watchItem.bottom);this.top-=this.offsets.top,this.bottom+=this.offsets.bottom,this.height=this.bottom-this.top,void 0===t&&void 0===e||this.top===t&&this.bottom===e||o(this.callbacks[l],null)}},this.recalculateLocation(),this.update(),m=this.isInViewport,v=this.isFullyInViewport,b=this.isAboveViewport,I=this.isBelowViewport}var s=i(1),n=s.VISIBILITYCHANGE,r=s.ENTERVIEWPORT,h=s.FULLYENTERVIEWPORT,c=s.EXITVIEWPORT,a=s.PARTIALLYEXITVIEWPORT,l=s.LOCATIONCHANGE,p=s.STATECHANGE,u=s.eventTypes,w=s.defaultOffsets;o.prototype={on:function(t,e,i){switch(!0){case t===n&&!this.isInViewport&&this.isAboveViewport:case t===r&&this.isInViewport:case t===h&&this.isFullyInViewport:case t===c&&this.isAboveViewport&&!this.isInViewport:case t===a&&this.isInViewport&&this.isAboveViewport:if(e.call(this,this.container.latestEvent,this),i)return}if(!this.callbacks[t])throw new Error("Tried to add a scroll monitor listener of type "+t+". Your options are: "+u.join(", "));this.callbacks[t].push({callback:e,isOne:i||!1})},off:function(t,e){if(!this.callbacks[t])throw new Error("Tried to remove a scroll monitor listener of type "+t+". Your options are: "+u.join(", "));for(var i,o=0;i=this.callbacks[t][o];o++)if(i.callback===e){this.callbacks[t].splice(o,1);break}},one:function(t,e){this.on(t,e,!0)},recalculateSize:function(){this.height=this.watchItem.offsetHeight+this.offsets.top+this.offsets.bottom,this.bottom=this.top+this.height},update:function(){this.isAboveViewport=this.top<this.container.viewportTop,this.isBelowViewport=this.bottom>this.container.viewportBottom,this.isInViewport=this.top<this.container.viewportBottom&&this.bottom>this.container.viewportTop,this.isFullyInViewport=this.top>=this.container.viewportTop&&this.bottom<=this.container.viewportBottom||this.isAboveViewport&&this.isBelowViewport},destroy:function(){var t=this.container.watchers.indexOf(this),e=this;this.container.watchers.splice(t,1);for(var i=0,o=u.length;i<o;i++)e.callbacks[u[i]].length=0},lock:function(){this.locked=!0},unlock:function(){this.locked=!1}};for(var d=function(t){return function(e,i){this.on.call(this,t,e,i)}},f=0,m=u.length;f<m;f++){var v=u[f];o.prototype[v]=d(v)}t.exports=o}])});
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/scrollparent/scrollparent.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/scrollparent/scrollparent.js":[function(require,module,exports){
 (function (root, factory) {
   if (typeof define === "function" && define.amd) {
     define([], factory);
@@ -61788,7 +61759,7 @@ if ("development" === 'production') {
   return scrollParent;
 }));
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/sentence-case/sentence-case.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/sentence-case/sentence-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 var upperCaseFirst = require('upper-case-first')
 
@@ -61803,10 +61774,10 @@ module.exports = function (value, locale) {
   return upperCaseFirst(noCase(value, locale), locale)
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js","upper-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case-first/upper-case-first.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/smartquotes/dist/smartquotes.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js","upper-case-first":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case-first/upper-case-first.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/smartquotes/dist/smartquotes.js":[function(require,module,exports){
 (function(a,b){'object'==typeof exports&&'object'==typeof module?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.smartquotes=b():a.smartquotes=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=3)}([function(a,b,c){'use strict';var d=c(1);a.exports=function(a,b){return b=b||{},d.forEach(function(c){var d='function'==typeof c[1]?c[1](b.retainLength):c[1];a=a.replace(c[0],d)}),a}},function(a){'use strict';a.exports=[[/'''/g,function(a){return'\u2034'+(a?'\u2063\u2063':'')}],[/(\W|^)"(\w)/g,'$1\u201C$2'],[/(\u201c[^"]*)"([^"]*$|[^\u201c"]*\u201c)/g,'$1\u201D$2'],[/([^0-9])"/g,'$1\u201D'],[/''/g,function(a){return'\u2033'+(a?'\u2063':'')}],[/(\W|^)'(\S)/g,'$1\u2018$2'],[/([a-z])'([a-z])/ig,'$1\u2019$2'],[/(\u2018)([0-9]{2}[^\u2019]*)(\u2018([^0-9]|$)|$|\u2019[a-z])/ig,'\u2019$2$3'],[/((\u2018[^']*)|[a-z])'([^0-9]|$)/ig,'$1\u2019$3'],[/(\B|^)\u2018(?=([^\u2018\u2019]*\u2019\b)*([^\u2018\u2019]*\B\W[\u2018\u2019]\b|[^\u2018\u2019]*$))/ig,'$1\u2019'],[/"/g,'\u2033'],[/'/g,'\u2032']]},function(a,b,c){'use strict';function d(a){if(-1===['CODE','PRE','SCRIPT','STYLE'].indexOf(a.nodeName.toUpperCase())){var b,c,h,i='',j=a.childNodes,k=[];for(b=0;b<j.length;b++)c=j[b],c.nodeType===g||'#text'===c.nodeName?(k.push([c,i.length]),i+=c.nodeValue||c.value):c.childNodes&&c.childNodes.length&&(i+=d(c));for(b in i=f(i,{retainLength:!0}),k)h=k[b],h[0].nodeValue?h[0].nodeValue=e(i,h[0].nodeValue,h[1]):h[0].value&&(h[0].value=e(i,h[0].value,h[1]));return i}}function e(a,b,c){return a.substr(c,b.length).replace('\u2063','')}var f=c(0),g='undefined'!=typeof Element&&Element.TEXT_NODE||3;a.exports=function(a){return d(a),a}},function(a,b,c){'use strict';function d(a){return'undefined'!=typeof document&&'undefined'==typeof a?(g.runOnReady(function(){return f(document.body)}),d):'string'==typeof a?h(a):f(a)}var e=c(1),f=c(2),g=c(4),h=c(0);a.exports=d,a.exports.string=h,a.exports.element=f,a.exports.replacements=e,a.exports.listen=g},function(a,b,c){'use strict';function d(a){var b=new MutationObserver(function(a){a.forEach(function(a){var b,c=!0,d=!1;try{for(var f,g,h=a.addedNodes[Symbol.iterator]();!(c=(f=h.next()).done);c=!0)g=f.value,e(g)}catch(a){d=!0,b=a}finally{try{!c&&h.return&&h.return()}finally{if(d)throw b}}})});return d.runOnReady(function(){b.observe(a||document.body,{childList:!0,subtree:!0})}),b}var e=c(2),f=c(0);d.runOnReady=function(a){if('loading'!==document.readyState)a();else if(document.addEventListener)document.addEventListener('DOMContentLoaded',a,!1);else var b=setInterval(function(){'loading'!==document.readyState&&(clearInterval(b),a())},10)},a.exports=d}])});
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/snake-case/snake-case.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/snake-case/snake-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 
 /**
@@ -61820,7 +61791,7 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '_')
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/stream-browserify/index.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/stream-browserify/index.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -61949,7 +61920,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/events/events.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/inherits/inherits_browser.js","readable-stream/duplex.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/duplex-browser.js","readable-stream/passthrough.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/passthrough.js","readable-stream/readable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/readable-browser.js","readable-stream/transform.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/transform.js","readable-stream/writable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/readable-stream/writable-browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/string_decoder/lib/string_decoder.js":[function(require,module,exports){
+},{"events":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/events/events.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/inherits/inherits_browser.js","readable-stream/duplex.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/duplex-browser.js","readable-stream/passthrough.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/passthrough.js","readable-stream/readable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/readable-browser.js","readable-stream/transform.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/transform.js","readable-stream/writable.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/readable-stream/writable-browser.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/string_decoder/lib/string_decoder.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -62246,7 +62217,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/safe-buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/strip-bom-string/index.js":[function(require,module,exports){
+},{"safe-buffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/safe-buffer/index.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/strip-bom-string/index.js":[function(require,module,exports){
 /*!
  * strip-bom-string <https://github.com/jonschlinkert/strip-bom-string>
  *
@@ -62263,7 +62234,7 @@ module.exports = function(str) {
   return str;
 };
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/swap-case/swap-case.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/swap-case/swap-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 var lowerCase = require('lower-case')
 
@@ -62292,7 +62263,7 @@ module.exports = function (str, locale) {
   return result
 }
 
-},{"lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/lower-case/lower-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/timers-browserify/main.js":[function(require,module,exports){
+},{"lower-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/lower-case/lower-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/timers-browserify/main.js":[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -62371,7 +62342,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js","timers":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/timers-browserify/main.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/title-case/title-case.js":[function(require,module,exports){
+},{"process/browser.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js","timers":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/timers-browserify/main.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/title-case/title-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 var upperCase = require('upper-case')
 
@@ -62388,7 +62359,7 @@ module.exports = function (value, locale) {
   })
 }
 
-},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/no-case/no-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case-first/upper-case-first.js":[function(require,module,exports){
+},{"no-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/no-case/no-case.js","upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case-first/upper-case-first.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 
 /**
@@ -62407,7 +62378,7 @@ module.exports = function (str, locale) {
   return upperCase(str.charAt(0), locale) + str.substr(1)
 }
 
-},{"upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/upper-case/upper-case.js":[function(require,module,exports){
+},{"upper-case":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/upper-case/upper-case.js":[function(require,module,exports){
 /**
  * Special language-specific overrides.
  *
@@ -62459,7 +62430,7 @@ module.exports = function (str, locale) {
   return str.toUpperCase()
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/uri-js/dist/es5/uri.all.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/uri-js/dist/es5/uri.all.js":[function(require,module,exports){
 /** @license URI.js v4.2.1 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -63850,7 +63821,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 })));
 
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util-deprecate/browser.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util-deprecate/browser.js":[function(require,module,exports){
 (function (global){
 
 /**
@@ -63921,7 +63892,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -63946,14 +63917,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/support/isBufferBrowser.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util/support/isBufferBrowser.js":[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/util.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util/util.js":[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -64543,22 +64514,22 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/support/isBufferBrowser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/node_modules/inherits/inherits_browser.js"}],"__IDYLL_AST__":[function(require,module,exports){
+},{"./support/isBuffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util/support/isBufferBrowser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/process/browser.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/util/node_modules/inherits/inherits_browser.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "component", "name": "TextContainer", "children": [{ "id": 3, "type": "meta", "properties": { "title": { "type": "value", "value": "Computation_1" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 4, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Computation 1" }, "subtitle": { "type": "value", "value": "Beginning Python with Physics II" }, "author": { "type": "value", "value": "Mary Span" }, "authorLink": { "type": "value", "value": "https://idyll-lang.org" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0580f6" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 5, "type": "component", "name": "TextContainer", "children": [{ "id": 6, "type": "component", "name": "h2", "children": [{ "id": 7, "type": "textnode", "value": "Overview" }] }, { "id": 8, "type": "component", "name": "p", "children": [{ "id": 9, "type": "textnode", "value": "Click the following posts to learn the basics of Python and how it can assist with common Physics II problems." }] }, { "id": 10, "type": "component", "name": "hr", "children": [] }, { "id": 11, "type": "component", "name": "h2", "children": [{ "id": 12, "type": "textnode", "value": "Lessons" }] }, { "id": 13, "type": "component", "name": "ul", "children": [{ "id": 14, "type": "component", "name": "li", "children": [{ "id": 15, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./post-1/" } }, "children": [{ "id": 16, "type": "textnode", "value": "Physics Fundamentals" }] }] }, { "id": 17, "type": "component", "name": "li", "children": [{ "id": 18, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./electric-fields/" } }, "children": [{ "id": 19, "type": "textnode", "value": "Electric Fields" }] }] }] }, { "id": 20, "type": "component", "name": "h2", "children": [{ "id": 21, "type": "textnode", "value": "Additional Resources" }] }, { "id": 22, "type": "component", "name": "ul", "children": [{ "id": 23, "type": "component", "name": "li", "children": [{ "id": 24, "type": "textnode", "value": "The direct source: " }, { "id": 25, "type": "component", "name": "link", "properties": { "text": { "type": "value", "value": "python.org" }, "url": { "type": "value", "value": "https://www.python.org/about/gettingstarted" } }, "children": [] }] }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "component", "name": "TextContainer", "children": [{ "id": 3, "type": "meta", "properties": { "title": { "type": "value", "value": "Chapter Summaries" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 4, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Chapter Summaries" }, "subtitle": { "type": "value", "value": "Welcome to Idyll. Open index.idyll to start writing" }, "author": { "type": "value", "value": "Your Name Here" }, "authorLink": { "type": "value", "value": "https://idyll-lang.org" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#222222" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 5, "type": "component", "name": "TextContainer", "children": [{ "id": 6, "type": "component", "name": "h2", "children": [{ "id": 7, "type": "textnode", "value": "Project overview" }] }, { "id": 8, "type": "component", "name": "ul", "children": [{ "id": 9, "type": "component", "name": "li", "children": [{ "id": 10, "type": "component", "name": "code", "children": [{ "id": 11, "type": "textnode", "value": "posts" }] }, { "id": 12, "type": "textnode", "value": " - all of the available posts, each directory within contains a full idyll post" }] }, { "id": 13, "type": "component", "name": "li", "children": [{ "id": 14, "type": "component", "name": "code", "children": [{ "id": 15, "type": "textnode", "value": "components" }] }, { "id": 16, "type": "textnode", "value": " - shared components, can be used by any post. Each post also has its own components folder where you can put components that don’t need to be shared." }] }, { "id": 17, "type": "component", "name": "li", "children": [{ "id": 18, "type": "component", "name": "code", "children": [{ "id": 19, "type": "textnode", "value": "template" }] }, { "id": 20, "type": "textnode", "value": " - the post template to use when you run " }, { "id": 21, "type": "component", "name": "code", "children": [{ "id": 22, "type": "textnode", "value": "idyll create" }] }, { "id": 23, "type": "textnode", "value": ". Update this template with site specific styles, configuration, etc." }] }, { "id": 24, "type": "component", "name": "li", "children": [{ "id": 25, "type": "component", "name": "code", "children": [{ "id": 26, "type": "textnode", "value": "index.idyll" }] }, { "id": 27, "type": "textnode", "value": " - the root" }, { "id": 28, "type": "textnode", "value": "/index page for the blog. Note this is not autogenerated." }] }, { "id": 29, "type": "component", "name": "li", "children": [{ "id": 30, "type": "component", "name": "code", "children": [{ "id": 31, "type": "textnode", "value": "docs" }] }, { "id": 32, "type": "textnode", "value": " - the folder where the output is built. Deploy to any static hosting service (we name it " }, { "id": 33, "type": "component", "name": "code", "children": [{ "id": 34, "type": "textnode", "value": "docs" }] }, { "id": 35, "type": "textnode", "value": " so its easy to host on github pages)." }] }] }, { "id": 36, "type": "component", "name": "h2", "children": [{ "id": 37, "type": "textnode", "value": "Installation" }] }, { "id": 38, "type": "component", "name": "ul", "children": [{ "id": 39, "type": "component", "name": "li", "children": [{ "id": 40, "type": "textnode", "value": "Make sure you have " }, { "id": 41, "type": "component", "name": "code", "children": [{ "id": 42, "type": "textnode", "value": "idyll" }] }, { "id": 43, "type": "textnode", "value": " installed (" }, { "id": 44, "type": "component", "name": "code", "children": [{ "id": 45, "type": "textnode", "value": "npm i -g idyll" }] }, { "id": 46, "type": "textnode", "value": ")." }] }, { "id": 47, "type": "component", "name": "li", "children": [{ "id": 48, "type": "textnode", "value": "Clone this repo and run " }, { "id": 49, "type": "component", "name": "code", "children": [{ "id": 50, "type": "textnode", "value": "npm install" }] }, { "id": 51, "type": "textnode", "value": "." }] }] }, { "id": 52, "type": "component", "name": "h2", "children": [{ "id": 53, "type": "textnode", "value": "Creating a post" }] }, { "id": 54, "type": "component", "name": "p", "children": [{ "id": 55, "type": "textnode", "value": "Navigate to the posts directory and run " }, { "id": 56, "type": "component", "name": "code", "children": [{ "id": 57, "type": "textnode", "value": "idyll create --template ../template/ --no-install" }] }, { "id": 58, "type": "textnode", "value": "." }] }, { "id": 59, "type": "component", "name": "h2", "children": [{ "id": 60, "type": "textnode", "value": "Developing a post locally" }] }, { "id": 61, "type": "component", "name": "p", "children": [{ "id": 62, "type": "textnode", "value": "Navigate to the post’s directory and run " }, { "id": 63, "type": "component", "name": "code", "children": [{ "id": 64, "type": "textnode", "value": "idyll" }] }, { "id": 65, "type": "textnode", "value": "." }] }, { "id": 66, "type": "component", "name": "h2", "children": [{ "id": 67, "type": "textnode", "value": "Developing the index page" }] }, { "id": 68, "type": "component", "name": "p", "children": [{ "id": 69, "type": "textnode", "value": "Navigate to the root of this project and run " }, { "id": 70, "type": "component", "name": "code", "children": [{ "id": 71, "type": "textnode", "value": "idyll" }] }, { "id": 72, "type": "textnode", "value": "." }] }, { "id": 73, "type": "component", "name": "h2", "children": [{ "id": 74, "type": "textnode", "value": "Building a post for production" }] }, { "id": 75, "type": "component", "name": "p", "children": [{ "id": 76, "type": "textnode", "value": "Navigate to the post’s directory and run " }, { "id": 77, "type": "component", "name": "code", "children": [{ "id": 78, "type": "textnode", "value": "idyll build" }] }, { "id": 79, "type": "textnode", "value": ". The output will appear in the top-level " }, { "id": 80, "type": "component", "name": "code", "children": [{ "id": 81, "type": "textnode", "value": "docs" }] }, { "id": 82, "type": "textnode", "value": " folder. To change the output location, change the " }, { "id": 83, "type": "component", "name": "code", "children": [{ "id": 84, "type": "textnode", "value": "output" }] }, { "id": 85, "type": "textnode", "value": " option in " }, { "id": 86, "type": "component", "name": "code", "children": [{ "id": 87, "type": "textnode", "value": "package.json" }] }, { "id": 88, "type": "textnode", "value": " in the template directory and at the root of this project (and any existing posts!)." }] }, { "id": 89, "type": "component", "name": "h2", "children": [{ "id": 90, "type": "textnode", "value": "Deploying" }] }, { "id": 91, "type": "component", "name": "p", "children": [{ "id": 92, "type": "textnode", "value": "Make sure all of your posts have been built, then deploy the docs folder via any static hosting service." }] }, { "id": 93, "type": "component", "name": "h2", "children": [{ "id": 94, "type": "textnode", "value": "Dependencies" }] }, { "id": 95, "type": "component", "name": "p", "children": [{ "id": 96, "type": "textnode", "value": "You can install custom dependencies on a per-post basis by running " }, { "id": 97, "type": "component", "name": "code", "children": [{ "id": 98, "type": "textnode", "value": "npm install <package-name> --save" }] }, { "id": 99, "type": "textnode", "value": " in the post directory. Note that any collaborators will also need download the package locally by running " }, { "id": 100, "type": "component", "name": "code", "children": [{ "id": 101, "type": "textnode", "value": "npm install" }] }, { "id": 102, "type": "textnode", "value": " after pulling the changes." }] }, { "id": 103, "type": "component", "name": "h2", "children": [{ "id": 104, "type": "textnode", "value": "Known limitations" }] }, { "id": 105, "type": "component", "name": "ul", "children": [{ "id": 106, "type": "component", "name": "li", "children": [{ "id": 107, "type": "textnode", "value": "Note that idyll.pub (used by the " }, { "id": 108, "type": "component", "name": "code", "children": [{ "id": 109, "type": "textnode", "value": "idyll publish" }] }, { "id": 110, "type": "textnode", "value": " command) does not yet support multi-page projects such as this one, so it is up to you host the output online." }] }, { "id": 111, "type": "component", "name": "li", "children": [{ "id": 112, "type": "textnode", "value": "The index page needs to be updated manually, it is not yet autogenerated based on the " }, { "id": 113, "type": "component", "name": "code", "children": [{ "id": 114, "type": "textnode", "value": "posts" }] }, { "id": 115, "type": "textnode", "value": " directory." }] }] }, { "id": 116, "type": "component", "name": "hr", "children": [] }, { "id": 117, "type": "component", "name": "h1", "children": [{ "id": 118, "type": "textnode", "value": "Posts" }] }, { "id": 119, "type": "component", "name": "ul", "children": [{ "id": 120, "type": "component", "name": "li", "children": [{ "id": 121, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./post-1/" } }, "children": [{ "id": 122, "type": "textnode", "value": "Post 1" }] }, { "id": 123, "type": "textnode", "value": " - note, you’ll need to compile the post before this link will work." }] }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
 
 module.exports = {
-	'text-container': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js'),
-	'header': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js'),
-	'h2': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js'),
-	'link': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js')
+	'text-container': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/text-container.js'),
+	'header': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/header.js'),
+	'h2': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h2.js'),
+	'h1': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h1.js')
 };
 
-},{"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h1.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h1.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h2.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/h2.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/header.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/header.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/text-container.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 
 module.exports = function () {
 
@@ -64620,7 +64591,7 @@ if ("development" === 'production') {
   module.exports = require('./cjs/react-dom.development.js');
 }
 
-},{"./cjs/react-dom.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-dom/cjs/react-dom.development.js","./cjs/react-dom.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react-dom/cjs/react-dom.production.min.js"}],"react":[function(require,module,exports){
+},{"./cjs/react-dom.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-dom/cjs/react-dom.development.js","./cjs/react-dom.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react-dom/cjs/react-dom.production.min.js"}],"react":[function(require,module,exports){
 'use strict';
 
 if ("development" === 'production') {
@@ -64629,4 +64600,4 @@ if ("development" === 'production') {
   module.exports = require('./cjs/react.development.js');
 }
 
-},{"./cjs/react.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react/cjs/react.development.js","./cjs/react.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/react/cjs/react.production.min.js"}]},{},["/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll/src/client/build.js"]);
+},{"./cjs/react.development.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react/cjs/react.development.js","./cjs/react.production.min.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/react/cjs/react.production.min.js"}]},{},["/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/chapter_summaries/node_modules/idyll/src/client/build.js"]);

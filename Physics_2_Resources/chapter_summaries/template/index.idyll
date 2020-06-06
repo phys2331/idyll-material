@@ -1,8 +1,8 @@
-[meta title:"Electric_Fields" description:"Short description of your project" /]
+[meta title:"{{title}}" description:"Short description of your project" /]
 
 [Header
   fullWidth:true
-  title:"Electric Fields"
+  title:"{{title}}"
   subtitle:"Welcome to Idyll. Open index.idyll to start writing"
   author:"Your Name Here"
   authorLink:"https://idyll-lang.org"

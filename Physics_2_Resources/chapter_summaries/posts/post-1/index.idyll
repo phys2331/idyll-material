@@ -1,8 +1,8 @@
-[meta title:"Electric_Fields" description:"Short description of your project" /]
+[meta title:"Post 1" description:"Short description of your project" /]
 
 [Header
   fullWidth:true
-  title:"Electric Fields"
+  title:"Post 1"
   subtitle:"Welcome to Idyll. Open index.idyll to start writing"
   author:"Your Name Here"
   authorLink:"https://idyll-lang.org"
@@ -17,6 +17,7 @@ This is an Idyll post. It is generated via
 the file `index.idyll`. To compile this post using
 idyll, run the command `idyll` inside of this directory.
 
+[CustomComponent /]
 
 Idyll posts are designed to support interaction and
 data-driven graphics.

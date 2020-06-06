@@ -7,7 +7,7 @@
   author:"Mary Span"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#222222"
+  background:"#0580f6"
   color:"#ffffff"
    /]
 
@@ -19,5 +19,9 @@ Click the following posts to learn the basics of Python and how it can assist wi
 
 ## Lessons
 
-* [Post 1](./post-1/) - Physics Fundamentals
-* [Post 2](./post-2/) - Electric Fields
+* [Physics Fundamentals](./post-1/)
+* [Electric Fields](./electric-fields/)
+
+## Additional Resources
+
+* The direct source: [link text: "python.org" url: "https://www.python.org/about/gettingstarted" /]

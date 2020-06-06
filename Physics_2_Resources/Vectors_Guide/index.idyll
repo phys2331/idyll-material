@@ -168,7 +168,7 @@ Equations:
 [Equation]
   \vec{A} + \vec{B} = \lt (A_{x} + B_{x}), (A_{y} + B_{y}), (A_{z} + B_{z}) \gt
 [/Equation]
-
+/Electric_Fields
 [Equation]
   \vec{A} - \vec{B} = \lt (A_{x} - B_{x}), (A_{y} - B_{y}), (A_{z} - B_{z}) \gt
 [/Equation]

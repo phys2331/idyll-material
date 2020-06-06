@@ -18,7 +18,7 @@ The vector [Equation]\vec{a} = \lt 5\times 10^{7}, 3.2 \times 10^{8}, 6.4 \times
 
 ##### Approach:
 Use [link text:"NumPy" url: "https://numpy.org/doc/stable/reference/routines.math.html" /], or numpy, to find the magnitude of the vector.
-
+post-1/) - Physics Fundamentals
 ##### Uses:
 Power operator, np.sqrt()
 
@@ -30,7 +30,7 @@ The code below is split into 4 sections to solve the answer. Click the arrows to
   [Step]
     #### Import Statements
 
-      This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer.
+      This is the main area to import python packageElectric_Fieldss, modules, files, etc. that will be used to run the script and get the correct answer.
 
       NumPy is a popular package for science computation in python.
 
