@@ -1,0 +1,74 @@
+[meta title:"Physics_Fundamentals" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Physics Fundamentals"
+  subtitle:"Physics II Fundamentals with Python"
+  author:"Mary Span"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+## Magnitude
+
+##### Question:
+The vector [Equation]\vec{a} = \lt 5\times 10^{7}, 3.2 \times 10^{8}, 6.4 \times 10^{7} \gt m/s^{2} [/Equation]. What is [Equation]|\vec{a}|[/Equation]?
+
+##### Approach:
+Use [link text:"NumPy" url: "https://numpy.org/doc/stable/reference/routines.math.html" /], or numpy, to find the magnitude of the vector.
+
+##### Uses:
+Power operator, np.sqrt()
+
+The code below is split into 4 sections to solve the answer. Click the arrows to learn more about the sections of code used to calculate the magnitude.
+
+[var name:"stepperIndex" value:0 /]
+
+[Stepper currentStep:stepperIndex]
+  [Step]
+    #### Import Statements
+
+      This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer.
+
+      NumPy is a popular package for science computation in python.
+
+      **import** numpy **as** np:
+
+        allows you to use the modules, functions, and objects within the package. In this problem, we need to take the square root, so np.sqrt() can be used.
+  [/Step]
+  [Step]
+    #### Given variables
+
+      In this section, organize the variables that are given in a problem.
+
+      The format is generally: variable = numbers
+
+      Note that no units are shown here.
+  [/Step]
+  [Step]
+    #### calculate
+
+      Use the variables listed to solve the problem. Set the problem equal to a unique new variable that you can call later.
+
+      * `new_variable = math`
+  [/Step]
+  [Step]
+    #### Print the answer
+
+    In this section, take the new variable(s) in the calculation section and output the answer by *printing*.
+
+    ```
+      print(new_variable)
+    ```
+
+    * This will print *only* what the new_variable is equal to, typically a number or set of numbers.
+
+    * Words
+
+  [/Step]
+  [StepperControl /]
+[/Stepper]
+
+[iframe src:"https://trinket.io/embed/python/6b7499f4e0" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
