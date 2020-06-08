@@ -77,9 +77,7 @@ Each number in the vector (x, y, z) is a **component** of the vector.
 
 A **unit vector** is a vector that has a magnitude of 1 in some direction.
 
-  * If a unit vector = 1, every component in that vect
-
-    ` print("This answer is =", new_variable, "units")`or must be *less* than 1.
+  * If a unit vector = 1, every component in that vector must be *less* than 1.
 
 There are 3 unit vectors in the Cartesian system that are along the three axes:
 
@@ -168,7 +166,7 @@ Equations:
 [Equation]
   \vec{A} + \vec{B} = \lt (A_{x} + B_{x}), (A_{y} + B_{y}), (A_{z} + B_{z}) \gt
 [/Equation]
-/Electric_Fields
+
 [Equation]
   \vec{A} - \vec{B} = \lt (A_{x} - B_{x}), (A_{y} - B_{y}), (A_{z} - B_{z}) \gt
 [/Equation]
