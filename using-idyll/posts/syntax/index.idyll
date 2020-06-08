@@ -24,10 +24,32 @@ The purpose of this page is to outline key differences between Idyll and markdow
 The main difference between Idyll and HTML is that Idyll uses `[]` instead of `<>`.
 For things that do not have an open/close, such as `</br>`, move the / to the end [br /] (`[br /]`).
 
+When copying "embed" code generated for html, you will probably need to convert all `=` into `:` in addition to the above.
+
+Example:
+    
+**Provided:**
+
+```
+<iframe src="https://trinket.io/embed/python/48ba1cf9b8" width="100%" height="600" frameborder="0" marginwidth="0" 
+marginheight="0" allowfullscreen>
+</iframe>
+```
+
+**Altered to work in Idyll**
+
+```
+[iframe src:"https://trinket.io/embed/python/48ba1cf9b8?outputOnly=true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" 
+marginheight:"0"]
+[/iframe]
+```
+
 ## Differences from Markdown
 
 Generally speaking, there are no major differences from markdown. 
 However, there are some commands that (at time of writing) were either missing a functionality available in markdown or have a different (undetermined) syntax, such as sub-bullets.
+
+All differences that I have noticed have seemed more like bugs than deliberate changes, and some have been patched.
 
 ## Components and JavaScript
 
@@ -43,3 +65,7 @@ Here is an example from the Idyll documentation:
 ```
 [Component propName:`2 * 2 * 2 * 2`/]
 ```
+
+The Idyll documentation mentions that backticks are needed for an evaluated expression;
+the confusion I encountered is, what expressions count as evaluated?
+This may need clarification for beginners.
