@@ -1,0 +1,262 @@
+[meta title:"Videos" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Physics Videos"
+  subtitle:""
+  author:"ms"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#111131"
+  color:"#ffffff"
+   /]
+
+## Overview
+
+Click the links below to view helpful videos about common Physics II problems and topics.
+
+[hr /]
+
+### Essential Math Skills
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ml4NSzCQobk" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Adding and Subtracting Vectors](https://www.youtube.com/watch?v=ci29I7a0HI8)
+
+* [The Meaning of the Dot Product](https://www.youtube.com/watch?v=BcxfxvYCL1g)
+
+* [The Cross Product](https://www.youtube.com/watch?v=jpKcpsNGgFo)
+
+[hr /]
+
+### Electric Fields
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mdulzEfQXDE" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Electric Force](https://www.youtube.com/watch?v=pFM-a7_qjFM)
+
+* [Electric Field due to a Point Charge](https://www.youtube.com/watch?v=PvMSFtS97Zc)
+
+* [Coulomb's Law (with some chemistry)](https://www.youtube.com/watch?v=yUPdtFqilXo)
+
+* [Sphere with Uniform Charge](https://www.youtube.com/watch?v=ULJTDCzKcZA)
+
+* [Ring with Uniform Charge](https://www.youtube.com/watch?v=Ta1q5_d-7yM)
+
+* [Disk with Uniform Charge](https://www.youtube.com/watch?v=i68CGhgGkxs)
+
+* [Electric Field of a Capacitor](https://www.youtube.com/watch?v=XSXKk_A3xUM)
+
+* [Charged Disk, Infinite Sheet, Parallel Plates](https://www.youtube.com/watch?v=B5UyXkFCg5s)
+
+* [Electric Field Patterns and Electric Flux](https://www.youtube.com/watch?v=q1eor6oIuUo)
+
+* [Electric Flux and Gauss' Law](https://www.youtube.com/watch?v=yOv4xxopQFQ)
+
+[hr /]
+
+### Electric Potential
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ZrMltpK6iAw" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Work and Electric Potential Energy](https://www.youtube.com/watch?v=Yvuo0IQuW64)
+
+* [Electric Potential and Electric Potential Difference (Voltage)](https://www.youtube.com/watch?v=_e6M5_FVn04)
+
+* [Electric Potential with Analogy to Gravity](https://www.youtube.com/watch?v=xrQCPYsoBKk)
+
+* [Electric Potential Equations](https://www.youtube.com/watch?v=Vek3hTjfXf4)
+
+* [Potential Difference and Nonuniform Fields](https://www.youtube.com/watch?v=j2k6LDafXHI)
+
+* [Path Independence](https://www.youtube.com/watch?v=rV7Y0Z2Oqp0)
+
+* [Potential Difference in an Insulator](https://www.youtube.com/watch?v=R--KiSGxPX0)
+
+* [Electric Field and Energy Density](https://www.youtube.com/watch?v=ZCCc-qSiRDM)
+
+[hr /]
+
+### Circuits
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/VfXGWWyJPmQ" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Circuit Basics](https://www.youtube.com/watch?v=iZYedWOERN0)
+
+* [Circuit Symbols and Diagrams](https://www.youtube.com/watch?v=ML9VqzZvkl8)
+
+* [Conventional Current vs Electron Flow](https://www.youtube.com/watch?v=gQEuliFx_Pc)
+
+* [Surface Charge on a High Voltage Circuit](https://www.youtube.com/watch?v=8BQM_xw2Rfo)
+
+* [Circuits Lecture - Overview of Ch 18](https://www.youtube.com/watch?v=Qp3iI06bujA)
+
+* [What is a Resistor?](https://www.youtube.com/watch?v=Gc1wVdbVI0E)
+
+* [How do Resistors Work?](https://www.youtube.com/watch?v=rcSOcbu6pDM)
+
+* [Resistors and Capacitors](https://www.youtube.com/watch?v=58PzPrjGsG8)
+
+* [Series and Parallel Circuits](https://www.youtube.com/watch?v=7mdc-lRrW1c)
+
+* [Capacitors Explained](https://www.youtube.com/watch?v=X4EUwTwZ110)
+
+* [Electron Flow in Capacitors During Charging and Discharging](https://www.youtube.com/watch?v=iQZknlJjaj4)
+
+* [Capacitor Problems](https://www.youtube.com/watch?v=PLQrPqYlPmI)
+
+* [Feedback](https://www.youtube.com/watch?v=f3TTn3si6ys)
+
+* [Feedback: Khan Academy](https://www.youtube.com/watch?v=ua4eMZTxpQ0)
+
+* [Circuit Analysis](https://www.youtube.com/watch?v=-w-VTw0tQlE)
+
+* [DC Resistors and Batteries](https://www.youtube.com/watch?v=g-wjP1otQWI)
+
+* [Capacitors and Kirchhoff](https://www.youtube.com/watch?v=vuCJP_5KOlI)
+
+* [AC Circuits](https://www.youtube.com/watch?v=Jveer7vhjGo)
+
+* [Power in Circuits](https://www.youtube.com/watch?v=jbyIrbi0f2A)
+
+* [Voltmeters and Ammeters](https://www.youtube.com/watch?v=yE3eQ6q39f4)
+
+* [Electromotive Force](https://www.youtube.com/watch?v=cbSKkrzdXe4)
+
+[hr /]
+
+### Magnetic Fields
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/IgtIdttfGVw" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Magnetic Field of a Wire](https://www.youtube.com/watch?v=nfSJ62mzKyY)
+
+* [The Biot-Savart Law](https://www.youtube.com/watch?v=GmAUjrA-dxM)
+
+* [Biot-Savart and Current](https://www.youtube.com/watch?v=S4uNHue5aNM)
+
+* [Magnetic Field due to Current-Carrying Loop](https://www.youtube.com/watch?v=fav3olr-ra0)
+
+* [Another Look at Magnetic Fields due to Wire Loops with Current](https://www.youtube.com/watch?v=gsTVN-4oycw)
+
+* [Magnetic Dipole Moment](https://www.youtube.com/watch?v=H1I9-VjCc-Y)
+
+* [Magnetic Field of a Bar Magnet](https://www.youtube.com/watch?v=TNPGiK6izvc)
+
+* [Solenoid Basics](https://www.youtube.com/watch?v=BbmocfETTFo)
+
+* [Magnetic Fields through Solenoids](https://www.youtube.com/watch?v=2XRtH46dsCI)
+
+* [The Curl Right Hand Rule](https://www.youtube.com/watch?v=LAnRTNwrFMo)
+
+* [Three Right Hand Rules](https://www.youtube.com/watch?v=TyaY5b2fqZk)
+
+[hr /]
+
+### Magnetic Force
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/RqSode4HZrE" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Magnetism (with force equations)](https://www.youtube.com/watch?v=s94suB5uLWw)
+
+* [Circular Path of Charge in Magnetic Field](https://www.youtube.com/watch?v=T6UvrobPnWQ)
+
+* [Magnetic Force on Charged Particles (Demonstration)](https://www.youtube.com/watch?v=orsMYomjwIw)
+
+* [How Cyclotrons Work](https://www.youtube.com/watch?v=m2jp0klZHEE)
+
+* [Magnetic Force on a Current-Carrying Wire (Explanation and Demonstration)](https://www.youtube.com/watch?v=fHuhkNosSrg)
+
+* [Force on a Current-Carrying Wire in a Magnetic Field (Example)](https://www.youtube.com/watch?v=F1PWnu01IQg)
+
+* [Electromagnetic Force on Parallel Wires (Example)](https://www.youtube.com/watch?v=GW7PvSR9VUo)
+
+* [Magnetic Force between Parallel Wires (Problem)](https://www.youtube.com/watch?v=8T_dP7Oq620)
+
+* [Velocity Selector Explanation (with equations)](https://www.youtube.com/watch?v=DnHVgItjzu8)
+
+* [Velocity Selector (Demonstration)](https://www.youtube.com/watch?v=Zad9QemCmBI)
+
+* [What is the Hall Effect (and a Hall Effect Sensor)](https://www.youtube.com/watch?v=wpAA3qeOYiI)
+
+* [Hall Effect (Demonstration)](https://www.youtube.com/watch?v=AcRCgyComEw)
+
+* [Hall Effect - What's THAT All About?](https://www.youtube.com/watch?v=xbGeMx0zOoc)
+
+* [Electromagnetic Induction, Motional EMF](https://www.youtube.com/watch?v=PqfxMWBe4PI)
+
+* [Motional EMF (Problem)](https://www.youtube.com/watch?v=iXmYJ8DQJ8A)
+
+* [Magnetic Torque on a Coil (Demonstration)](https://www.youtube.com/watch?v=yweryDX_vsE)
+
+* [Net Force on a Current Loop in a Magnetic Field](https://www.youtube.com/watch?v=rCc5-IxUXEI)
+
+* [Motion in a Magnetic Field](https://www.youtube.com/watch?v=84ZTzeCfswg)
+
+* [Stern-Gerlach Experiment](https://www.youtube.com/watch?v=PH1FbkLVJU4)
+
+* [Maxwell's Equations](https://www.youtube.com/watch?v=K40lNL3KsJ4)
+
+* [Gauss' Law for Magnetism](https://www.youtube.com/watch?v=tY5DBj55uGM)
+
+* [Ampere's Law](https://www.youtube.com/watch?v=5fqwJyt4Lus)
+
+[hr /]
+
+### Faraday's Law
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/BZaTW6lnaEg" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+* [Curly Electric Fields](https://www.youtube.com/watch?v=mCfrtEbJtLw)
+
+* [Faraday's Law Demo: Induction Coils](https://www.youtube.com/watch?v=Hh58afwzHfA)
+
+* [What is Magnetic Flux?](https://www.youtube.com/watch?v=6Q8wPfeOqnk)
+
+* [Magnetic Flux and Flux Density](https://www.youtube.com/watch?v=3NYg34_vy7k)
+
+* [Breakdown of Magnetic Flux](https://www.youtube.com/watch?v=VUZgHf7feew)
+
+* [Flux: Khan Academy](https://www.youtube.com/watch?v=m1PPujngqAw)
+
+* [The Physics of Superconductors](https://www.youtube.com/watch?v=h6FYs_AUCsQ)
+
+* [Meissner Effect](https://www.youtube.com/watch?v=HRLvVkkq5GE)
+
+* [Magnetism: Transformers](https://www.youtube.com/watch?v=2-Ijjm7if5g)
+
+* [Transformer Problems](https://www.youtube.com/watch?v=GJm-FOMeG4E)
+
+* [Inductors and Inductance](https://www.youtube.com/watch?v=ukBFPrXiKWA)
+
+* [The Basics of Inductance](https://www.youtube.com/watch?v=B8CPGiK59f8)
+
+* [Basics of Inductance P.2](https://www.youtube.com/watch?v=Z85J5eW1C1A)
+
+* [LC Oscillator Circuit](https://www.youtube.com/watch?v=nh4q7mIhLrY)
+
+* [Lenz's Law Demonstration](https://www.youtube.com/watch?v=k2RzSs4_Ur0)
+
+* [Lenz's Law: Khan Academy](https://www.youtube.com/watch?v=xxZenoBs2Pg)
+
+[hr /]
+
+### Electromagnetic Radiation
+
+[br /]
+
+[iframe width:"560" height:"315" src:"https://www.youtube.com/embed/FWCN_uI5ygY" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]

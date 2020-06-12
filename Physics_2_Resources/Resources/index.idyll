@@ -1,0 +1,27 @@
+[meta title:"Physics II Resources" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Physics II Resources"
+  subtitle:""
+  author:"ms"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#A504BF"
+  color:"#ffffff"
+   /]
+
+## Overview
+
+The following links lead to various resources that will help in Physics II.
+These pages may be referenced in other Idyll applications throughout the course.
+
+## Resource Type
+
+* [Videos](./post-1)
+
+* Articles
+
+* Problems
+
+* Simulations
