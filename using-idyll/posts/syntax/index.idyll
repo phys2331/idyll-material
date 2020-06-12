@@ -21,13 +21,15 @@ The purpose of this page is to outline key differences between Idyll and markdow
 
 ## Differences from HTML
 
+*There are already two issues on GitHub regarding these differences.*
+
 The main difference between Idyll and HTML is that Idyll uses `[]` instead of `<>`.
 For things that do not have an open/close, such as `</br>`, move the / to the end [br /] (`[br /]`).
 
 When copying "embed" code generated for html, you will probably need to convert all `=` into `:` in addition to the above.
 
 Example:
-    
+
 **Provided:**
 
 ```
@@ -47,9 +49,39 @@ marginheight:"0"]
 ## Differences from Markdown
 
 Generally speaking, there are no major differences from markdown. 
-However, there are some commands that (at time of writing) were either missing a functionality available in markdown or have a different (undetermined) syntax, such as sub-bullets.
+However, there are some commands that (at time of writing) were either missing a functionality available in markdown or have a different (undetermined) syntax.
 
-All differences that I have noticed have seemed more like bugs than deliberate changes, and some have been patched.
+All differences that I have noticed have seemed more like bugs or missing features than deliberate changes, and some have been patched.
+
+### Sub-Bullets
+Sub-bullets can't be generated as they normally would be in markdown:
+
+```
+* Main bullet
+  * sub-bullet
+```
+
+will produce:
+* Main bullet
+  * sub-bullet
+so we need to use:
+
+```
+[ul]
+  [li]
+    Main Bullet
+    [ul][li]Sub Bullet[/li][/ul]
+  [/li]
+[/ul]
+```
+
+which will produce:
+[ul]
+  [li]
+    Main Bullet
+    [ul][li]Sub Bullet[/li][/ul]
+  [/li]
+[/ul]
 
 ## Components and JavaScript
 
