@@ -1,0 +1,36 @@
+[meta title:"Bug Replication" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Bug Replication"
+  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
+  author:"Your Name Here"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+
+## Malfunctioning Links
+So if there's text between the first and second paragraph blocks, the links in the third paragraph block function as the links in the first one. 
+If I comment that between-paragraph text out or delete it, all of the links work fine. 
+If I only have one link in the first paragraph, only one link is broken in the third block.
+If I put blank lines before and after this text, there are no issues.
+If I put a blank line only before the text but not after, the last link functions as the second one instead of the first one.
+
+[p]
+[Google](https://google.com) // and some text about google
+[/p]
+asdf
+[p]
+[reddit](https://reddit.com) // hmmm i dunno
+[/p]
+
+[p]
+[yahoo](https://yahoo.com) // yeah we like weords here
+// probably anyway
+[/p]
+
+[p]
+[/p]
