@@ -2,115 +2,131 @@
 
 [Header
   fullWidth:true
-  title:"Simulations"
-  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
-  author:"Your Name Here"
+  title:"Simulations and Math Resources"
+  subtitle:""
+  author:"ms"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#222222"
+  background:"#004d66"
   color:"#ffffff"
    /]
 
-## Introduction
+[div class:"centerHead"]
 
-This is an Idyll post. It is generated via
-the file `index.idyll`. To compile this post using
-idyll, run the command `idyll` inside of this directory.
+  ## Overview
 
+    [p]The following sections detail simulations and math resources that may
+    be helpful in understanding Physics II topics.[/p]
 
-Idyll posts are designed to support interaction and
-data-driven graphics.
+  [hr /]
 
-[var name:"state" value:0 /]
-[CustomD3Component className:"d3-component" state:state /]
-[button onClick:`state++`]
-  Click Me.
-[/button]
+  ##Simulations
 
-Configuration can be done via the `idyll` field in `package.json`.
+    [p]
+      [PhET](https://phet.colorado.edu/) is from the University of Colorado,
+      Boulder, and has a variety of interactive simulations. The Charges and
+      Fields simulation below is a common tool used in the course. To access all
+      of the Physics simulations PhET offers, click [here](https://phet.colorado.edu/en/simulations/category/physics).
+    [/p]
 
-## Markup
+[/div]
 
-Idyll is based on Markdown.
+[fullWidth]
+  [div class:"frameWidth"]
+    [iframe src:"https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+  [/div]
+[/fullWidth]
 
-You can use familiar syntax
-to create **bold** (`**bold**` ) and *italic* (``*italic*` ) styles,
+[div class:"centerHead"]
 
-* lists
-* of
-* items,
+    [br /]
 
-```
-* lists
-* of
-* items,
-```
+    ### Commonly Used Simulations
 
-1. and numbered
-2. lists
-3. of items,
+      [p]
+        [Charges and Fields (embedded above)](https://phet.colorado.edu/en/simulation/charges-and-fields)
+        [br /]
+        [Faraday's Law](https://phet.colorado.edu/en/simulation/faradays-law)
+        [br /]
+        [Radio Waves & Electromagnetic Fields](https://phet.colorado.edu/en/simulation/legacy/radio-waves)
+        [br /]
+        [Vector Addition](https://phet.colorado.edu/en/simulation/vector-addition)
+      [/p]
 
+    ### Other Helpful Simulations
 
-```
-1. and numbered
-2. lists
-3. of items,
-```
+      [p]
+        [Battery-Resistor Circuit](https://phet.colorado.edu/en/simulation/legacy/battery-resistor-circuit)
+        [br /]
+        [Battery Voltage](https://phet.colorado.edu/en/simulation/legacy/battery-voltage)
+        [br /]
+        [Bending Light](https://phet.colorado.edu/en/simulation/bending-light)
+        [br /]
+        [Coulomb's Law](https://phet.colorado.edu/en/simulation/coulombs-law)
+        [br /]
+        [Electric Field Hockey](https://phet.colorado.edu/en/simulation/legacy/electric-hockey)
+        [br /]
+        [Electric Field of Dreams](https://phet.colorado.edu/en/simulation/legacy/efield)
+        [br /]
+        [Faraday's Electromagnetic Lab](https://phet.colorado.edu/en/simulation/legacy/faraday)
+        [br /]
+        [Ohm's Law](https://phet.colorado.edu/en/simulation/ohms-law)
+      [/p]
 
-in addition to [hyperlinks](https://idyll-lang.org) and images:
+    [p]
+      Want to contribute to PhET? Contact Dr. Amy Roberts for more information.
+    [/p]
 
-![quill](static/images/quill.svg)
+    [hr /]
 
-```
-![quill](static/images/quill.svg)
-```
+    [p]
+      [My Physics Lab](https://www.myphysicslab.com/) has simulations that mainly
+      deal with Physics I concepts. The simulation below is an example that uses
+      gravitational force, which can be compared to the electric force equation
+      in Physics II. [Here](https://www.khanacademy.org/science/ap-physics-1/ap-electric-charge-electric-force-and-voltage/coulombs-law-and-electric-force-ap/a/coulombs-law-and-electric-force-ap-physics-1)
+      is an article that compares the two force equations.
+    [/p]
 
-## Components
+[/div]
 
-Components can be embedded using a bracket syntax:
+[fullWidth]
+  [div class:"frameWidth"]
+    [iframe src:"https://www.myphysicslab.com/engine2D/mutual-attract-en.html?" width:"1000" height:"700" scrolling:"no"][/iframe]
+  [/div]
+[/fullWidth]
 
-```
-[Range /]
-```
+[hr /]
 
-and can contain nested content:
+[div class:"centerHead"]
 
-```
-[Equation]e = mc^{2}[/Equation]
-```
+  [br /]
 
-Components accept properties:
+  [p]
+    The [Molecular Workbench](http://mw.concord.org/modeler/?gclid=EAIaIQobChMIxOnJj_L86QIViYbACh1cWgZfEAAYASAAEgI4JfD_BwE)
+    is an open source platform with many simulations that span multiple subjects.
+  [/p]
 
-```
-[Range value:x min:0 max:1 /]
-```
+  [hr /]
 
-that can be bound to variables to achieve interactivity (more in next section).
+  ## Math Resources
 
+    [p]
+      [MATLAB](https://www.mathworks.com/products/matlab.html) provides an
+      environment in which programming and mathematics skills combine. It is
+      often used in various STEM curricula and may be available for free through
+      universities (CU Denver students: click [here](https://www1.ucdenver.edu/offices/office-of-information-technology/software/how-do-i-use/matlab)
+      to download).
 
-A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
+      MathWorks offers a few free, interactive [tutorials](https://www.mathworks.com/products/matlab/student.html).
+      The MATLAB Onramp course is a great introduction to the available tools,
+      and enough to get started with physics calculations.
 
-To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+      [WolframAlpha](https://www.wolframalpha.com/) can be used for calculations
+      and provides a breakdown of the mathematics involved. Click [here](https://www.wolframalpha.com/examples/science-and-technology/physics/)
+      for the WolframAlpha Physics Example page.
 
+      Need to brush up on math topics? Navigate to the [Video Resources](./../post-1)
+      page for quick videos on the math knowledge needed for Physics II.
+    [/p]
 
-
-## Interactivity
-
-Here is how you can instantiate a variable and bind it to a component:
-
-[var name:"exampleVar" value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-
-```
-[var name:"exampleVar" value:5 /]
-
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-```
-
-## Learn More
-
-To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
-join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
+[/div]

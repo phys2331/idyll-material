@@ -8,3 +8,13 @@
     max-height: 200px;
   }
 }
+
+.centerHead h2, h3{
+  text-align: center;
+  color: #004d66;
+}
+
+.frameWidth iframe{
+  display:block;
+  margin:auto;
+}
