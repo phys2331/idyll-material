@@ -375,7 +375,39 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
       /]
     // Causing strange errors. Tried commenting args; this was not the issue.
     [/div]
+    
+    // to line these up I have tried:
+    // div align,display,float
+    // span
 
+    [table]
+      [tr]
+        [td][div]test[/div][/td]
+        //[td][div]test[/]
+      [/tr]
+    [/table]
+
+    [div display:"inline-block"]
+      **The particle is:**
+      [Radio value:particleSign options:`[{value:1,label:"Positively charged."}]`/]
+      [Radio value:particleSign options:`[{value:0,label:"Neutral."}]`/]
+      [Radio value:particleSign options:`[{value:-1,label:"Negatively charged."}]`/]
+    [/div]
+
+    [div display:"inline-block"]
+      **The left plate is:**
+      [Radio value:leftSign onClick:`rightSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
+      [Radio value:leftSign onClick:`rightSign=0` options:`[{value:0,label:"Neutral."}]`/]
+      [Radio value:leftSign onClick:`rightSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
+    [/div]
+
+    [div align:"right"]
+      **The top plate is:**
+      [Radio value:topSign onClick:`bottomSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
+      [Radio value:topSign onClick:`bottomSign=0` options:`[{value:0,label:"Neutral."}]`/]
+      [Radio value:topSign onClick:`bottomSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
+    [/div]
+    
     *This simulation is still under construction!*
 
   [/Step]
