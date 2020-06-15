@@ -373,42 +373,38 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
         topSign:topSign
         bottomSign:bottomSign
       /]
-    // Causing strange errors. Tried commenting args; this was not the issue.
     [/div]
-    
-    // to line these up I have tried:
-    // div align,display,float
-    // span
 
-    [table]
-      [tr]
-        [td][div]test[/div][/td]
-        //[td][div]test[/]
-      [/tr]
-    [/table]
-
-    [div display:"inline-block"]
+    // Needs to be styled but that can come later
+    // Once it's styled let them change right and left (and top and bottom) independently?
+    // Will also take some more coding
+    [Float position:"left"]
       **The particle is:**
       [Radio value:particleSign options:`[{value:1,label:"Positively charged."}]`/]
       [Radio value:particleSign options:`[{value:0,label:"Neutral."}]`/]
       [Radio value:particleSign options:`[{value:-1,label:"Negatively charged."}]`/]
-    [/div]
-
-    [div display:"inline-block"]
-      **The left plate is:**
-      [Radio value:leftSign onClick:`rightSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
-      [Radio value:leftSign onClick:`rightSign=0` options:`[{value:0,label:"Neutral."}]`/]
-      [Radio value:leftSign onClick:`rightSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
-    [/div]
-
-    [div align:"right"]
+    [/Float]
+    [Float position:"right"]
       **The top plate is:**
       [Radio value:topSign onClick:`bottomSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
       [Radio value:topSign onClick:`bottomSign=0` options:`[{value:0,label:"Neutral."}]`/]
       [Radio value:topSign onClick:`bottomSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
-    [/div]
-    
+    [/Float]
+    [Float position:"left"]
+      **The left plate is:**
+      [Radio value:leftSign onClick:`rightSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
+      [Radio value:leftSign onClick:`rightSign=0` options:`[{value:0,label:"Neutral."}]`/]
+      [Radio value:leftSign onClick:`rightSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
+    [/Float]
+    [Float position:"right"]
+      [Button] Run! [/Button] *These buttons are currently useless!*
+      [EaserToggle value:time targetValue:targetTime time:5000 ] Accelerate! [/EaserToggle]
+    [/Float]
+
+    [Float]
+    [br /][br /]
     *This simulation is still under construction!*
+    [/Float]
 
   [/Step]
 

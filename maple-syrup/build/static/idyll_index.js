@@ -1,4 +1,127 @@
-require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/mnt/d/git/idyll-material/maple-syrup/node_modules/acorn/dist/acorn.js":[function(require,module,exports){
+require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _tween2 = require('tween.js');
+
+var _tween3 = _interopRequireDefault(_tween2);
+
+var _raf = require('raf');
+
+var _raf2 = _interopRequireDefault(_raf);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// Example:
+// [EaserToggle value:time targetValue:10 ] Start! [/easer]
+
+var stages = {
+  INITIAL: 0,
+  ANIMATING: 1,
+  FINAL: 2
+};
+
+var isEasing = false;
+
+var animate = function animate() {
+  var update = _tween3.default.update();
+  requestAnimationFrame(animate);
+};
+
+var EaserToggle = function (_React$PureComponent) {
+  _inherits(EaserToggle, _React$PureComponent);
+
+  function EaserToggle(props) {
+    _classCallCheck(this, EaserToggle);
+
+    var _this = _possibleConstructorReturn(this, (EaserToggle.__proto__ || Object.getPrototypeOf(EaserToggle)).call(this, props));
+
+    _this._initialValue = _this.value;
+    _this.state = {
+      stage: stages.INITIAL,
+      isToggleOn: true
+    };
+    // This binding is necessary to make `this` work in the callback
+    _this.handleClick = _this.handleClick.bind(_this);
+    return _this;
+  }
+
+  _createClass(EaserToggle, [{
+    key: 'handleClick',
+    value: function handleClick() {
+      this.setState(function (prevState) {
+        if (this.state.isToggleOn) {
+          this.onClick();
+        } else {
+          this.onStop();
+        }
+        return { isToggleOn: !prevState.isToggleOn };
+      });
+    }
+  }, {
+    key: 'onClick',
+    value: function onClick() {
+      var _this2 = this;
+
+      if (isEasing || this.state.stage !== stages.INITIAL) {
+        return;
+      }
+      isEasing = true;
+      _tween3.default.removeAll();
+      this.setState({ stage: stages.ANIMATING });
+      var _tween = { value: +this.props.value };
+      new _tween3.default.Tween(_tween).to({ value: this.props.targetValue }, 3000) // TODO: add 'time' variable
+      .easing(_tween3.default.Easing.Linear.None).onUpdate(function () {
+        _this2.props.updateProps({ value: _tween.value });
+      }).onStop(function () {
+        _this2.setState({ stage: stages.INITIAL });
+      }).onComplete(function () {
+        isEasing = false;
+        _this2.setState({ stage: stages.INITIAL });
+        _this2.handleClick();
+      }).start();
+
+      animate();
+    }
+  }, {
+    key: 'onStop',
+    value: function onStop() {
+      isEasing = false;
+      _tween3.default.removeAll();
+      this.setState({ stage: stages.INITIAL });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'button',
+        { onClick: this.handleClick },
+        this.state.isToggleOn ? 'Go!' : 'Stop.'
+      );
+    }
+  }]);
+
+  return EaserToggle;
+}(_react2.default.PureComponent);
+
+exports.default = EaserToggle;
+
+},{"raf":"/mnt/d/git/idyll-material/maple-syrup/node_modules/raf/index.js","react":"react","tween.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/tween.js/src/Tween.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/acorn/dist/acorn.js":[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -12732,61 +12855,7 @@ exports.isLower = exports.isLowerCase = require('is-lower-case')
 exports.ucFirst = exports.upperCaseFirst = require('upper-case-first')
 exports.lcFirst = exports.lowerCaseFirst = require('lower-case-first')
 
-},{"camel-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/camel-case/camel-case.js","constant-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/constant-case/constant-case.js","dot-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/dot-case/dot-case.js","header-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/header-case/header-case.js","is-lower-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/is-lower-case/is-lower-case.js","is-upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/is-upper-case/is-upper-case.js","lower-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/lower-case/lower-case.js","lower-case-first":"/mnt/d/git/idyll-material/maple-syrup/node_modules/lower-case-first/lower-case-first.js","no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js","param-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/param-case/param-case.js","pascal-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/pascal-case/pascal-case.js","path-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/path-case/path-case.js","sentence-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/sentence-case/sentence-case.js","snake-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/snake-case/snake-case.js","swap-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/swap-case/swap-case.js","title-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/title-case/title-case.js","upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case/upper-case.js","upper-case-first":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case-first/upper-case-first.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/classnames/index.js":[function(require,module,exports){
-/*!
-  Copyright (c) 2017 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
-
-(function () {
-	'use strict';
-
-	var hasOwn = {}.hasOwnProperty;
-
-	function classNames () {
-		var classes = [];
-
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
-
-			var argType = typeof arg;
-
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg) && arg.length) {
-				var inner = classNames.apply(null, arg);
-				if (inner) {
-					classes.push(inner);
-				}
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
-
-		return classes.join(' ');
-	}
-
-	if (typeof module !== 'undefined' && module.exports) {
-		classNames.default = classNames;
-		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
-		// register as 'classnames', consistent with npm package name
-		define('classnames', [], function () {
-			return classNames;
-		});
-	} else {
-		window.classNames = classNames;
-	}
-}());
-
-},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/constant-case/constant-case.js":[function(require,module,exports){
+},{"camel-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/camel-case/camel-case.js","constant-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/constant-case/constant-case.js","dot-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/dot-case/dot-case.js","header-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/header-case/header-case.js","is-lower-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/is-lower-case/is-lower-case.js","is-upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/is-upper-case/is-upper-case.js","lower-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/lower-case/lower-case.js","lower-case-first":"/mnt/d/git/idyll-material/maple-syrup/node_modules/lower-case-first/lower-case-first.js","no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js","param-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/param-case/param-case.js","pascal-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/pascal-case/pascal-case.js","path-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/path-case/path-case.js","sentence-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/sentence-case/sentence-case.js","snake-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/snake-case/snake-case.js","swap-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/swap-case/swap-case.js","title-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/title-case/title-case.js","upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case/upper-case.js","upper-case-first":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case-first/upper-case-first.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/constant-case/constant-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 var snakeCase = require('snake-case')
 
@@ -21865,127 +21934,7 @@ Step._idyll = {
 };
 
 exports.default = Step;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/table.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require('react');
-var Table = require('react-table').default;
-
-var TableComponent = function (_React$PureComponent) {
-  _inherits(TableComponent, _React$PureComponent);
-
-  function TableComponent() {
-    _classCallCheck(this, TableComponent);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  TableComponent.prototype.getColumns = function getColumns() {
-    if (this.props.columns) {
-      if (this.props.columns.length && typeof this.props.columns[0] === 'string') {
-        return this.props.columns.map(function (d) {
-          return {
-            Header: d,
-            accessor: d
-          };
-        });
-      }
-
-      return this.props.columns;
-    }
-    if ((this.props.data || []).length) {
-      return Object.keys(this.props.data[0]).filter(function (d) {
-        return d !== '';
-      }).map(function (d) {
-        return {
-          Header: d,
-          accessor: d
-        };
-      });
-    }
-
-    return [];
-  };
-
-  TableComponent.prototype.render = function render() {
-    var _props = this.props,
-        idyll = _props.idyll,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps']);
-
-    if (!props.data && props.value) {
-      props.data = props.value;
-    }
-    return React.createElement(Table, _extends({
-      className: 'table ' + (props.className || ''),
-      showPagination: props.data.length > props.defaultPageSize,
-      minRows: props.data.length <= props.defaultPageSize ? props.data.length : undefined
-    }, props, {
-      children: undefined,
-      columns: this.getColumns()
-    }));
-  };
-
-  return TableComponent;
-}(React.PureComponent);
-
-TableComponent.defaultProps = {
-  data: [],
-  showPageSizeOptions: false,
-  showPageJump: false,
-  defaultPageSize: 20
-};
-
-TableComponent._idyll = {
-  name: 'Table',
-  tagType: 'closed',
-  props: [{
-    name: 'data',
-    type: 'array',
-    description: 'The data to be shown in a table. Should be an array of object.',
-    example: '`[{name: "A", value: 0}, {name: "B", value: 5}]`'
-  }, {
-    name: 'defaultPageSize',
-    type: 'number',
-    example: '10',
-    description: 'The number of datapoints to be shown on a page.',
-    defaultValue: '20'
-  }, {
-    name: 'showPagination',
-    type: 'boolean',
-    example: 'false',
-    description: 'Show next and previous page buttons.',
-    defaultValue: 'true'
-  }, {
-    name: 'showPageSizeOptions',
-    type: 'boolean',
-    example: 'false',
-    description: 'Show options to configure page size.',
-    defaultValue: 'false'
-  }, {
-    name: 'showPageJump',
-    type: 'boolean',
-    example: 'false',
-    description: 'Show page jump option.',
-    defaultValue: 'false'
-  }]
-};
-
-exports.default = TableComponent;
-},{"react":"react","react-table":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/index.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -46598,7 +46547,47 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '/')
 }
 
-},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/process-nextick-args/index.js":[function(require,module,exports){
+},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/performance-now/lib/performance-now.js":[function(require,module,exports){
+(function (process){
+// Generated by CoffeeScript 1.12.2
+(function() {
+  var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
+
+  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
+    module.exports = function() {
+      return performance.now();
+    };
+  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
+    module.exports = function() {
+      return (getNanoSeconds() - nodeLoadTime) / 1e6;
+    };
+    hrtime = process.hrtime;
+    getNanoSeconds = function() {
+      var hr;
+      hr = hrtime();
+      return hr[0] * 1e9 + hr[1];
+    };
+    moduleLoadTime = getNanoSeconds();
+    upTime = process.uptime() * 1e9;
+    nodeLoadTime = moduleLoadTime - upTime;
+  } else if (Date.now) {
+    module.exports = function() {
+      return Date.now() - loadTime;
+    };
+    loadTime = Date.now();
+  } else {
+    module.exports = function() {
+      return new Date().getTime() - loadTime;
+    };
+    loadTime = new Date().getTime();
+  }
+
+}).call(this);
+
+
+
+}).call(this,require('_process'))
+},{"_process":"/mnt/d/git/idyll-material/maple-syrup/node_modules/process/browser.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/process-nextick-args/index.js":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -47631,7 +47620,86 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-dom-factories/index.js":[function(require,module,exports){
+},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/raf/index.js":[function(require,module,exports){
+(function (global){
+var now = require('performance-now')
+  , root = typeof window === 'undefined' ? global : window
+  , vendors = ['moz', 'webkit']
+  , suffix = 'AnimationFrame'
+  , raf = root['request' + suffix]
+  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
+
+for(var i = 0; !raf && i < vendors.length; i++) {
+  raf = root[vendors[i] + 'Request' + suffix]
+  caf = root[vendors[i] + 'Cancel' + suffix]
+      || root[vendors[i] + 'CancelRequest' + suffix]
+}
+
+// Some versions of FF have rAF but not cAF
+if(!raf || !caf) {
+  var last = 0
+    , id = 0
+    , queue = []
+    , frameDuration = 1000 / 60
+
+  raf = function(callback) {
+    if(queue.length === 0) {
+      var _now = now()
+        , next = Math.max(0, frameDuration - (_now - last))
+      last = next + _now
+      setTimeout(function() {
+        var cp = queue.slice(0)
+        // Clear queue here to prevent
+        // callbacks from appending listeners
+        // to the current frame's queue
+        queue.length = 0
+        for(var i = 0; i < cp.length; i++) {
+          if(!cp[i].cancelled) {
+            try{
+              cp[i].callback(last)
+            } catch(e) {
+              setTimeout(function() { throw e }, 0)
+            }
+          }
+        }
+      }, Math.round(next))
+    }
+    queue.push({
+      handle: ++id,
+      callback: callback,
+      cancelled: false
+    })
+    return id
+  }
+
+  caf = function(handle) {
+    for(var i = 0; i < queue.length; i++) {
+      if(queue[i].handle === handle) {
+        queue[i].cancelled = true
+      }
+    }
+  }
+}
+
+module.exports = function(fn) {
+  // Wrap in a new function to prevent
+  // `cancel` potentially being assigned
+  // to the native rAF function
+  return raf.call(root, fn)
+}
+module.exports.cancel = function() {
+  caf.apply(root, arguments)
+}
+module.exports.polyfill = function(object) {
+  if (!object) {
+    object = root;
+  }
+  object.requestAnimationFrame = raf
+  object.cancelAnimationFrame = caf
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"performance-now":"/mnt/d/git/idyll-material/maple-syrup/node_modules/performance-now/lib/performance-now.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-dom-factories/index.js":[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -73489,2727 +73557,7 @@ if (module && module.exports) {
     window.Latex = Latex;
 }
 
-},{"katex":"/mnt/d/git/idyll-material/maple-syrup/node_modules/katex/dist/katex.js","prop-types":"/mnt/d/git/idyll-material/maple-syrup/node_modules/prop-types/index.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/defaultProps.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _classnames = require('classnames');
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-var _utils = require('./utils');
-
-var _utils2 = _interopRequireDefault(_utils);
-
-var _pagination = require('./pagination');
-
-var _pagination2 = _interopRequireDefault(_pagination);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-//
-
-
-var emptyObj = function emptyObj() {
-  return {};
-};
-
-exports.default = {
-  // General
-  data: [],
-  resolveData: function resolveData(data) {
-    return data;
-  },
-  loading: false,
-  showPagination: true,
-  showPaginationTop: false,
-  showPaginationBottom: true,
-  showPageSizeOptions: true,
-  pageSizeOptions: [5, 10, 20, 25, 50, 100],
-  defaultPageSize: 20,
-  showPageJump: true,
-  collapseOnSortingChange: true,
-  collapseOnPageChange: true,
-  collapseOnDataChange: true,
-  freezeWhenExpanded: false,
-  sortable: true,
-  multiSort: true,
-  resizable: true,
-  filterable: false,
-  defaultSortDesc: false,
-  defaultSorted: [],
-  defaultFiltered: [],
-  defaultResized: [],
-  defaultExpanded: {},
-  // eslint-disable-next-line no-unused-vars
-  defaultFilterMethod: function defaultFilterMethod(filter, row, column) {
-    var id = filter.pivotId || filter.id;
-    return row[id] !== undefined ? String(row[id]).startsWith(filter.value) : true;
-  },
-  // eslint-disable-next-line no-unused-vars
-  defaultSortMethod: function defaultSortMethod(a, b, desc) {
-    // force null and undefined to the bottom
-    a = a === null || a === undefined ? '' : a;
-    b = b === null || b === undefined ? '' : b;
-    // force any string values to lowercase
-    a = typeof a === 'string' ? a.toLowerCase() : a;
-    b = typeof b === 'string' ? b.toLowerCase() : b;
-    // Return either 1 or -1 to indicate a sort priority
-    if (a > b) {
-      return 1;
-    }
-    if (a < b) {
-      return -1;
-    }
-    // returning 0, undefined or any falsey value will use subsequent sorts or
-    // the index as a tiebreaker
-    return 0;
-  },
-
-  // Controlled State Props
-  // page: undefined,
-  // pageSize: undefined,
-  // sorted: [],
-  // filtered: [],
-  // resized: [],
-  // expanded: {},
-
-  // Controlled State Callbacks
-  onPageChange: undefined,
-  onPageSizeChange: undefined,
-  onSortedChange: undefined,
-  onFilteredChange: undefined,
-  onResizedChange: undefined,
-  onExpandedChange: undefined,
-
-  // Pivoting
-  pivotBy: undefined,
-
-  // Key Constants
-  pivotValKey: '_pivotVal',
-  pivotIDKey: '_pivotID',
-  subRowsKey: '_subRows',
-  aggregatedKey: '_aggregated',
-  nestingLevelKey: '_nestingLevel',
-  originalKey: '_original',
-  indexKey: '_index',
-  groupedByPivotKey: '_groupedByPivot',
-
-  // Server-side Callbacks
-  onFetchData: function onFetchData() {
-    return null;
-  },
-
-  // Classes
-  className: '',
-  style: {},
-
-  // Component decorators
-  getProps: emptyObj,
-  getTableProps: emptyObj,
-  getTheadGroupProps: emptyObj,
-  getTheadGroupTrProps: emptyObj,
-  getTheadGroupThProps: emptyObj,
-  getTheadProps: emptyObj,
-  getTheadTrProps: emptyObj,
-  getTheadThProps: emptyObj,
-  getTheadFilterProps: emptyObj,
-  getTheadFilterTrProps: emptyObj,
-  getTheadFilterThProps: emptyObj,
-  getTbodyProps: emptyObj,
-  getTrGroupProps: emptyObj,
-  getTrProps: emptyObj,
-  getTdProps: emptyObj,
-  getTfootProps: emptyObj,
-  getTfootTrProps: emptyObj,
-  getTfootTdProps: emptyObj,
-  getPaginationProps: emptyObj,
-  getLoadingProps: emptyObj,
-  getNoDataProps: emptyObj,
-  getResizerProps: emptyObj,
-
-  // Global Column Defaults
-  column: {
-    // Renderers
-    Cell: undefined,
-    Header: undefined,
-    Footer: undefined,
-    Aggregated: undefined,
-    Pivot: undefined,
-    PivotValue: undefined,
-    Expander: undefined,
-    Filter: undefined,
-    // All Columns
-    sortable: undefined, // use table default
-    resizable: undefined, // use table default
-    filterable: undefined, // use table default
-    show: true,
-    minWidth: 100,
-    // Cells only
-    className: '',
-    style: {},
-    getProps: emptyObj,
-    // Pivot only
-    aggregate: undefined,
-    // Headers only
-    headerClassName: '',
-    headerStyle: {},
-    getHeaderProps: emptyObj,
-    // Footers only
-    footerClassName: '',
-    footerStyle: {},
-    getFooterProps: emptyObj,
-    filterMethod: undefined,
-    filterAll: false,
-    sortMethod: undefined
-  },
-
-  // Global Expander Column Defaults
-  expanderDefaults: {
-    sortable: false,
-    resizable: false,
-    filterable: false,
-    width: 35
-  },
-
-  pivotDefaults: {
-    // extend the defaults for pivoted columns here
-  },
-
-  // Text
-  previousText: 'Previous',
-  nextText: 'Next',
-  loadingText: 'Loading...',
-  noDataText: 'No rows found',
-  pageText: 'Page',
-  ofText: 'of',
-  rowsText: 'rows',
-
-  // Components
-  TableComponent: function TableComponent(_ref) {
-    var children = _ref.children,
-        className = _ref.className,
-        rest = _objectWithoutProperties(_ref, ['children', 'className']);
-
-    return _react2.default.createElement(
-      'div',
-      _extends({
-        className: (0, _classnames2.default)('rt-table', className),
-        role: 'grid'
-        // tabIndex='0'
-      }, rest),
-      children
-    );
-  },
-  TheadComponent: _utils2.default.makeTemplateComponent('rt-thead', 'Thead'),
-  TbodyComponent: _utils2.default.makeTemplateComponent('rt-tbody', 'Tbody'),
-  TrGroupComponent: function TrGroupComponent(_ref2) {
-    var children = _ref2.children,
-        className = _ref2.className,
-        rest = _objectWithoutProperties(_ref2, ['children', 'className']);
-
-    return _react2.default.createElement(
-      'div',
-      _extends({ className: (0, _classnames2.default)('rt-tr-group', className), role: 'rowgroup' }, rest),
-      children
-    );
-  },
-  TrComponent: function TrComponent(_ref3) {
-    var children = _ref3.children,
-        className = _ref3.className,
-        rest = _objectWithoutProperties(_ref3, ['children', 'className']);
-
-    return _react2.default.createElement(
-      'div',
-      _extends({ className: (0, _classnames2.default)('rt-tr', className), role: 'row' }, rest),
-      children
-    );
-  },
-  ThComponent: function ThComponent(_ref4) {
-    var toggleSort = _ref4.toggleSort,
-        className = _ref4.className,
-        children = _ref4.children,
-        rest = _objectWithoutProperties(_ref4, ['toggleSort', 'className', 'children']);
-
-    return (
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-      _react2.default.createElement(
-        'div',
-        _extends({
-          className: (0, _classnames2.default)('rt-th', className),
-          onClick: function onClick(e) {
-            return toggleSort && toggleSort(e);
-          },
-          role: 'columnheader',
-          tabIndex: '-1' // Resolves eslint issues without implementing keyboard navigation incorrectly
-        }, rest),
-        children
-      )
-    );
-  },
-  TdComponent: function TdComponent(_ref5) {
-    var toggleSort = _ref5.toggleSort,
-        className = _ref5.className,
-        children = _ref5.children,
-        rest = _objectWithoutProperties(_ref5, ['toggleSort', 'className', 'children']);
-
-    return _react2.default.createElement(
-      'div',
-      _extends({ className: (0, _classnames2.default)('rt-td', className), role: 'gridcell' }, rest),
-      children
-    );
-  },
-  TfootComponent: _utils2.default.makeTemplateComponent('rt-tfoot', 'Tfoot'),
-  FilterComponent: function FilterComponent(_ref6) {
-    var filter = _ref6.filter,
-        _onChange = _ref6.onChange;
-    return _react2.default.createElement('input', {
-      type: 'text',
-      style: {
-        width: '100%'
-      },
-      value: filter ? filter.value : '',
-      onChange: function onChange(event) {
-        return _onChange(event.target.value);
-      }
-    });
-  },
-  ExpanderComponent: function ExpanderComponent(_ref7) {
-    var isExpanded = _ref7.isExpanded;
-    return _react2.default.createElement(
-      'div',
-      { className: (0, _classnames2.default)('rt-expander', isExpanded && '-open') },
-      '\u2022'
-    );
-  },
-  PivotValueComponent: function PivotValueComponent(_ref8) {
-    var subRows = _ref8.subRows,
-        value = _ref8.value;
-    return _react2.default.createElement(
-      'span',
-      null,
-      value,
-      ' ',
-      subRows && '(' + subRows.length + ')'
-    );
-  },
-  AggregatedComponent: function AggregatedComponent(_ref9) {
-    var subRows = _ref9.subRows,
-        column = _ref9.column;
-
-    var previewValues = subRows.filter(function (d) {
-      return typeof d[column.id] !== 'undefined';
-    }).map(function (row, i) {
-      return (
-        // eslint-disable-next-line react/no-array-index-key
-        _react2.default.createElement(
-          'span',
-          { key: i },
-          row[column.id],
-          i < subRows.length - 1 ? ', ' : ''
-        )
-      );
-    });
-    return _react2.default.createElement(
-      'span',
-      null,
-      previewValues
-    );
-  },
-  PivotComponent: undefined, // this is a computed default generated using
-  // the ExpanderComponent and PivotValueComponent at run-time in methods.js
-  PaginationComponent: _pagination2.default,
-  PreviousComponent: undefined,
-  NextComponent: undefined,
-  LoadingComponent: function LoadingComponent(_ref10) {
-    var className = _ref10.className,
-        loading = _ref10.loading,
-        loadingText = _ref10.loadingText,
-        rest = _objectWithoutProperties(_ref10, ['className', 'loading', 'loadingText']);
-
-    return _react2.default.createElement(
-      'div',
-      _extends({ className: (0, _classnames2.default)('-loading', { '-active': loading }, className) }, rest),
-      _react2.default.createElement(
-        'div',
-        { className: '-loading-inner' },
-        loadingText
-      )
-    );
-  },
-  NoDataComponent: _utils2.default.makeTemplateComponent('rt-noData', 'NoData'),
-  ResizerComponent: _utils2.default.makeTemplateComponent('rt-resizer', 'Resizer'),
-  PadRowComponent: function PadRowComponent() {
-    return _react2.default.createElement(
-      'span',
-      null,
-      '\xA0'
-    );
-  }
-};
-
-},{"./pagination":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/pagination.js","./utils":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/utils.js","classnames":"/mnt/d/git/idyll-material/maple-syrup/node_modules/classnames/index.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/index.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ReactTableDefaults = undefined;
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _classnames = require('classnames');
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-var _utils = require('./utils');
-
-var _utils2 = _interopRequireDefault(_utils);
-
-var _lifecycle = require('./lifecycle');
-
-var _lifecycle2 = _interopRequireDefault(_lifecycle);
-
-var _methods = require('./methods');
-
-var _methods2 = _interopRequireDefault(_methods);
-
-var _defaultProps = require('./defaultProps');
-
-var _defaultProps2 = _interopRequireDefault(_defaultProps);
-
-var _propTypes = require('./propTypes');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-//
-
-
-var ReactTableDefaults = exports.ReactTableDefaults = _defaultProps2.default;
-
-var ReactTable = function (_Methods) {
-  _inherits(ReactTable, _Methods);
-
-  function ReactTable(props) {
-    _classCallCheck(this, ReactTable);
-
-    var _this = _possibleConstructorReturn(this, (ReactTable.__proto__ || Object.getPrototypeOf(ReactTable)).call(this));
-
-    _this.getResolvedState = _this.getResolvedState.bind(_this);
-    _this.getDataModel = _this.getDataModel.bind(_this);
-    _this.getSortedData = _this.getSortedData.bind(_this);
-    _this.fireFetchData = _this.fireFetchData.bind(_this);
-    _this.getPropOrState = _this.getPropOrState.bind(_this);
-    _this.getStateOrProp = _this.getStateOrProp.bind(_this);
-    _this.filterData = _this.filterData.bind(_this);
-    _this.sortData = _this.sortData.bind(_this);
-    _this.getMinRows = _this.getMinRows.bind(_this);
-    _this.onPageChange = _this.onPageChange.bind(_this);
-    _this.onPageSizeChange = _this.onPageSizeChange.bind(_this);
-    _this.sortColumn = _this.sortColumn.bind(_this);
-    _this.filterColumn = _this.filterColumn.bind(_this);
-    _this.resizeColumnStart = _this.resizeColumnStart.bind(_this);
-    _this.resizeColumnEnd = _this.resizeColumnEnd.bind(_this);
-    _this.resizeColumnMoving = _this.resizeColumnMoving.bind(_this);
-
-    _this.state = {
-      page: 0,
-      pageSize: props.defaultPageSize,
-      sorted: props.defaultSorted,
-      expanded: props.defaultExpanded,
-      filtered: props.defaultFiltered,
-      resized: props.defaultResized,
-      currentlyResizing: false,
-      skipNextSort: false
-    };
-    return _this;
-  }
-
-  _createClass(ReactTable, [{
-    key: 'render',
-    value: function render() {
-      var _this2 = this;
-
-      var resolvedState = this.getResolvedState();
-      var children = resolvedState.children,
-          className = resolvedState.className,
-          style = resolvedState.style,
-          getProps = resolvedState.getProps,
-          getTableProps = resolvedState.getTableProps,
-          getTheadGroupProps = resolvedState.getTheadGroupProps,
-          getTheadGroupTrProps = resolvedState.getTheadGroupTrProps,
-          getTheadGroupThProps = resolvedState.getTheadGroupThProps,
-          getTheadProps = resolvedState.getTheadProps,
-          getTheadTrProps = resolvedState.getTheadTrProps,
-          getTheadThProps = resolvedState.getTheadThProps,
-          getTheadFilterProps = resolvedState.getTheadFilterProps,
-          getTheadFilterTrProps = resolvedState.getTheadFilterTrProps,
-          getTheadFilterThProps = resolvedState.getTheadFilterThProps,
-          getTbodyProps = resolvedState.getTbodyProps,
-          getTrGroupProps = resolvedState.getTrGroupProps,
-          getTrProps = resolvedState.getTrProps,
-          getTdProps = resolvedState.getTdProps,
-          getTfootProps = resolvedState.getTfootProps,
-          getTfootTrProps = resolvedState.getTfootTrProps,
-          getTfootTdProps = resolvedState.getTfootTdProps,
-          getPaginationProps = resolvedState.getPaginationProps,
-          getLoadingProps = resolvedState.getLoadingProps,
-          getNoDataProps = resolvedState.getNoDataProps,
-          getResizerProps = resolvedState.getResizerProps,
-          showPagination = resolvedState.showPagination,
-          showPaginationTop = resolvedState.showPaginationTop,
-          showPaginationBottom = resolvedState.showPaginationBottom,
-          manual = resolvedState.manual,
-          loadingText = resolvedState.loadingText,
-          noDataText = resolvedState.noDataText,
-          sortable = resolvedState.sortable,
-          multiSort = resolvedState.multiSort,
-          resizable = resolvedState.resizable,
-          filterable = resolvedState.filterable,
-          pivotIDKey = resolvedState.pivotIDKey,
-          pivotValKey = resolvedState.pivotValKey,
-          pivotBy = resolvedState.pivotBy,
-          subRowsKey = resolvedState.subRowsKey,
-          aggregatedKey = resolvedState.aggregatedKey,
-          originalKey = resolvedState.originalKey,
-          indexKey = resolvedState.indexKey,
-          groupedByPivotKey = resolvedState.groupedByPivotKey,
-          loading = resolvedState.loading,
-          pageSize = resolvedState.pageSize,
-          page = resolvedState.page,
-          sorted = resolvedState.sorted,
-          filtered = resolvedState.filtered,
-          resized = resolvedState.resized,
-          expanded = resolvedState.expanded,
-          pages = resolvedState.pages,
-          onExpandedChange = resolvedState.onExpandedChange,
-          TableComponent = resolvedState.TableComponent,
-          TheadComponent = resolvedState.TheadComponent,
-          TbodyComponent = resolvedState.TbodyComponent,
-          TrGroupComponent = resolvedState.TrGroupComponent,
-          TrComponent = resolvedState.TrComponent,
-          ThComponent = resolvedState.ThComponent,
-          TdComponent = resolvedState.TdComponent,
-          TfootComponent = resolvedState.TfootComponent,
-          PaginationComponent = resolvedState.PaginationComponent,
-          LoadingComponent = resolvedState.LoadingComponent,
-          SubComponent = resolvedState.SubComponent,
-          NoDataComponent = resolvedState.NoDataComponent,
-          ResizerComponent = resolvedState.ResizerComponent,
-          ExpanderComponent = resolvedState.ExpanderComponent,
-          PivotValueComponent = resolvedState.PivotValueComponent,
-          PivotComponent = resolvedState.PivotComponent,
-          AggregatedComponent = resolvedState.AggregatedComponent,
-          FilterComponent = resolvedState.FilterComponent,
-          PadRowComponent = resolvedState.PadRowComponent,
-          resolvedData = resolvedState.resolvedData,
-          allVisibleColumns = resolvedState.allVisibleColumns,
-          headerGroups = resolvedState.headerGroups,
-          hasHeaderGroups = resolvedState.hasHeaderGroups,
-          sortedData = resolvedState.sortedData,
-          currentlyResizing = resolvedState.currentlyResizing;
-
-      // Pagination
-
-      var startRow = pageSize * page;
-      var endRow = startRow + pageSize;
-      var pageRows = manual ? resolvedData : sortedData.slice(startRow, endRow);
-      var minRows = this.getMinRows();
-      var padRows = _utils2.default.range(Math.max(minRows - pageRows.length, 0));
-
-      var hasColumnFooter = allVisibleColumns.some(function (d) {
-        return d.Footer;
-      });
-      var hasFilters = filterable || allVisibleColumns.some(function (d) {
-        return d.filterable;
-      });
-
-      var recurseRowsViewIndex = function recurseRowsViewIndex(rows) {
-        var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-        var index = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : -1;
-        return [rows.map(function (row, i) {
-          index += 1;
-          var rowWithViewIndex = _extends({}, row, {
-            _viewIndex: index
-          });
-          var newPath = path.concat([i]);
-          if (rowWithViewIndex[subRowsKey] && _utils2.default.get(expanded, newPath)) {
-            var _recurseRowsViewIndex = recurseRowsViewIndex(rowWithViewIndex[subRowsKey], newPath, index);
-
-            var _recurseRowsViewIndex2 = _slicedToArray(_recurseRowsViewIndex, 2);
-
-            rowWithViewIndex[subRowsKey] = _recurseRowsViewIndex2[0];
-            index = _recurseRowsViewIndex2[1];
-          }
-          return rowWithViewIndex;
-        }), index];
-      };
-
-      var _recurseRowsViewIndex3 = recurseRowsViewIndex(pageRows);
-
-      var _recurseRowsViewIndex4 = _slicedToArray(_recurseRowsViewIndex3, 1);
-
-      pageRows = _recurseRowsViewIndex4[0];
-
-
-      var canPrevious = page > 0;
-      var canNext = page + 1 < pages;
-
-      var rowMinWidth = _utils2.default.sum(allVisibleColumns.map(function (d) {
-        var resizedColumn = resized.find(function (x) {
-          return x.id === d.id;
-        }) || {};
-        return _utils2.default.getFirstDefined(resizedColumn.value, d.width, d.minWidth);
-      }));
-
-      var rowIndex = -1;
-
-      var finalState = _extends({}, resolvedState, {
-        startRow: startRow,
-        endRow: endRow,
-        pageRows: pageRows,
-        minRows: minRows,
-        padRows: padRows,
-        hasColumnFooter: hasColumnFooter,
-        canPrevious: canPrevious,
-        canNext: canNext,
-        rowMinWidth: rowMinWidth
-      });
-
-      var rootProps = _utils2.default.splitProps(getProps(finalState, undefined, undefined, this));
-      var tableProps = _utils2.default.splitProps(getTableProps(finalState, undefined, undefined, this));
-      var tBodyProps = _utils2.default.splitProps(getTbodyProps(finalState, undefined, undefined, this));
-      var loadingProps = getLoadingProps(finalState, undefined, undefined, this);
-      var noDataProps = getNoDataProps(finalState, undefined, undefined, this);
-
-      // Visual Components
-
-      var makeHeaderGroup = function makeHeaderGroup(column, i) {
-        var resizedValue = function resizedValue(col) {
-          return (resized.find(function (x) {
-            return x.id === col.id;
-          }) || {}).value;
-        };
-        var flex = _utils2.default.sum(column.columns.map(function (col) {
-          return col.width || resizedValue(col) ? 0 : col.minWidth;
-        }));
-        var width = _utils2.default.sum(column.columns.map(function (col) {
-          return _utils2.default.getFirstDefined(resizedValue(col), col.width, col.minWidth);
-        }));
-        var maxWidth = _utils2.default.sum(column.columns.map(function (col) {
-          return _utils2.default.getFirstDefined(resizedValue(col), col.width, col.maxWidth);
-        }));
-
-        var theadGroupThProps = _utils2.default.splitProps(getTheadGroupThProps(finalState, undefined, column, _this2));
-        var columnHeaderProps = _utils2.default.splitProps(column.getHeaderProps(finalState, undefined, column, _this2));
-
-        var classes = [column.headerClassName, theadGroupThProps.className, columnHeaderProps.className];
-
-        var styles = _extends({}, column.headerStyle, theadGroupThProps.style, columnHeaderProps.style);
-
-        var rest = _extends({}, theadGroupThProps.rest, columnHeaderProps.rest);
-
-        var flexStyles = {
-          flex: flex + ' 0 auto',
-          width: _utils2.default.asPx(width),
-          maxWidth: _utils2.default.asPx(maxWidth)
-        };
-
-        return _react2.default.createElement(
-          ThComponent,
-          _extends({
-            key: i + '-' + column.id,
-            className: (0, _classnames2.default)(classes),
-            style: _extends({}, styles, flexStyles)
-          }, rest),
-          _utils2.default.normalizeComponent(column.Header, {
-            data: sortedData,
-            column: column
-          })
-        );
-      };
-
-      var makeHeaderGroups = function makeHeaderGroups() {
-        var theadGroupProps = _utils2.default.splitProps(getTheadGroupProps(finalState, undefined, undefined, _this2));
-        var theadGroupTrProps = _utils2.default.splitProps(getTheadGroupTrProps(finalState, undefined, undefined, _this2));
-        return _react2.default.createElement(
-          TheadComponent,
-          _extends({
-            className: (0, _classnames2.default)('-headerGroups', theadGroupProps.className),
-            style: _extends({}, theadGroupProps.style, {
-              minWidth: rowMinWidth + 'px'
-            })
-          }, theadGroupProps.rest),
-          _react2.default.createElement(
-            TrComponent,
-            _extends({
-              className: theadGroupTrProps.className,
-              style: theadGroupTrProps.style
-            }, theadGroupTrProps.rest),
-            headerGroups.map(makeHeaderGroup)
-          )
-        );
-      };
-
-      var makeHeader = function makeHeader(column, i) {
-        var resizedCol = resized.find(function (x) {
-          return x.id === column.id;
-        }) || {};
-        var sort = sorted.find(function (d) {
-          return d.id === column.id;
-        });
-        var show = typeof column.show === 'function' ? column.show() : column.show;
-        var width = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.minWidth);
-        var maxWidth = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.maxWidth);
-        var theadThProps = _utils2.default.splitProps(getTheadThProps(finalState, undefined, column, _this2));
-        var columnHeaderProps = _utils2.default.splitProps(column.getHeaderProps(finalState, undefined, column, _this2));
-
-        var classes = [column.headerClassName, theadThProps.className, columnHeaderProps.className];
-
-        var styles = _extends({}, column.headerStyle, theadThProps.style, columnHeaderProps.style);
-
-        var rest = _extends({}, theadThProps.rest, columnHeaderProps.rest);
-
-        var isResizable = _utils2.default.getFirstDefined(column.resizable, resizable, false);
-        var resizer = isResizable ? _react2.default.createElement(ResizerComponent, _extends({
-          onMouseDown: function onMouseDown(e) {
-            return _this2.resizeColumnStart(e, column, false);
-          },
-          onTouchStart: function onTouchStart(e) {
-            return _this2.resizeColumnStart(e, column, true);
-          }
-        }, getResizerProps('finalState', undefined, column, _this2))) : null;
-
-        var isSortable = _utils2.default.getFirstDefined(column.sortable, sortable, false);
-
-        return _react2.default.createElement(
-          ThComponent,
-          _extends({
-            key: i + '-' + column.id,
-            className: (0, _classnames2.default)(classes, isResizable && 'rt-resizable-header', sort ? sort.desc ? '-sort-desc' : '-sort-asc' : '', isSortable && '-cursor-pointer', !show && '-hidden', pivotBy && pivotBy.slice(0, -1).includes(column.id) && 'rt-header-pivot'),
-            style: _extends({}, styles, {
-              flex: width + ' 0 auto',
-              width: _utils2.default.asPx(width),
-              maxWidth: _utils2.default.asPx(maxWidth)
-            }),
-            toggleSort: function toggleSort(e) {
-              if (isSortable) _this2.sortColumn(column, multiSort ? e.shiftKey : false);
-            }
-          }, rest),
-          _react2.default.createElement(
-            'div',
-            { className: (0, _classnames2.default)(isResizable && 'rt-resizable-header-content') },
-            _utils2.default.normalizeComponent(column.Header, {
-              data: sortedData,
-              column: column
-            })
-          ),
-          resizer
-        );
-      };
-
-      var makeHeaders = function makeHeaders() {
-        var theadProps = _utils2.default.splitProps(getTheadProps(finalState, undefined, undefined, _this2));
-        var theadTrProps = _utils2.default.splitProps(getTheadTrProps(finalState, undefined, undefined, _this2));
-        return _react2.default.createElement(
-          TheadComponent,
-          _extends({
-            className: (0, _classnames2.default)('-header', theadProps.className),
-            style: _extends({}, theadProps.style, {
-              minWidth: rowMinWidth + 'px'
-            })
-          }, theadProps.rest),
-          _react2.default.createElement(
-            TrComponent,
-            _extends({
-              className: theadTrProps.className,
-              style: theadTrProps.style
-            }, theadTrProps.rest),
-            allVisibleColumns.map(makeHeader)
-          )
-        );
-      };
-
-      var makeFilter = function makeFilter(column, i) {
-        var resizedCol = resized.find(function (x) {
-          return x.id === column.id;
-        }) || {};
-        var width = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.minWidth);
-        var maxWidth = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.maxWidth);
-        var theadFilterThProps = _utils2.default.splitProps(getTheadFilterThProps(finalState, undefined, column, _this2));
-        var columnHeaderProps = _utils2.default.splitProps(column.getHeaderProps(finalState, undefined, column, _this2));
-
-        var classes = [column.headerClassName, theadFilterThProps.className, columnHeaderProps.className];
-
-        var styles = _extends({}, column.headerStyle, theadFilterThProps.style, columnHeaderProps.style);
-
-        var rest = _extends({}, theadFilterThProps.rest, columnHeaderProps.rest);
-
-        var filter = filtered.find(function (filter) {
-          return filter.id === column.id;
-        });
-
-        var ResolvedFilterComponent = column.Filter || FilterComponent;
-
-        var isFilterable = _utils2.default.getFirstDefined(column.filterable, filterable, false);
-
-        return _react2.default.createElement(
-          ThComponent,
-          _extends({
-            key: i + '-' + column.id,
-            className: (0, _classnames2.default)(classes),
-            style: _extends({}, styles, {
-              flex: width + ' 0 auto',
-              width: _utils2.default.asPx(width),
-              maxWidth: _utils2.default.asPx(maxWidth)
-            })
-          }, rest),
-          isFilterable ? _utils2.default.normalizeComponent(ResolvedFilterComponent, {
-            column: column,
-            filter: filter,
-            onChange: function onChange(value) {
-              return _this2.filterColumn(column, value);
-            }
-          }, _defaultProps2.default.column.Filter) : null
-        );
-      };
-
-      var makeFilters = function makeFilters() {
-        var theadFilterProps = _utils2.default.splitProps(getTheadFilterProps(finalState, undefined, undefined, _this2));
-        var theadFilterTrProps = _utils2.default.splitProps(getTheadFilterTrProps(finalState, undefined, undefined, _this2));
-        return _react2.default.createElement(
-          TheadComponent,
-          _extends({
-            className: (0, _classnames2.default)('-filters', theadFilterProps.className),
-            style: _extends({}, theadFilterProps.style, {
-              minWidth: rowMinWidth + 'px'
-            })
-          }, theadFilterProps.rest),
-          _react2.default.createElement(
-            TrComponent,
-            _extends({
-              className: theadFilterTrProps.className,
-              style: theadFilterTrProps.style
-            }, theadFilterTrProps.rest),
-            allVisibleColumns.map(makeFilter)
-          )
-        );
-      };
-
-      var makePageRow = function makePageRow(row, i) {
-        var path = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-        var rowInfo = {
-          original: row[originalKey],
-          row: row,
-          index: row[indexKey],
-          viewIndex: rowIndex += 1,
-          pageSize: pageSize,
-          page: page,
-          level: path.length,
-          nestingPath: path.concat([i]),
-          aggregated: row[aggregatedKey],
-          groupedByPivot: row[groupedByPivotKey],
-          subRows: row[subRowsKey]
-        };
-        var isExpanded = _utils2.default.get(expanded, rowInfo.nestingPath);
-        var trGroupProps = getTrGroupProps(finalState, rowInfo, undefined, _this2);
-        var trProps = _utils2.default.splitProps(getTrProps(finalState, rowInfo, undefined, _this2));
-        return _react2.default.createElement(
-          TrGroupComponent,
-          _extends({ key: rowInfo.nestingPath.join('_') }, trGroupProps),
-          _react2.default.createElement(
-            TrComponent,
-            _extends({
-              className: (0, _classnames2.default)(trProps.className, row._viewIndex % 2 ? '-even' : '-odd'),
-              style: trProps.style
-            }, trProps.rest),
-            allVisibleColumns.map(function (column, i2) {
-              var resizedCol = resized.find(function (x) {
-                return x.id === column.id;
-              }) || {};
-              var show = typeof column.show === 'function' ? column.show() : column.show;
-              var width = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.minWidth);
-              var maxWidth = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.maxWidth);
-              var tdProps = _utils2.default.splitProps(getTdProps(finalState, rowInfo, column, _this2));
-              var columnProps = _utils2.default.splitProps(column.getProps(finalState, rowInfo, column, _this2));
-
-              var classes = [tdProps.className, column.className, columnProps.className];
-
-              var styles = _extends({}, tdProps.style, column.style, columnProps.style);
-
-              var cellInfo = _extends({}, rowInfo, {
-                isExpanded: isExpanded,
-                column: _extends({}, column),
-                value: rowInfo.row[column.id],
-                pivoted: column.pivoted,
-                expander: column.expander,
-                resized: resized,
-                show: show,
-                width: width,
-                maxWidth: maxWidth,
-                tdProps: tdProps,
-                columnProps: columnProps,
-                classes: classes,
-                styles: styles
-              });
-
-              var value = cellInfo.value;
-
-              var useOnExpanderClick = void 0;
-              var isBranch = void 0;
-              var isPreview = void 0;
-
-              var onExpanderClick = function onExpanderClick(e) {
-                var newExpanded = _utils2.default.clone(expanded);
-                if (isExpanded) {
-                  newExpanded = _utils2.default.set(newExpanded, cellInfo.nestingPath, false);
-                } else {
-                  newExpanded = _utils2.default.set(newExpanded, cellInfo.nestingPath, {});
-                }
-
-                return _this2.setStateWithData({
-                  expanded: newExpanded
-                }, function () {
-                  return onExpandedChange && onExpandedChange(newExpanded, cellInfo.nestingPath, e);
-                });
-              };
-
-              // Default to a standard cell
-              var resolvedCell = _utils2.default.normalizeComponent(column.Cell, cellInfo, value);
-
-              // Resolve Renderers
-              var ResolvedAggregatedComponent = column.Aggregated || (!column.aggregate ? AggregatedComponent : column.Cell);
-              var ResolvedExpanderComponent = column.Expander || ExpanderComponent;
-              var ResolvedPivotValueComponent = column.PivotValue || PivotValueComponent;
-              var DefaultResolvedPivotComponent = PivotComponent || function (props) {
-                return _react2.default.createElement(
-                  'div',
-                  null,
-                  _react2.default.createElement(ResolvedExpanderComponent, props),
-                  _react2.default.createElement(ResolvedPivotValueComponent, props)
-                );
-              };
-              var ResolvedPivotComponent = column.Pivot || DefaultResolvedPivotComponent;
-
-              // Is this cell expandable?
-              if (cellInfo.pivoted || cellInfo.expander) {
-                // Make it expandable by defualt
-                cellInfo.expandable = true;
-                useOnExpanderClick = true;
-                // If pivoted, has no subRows, and does not have a subComponent,
-                // do not make expandable
-                if (cellInfo.pivoted && !cellInfo.subRows && !SubComponent) {
-                  cellInfo.expandable = false;
-                }
-              }
-
-              if (cellInfo.pivoted) {
-                // Is this column a branch?
-                isBranch = rowInfo.row[pivotIDKey] === column.id && cellInfo.subRows;
-                // Should this column be blank?
-                isPreview = pivotBy.indexOf(column.id) > pivotBy.indexOf(rowInfo.row[pivotIDKey]) && cellInfo.subRows;
-                // Pivot Cell Render Override
-                if (isBranch) {
-                  // isPivot
-                  resolvedCell = _utils2.default.normalizeComponent(ResolvedPivotComponent, _extends({}, cellInfo, {
-                    value: row[pivotValKey]
-                  }), row[pivotValKey]);
-                } else if (isPreview) {
-                  // Show the pivot preview
-                  resolvedCell = _utils2.default.normalizeComponent(ResolvedAggregatedComponent, cellInfo, value);
-                } else {
-                  resolvedCell = null;
-                }
-              } else if (cellInfo.aggregated) {
-                resolvedCell = _utils2.default.normalizeComponent(ResolvedAggregatedComponent, cellInfo, value);
-              }
-
-              if (cellInfo.expander) {
-                resolvedCell = _utils2.default.normalizeComponent(ResolvedExpanderComponent, cellInfo, row[pivotValKey]);
-                if (pivotBy) {
-                  if (cellInfo.groupedByPivot) {
-                    resolvedCell = null;
-                  }
-                  if (!cellInfo.subRows && !SubComponent) {
-                    resolvedCell = null;
-                  }
-                }
-              }
-
-              var resolvedOnExpanderClick = useOnExpanderClick ? onExpanderClick : function () {};
-
-              // If there are multiple onClick events, make sure they don't
-              // override eachother. This should maybe be expanded to handle all
-              // function attributes
-              var interactionProps = {
-                onClick: resolvedOnExpanderClick
-              };
-
-              if (tdProps.rest.onClick) {
-                interactionProps.onClick = function (e) {
-                  tdProps.rest.onClick(e, function () {
-                    return resolvedOnExpanderClick(e);
-                  });
-                };
-              }
-
-              if (columnProps.rest.onClick) {
-                interactionProps.onClick = function (e) {
-                  columnProps.rest.onClick(e, function () {
-                    return resolvedOnExpanderClick(e);
-                  });
-                };
-              }
-
-              // Return the cell
-              return _react2.default.createElement(
-                TdComponent
-                // eslint-disable-next-line react/no-array-index-key
-                ,
-                _extends({ key: i2 + '-' + column.id,
-                  className: (0, _classnames2.default)(classes, !show && 'hidden', cellInfo.expandable && 'rt-expandable', (isBranch || isPreview) && 'rt-pivot'),
-                  style: _extends({}, styles, {
-                    flex: width + ' 0 auto',
-                    width: _utils2.default.asPx(width),
-                    maxWidth: _utils2.default.asPx(maxWidth)
-                  })
-                }, tdProps.rest, columnProps.rest, interactionProps),
-                resolvedCell
-              );
-            })
-          ),
-          rowInfo.subRows && isExpanded && rowInfo.subRows.map(function (d, i) {
-            return makePageRow(d, i, rowInfo.nestingPath);
-          }),
-          SubComponent && !rowInfo.subRows && isExpanded && SubComponent(rowInfo)
-        );
-      };
-
-      var makePadColumn = function makePadColumn(column, i) {
-        var resizedCol = resized.find(function (x) {
-          return x.id === column.id;
-        }) || {};
-        var show = typeof column.show === 'function' ? column.show() : column.show;
-        var width = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.minWidth);
-        var flex = width;
-        var maxWidth = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.maxWidth);
-        var tdProps = _utils2.default.splitProps(getTdProps(finalState, undefined, column, _this2));
-        var columnProps = _utils2.default.splitProps(column.getProps(finalState, undefined, column, _this2));
-
-        var classes = [tdProps.className, column.className, columnProps.className];
-
-        var styles = _extends({}, tdProps.style, column.style, columnProps.style);
-
-        return _react2.default.createElement(
-          TdComponent,
-          _extends({
-            key: i + '-' + column.id,
-            className: (0, _classnames2.default)(classes, !show && 'hidden'),
-            style: _extends({}, styles, {
-              flex: flex + ' 0 auto',
-              width: _utils2.default.asPx(width),
-              maxWidth: _utils2.default.asPx(maxWidth)
-            })
-          }, tdProps.rest),
-          _utils2.default.normalizeComponent(PadRowComponent)
-        );
-      };
-
-      var makePadRow = function makePadRow(row, i) {
-        var trGroupProps = getTrGroupProps(finalState, undefined, undefined, _this2);
-        var trProps = _utils2.default.splitProps(getTrProps(finalState, undefined, undefined, _this2));
-        return _react2.default.createElement(
-          TrGroupComponent,
-          _extends({ key: i }, trGroupProps),
-          _react2.default.createElement(
-            TrComponent,
-            {
-              className: (0, _classnames2.default)('-padRow', (pageRows.length + i) % 2 ? '-even' : '-odd', trProps.className),
-              style: trProps.style || {}
-            },
-            allVisibleColumns.map(makePadColumn)
-          )
-        );
-      };
-
-      var makeColumnFooter = function makeColumnFooter(column, i) {
-        var resizedCol = resized.find(function (x) {
-          return x.id === column.id;
-        }) || {};
-        var show = typeof column.show === 'function' ? column.show() : column.show;
-        var width = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.minWidth);
-        var maxWidth = _utils2.default.getFirstDefined(resizedCol.value, column.width, column.maxWidth);
-        var tFootTdProps = _utils2.default.splitProps(getTfootTdProps(finalState, undefined, undefined, _this2));
-        var columnProps = _utils2.default.splitProps(column.getProps(finalState, undefined, column, _this2));
-        var columnFooterProps = _utils2.default.splitProps(column.getFooterProps(finalState, undefined, column, _this2));
-
-        var classes = [tFootTdProps.className, column.className, columnProps.className, columnFooterProps.className];
-
-        var styles = _extends({}, tFootTdProps.style, column.style, columnProps.style, columnFooterProps.style);
-
-        return _react2.default.createElement(
-          TdComponent,
-          _extends({
-            key: i + '-' + column.id,
-            className: (0, _classnames2.default)(classes, !show && 'hidden'),
-            style: _extends({}, styles, {
-              flex: width + ' 0 auto',
-              width: _utils2.default.asPx(width),
-              maxWidth: _utils2.default.asPx(maxWidth)
-            })
-          }, columnProps.rest, tFootTdProps.rest, columnFooterProps.rest),
-          _utils2.default.normalizeComponent(column.Footer, {
-            data: sortedData,
-            column: column
-          })
-        );
-      };
-
-      var makeColumnFooters = function makeColumnFooters() {
-        var tFootProps = getTfootProps(finalState, undefined, undefined, _this2);
-        var tFootTrProps = _utils2.default.splitProps(getTfootTrProps(finalState, undefined, undefined, _this2));
-        return _react2.default.createElement(
-          TfootComponent,
-          _extends({
-            className: tFootProps.className,
-            style: _extends({}, tFootProps.style, {
-              minWidth: rowMinWidth + 'px'
-            })
-          }, tFootProps.rest),
-          _react2.default.createElement(
-            TrComponent,
-            _extends({
-              className: (0, _classnames2.default)(tFootTrProps.className),
-              style: tFootTrProps.style
-            }, tFootTrProps.rest),
-            allVisibleColumns.map(makeColumnFooter)
-          )
-        );
-      };
-
-      var makePagination = function makePagination() {
-        var paginationProps = _utils2.default.splitProps(getPaginationProps(finalState, undefined, undefined, _this2));
-        return _react2.default.createElement(PaginationComponent, _extends({}, resolvedState, {
-          pages: pages,
-          canPrevious: canPrevious,
-          canNext: canNext,
-          onPageChange: _this2.onPageChange,
-          onPageSizeChange: _this2.onPageSizeChange,
-          className: paginationProps.className,
-          style: paginationProps.style
-        }, paginationProps.rest));
-      };
-
-      var makeTable = function makeTable() {
-        var pagination = makePagination();
-        return _react2.default.createElement(
-          'div',
-          _extends({
-            className: (0, _classnames2.default)('ReactTable', className, rootProps.className),
-            style: _extends({}, style, rootProps.style)
-          }, rootProps.rest),
-          showPagination && showPaginationTop ? _react2.default.createElement(
-            'div',
-            { className: 'pagination-top' },
-            pagination
-          ) : null,
-          _react2.default.createElement(
-            TableComponent,
-            _extends({
-              className: (0, _classnames2.default)(tableProps.className, currentlyResizing ? 'rt-resizing' : ''),
-              style: tableProps.style
-            }, tableProps.rest),
-            hasHeaderGroups ? makeHeaderGroups() : null,
-            makeHeaders(),
-            hasFilters ? makeFilters() : null,
-            _react2.default.createElement(
-              TbodyComponent,
-              _extends({
-                className: (0, _classnames2.default)(tBodyProps.className),
-                style: _extends({}, tBodyProps.style, {
-                  minWidth: rowMinWidth + 'px'
-                })
-              }, tBodyProps.rest),
-              pageRows.map(function (d, i) {
-                return makePageRow(d, i);
-              }),
-              padRows.map(makePadRow)
-            ),
-            hasColumnFooter ? makeColumnFooters() : null
-          ),
-          showPagination && showPaginationBottom ? _react2.default.createElement(
-            'div',
-            { className: 'pagination-bottom' },
-            pagination
-          ) : null,
-          !pageRows.length && _react2.default.createElement(
-            NoDataComponent,
-            noDataProps,
-            _utils2.default.normalizeComponent(noDataText)
-          ),
-          _react2.default.createElement(LoadingComponent, _extends({ loading: loading, loadingText: loadingText }, loadingProps))
-        );
-      };
-
-      // childProps are optionally passed to a function-as-a-child
-      return children ? children(finalState, makeTable, this) : makeTable();
-    }
-  }]);
-
-  return ReactTable;
-}((0, _methods2.default)((0, _lifecycle2.default)(_react.Component)));
-
-ReactTable.propTypes = _propTypes2.default;
-ReactTable.defaultProps = _defaultProps2.default;
-exports.default = ReactTable;
-
-},{"./defaultProps":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/defaultProps.js","./lifecycle":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/lifecycle.js","./methods":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/methods.js","./propTypes":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/propTypes.js","./utils":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/utils.js","classnames":"/mnt/d/git/idyll-material/maple-syrup/node_modules/classnames/index.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/lifecycle.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-exports.default = function (Base) {
-  return function (_Base) {
-    _inherits(_class, _Base);
-
-    function _class() {
-      _classCallCheck(this, _class);
-
-      return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
-    }
-
-    _createClass(_class, [{
-      key: 'componentWillMount',
-      value: function componentWillMount() {
-        this.setStateWithData(this.getDataModel(this.getResolvedState(), true));
-      }
-    }, {
-      key: 'componentDidMount',
-      value: function componentDidMount() {
-        this.fireFetchData();
-      }
-    }, {
-      key: 'componentWillReceiveProps',
-      value: function componentWillReceiveProps(nextProps, nextState) {
-        var oldState = this.getResolvedState();
-        var newState = this.getResolvedState(nextProps, nextState);
-
-        // Do a deep compare of new and old `defaultOption` and
-        // if they are different reset `option = defaultOption`
-        var defaultableOptions = ['sorted', 'filtered', 'resized', 'expanded'];
-        defaultableOptions.forEach(function (x) {
-          var defaultName = 'default' + (x.charAt(0).toUpperCase() + x.slice(1));
-          if (JSON.stringify(oldState[defaultName]) !== JSON.stringify(newState[defaultName])) {
-            newState[x] = newState[defaultName];
-          }
-        });
-
-        // If they change these table options, we need to reset defaults
-        // or else we could get into a state where the user has changed the UI
-        // and then disabled the ability to change it back.
-        // e.g. If `filterable` has changed, set `filtered = defaultFiltered`
-        var resettableOptions = ['sortable', 'filterable', 'resizable'];
-        resettableOptions.forEach(function (x) {
-          if (oldState[x] !== newState[x]) {
-            var baseName = x.replace('able', '');
-            var optionName = baseName + 'ed';
-            var defaultName = 'default' + (optionName.charAt(0).toUpperCase() + optionName.slice(1));
-            newState[optionName] = newState[defaultName];
-          }
-        });
-
-        // Props that trigger a data update
-        if (oldState.data !== newState.data || oldState.columns !== newState.columns || oldState.pivotBy !== newState.pivotBy || oldState.sorted !== newState.sorted || oldState.filtered !== newState.filtered) {
-          this.setStateWithData(this.getDataModel(newState, oldState.data !== newState.data));
-        }
-      }
-    }, {
-      key: 'setStateWithData',
-      value: function setStateWithData(newState, cb) {
-        var _this2 = this;
-
-        var oldState = this.getResolvedState();
-        var newResolvedState = this.getResolvedState({}, newState);
-        var freezeWhenExpanded = newResolvedState.freezeWhenExpanded;
-
-        // Default to unfrozen state
-
-        newResolvedState.frozen = false;
-
-        // If freezeWhenExpanded is set, check for frozen conditions
-        if (freezeWhenExpanded) {
-          // if any rows are expanded, freeze the existing data and sorting
-          var keys = Object.keys(newResolvedState.expanded);
-          for (var i = 0; i < keys.length; i += 1) {
-            if (newResolvedState.expanded[keys[i]]) {
-              newResolvedState.frozen = true;
-              break;
-            }
-          }
-        }
-
-        // If the data isn't frozen and either the data or
-        // sorting model has changed, update the data
-        if (oldState.frozen && !newResolvedState.frozen || oldState.sorted !== newResolvedState.sorted || oldState.filtered !== newResolvedState.filtered || oldState.showFilters !== newResolvedState.showFilters || !newResolvedState.frozen && oldState.resolvedData !== newResolvedState.resolvedData) {
-          // Handle collapseOnsortedChange & collapseOnDataChange
-          if (oldState.sorted !== newResolvedState.sorted && this.props.collapseOnSortingChange || oldState.filtered !== newResolvedState.filtered || oldState.showFilters !== newResolvedState.showFilters || oldState.sortedData && !newResolvedState.frozen && oldState.resolvedData !== newResolvedState.resolvedData && this.props.collapseOnDataChange) {
-            newResolvedState.expanded = {};
-          }
-
-          Object.assign(newResolvedState, this.getSortedData(newResolvedState));
-        }
-
-        // Set page to 0 if filters change
-        if (oldState.filtered !== newResolvedState.filtered) {
-          newResolvedState.page = 0;
-        }
-
-        // Calculate pageSize all the time
-        if (newResolvedState.sortedData) {
-          newResolvedState.pages = newResolvedState.manual ? newResolvedState.pages : Math.ceil(newResolvedState.sortedData.length / newResolvedState.pageSize);
-          newResolvedState.page = Math.max(newResolvedState.page >= newResolvedState.pages ? newResolvedState.pages - 1 : newResolvedState.page, 0);
-        }
-
-        return this.setState(newResolvedState, function () {
-          if (cb) {
-            cb();
-          }
-          if (oldState.page !== newResolvedState.page || oldState.pageSize !== newResolvedState.pageSize || oldState.sorted !== newResolvedState.sorted || oldState.filtered !== newResolvedState.filtered) {
-            _this2.fireFetchData();
-          }
-        });
-      }
-    }]);
-
-    return _class;
-  }(Base);
-};
-
-},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/methods.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _utils = require('./utils');
-
-var _utils2 = _interopRequireDefault(_utils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-exports.default = function (Base) {
-  return function (_Base) {
-    _inherits(_class, _Base);
-
-    function _class() {
-      _classCallCheck(this, _class);
-
-      return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
-    }
-
-    _createClass(_class, [{
-      key: 'getResolvedState',
-      value: function getResolvedState(props, state) {
-        var resolvedState = _extends({}, _utils2.default.compactObject(this.state), _utils2.default.compactObject(this.props), _utils2.default.compactObject(state), _utils2.default.compactObject(props));
-        return resolvedState;
-      }
-    }, {
-      key: 'getDataModel',
-      value: function getDataModel(newState, dataChanged) {
-        var _this2 = this;
-
-        var columns = newState.columns,
-            _newState$pivotBy = newState.pivotBy,
-            pivotBy = _newState$pivotBy === undefined ? [] : _newState$pivotBy,
-            data = newState.data,
-            resolveData = newState.resolveData,
-            pivotIDKey = newState.pivotIDKey,
-            pivotValKey = newState.pivotValKey,
-            subRowsKey = newState.subRowsKey,
-            aggregatedKey = newState.aggregatedKey,
-            nestingLevelKey = newState.nestingLevelKey,
-            originalKey = newState.originalKey,
-            indexKey = newState.indexKey,
-            groupedByPivotKey = newState.groupedByPivotKey,
-            SubComponent = newState.SubComponent;
-
-        // Determine Header Groups
-
-        var hasHeaderGroups = false;
-        columns.forEach(function (column) {
-          if (column.columns) {
-            hasHeaderGroups = true;
-          }
-        });
-
-        var columnsWithExpander = [].concat(_toConsumableArray(columns));
-
-        var expanderColumn = columns.find(function (col) {
-          return col.expander || col.columns && col.columns.some(function (col2) {
-            return col2.expander;
-          });
-        });
-        // The actual expander might be in the columns field of a group column
-        if (expanderColumn && !expanderColumn.expander) {
-          expanderColumn = expanderColumn.columns.find(function (col) {
-            return col.expander;
-          });
-        }
-
-        // If we have SubComponent's we need to make sure we have an expander column
-        if (SubComponent && !expanderColumn) {
-          expanderColumn = { expander: true };
-          columnsWithExpander = [expanderColumn].concat(_toConsumableArray(columnsWithExpander));
-        }
-
-        var makeDecoratedColumn = function makeDecoratedColumn(column, parentColumn) {
-          var dcol = void 0;
-          if (column.expander) {
-            dcol = _extends({}, _this2.props.column, _this2.props.expanderDefaults, column);
-          } else {
-            dcol = _extends({}, _this2.props.column, column);
-          }
-
-          // Ensure minWidth is not greater than maxWidth if set
-          if (dcol.maxWidth < dcol.minWidth) {
-            dcol.minWidth = dcol.maxWidth;
-          }
-
-          if (parentColumn) {
-            dcol.parentColumn = parentColumn;
-          }
-
-          // First check for string accessor
-          if (typeof dcol.accessor === 'string') {
-            dcol.id = dcol.id || dcol.accessor;
-            var accessorString = dcol.accessor;
-            dcol.accessor = function (row) {
-              return _utils2.default.get(row, accessorString);
-            };
-            return dcol;
-          }
-
-          // Fall back to functional accessor (but require an ID)
-          if (dcol.accessor && !dcol.id) {
-            console.warn(dcol);
-            throw new Error('A column id is required if using a non-string accessor for column above.');
-          }
-
-          // Fall back to an undefined accessor
-          if (!dcol.accessor) {
-            dcol.accessor = function () {
-              return undefined;
-            };
-          }
-
-          return dcol;
-        };
-
-        var allDecoratedColumns = [];
-
-        // Decorate the columns
-        var decorateAndAddToAll = function decorateAndAddToAll(column, parentColumn) {
-          var decoratedColumn = makeDecoratedColumn(column, parentColumn);
-          allDecoratedColumns.push(decoratedColumn);
-          return decoratedColumn;
-        };
-
-        var decoratedColumns = columnsWithExpander.map(function (column) {
-          if (column.columns) {
-            return _extends({}, column, {
-              columns: column.columns.map(function (d) {
-                return decorateAndAddToAll(d, column);
-              })
-            });
-          }
-          return decorateAndAddToAll(column);
-        });
-
-        // Build the visible columns, headers and flat column list
-        var visibleColumns = decoratedColumns.slice();
-        var allVisibleColumns = [];
-
-        visibleColumns = visibleColumns.map(function (column) {
-          if (column.columns) {
-            var visibleSubColumns = column.columns.filter(function (d) {
-              return pivotBy.indexOf(d.id) > -1 ? false : _utils2.default.getFirstDefined(d.show, true);
-            });
-            return _extends({}, column, {
-              columns: visibleSubColumns
-            });
-          }
-          return column;
-        });
-
-        visibleColumns = visibleColumns.filter(function (column) {
-          return column.columns ? column.columns.length : pivotBy.indexOf(column.id) > -1 ? false : _utils2.default.getFirstDefined(column.show, true);
-        });
-
-        // Find any custom pivot location
-        var pivotIndex = visibleColumns.findIndex(function (col) {
-          return col.pivot;
-        });
-
-        // Handle Pivot Columns
-        if (pivotBy.length) {
-          // Retrieve the pivot columns in the correct pivot order
-          var pivotColumns = [];
-          pivotBy.forEach(function (pivotID) {
-            var found = allDecoratedColumns.find(function (d) {
-              return d.id === pivotID;
-            });
-            if (found) {
-              pivotColumns.push(found);
-            }
-          });
-
-          var PivotParentColumn = pivotColumns.reduce(function (prev, current) {
-            return prev && prev === current.parentColumn && current.parentColumn;
-          }, pivotColumns[0].parentColumn);
-
-          var PivotGroupHeader = hasHeaderGroups && PivotParentColumn.Header;
-          PivotGroupHeader = PivotGroupHeader || function () {
-            return _react2.default.createElement(
-              'strong',
-              null,
-              'Pivoted'
-            );
-          };
-
-          var pivotColumnGroup = {
-            Header: PivotGroupHeader,
-            columns: pivotColumns.map(function (col) {
-              return _extends({}, _this2.props.pivotDefaults, col, {
-                pivoted: true
-              });
-            })
-
-            // Place the pivotColumns back into the visibleColumns
-          };if (pivotIndex >= 0) {
-            pivotColumnGroup = _extends({}, visibleColumns[pivotIndex], pivotColumnGroup);
-            visibleColumns.splice(pivotIndex, 1, pivotColumnGroup);
-          } else {
-            visibleColumns.unshift(pivotColumnGroup);
-          }
-        }
-
-        // Build Header Groups
-        var headerGroups = [];
-        var currentSpan = [];
-
-        // A convenience function to add a header and reset the currentSpan
-        var addHeader = function addHeader(columns, column) {
-          headerGroups.push(_extends({}, _this2.props.column, column, {
-            columns: columns
-          }));
-          currentSpan = [];
-        };
-
-        // Build flast list of allVisibleColumns and HeaderGroups
-        visibleColumns.forEach(function (column) {
-          if (column.columns) {
-            allVisibleColumns = allVisibleColumns.concat(column.columns);
-            if (currentSpan.length > 0) {
-              addHeader(currentSpan);
-            }
-            addHeader(column.columns, column);
-            return;
-          }
-          allVisibleColumns.push(column);
-          currentSpan.push(column);
-        });
-        if (hasHeaderGroups && currentSpan.length > 0) {
-          addHeader(currentSpan);
-        }
-
-        // Access the data
-        var accessRow = function accessRow(d, i) {
-          var _row;
-
-          var level = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-          var row = (_row = {}, _defineProperty(_row, originalKey, d), _defineProperty(_row, indexKey, i), _defineProperty(_row, subRowsKey, d[subRowsKey]), _defineProperty(_row, nestingLevelKey, level), _row);
-          allDecoratedColumns.forEach(function (column) {
-            if (column.expander) return;
-            row[column.id] = column.accessor(d);
-          });
-          if (row[subRowsKey]) {
-            row[subRowsKey] = row[subRowsKey].map(function (d, i) {
-              return accessRow(d, i, level + 1);
-            });
-          }
-          return row;
-        };
-
-        // // If the data hasn't changed, just use the cached data
-        var resolvedData = this.resolvedData;
-        // If the data has changed, run the data resolver and cache the result
-        if (!this.resolvedData || dataChanged) {
-          resolvedData = resolveData(data);
-          this.resolvedData = resolvedData;
-        }
-        // Use the resolved data
-        resolvedData = resolvedData.map(function (d, i) {
-          return accessRow(d, i);
-        });
-
-        // TODO: Make it possible to fabricate nested rows without pivoting
-        var aggregatingColumns = allVisibleColumns.filter(function (d) {
-          return !d.expander && d.aggregate;
-        });
-
-        // If pivoting, recursively group the data
-        var aggregate = function aggregate(rows) {
-          var aggregationValues = {};
-          aggregatingColumns.forEach(function (column) {
-            var values = rows.map(function (d) {
-              return d[column.id];
-            });
-            aggregationValues[column.id] = column.aggregate(values, rows);
-          });
-          return aggregationValues;
-        };
-        if (pivotBy.length) {
-          var groupRecursively = function groupRecursively(rows, keys) {
-            var i = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-            // This is the last level, just return the rows
-            if (i === keys.length) {
-              return rows;
-            }
-            // Group the rows together for this level
-            var groupedRows = Object.entries(_utils2.default.groupBy(rows, keys[i])).map(function (_ref) {
-              var _ref3;
-
-              var _ref2 = _slicedToArray(_ref, 2),
-                  key = _ref2[0],
-                  value = _ref2[1];
-
-              return _ref3 = {}, _defineProperty(_ref3, pivotIDKey, keys[i]), _defineProperty(_ref3, pivotValKey, key), _defineProperty(_ref3, keys[i], key), _defineProperty(_ref3, subRowsKey, value), _defineProperty(_ref3, nestingLevelKey, i), _defineProperty(_ref3, groupedByPivotKey, true), _ref3;
-            });
-            // Recurse into the subRows
-            groupedRows = groupedRows.map(function (rowGroup) {
-              var _extends2;
-
-              var subRows = groupRecursively(rowGroup[subRowsKey], keys, i + 1);
-              return _extends({}, rowGroup, (_extends2 = {}, _defineProperty(_extends2, subRowsKey, subRows), _defineProperty(_extends2, aggregatedKey, true), _extends2), aggregate(subRows));
-            });
-            return groupedRows;
-          };
-          resolvedData = groupRecursively(resolvedData, pivotBy);
-        }
-
-        return _extends({}, newState, {
-          resolvedData: resolvedData,
-          allVisibleColumns: allVisibleColumns,
-          headerGroups: headerGroups,
-          allDecoratedColumns: allDecoratedColumns,
-          hasHeaderGroups: hasHeaderGroups
-        });
-      }
-    }, {
-      key: 'getSortedData',
-      value: function getSortedData(resolvedState) {
-        var manual = resolvedState.manual,
-            sorted = resolvedState.sorted,
-            filtered = resolvedState.filtered,
-            defaultFilterMethod = resolvedState.defaultFilterMethod,
-            resolvedData = resolvedState.resolvedData,
-            allVisibleColumns = resolvedState.allVisibleColumns,
-            allDecoratedColumns = resolvedState.allDecoratedColumns;
-
-
-        var sortMethodsByColumnID = {};
-
-        allDecoratedColumns.filter(function (col) {
-          return col.sortMethod;
-        }).forEach(function (col) {
-          sortMethodsByColumnID[col.id] = col.sortMethod;
-        });
-
-        // Resolve the data from either manual data or sorted data
-        return {
-          sortedData: manual ? resolvedData : this.sortData(this.filterData(resolvedData, filtered, defaultFilterMethod, allVisibleColumns), sorted, sortMethodsByColumnID)
-        };
-      }
-    }, {
-      key: 'fireFetchData',
-      value: function fireFetchData() {
-        this.props.onFetchData(this.getResolvedState(), this);
-      }
-    }, {
-      key: 'getPropOrState',
-      value: function getPropOrState(key) {
-        return _utils2.default.getFirstDefined(this.props[key], this.state[key]);
-      }
-    }, {
-      key: 'getStateOrProp',
-      value: function getStateOrProp(key) {
-        return _utils2.default.getFirstDefined(this.state[key], this.props[key]);
-      }
-    }, {
-      key: 'filterData',
-      value: function filterData(data, filtered, defaultFilterMethod, allVisibleColumns) {
-        var _this3 = this;
-
-        var filteredData = data;
-
-        if (filtered.length) {
-          filteredData = filtered.reduce(function (filteredSoFar, nextFilter) {
-            var column = allVisibleColumns.find(function (x) {
-              return x.id === nextFilter.id;
-            });
-
-            // Don't filter hidden columns or columns that have had their filters disabled
-            if (!column || column.filterable === false) {
-              return filteredSoFar;
-            }
-
-            var filterMethod = column.filterMethod || defaultFilterMethod;
-
-            // If 'filterAll' is set to true, pass the entire dataset to the filter method
-            if (column.filterAll) {
-              return filterMethod(nextFilter, filteredSoFar, column);
-            }
-            return filteredSoFar.filter(function (row) {
-              return filterMethod(nextFilter, row, column);
-            });
-          }, filteredData);
-
-          // Apply the filter to the subrows if we are pivoting, and then
-          // filter any rows without subcolumns because it would be strange to show
-          filteredData = filteredData.map(function (row) {
-            if (!row[_this3.props.subRowsKey]) {
-              return row;
-            }
-            return _extends({}, row, _defineProperty({}, _this3.props.subRowsKey, _this3.filterData(row[_this3.props.subRowsKey], filtered, defaultFilterMethod, allVisibleColumns)));
-          }).filter(function (row) {
-            if (!row[_this3.props.subRowsKey]) {
-              return true;
-            }
-            return row[_this3.props.subRowsKey].length > 0;
-          });
-        }
-
-        return filteredData;
-      }
-    }, {
-      key: 'sortData',
-      value: function sortData(data, sorted) {
-        var _this4 = this;
-
-        var sortMethodsByColumnID = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-        if (!sorted.length) {
-          return data;
-        }
-
-        var sortedData = (this.props.orderByMethod || _utils2.default.orderBy)(data, sorted.map(function (sort) {
-          // Support custom sorting methods for each column
-          if (sortMethodsByColumnID[sort.id]) {
-            return function (a, b) {
-              return sortMethodsByColumnID[sort.id](a[sort.id], b[sort.id], sort.desc);
-            };
-          }
-          return function (a, b) {
-            return _this4.props.defaultSortMethod(a[sort.id], b[sort.id], sort.desc);
-          };
-        }), sorted.map(function (d) {
-          return !d.desc;
-        }), this.props.indexKey);
-
-        sortedData.forEach(function (row) {
-          if (!row[_this4.props.subRowsKey]) {
-            return;
-          }
-          row[_this4.props.subRowsKey] = _this4.sortData(row[_this4.props.subRowsKey], sorted, sortMethodsByColumnID);
-        });
-
-        return sortedData;
-      }
-    }, {
-      key: 'getMinRows',
-      value: function getMinRows() {
-        return _utils2.default.getFirstDefined(this.props.minRows, this.getStateOrProp('pageSize'));
-      }
-
-      // User actions
-
-    }, {
-      key: 'onPageChange',
-      value: function onPageChange(page) {
-        var _props = this.props,
-            onPageChange = _props.onPageChange,
-            collapseOnPageChange = _props.collapseOnPageChange;
-
-
-        var newState = { page: page };
-        if (collapseOnPageChange) {
-          newState.expanded = {};
-        }
-        this.setStateWithData(newState, function () {
-          return onPageChange && onPageChange(page);
-        });
-      }
-    }, {
-      key: 'onPageSizeChange',
-      value: function onPageSizeChange(newPageSize) {
-        var onPageSizeChange = this.props.onPageSizeChange;
-
-        var _getResolvedState = this.getResolvedState(),
-            pageSize = _getResolvedState.pageSize,
-            page = _getResolvedState.page;
-
-        // Normalize the page to display
-
-
-        var currentRow = pageSize * page;
-        var newPage = Math.floor(currentRow / newPageSize);
-
-        this.setStateWithData({
-          pageSize: newPageSize,
-          page: newPage
-        }, function () {
-          return onPageSizeChange && onPageSizeChange(newPageSize, newPage);
-        });
-      }
-    }, {
-      key: 'sortColumn',
-      value: function sortColumn(column, additive) {
-        var _getResolvedState2 = this.getResolvedState(),
-            sorted = _getResolvedState2.sorted,
-            skipNextSort = _getResolvedState2.skipNextSort,
-            defaultSortDesc = _getResolvedState2.defaultSortDesc;
-
-        var firstSortDirection = Object.prototype.hasOwnProperty.call(column, 'defaultSortDesc') ? column.defaultSortDesc : defaultSortDesc;
-        var secondSortDirection = !firstSortDirection;
-
-        // we can't stop event propagation from the column resize move handlers
-        // attached to the document because of react's synthetic events
-        // so we have to prevent the sort function from actually sorting
-        // if we click on the column resize element within a header.
-        if (skipNextSort) {
-          this.setStateWithData({
-            skipNextSort: false
-          });
-          return;
-        }
-
-        var onSortedChange = this.props.onSortedChange;
-
-
-        var newSorted = _utils2.default.clone(sorted || []).map(function (d) {
-          d.desc = _utils2.default.isSortingDesc(d);
-          return d;
-        });
-        if (!_utils2.default.isArray(column)) {
-          // Single-Sort
-          var existingIndex = newSorted.findIndex(function (d) {
-            return d.id === column.id;
-          });
-          if (existingIndex > -1) {
-            var existing = newSorted[existingIndex];
-            if (existing.desc === secondSortDirection) {
-              if (additive) {
-                newSorted.splice(existingIndex, 1);
-              } else {
-                existing.desc = firstSortDirection;
-                newSorted = [existing];
-              }
-            } else {
-              existing.desc = secondSortDirection;
-              if (!additive) {
-                newSorted = [existing];
-              }
-            }
-          } else if (additive) {
-            newSorted.push({
-              id: column.id,
-              desc: firstSortDirection
-            });
-          } else {
-            newSorted = [{
-              id: column.id,
-              desc: firstSortDirection
-            }];
-          }
-        } else {
-          // Multi-Sort
-          var _existingIndex = newSorted.findIndex(function (d) {
-            return d.id === column[0].id;
-          });
-          // Existing Sorted Column
-          if (_existingIndex > -1) {
-            var _existing = newSorted[_existingIndex];
-            if (_existing.desc === secondSortDirection) {
-              if (additive) {
-                newSorted.splice(_existingIndex, column.length);
-              } else {
-                column.forEach(function (d, i) {
-                  newSorted[_existingIndex + i].desc = firstSortDirection;
-                });
-              }
-            } else {
-              column.forEach(function (d, i) {
-                newSorted[_existingIndex + i].desc = secondSortDirection;
-              });
-            }
-            if (!additive) {
-              newSorted = newSorted.slice(_existingIndex, column.length);
-            }
-            // New Sort Column
-          } else if (additive) {
-            newSorted = newSorted.concat(column.map(function (d) {
-              return {
-                id: d.id,
-                desc: firstSortDirection
-              };
-            }));
-          } else {
-            newSorted = column.map(function (d) {
-              return {
-                id: d.id,
-                desc: firstSortDirection
-              };
-            });
-          }
-        }
-
-        this.setStateWithData({
-          page: !sorted.length && newSorted.length || !additive ? 0 : this.state.page,
-          sorted: newSorted
-        }, function () {
-          return onSortedChange && onSortedChange(newSorted, column, additive);
-        });
-      }
-    }, {
-      key: 'filterColumn',
-      value: function filterColumn(column, value) {
-        var _getResolvedState3 = this.getResolvedState(),
-            filtered = _getResolvedState3.filtered;
-
-        var onFilteredChange = this.props.onFilteredChange;
-
-        // Remove old filter first if it exists
-
-        var newFiltering = (filtered || []).filter(function (x) {
-          return x.id !== column.id;
-        });
-
-        if (value !== '') {
-          newFiltering.push({
-            id: column.id,
-            value: value
-          });
-        }
-
-        this.setStateWithData({
-          filtered: newFiltering
-        }, function () {
-          return onFilteredChange && onFilteredChange(newFiltering, column, value);
-        });
-      }
-    }, {
-      key: 'resizeColumnStart',
-      value: function resizeColumnStart(event, column, isTouch) {
-        var _this5 = this;
-
-        event.stopPropagation();
-        var parentWidth = event.target.parentElement.getBoundingClientRect().width;
-
-        var pageX = void 0;
-        if (isTouch) {
-          pageX = event.changedTouches[0].pageX;
-        } else {
-          pageX = event.pageX;
-        }
-
-        this.trapEvents = true;
-        this.setStateWithData({
-          currentlyResizing: {
-            id: column.id,
-            startX: pageX,
-            parentWidth: parentWidth
-          }
-        }, function () {
-          if (isTouch) {
-            document.addEventListener('touchmove', _this5.resizeColumnMoving);
-            document.addEventListener('touchcancel', _this5.resizeColumnEnd);
-            document.addEventListener('touchend', _this5.resizeColumnEnd);
-          } else {
-            document.addEventListener('mousemove', _this5.resizeColumnMoving);
-            document.addEventListener('mouseup', _this5.resizeColumnEnd);
-            document.addEventListener('mouseleave', _this5.resizeColumnEnd);
-          }
-        });
-      }
-    }, {
-      key: 'resizeColumnMoving',
-      value: function resizeColumnMoving(event) {
-        event.stopPropagation();
-        var onResizedChange = this.props.onResizedChange;
-
-        var _getResolvedState4 = this.getResolvedState(),
-            resized = _getResolvedState4.resized,
-            currentlyResizing = _getResolvedState4.currentlyResizing;
-
-        // Delete old value
-
-
-        var newResized = resized.filter(function (x) {
-          return x.id !== currentlyResizing.id;
-        });
-
-        var pageX = void 0;
-
-        if (event.type === 'touchmove') {
-          pageX = event.changedTouches[0].pageX;
-        } else if (event.type === 'mousemove') {
-          pageX = event.pageX;
-        }
-
-        // Set the min size to 10 to account for margin and border or else the
-        // group headers don't line up correctly
-        var newWidth = Math.max(currentlyResizing.parentWidth + pageX - currentlyResizing.startX, 11);
-
-        newResized.push({
-          id: currentlyResizing.id,
-          value: newWidth
-        });
-
-        this.setStateWithData({
-          resized: newResized
-        }, function () {
-          return onResizedChange && onResizedChange(newResized, event);
-        });
-      }
-    }, {
-      key: 'resizeColumnEnd',
-      value: function resizeColumnEnd(event) {
-        event.stopPropagation();
-        var isTouch = event.type === 'touchend' || event.type === 'touchcancel';
-
-        if (isTouch) {
-          document.removeEventListener('touchmove', this.resizeColumnMoving);
-          document.removeEventListener('touchcancel', this.resizeColumnEnd);
-          document.removeEventListener('touchend', this.resizeColumnEnd);
-        }
-
-        // If its a touch event clear the mouse one's as well because sometimes
-        // the mouseDown event gets called as well, but the mouseUp event doesn't
-        document.removeEventListener('mousemove', this.resizeColumnMoving);
-        document.removeEventListener('mouseup', this.resizeColumnEnd);
-        document.removeEventListener('mouseleave', this.resizeColumnEnd);
-
-        // The touch events don't propagate up to the sorting's onMouseDown event so
-        // no need to prevent it from happening or else the first click after a touch
-        // event resize will not sort the column.
-        if (!isTouch) {
-          this.setStateWithData({
-            skipNextSort: true,
-            currentlyResizing: false
-          });
-        }
-      }
-    }]);
-
-    return _class;
-  }(Base);
-};
-
-},{"./utils":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/utils.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/pagination.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _classnames = require('classnames');
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-//
-// import _ from './utils'
-
-var defaultButton = function defaultButton(props) {
-  return _react2.default.createElement(
-    'button',
-    _extends({ type: 'button' }, props, { className: '-btn' }),
-    props.children
-  );
-};
-
-var ReactTablePagination = function (_Component) {
-  _inherits(ReactTablePagination, _Component);
-
-  function ReactTablePagination(props) {
-    _classCallCheck(this, ReactTablePagination);
-
-    var _this = _possibleConstructorReturn(this, (ReactTablePagination.__proto__ || Object.getPrototypeOf(ReactTablePagination)).call(this));
-
-    _this.getSafePage = _this.getSafePage.bind(_this);
-    _this.changePage = _this.changePage.bind(_this);
-    _this.applyPage = _this.applyPage.bind(_this);
-
-    _this.state = {
-      page: props.page
-    };
-    return _this;
-  }
-
-  _createClass(ReactTablePagination, [{
-    key: 'componentWillReceiveProps',
-    value: function componentWillReceiveProps(nextProps) {
-      this.setState({ page: nextProps.page });
-    }
-  }, {
-    key: 'getSafePage',
-    value: function getSafePage(page) {
-      if (Number.isNaN(page)) {
-        page = this.props.page;
-      }
-      return Math.min(Math.max(page, 0), this.props.pages - 1);
-    }
-  }, {
-    key: 'changePage',
-    value: function changePage(page) {
-      page = this.getSafePage(page);
-      this.setState({ page: page });
-      if (this.props.page !== page) {
-        this.props.onPageChange(page);
-      }
-    }
-  }, {
-    key: 'applyPage',
-    value: function applyPage(e) {
-      if (e) {
-        e.preventDefault();
-      }
-      var page = this.state.page;
-      this.changePage(page === '' ? this.props.page : page);
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var _this2 = this;
-
-      var _props = this.props,
-          pages = _props.pages,
-          page = _props.page,
-          showPageSizeOptions = _props.showPageSizeOptions,
-          pageSizeOptions = _props.pageSizeOptions,
-          pageSize = _props.pageSize,
-          showPageJump = _props.showPageJump,
-          canPrevious = _props.canPrevious,
-          canNext = _props.canNext,
-          onPageSizeChange = _props.onPageSizeChange,
-          className = _props.className,
-          _props$PreviousCompon = _props.PreviousComponent,
-          PreviousComponent = _props$PreviousCompon === undefined ? defaultButton : _props$PreviousCompon,
-          _props$NextComponent = _props.NextComponent,
-          NextComponent = _props$NextComponent === undefined ? defaultButton : _props$NextComponent;
-
-
-      return _react2.default.createElement(
-        'div',
-        { className: (0, _classnames2.default)(className, '-pagination'), style: this.props.style },
-        _react2.default.createElement(
-          'div',
-          { className: '-previous' },
-          _react2.default.createElement(
-            PreviousComponent,
-            {
-              onClick: function onClick() {
-                if (!canPrevious) return;
-                _this2.changePage(page - 1);
-              },
-              disabled: !canPrevious
-            },
-            this.props.previousText
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: '-center' },
-          _react2.default.createElement(
-            'span',
-            { className: '-pageInfo' },
-            this.props.pageText,
-            ' ',
-            showPageJump ? _react2.default.createElement(
-              'div',
-              { className: '-pageJump' },
-              _react2.default.createElement('input', {
-                type: this.state.page === '' ? 'text' : 'number',
-                onChange: function onChange(e) {
-                  var val = e.target.value;
-                  var page = val - 1;
-                  if (val === '') {
-                    return _this2.setState({ page: val });
-                  }
-                  _this2.setState({ page: _this2.getSafePage(page) });
-                },
-                value: this.state.page === '' ? '' : this.state.page + 1,
-                onBlur: this.applyPage,
-                onKeyPress: function onKeyPress(e) {
-                  if (e.which === 13 || e.keyCode === 13) {
-                    _this2.applyPage();
-                  }
-                }
-              })
-            ) : _react2.default.createElement(
-              'span',
-              { className: '-currentPage' },
-              page + 1
-            ),
-            ' ',
-            this.props.ofText,
-            ' ',
-            _react2.default.createElement(
-              'span',
-              { className: '-totalPages' },
-              pages || 1
-            )
-          ),
-          showPageSizeOptions && _react2.default.createElement(
-            'span',
-            { className: 'select-wrap -pageSizeOptions' },
-            _react2.default.createElement(
-              'select',
-              { onChange: function onChange(e) {
-                  return onPageSizeChange(Number(e.target.value));
-                }, value: pageSize },
-              pageSizeOptions.map(function (option, i) {
-                return (
-                  // eslint-disable-next-line react/no-array-index-key
-                  _react2.default.createElement(
-                    'option',
-                    { key: i, value: option },
-                    option,
-                    ' ',
-                    _this2.props.rowsText
-                  )
-                );
-              })
-            )
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: '-next' },
-          _react2.default.createElement(
-            NextComponent,
-            {
-              onClick: function onClick() {
-                if (!canNext) return;
-                _this2.changePage(page + 1);
-              },
-              disabled: !canNext
-            },
-            this.props.nextText
-          )
-        )
-      );
-    }
-  }]);
-
-  return ReactTablePagination;
-}(_react.Component);
-
-exports.default = ReactTablePagination;
-
-},{"classnames":"/mnt/d/git/idyll-material/maple-syrup/node_modules/classnames/index.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/propTypes.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _propTypes = require('prop-types');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-  // General
-  data: _propTypes2.default.any,
-  loading: _propTypes2.default.bool,
-  showPagination: _propTypes2.default.bool,
-  showPaginationTop: _propTypes2.default.bool,
-  showPaginationBottom: _propTypes2.default.bool,
-  showPageSizeOptions: _propTypes2.default.bool,
-  pageSizeOptions: _propTypes2.default.array,
-  defaultPageSize: _propTypes2.default.number,
-  showPageJump: _propTypes2.default.bool,
-  collapseOnSortingChange: _propTypes2.default.bool,
-  collapseOnPageChange: _propTypes2.default.bool,
-  collapseOnDataChange: _propTypes2.default.bool,
-  freezeWhenExpanded: _propTypes2.default.bool,
-  sortable: _propTypes2.default.bool,
-  resizable: _propTypes2.default.bool,
-  filterable: _propTypes2.default.bool,
-  defaultSortDesc: _propTypes2.default.bool,
-  defaultSorted: _propTypes2.default.array,
-  defaultFiltered: _propTypes2.default.array,
-  defaultResized: _propTypes2.default.array,
-  defaultExpanded: _propTypes2.default.object,
-  defaultFilterMethod: _propTypes2.default.func,
-  defaultSortMethod: _propTypes2.default.func,
-
-  // Controlled State Callbacks
-  onPageChange: _propTypes2.default.func,
-  onPageSizeChange: _propTypes2.default.func,
-  onSortedChange: _propTypes2.default.func,
-  onFilteredChange: _propTypes2.default.func,
-  onResizedChange: _propTypes2.default.func,
-  onExpandedChange: _propTypes2.default.func,
-
-  // Pivoting
-  pivotBy: _propTypes2.default.array,
-
-  // Key Constants
-  pivotValKey: _propTypes2.default.string,
-  pivotIDKey: _propTypes2.default.string,
-  subRowsKey: _propTypes2.default.string,
-  aggregatedKey: _propTypes2.default.string,
-  nestingLevelKey: _propTypes2.default.string,
-  originalKey: _propTypes2.default.string,
-  indexKey: _propTypes2.default.string,
-  groupedByPivotKey: _propTypes2.default.string,
-
-  // Server-side Callbacks
-  onFetchData: _propTypes2.default.func,
-
-  // Classes
-  className: _propTypes2.default.string,
-  style: _propTypes2.default.object,
-
-  // Component decorators
-  getProps: _propTypes2.default.func,
-  getTableProps: _propTypes2.default.func,
-  getTheadGroupProps: _propTypes2.default.func,
-  getTheadGroupTrProps: _propTypes2.default.func,
-  getTheadGroupThProps: _propTypes2.default.func,
-  getTheadProps: _propTypes2.default.func,
-  getTheadTrProps: _propTypes2.default.func,
-  getTheadThProps: _propTypes2.default.func,
-  getTheadFilterProps: _propTypes2.default.func,
-  getTheadFilterTrProps: _propTypes2.default.func,
-  getTheadFilterThProps: _propTypes2.default.func,
-  getTbodyProps: _propTypes2.default.func,
-  getTrGroupProps: _propTypes2.default.func,
-  getTrProps: _propTypes2.default.func,
-  getTdProps: _propTypes2.default.func,
-  getTfootProps: _propTypes2.default.func,
-  getTfootTrProps: _propTypes2.default.func,
-  getTfootTdProps: _propTypes2.default.func,
-  getPaginationProps: _propTypes2.default.func,
-  getLoadingProps: _propTypes2.default.func,
-  getNoDataProps: _propTypes2.default.func,
-  getResizerProps: _propTypes2.default.func,
-
-  // Global Column Defaults
-  columns: _propTypes2.default.arrayOf(_propTypes2.default.shape({
-    // Renderers
-    Cell: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    Header: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    Footer: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    Aggregated: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    Pivot: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    PivotValue: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    Expander: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.string, _propTypes2.default.func]),
-    Filter: _propTypes2.default.oneOfType([_propTypes2.default.element, _propTypes2.default.func]),
-
-    // All Columns
-    sortable: _propTypes2.default.bool, // use table default
-    resizable: _propTypes2.default.bool, // use table default
-    filterable: _propTypes2.default.bool, // use table default
-    show: _propTypes2.default.bool,
-    minWidth: _propTypes2.default.number,
-
-    // Cells only
-    className: _propTypes2.default.string,
-    style: _propTypes2.default.object,
-    getProps: _propTypes2.default.func,
-
-    // Pivot only
-    aggregate: _propTypes2.default.func,
-
-    // Headers only
-    headerClassName: _propTypes2.default.string,
-    headerStyle: _propTypes2.default.object,
-    getHeaderProps: _propTypes2.default.func,
-
-    // Footers only
-    footerClassName: _propTypes2.default.string,
-    footerStyle: _propTypes2.default.object,
-    getFooterProps: _propTypes2.default.object,
-    filterMethod: _propTypes2.default.func,
-    filterAll: _propTypes2.default.bool,
-    sortMethod: _propTypes2.default.func
-  })),
-
-  // Global Expander Column Defaults
-  expanderDefaults: _propTypes2.default.shape({
-    sortable: _propTypes2.default.bool,
-    resizable: _propTypes2.default.bool,
-    filterable: _propTypes2.default.bool,
-    width: _propTypes2.default.number
-  }),
-
-  pivotDefaults: _propTypes2.default.object,
-
-  // Text
-  previousText: _propTypes2.default.node,
-  nextText: _propTypes2.default.node,
-  loadingText: _propTypes2.default.node,
-  noDataText: _propTypes2.default.node,
-  pageText: _propTypes2.default.node,
-  ofText: _propTypes2.default.node,
-  rowsText: _propTypes2.default.node,
-
-  // Components
-  TableComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  TheadComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  TbodyComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  TrGroupComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  TrComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  ThComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  TdComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  TfootComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  FilterComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  ExpanderComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  PivotValueComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  AggregatedComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  // this is a computed default generated using
-  PivotComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  // the ExpanderComponent and PivotValueComponent at run-time in methods.js
-  PaginationComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  PreviousComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  NextComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  LoadingComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  NoDataComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  ResizerComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element]),
-  PadRowComponent: _propTypes2.default.oneOfType([_propTypes2.default.func, _propTypes2.default.element])
-};
-
-},{"prop-types":"/mnt/d/git/idyll-material/maple-syrup/node_modules/prop-types/index.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-table/lib/utils.js":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _classnames = require('classnames');
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-//
-exports.default = {
-  get: get,
-  set: set,
-  takeRight: takeRight,
-  last: last,
-  orderBy: orderBy,
-  range: range,
-  remove: remove,
-  clone: clone,
-  getFirstDefined: getFirstDefined,
-  sum: sum,
-  makeTemplateComponent: makeTemplateComponent,
-  groupBy: groupBy,
-  isArray: isArray,
-  splitProps: splitProps,
-  compactObject: compactObject,
-  isSortingDesc: isSortingDesc,
-  normalizeComponent: normalizeComponent,
-  asPx: asPx
-};
-
-
-function get(obj, path, def) {
-  if (!path) {
-    return obj;
-  }
-  var pathObj = makePathArray(path);
-  var val = void 0;
-  try {
-    val = pathObj.reduce(function (current, pathPart) {
-      return current[pathPart];
-    }, obj);
-  } catch (e) {
-    // continue regardless of error
-  }
-  return typeof val !== 'undefined' ? val : def;
-}
-
-function set() {
-  var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var path = arguments[1];
-  var value = arguments[2];
-
-  var keys = makePathArray(path);
-  var keyPart = void 0;
-  var cursor = obj;
-  while ((keyPart = keys.shift()) && keys.length) {
-    if (!cursor[keyPart]) {
-      cursor[keyPart] = {};
-    }
-    cursor = cursor[keyPart];
-  }
-  cursor[keyPart] = value;
-  return obj;
-}
-
-function takeRight(arr, n) {
-  var start = n > arr.length ? 0 : arr.length - n;
-  return arr.slice(start);
-}
-
-function last(arr) {
-  return arr[arr.length - 1];
-}
-
-function range(n) {
-  var arr = [];
-  for (var i = 0; i < n; i += 1) {
-    arr.push(n);
-  }
-  return arr;
-}
-
-function orderBy(arr, funcs, dirs, indexKey) {
-  return arr.sort(function (rowA, rowB) {
-    for (var i = 0; i < funcs.length; i += 1) {
-      var comp = funcs[i];
-      var desc = dirs[i] === false || dirs[i] === 'desc';
-      var sortInt = comp(rowA, rowB);
-      if (sortInt) {
-        return desc ? -sortInt : sortInt;
-      }
-    }
-    // Use the row index for tie breakers
-    return dirs[0] ? rowA[indexKey] - rowB[indexKey] : rowB[indexKey] - rowA[indexKey];
-  });
-}
-
-function remove(a, b) {
-  return a.filter(function (o, i) {
-    var r = b(o);
-    if (r) {
-      a.splice(i, 1);
-      return true;
-    }
-    return false;
-  });
-}
-
-function clone(a) {
-  try {
-    return JSON.parse(JSON.stringify(a, function (key, value) {
-      if (typeof value === 'function') {
-        return value.toString();
-      }
-      return value;
-    }));
-  } catch (e) {
-    return a;
-  }
-}
-
-function getFirstDefined() {
-  for (var i = 0; i < arguments.length; i += 1) {
-    if (typeof (arguments.length <= i ? undefined : arguments[i]) !== 'undefined') {
-      return arguments.length <= i ? undefined : arguments[i];
-    }
-  }
-}
-
-function sum(arr) {
-  return arr.reduce(function (a, b) {
-    return a + b;
-  }, 0);
-}
-
-function makeTemplateComponent(compClass, displayName) {
-  if (!displayName) {
-    throw new Error('No displayName found for template component:', compClass);
-  }
-  var cmp = function cmp(_ref) {
-    var children = _ref.children,
-        className = _ref.className,
-        rest = _objectWithoutProperties(_ref, ['children', 'className']);
-
-    return _react2.default.createElement(
-      'div',
-      _extends({ className: (0, _classnames2.default)(compClass, className) }, rest),
-      children
-    );
-  };
-  cmp.displayName = displayName;
-  return cmp;
-}
-
-function groupBy(xs, key) {
-  return xs.reduce(function (rv, x, i) {
-    var resKey = typeof key === 'function' ? key(x, i) : x[key];
-    rv[resKey] = isArray(rv[resKey]) ? rv[resKey] : [];
-    rv[resKey].push(x);
-    return rv;
-  }, {});
-}
-
-function asPx(value) {
-  value = Number(value);
-  return Number.isNaN(value) ? null : value + 'px';
-}
-
-function isArray(a) {
-  return Array.isArray(a);
-}
-
-// ########################################################################
-// Non-exported Helpers
-// ########################################################################
-
-function makePathArray(obj) {
-  return flattenDeep(obj).join('.').replace(/\[/g, '.').replace(/\]/g, '').split('.');
-}
-
-function flattenDeep(arr) {
-  var newArr = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-
-  if (!isArray(arr)) {
-    newArr.push(arr);
-  } else {
-    for (var i = 0; i < arr.length; i += 1) {
-      flattenDeep(arr[i], newArr);
-    }
-  }
-  return newArr;
-}
-
-function splitProps(_ref2) {
-  var className = _ref2.className,
-      style = _ref2.style,
-      rest = _objectWithoutProperties(_ref2, ['className', 'style']);
-
-  return {
-    className: className,
-    style: style,
-    rest: rest || {}
-  };
-}
-
-function compactObject(obj) {
-  var newObj = {};
-  if (obj) {
-    Object.keys(obj).map(function (key) {
-      if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] !== undefined && typeof obj[key] !== 'undefined') {
-        newObj[key] = obj[key];
-      }
-      return true;
-    });
-  }
-  return newObj;
-}
-
-function isSortingDesc(d) {
-  return !!(d.sort === 'desc' || d.desc === true || d.asc === false);
-}
-
-function normalizeComponent(Comp) {
-  var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-  var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Comp;
-
-  return typeof Comp === 'function' ? Object.getPrototypeOf(Comp).isReactComponent ? _react2.default.createElement(Comp, params) : Comp(params) : fallback;
-}
-
-},{"classnames":"/mnt/d/git/idyll-material/maple-syrup/node_modules/classnames/index.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-tooltip/dist/index.js":[function(require,module,exports){
+},{"katex":"/mnt/d/git/idyll-material/maple-syrup/node_modules/katex/dist/katex.js","prop-types":"/mnt/d/git/idyll-material/maple-syrup/node_modules/prop-types/index.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-tooltip/dist/index.js":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -85715,7 +83063,893 @@ module.exports = function (value, locale) {
   })
 }
 
-},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js","upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case/upper-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case-first/upper-case-first.js":[function(require,module,exports){
+},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js","upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case/upper-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/tween.js/src/Tween.js":[function(require,module,exports){
+(function (process){
+/**
+ * Tween.js - Licensed under the MIT license
+ * https://github.com/tweenjs/tween.js
+ * ----------------------------------------------
+ *
+ * See https://github.com/tweenjs/tween.js/graphs/contributors for the full list of contributors.
+ * Thank you all, you're awesome!
+ */
+
+var TWEEN = TWEEN || (function () {
+
+	var _tweens = [];
+
+	return {
+
+		getAll: function () {
+
+			return _tweens;
+
+		},
+
+		removeAll: function () {
+
+			_tweens = [];
+
+		},
+
+		add: function (tween) {
+
+			_tweens.push(tween);
+
+		},
+
+		remove: function (tween) {
+
+			var i = _tweens.indexOf(tween);
+
+			if (i !== -1) {
+				_tweens.splice(i, 1);
+			}
+
+		},
+
+		update: function (time, preserve) {
+
+			if (_tweens.length === 0) {
+				return false;
+			}
+
+			var i = 0;
+
+			time = time !== undefined ? time : TWEEN.now();
+
+			while (i < _tweens.length) {
+
+				if (_tweens[i].update(time) || preserve) {
+					i++;
+				} else {
+					_tweens.splice(i, 1);
+				}
+
+			}
+
+			return true;
+
+		}
+	};
+
+})();
+
+
+// Include a performance.now polyfill.
+// In node.js, use process.hrtime.
+if (typeof (window) === 'undefined' && typeof (process) !== 'undefined') {
+	TWEEN.now = function () {
+		var time = process.hrtime();
+
+		// Convert [seconds, nanoseconds] to milliseconds.
+		return time[0] * 1000 + time[1] / 1000000;
+	};
+}
+// In a browser, use window.performance.now if it is available.
+else if (typeof (window) !== 'undefined' &&
+         window.performance !== undefined &&
+		 window.performance.now !== undefined) {
+	// This must be bound, because directly assigning this function
+	// leads to an invocation exception in Chrome.
+	TWEEN.now = window.performance.now.bind(window.performance);
+}
+// Use Date.now if it is available.
+else if (Date.now !== undefined) {
+	TWEEN.now = Date.now;
+}
+// Otherwise, use 'new Date().getTime()'.
+else {
+	TWEEN.now = function () {
+		return new Date().getTime();
+	};
+}
+
+
+TWEEN.Tween = function (object) {
+
+	var _object = object;
+	var _valuesStart = {};
+	var _valuesEnd = {};
+	var _valuesStartRepeat = {};
+	var _duration = 1000;
+	var _repeat = 0;
+	var _repeatDelayTime;
+	var _yoyo = false;
+	var _isPlaying = false;
+	var _reversed = false;
+	var _delayTime = 0;
+	var _startTime = null;
+	var _easingFunction = TWEEN.Easing.Linear.None;
+	var _interpolationFunction = TWEEN.Interpolation.Linear;
+	var _chainedTweens = [];
+	var _onStartCallback = null;
+	var _onStartCallbackFired = false;
+	var _onUpdateCallback = null;
+	var _onCompleteCallback = null;
+	var _onStopCallback = null;
+
+	this.to = function (properties, duration) {
+
+		_valuesEnd = properties;
+
+		if (duration !== undefined) {
+			_duration = duration;
+		}
+
+		return this;
+
+	};
+
+	this.start = function (time) {
+
+		TWEEN.add(this);
+
+		_isPlaying = true;
+
+		_onStartCallbackFired = false;
+
+		_startTime = time !== undefined ? time : TWEEN.now();
+		_startTime += _delayTime;
+
+		for (var property in _valuesEnd) {
+
+			// Check if an Array was provided as property value
+			if (_valuesEnd[property] instanceof Array) {
+
+				if (_valuesEnd[property].length === 0) {
+					continue;
+				}
+
+				// Create a local copy of the Array with the start value at the front
+				_valuesEnd[property] = [_object[property]].concat(_valuesEnd[property]);
+
+			}
+
+			// If `to()` specifies a property that doesn't exist in the source object,
+			// we should not set that property in the object
+			if (_object[property] === undefined) {
+				continue;
+			}
+
+			// Save the starting value.
+			_valuesStart[property] = _object[property];
+
+			if ((_valuesStart[property] instanceof Array) === false) {
+				_valuesStart[property] *= 1.0; // Ensures we're using numbers, not strings
+			}
+
+			_valuesStartRepeat[property] = _valuesStart[property] || 0;
+
+		}
+
+		return this;
+
+	};
+
+	this.stop = function () {
+
+		if (!_isPlaying) {
+			return this;
+		}
+
+		TWEEN.remove(this);
+		_isPlaying = false;
+
+		if (_onStopCallback !== null) {
+			_onStopCallback.call(_object, _object);
+		}
+
+		this.stopChainedTweens();
+		return this;
+
+	};
+
+	this.end = function () {
+
+		this.update(_startTime + _duration);
+		return this;
+
+	};
+
+	this.stopChainedTweens = function () {
+
+		for (var i = 0, numChainedTweens = _chainedTweens.length; i < numChainedTweens; i++) {
+			_chainedTweens[i].stop();
+		}
+
+	};
+
+	this.delay = function (amount) {
+
+		_delayTime = amount;
+		return this;
+
+	};
+
+	this.repeat = function (times) {
+
+		_repeat = times;
+		return this;
+
+	};
+
+	this.repeatDelay = function (amount) {
+
+		_repeatDelayTime = amount;
+		return this;
+
+	};
+
+	this.yoyo = function (yoyo) {
+
+		_yoyo = yoyo;
+		return this;
+
+	};
+
+
+	this.easing = function (easing) {
+
+		_easingFunction = easing;
+		return this;
+
+	};
+
+	this.interpolation = function (interpolation) {
+
+		_interpolationFunction = interpolation;
+		return this;
+
+	};
+
+	this.chain = function () {
+
+		_chainedTweens = arguments;
+		return this;
+
+	};
+
+	this.onStart = function (callback) {
+
+		_onStartCallback = callback;
+		return this;
+
+	};
+
+	this.onUpdate = function (callback) {
+
+		_onUpdateCallback = callback;
+		return this;
+
+	};
+
+	this.onComplete = function (callback) {
+
+		_onCompleteCallback = callback;
+		return this;
+
+	};
+
+	this.onStop = function (callback) {
+
+		_onStopCallback = callback;
+		return this;
+
+	};
+
+	this.update = function (time) {
+
+		var property;
+		var elapsed;
+		var value;
+
+		if (time < _startTime) {
+			return true;
+		}
+
+		if (_onStartCallbackFired === false) {
+
+			if (_onStartCallback !== null) {
+				_onStartCallback.call(_object, _object);
+			}
+
+			_onStartCallbackFired = true;
+		}
+
+		elapsed = (time - _startTime) / _duration;
+		elapsed = elapsed > 1 ? 1 : elapsed;
+
+		value = _easingFunction(elapsed);
+
+		for (property in _valuesEnd) {
+
+			// Don't update properties that do not exist in the source object
+			if (_valuesStart[property] === undefined) {
+				continue;
+			}
+
+			var start = _valuesStart[property] || 0;
+			var end = _valuesEnd[property];
+
+			if (end instanceof Array) {
+
+				_object[property] = _interpolationFunction(end, value);
+
+			} else {
+
+				// Parses relative end values with start as base (e.g.: +10, -3)
+				if (typeof (end) === 'string') {
+
+					if (end.charAt(0) === '+' || end.charAt(0) === '-') {
+						end = start + parseFloat(end);
+					} else {
+						end = parseFloat(end);
+					}
+				}
+
+				// Protect against non numeric properties.
+				if (typeof (end) === 'number') {
+					_object[property] = start + (end - start) * value;
+				}
+
+			}
+
+		}
+
+		if (_onUpdateCallback !== null) {
+			_onUpdateCallback.call(_object, value);
+		}
+
+		if (elapsed === 1) {
+
+			if (_repeat > 0) {
+
+				if (isFinite(_repeat)) {
+					_repeat--;
+				}
+
+				// Reassign starting values, restart by making startTime = now
+				for (property in _valuesStartRepeat) {
+
+					if (typeof (_valuesEnd[property]) === 'string') {
+						_valuesStartRepeat[property] = _valuesStartRepeat[property] + parseFloat(_valuesEnd[property]);
+					}
+
+					if (_yoyo) {
+						var tmp = _valuesStartRepeat[property];
+
+						_valuesStartRepeat[property] = _valuesEnd[property];
+						_valuesEnd[property] = tmp;
+					}
+
+					_valuesStart[property] = _valuesStartRepeat[property];
+
+				}
+
+				if (_yoyo) {
+					_reversed = !_reversed;
+				}
+
+				if (_repeatDelayTime !== undefined) {
+					_startTime = time + _repeatDelayTime;
+				} else {
+					_startTime = time + _delayTime;
+				}
+
+				return true;
+
+			} else {
+
+				if (_onCompleteCallback !== null) {
+
+					_onCompleteCallback.call(_object, _object);
+				}
+
+				for (var i = 0, numChainedTweens = _chainedTweens.length; i < numChainedTweens; i++) {
+					// Make the chained tweens start exactly at the time they should,
+					// even if the `update()` method was called way past the duration of the tween
+					_chainedTweens[i].start(_startTime + _duration);
+				}
+
+				return false;
+
+			}
+
+		}
+
+		return true;
+
+	};
+
+};
+
+
+TWEEN.Easing = {
+
+	Linear: {
+
+		None: function (k) {
+
+			return k;
+
+		}
+
+	},
+
+	Quadratic: {
+
+		In: function (k) {
+
+			return k * k;
+
+		},
+
+		Out: function (k) {
+
+			return k * (2 - k);
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k;
+			}
+
+			return - 0.5 * (--k * (k - 2) - 1);
+
+		}
+
+	},
+
+	Cubic: {
+
+		In: function (k) {
+
+			return k * k * k;
+
+		},
+
+		Out: function (k) {
+
+			return --k * k * k + 1;
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k * k;
+			}
+
+			return 0.5 * ((k -= 2) * k * k + 2);
+
+		}
+
+	},
+
+	Quartic: {
+
+		In: function (k) {
+
+			return k * k * k * k;
+
+		},
+
+		Out: function (k) {
+
+			return 1 - (--k * k * k * k);
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k * k * k;
+			}
+
+			return - 0.5 * ((k -= 2) * k * k * k - 2);
+
+		}
+
+	},
+
+	Quintic: {
+
+		In: function (k) {
+
+			return k * k * k * k * k;
+
+		},
+
+		Out: function (k) {
+
+			return --k * k * k * k * k + 1;
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k * k * k * k;
+			}
+
+			return 0.5 * ((k -= 2) * k * k * k * k + 2);
+
+		}
+
+	},
+
+	Sinusoidal: {
+
+		In: function (k) {
+
+			return 1 - Math.cos(k * Math.PI / 2);
+
+		},
+
+		Out: function (k) {
+
+			return Math.sin(k * Math.PI / 2);
+
+		},
+
+		InOut: function (k) {
+
+			return 0.5 * (1 - Math.cos(Math.PI * k));
+
+		}
+
+	},
+
+	Exponential: {
+
+		In: function (k) {
+
+			return k === 0 ? 0 : Math.pow(1024, k - 1);
+
+		},
+
+		Out: function (k) {
+
+			return k === 1 ? 1 : 1 - Math.pow(2, - 10 * k);
+
+		},
+
+		InOut: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			if ((k *= 2) < 1) {
+				return 0.5 * Math.pow(1024, k - 1);
+			}
+
+			return 0.5 * (- Math.pow(2, - 10 * (k - 1)) + 2);
+
+		}
+
+	},
+
+	Circular: {
+
+		In: function (k) {
+
+			return 1 - Math.sqrt(1 - k * k);
+
+		},
+
+		Out: function (k) {
+
+			return Math.sqrt(1 - (--k * k));
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return - 0.5 * (Math.sqrt(1 - k * k) - 1);
+			}
+
+			return 0.5 * (Math.sqrt(1 - (k -= 2) * k) + 1);
+
+		}
+
+	},
+
+	Elastic: {
+
+		In: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			return -Math.pow(2, 10 * (k - 1)) * Math.sin((k - 1.1) * 5 * Math.PI);
+
+		},
+
+		Out: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			return Math.pow(2, -10 * k) * Math.sin((k - 0.1) * 5 * Math.PI) + 1;
+
+		},
+
+		InOut: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			k *= 2;
+
+			if (k < 1) {
+				return -0.5 * Math.pow(2, 10 * (k - 1)) * Math.sin((k - 1.1) * 5 * Math.PI);
+			}
+
+			return 0.5 * Math.pow(2, -10 * (k - 1)) * Math.sin((k - 1.1) * 5 * Math.PI) + 1;
+
+		}
+
+	},
+
+	Back: {
+
+		In: function (k) {
+
+			var s = 1.70158;
+
+			return k * k * ((s + 1) * k - s);
+
+		},
+
+		Out: function (k) {
+
+			var s = 1.70158;
+
+			return --k * k * ((s + 1) * k + s) + 1;
+
+		},
+
+		InOut: function (k) {
+
+			var s = 1.70158 * 1.525;
+
+			if ((k *= 2) < 1) {
+				return 0.5 * (k * k * ((s + 1) * k - s));
+			}
+
+			return 0.5 * ((k -= 2) * k * ((s + 1) * k + s) + 2);
+
+		}
+
+	},
+
+	Bounce: {
+
+		In: function (k) {
+
+			return 1 - TWEEN.Easing.Bounce.Out(1 - k);
+
+		},
+
+		Out: function (k) {
+
+			if (k < (1 / 2.75)) {
+				return 7.5625 * k * k;
+			} else if (k < (2 / 2.75)) {
+				return 7.5625 * (k -= (1.5 / 2.75)) * k + 0.75;
+			} else if (k < (2.5 / 2.75)) {
+				return 7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375;
+			} else {
+				return 7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375;
+			}
+
+		},
+
+		InOut: function (k) {
+
+			if (k < 0.5) {
+				return TWEEN.Easing.Bounce.In(k * 2) * 0.5;
+			}
+
+			return TWEEN.Easing.Bounce.Out(k * 2 - 1) * 0.5 + 0.5;
+
+		}
+
+	}
+
+};
+
+TWEEN.Interpolation = {
+
+	Linear: function (v, k) {
+
+		var m = v.length - 1;
+		var f = m * k;
+		var i = Math.floor(f);
+		var fn = TWEEN.Interpolation.Utils.Linear;
+
+		if (k < 0) {
+			return fn(v[0], v[1], f);
+		}
+
+		if (k > 1) {
+			return fn(v[m], v[m - 1], m - f);
+		}
+
+		return fn(v[i], v[i + 1 > m ? m : i + 1], f - i);
+
+	},
+
+	Bezier: function (v, k) {
+
+		var b = 0;
+		var n = v.length - 1;
+		var pw = Math.pow;
+		var bn = TWEEN.Interpolation.Utils.Bernstein;
+
+		for (var i = 0; i <= n; i++) {
+			b += pw(1 - k, n - i) * pw(k, i) * v[i] * bn(n, i);
+		}
+
+		return b;
+
+	},
+
+	CatmullRom: function (v, k) {
+
+		var m = v.length - 1;
+		var f = m * k;
+		var i = Math.floor(f);
+		var fn = TWEEN.Interpolation.Utils.CatmullRom;
+
+		if (v[0] === v[m]) {
+
+			if (k < 0) {
+				i = Math.floor(f = m * (1 + k));
+			}
+
+			return fn(v[(i - 1 + m) % m], v[i], v[(i + 1) % m], v[(i + 2) % m], f - i);
+
+		} else {
+
+			if (k < 0) {
+				return v[0] - (fn(v[0], v[0], v[1], v[1], -f) - v[0]);
+			}
+
+			if (k > 1) {
+				return v[m] - (fn(v[m], v[m], v[m - 1], v[m - 1], f - m) - v[m]);
+			}
+
+			return fn(v[i ? i - 1 : 0], v[i], v[m < i + 1 ? m : i + 1], v[m < i + 2 ? m : i + 2], f - i);
+
+		}
+
+	},
+
+	Utils: {
+
+		Linear: function (p0, p1, t) {
+
+			return (p1 - p0) * t + p0;
+
+		},
+
+		Bernstein: function (n, i) {
+
+			var fc = TWEEN.Interpolation.Utils.Factorial;
+
+			return fc(n) / fc(i) / fc(n - i);
+
+		},
+
+		Factorial: (function () {
+
+			var a = [1];
+
+			return function (n) {
+
+				var s = 1;
+
+				if (a[n]) {
+					return a[n];
+				}
+
+				for (var i = n; i > 1; i--) {
+					s *= i;
+				}
+
+				a[n] = s;
+				return s;
+
+			};
+
+		})(),
+
+		CatmullRom: function (p0, p1, p2, p3, t) {
+
+			var v0 = (p2 - p0) * 0.5;
+			var v1 = (p3 - p1) * 0.5;
+			var t2 = t * t;
+			var t3 = t * t2;
+
+			return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (- 3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+
+		}
+
+	}
+
+};
+
+// UMD (Universal Module Definition)
+(function (root) {
+
+	if (typeof define === 'function' && define.amd) {
+
+		// AMD
+		define([], function () {
+			return TWEEN;
+		});
+
+	} else if (typeof module !== 'undefined' && typeof exports === 'object') {
+
+		// Node.js
+		module.exports = TWEEN;
+
+	} else if (root !== undefined) {
+
+		// Global variable
+		root.TWEEN = TWEEN;
+
+	}
+
+})(this);
+
+}).call(this,require('_process'))
+},{"_process":"/mnt/d/git/idyll-material/maple-syrup/node_modules/process/browser.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case-first/upper-case-first.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 
 /**
@@ -87873,7 +86107,7 @@ function hasOwnProperty(obj, prop) {
 },{"./support/isBuffer":"/mnt/d/git/idyll-material/maple-syrup/node_modules/util/support/isBufferBrowser.js","_process":"/mnt/d/git/idyll-material/maple-syrup/node_modules/process/browser.js","inherits":"/mnt/d/git/idyll-material/maple-syrup/node_modules/util/node_modules/inherits/inherits_browser.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "state" }, "value": { "type": "value", "value": 0 } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "showResult" }, "value": { "type": "value", "value": false } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer" }, "value": { "type": "value", "value": false } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "samemag" }, "value": { "type": "value", "value": false } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "diffmag" }, "value": { "type": "value", "value": false } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "samesign" }, "value": { "type": "value", "value": false } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "diffsign" }, "value": { "type": "value", "value": false } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "smans" }, "value": { "type": "value", "value": false } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "dmans" }, "value": { "type": "value", "value": false } } }, { "id": 11, "type": "var", "properties": { "name": { "type": "value", "value": "ssans" }, "value": { "type": "value", "value": false } } }, { "id": 12, "type": "var", "properties": { "name": { "type": "value", "value": "dsans" }, "value": { "type": "value", "value": false } } }, { "id": 13, "type": "var", "properties": { "name": { "type": "value", "value": "showResult2" }, "value": { "type": "value", "value": false } } }, { "id": 14, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer2" }, "value": { "type": "value", "value": false } } }, { "id": 15, "type": "var", "properties": { "name": { "type": "value", "value": "radioVal" }, "value": { "type": "value", "value": "null" } } }, { "id": 16, "type": "var", "properties": { "name": { "type": "value", "value": "showResult3" }, "value": { "type": "value", "value": false } } }, { "id": 17, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer3" }, "value": { "type": "value", "value": false } } }, { "id": 18, "type": "var", "properties": { "name": { "type": "variable", "value": "particleSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 19, "type": "var", "properties": { "name": { "type": "variable", "value": "leftSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 20, "type": "var", "properties": { "name": { "type": "variable", "value": "rightSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 21, "type": "var", "properties": { "name": { "type": "variable", "value": "topSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 22, "type": "var", "properties": { "name": { "type": "variable", "value": "bottomSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 23, "type": "component", "name": "TextContainer", "children": [{ "id": 24, "type": "meta", "properties": { "title": { "type": "value", "value": "Maple Syrup Worksheet" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 25, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Maple Syrup" }, "subtitle": { "type": "value", "value": "Mass Spectrometry Analysis" }, "author": { "type": "value", "value": "Olivier Tardif-Paradis, Mathieu Riopel, & Cégep Garneau." }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#222222" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 26, "type": "component", "name": "TextContainer", "children": [{ "id": 27, "type": "component", "name": "p", "children": [{ "id": 28, "type": "textnode", "value": " " }, { "id": 29, "type": "component", "name": "em", "children": [{ "id": 30, "type": "textnode", "value": "This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver." }] }, { "id": 31, "type": "textnode", "value": " \n" }] }, { "id": 32, "type": "component", "name": "p", "children": [{ "id": 33, "type": "component", "name": "em", "children": [{ "id": 34, "type": "textnode", "value": "Original date of creation unknown; date listed is last update of this adaptation." }] }, { "id": 35, "type": "textnode", "value": "\n" }] }, { "id": 36, "type": "component", "name": "hr", "children": [] }, { "id": 37, "type": "component", "name": "p", "children": [{ "id": 38, "type": "textnode", "value": "This worksheet has a lot of information; you will not need it all for each individual question. \nIt’s okay if you need to go back and re-read to answer some of these questions." }] }, { "id": 39, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Pouring_Syrup.png" }, "alt": { "type": "value", "value": "\"A metal jug of syrup being poured over a metal trough full of snow.\"" } }, "children": [] }, { "id": 40, "type": "component", "name": "h2", "children": [{ "id": 41, "type": "textnode", "value": "Background" }] }, { "id": 42, "type": "component", "name": "p", "children": [{ "id": 43, "type": "textnode", "value": "In Québec, the return of the warm weather at the end of winter also signals sugaring off time. \nThe maple syrup produced in our good old sugar shacks is one of our most treasured traditions. \nAnd in fact, about 75% of all the maple syrup consumed in the entire world is produced right here in Québec." }] }, { "id": 44, "type": "component", "name": "p", "children": [{ "id": 45, "type": "textnode", "value": "But with the high demand and drive for expansion and quick profits, some maple culturists sometimes dilute their maple syrup with other, less expensive sugar syrups, like corn syrup. \nThis adulteration process is illegal, since it misleads the consumer and hurts the maple culture industry. \nAnd yet this alteration of our national syrup is hard to detect, since it generally changes neither the flavour nor the colour of the syrup. \nOur maple syrup is therefore subject to frequent controls to certify its quality." }] }, { "id": 46, "type": "component", "name": "p", "children": [{ "id": 47, "type": "textnode", "value": "One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. \nIn brief, this technique measures the relative concentrations of different carbon isotopes in various substances. \nSince corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a " }, { "id": 48, "type": "component", "name": "sup", "children": [{ "id": 49, "type": "textnode", "value": "13" }] }, { "id": 50, "type": "textnode", "value": "C ratio that is lower than normal. \nThis isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers." }] }, { "id": 51, "type": "component", "name": "p", "children": [{ "id": 52, "type": "textnode", "value": "Your role is to analyse a maple syrup sample using mass spectrometry. \nTo do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. \nA detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse." }] }, { "id": 53, "type": "component", "name": "p", "children": [{ "id": 54, "type": "textnode", "value": "Our goal as physicists is to learn how we can apply our knowledge of electric and magnetic fields to set up our mass spectrometer." }] }] }, { "id": 55, "type": "component", "name": "Scroller", "properties": { "currentStep": { "type": "variable", "value": "state" } }, "children": [{ "id": 56, "type": "component", "name": "Step", "children": [{ "id": 57, "type": "component", "name": "h3", "children": [{ "id": 58, "type": "textnode", "value": "Three-Step Cycle" }] }, { "id": 59, "type": "component", "name": "p", "children": [{ "id": 60, "type": "component", "name": "strong", "children": [{ "id": 61, "type": "textnode", "value": "The main question:" }] }, { "id": 62, "type": "textnode", "value": " How can we set the initial voltage for our velocity selector such that we can determine whether the syrup is actually maple syrup?" }] }, { "id": 63, "type": "component", "name": "p", "children": [{ "id": 64, "type": "textnode", "value": "As you read the information below, list all the " }, { "id": 65, "type": "component", "name": "em", "children": [{ "id": 66, "type": "textnode", "value": "relevant" }] }, { "id": 67, "type": "textnode", "value": " information you gathered when you read the problem. \n    Based on this information, state what you need to know to solve the problem. \n    As you discover new information, you should summarize and update the relevant information you have gathered and ask new questions." }] }, { "id": 68, "type": "component", "name": "h3", "children": [{ "id": 69, "type": "textnode", "value": "List the Following:" }] }, { "id": 70, "type": "component", "name": "ul", "children": [{ "id": 71, "type": "component", "name": "li", "children": [{ "id": 72, "type": "textnode", "value": "What We Know" }] }, { "id": 73, "type": "component", "name": "li", "children": [{ "id": 74, "type": "textnode", "value": "To Determine" }] }, { "id": 75, "type": "component", "name": "li", "children": [{ "id": 76, "type": "textnode", "value": "Summary" }] }] }] }, { "id": 77, "type": "component", "name": "Step", "children": [{ "id": 78, "type": "component", "name": "h3", "children": [{ "id": 79, "type": "textnode", "value": "Isotopic Ratios – Standards and Definitions" }] }, { "id": 80, "type": "component", "name": "p", "children": [{ "id": 81, "type": "textnode", "value": "The isotopic signature of a substance is established using the concentration ratios of certain stable isotopes found in the substance. \n    For example, the standard ratio between the isotopes 13C and 12C is:" }] }, { "id": 82, "type": "component", "name": "p", "children": [{ "id": 83, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 84, "type": "textnode", "value": "(\\frac{^{13}C}{^{12}C})_{standard} = 0,0112372011237" }] }] }, { "id": 85, "type": "component", "name": "p", "children": [{ "id": 86, "type": "textnode", "value": "which means that the quantity of " }, { "id": 87, "type": "component", "name": "sup", "children": [{ "id": 88, "type": "textnode", "value": "13" }] }, { "id": 89, "type": "textnode", "value": "C atoms generally found in a substance is far lower than the quantity of " }, { "id": 90, "type": "component", "name": "sup", "children": [{ "id": 91, "type": "textnode", "value": "12" }] }, { "id": 92, "type": "textnode", "value": "C atoms.\n    Different substances have an isotopic ratio for carbon that is slightly different. \n    For example, a given plant might have an isotopic ratio of:" }] }, { "id": 93, "type": "component", "name": "p", "children": [{ "id": 94, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 95, "type": "textnode", "value": "\\frac{^{13}C}{^{12}C} = 0,0115850109" }] }] }, { "id": 96, "type": "component", "name": "p", "children": [{ "id": 97, "type": "textnode", "value": "or slightly higher than the standard. \n    The isotopic signature of this substance is then calculated from its isotopic ratio and the standard ratio, using the following formula:" }] }, { "id": 98, "type": "component", "name": "p", "children": [{ "id": 99, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 100, "type": "textnode", "value": "\\delta^{13} = \n      \\frac{(\\frac{^{13}C}{^{12}C})_{standard} - \\frac{^{13}C}{^{12}C}}{\\frac{^{13}C}{^{12}C}} * 1000\\delta^{13}C" }] }, { "id": 101, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 102, "type": "textnode", "value": "= \\frac{\\frac{^{13}C}{^{12}C} - (\\frac{^{13}C}{^{12}C})_{standard}}{(\\frac{^{13}C}{^{12}C})_{standard}} * 1000" }] }, { "id": 103, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 104, "type": "textnode", "value": "= 0,0115850109" }] }] }, { "id": 105, "type": "component", "name": "p", "children": [{ "id": 106, "type": "textnode", "value": "The isotopic signature is therefore basically a deviation expressed in per mil (‰). For the example cited above, the result is δ" }, { "id": 107, "type": "component", "name": "sup", "children": [{ "id": 108, "type": "textnode", "value": "13" }] }, { "id": 109, "type": "textnode", "value": "C = –30." }] }, { "id": 110, "type": "component", "name": "p", "children": [{ "id": 111, "type": "component", "name": "strong", "children": [{ "id": 112, "type": "textnode", "value": "Pure maple syrup has an isotopic signature of δ" }, { "id": 113, "type": "component", "name": "sup", "children": [{ "id": 114, "type": "textnode", "value": "13" }] }, { "id": 115, "type": "textnode", "value": "C = –" }, { "id": 116, "type": "textnode", "value": "2" }, { "id": 117, "type": "textnode", "value": "3" }, { "id": 118, "type": "textnode", "value": "." }, { "id": 119, "type": "textnode", "value": "8" }, { "id": 120, "type": "textnode", "value": "1 " }, { "id": 121, "type": "textnode", "value": "whereas corn syrup has a ratio of δ" }, { "id": 122, "type": "component", "name": "sup", "children": [{ "id": 123, "type": "textnode", "value": "13" }] }, { "id": 124, "type": "textnode", "value": "C=-" }, { "id": 125, "type": "textnode", "value": "1" }, { "id": 126, "type": "textnode", "value": "0" }, { "id": 127, "type": "textnode", "value": "." }, { "id": 128, "type": "textnode", "value": "2" }, { "id": 129, "type": "textnode", "value": "2" }, { "id": 130, "type": "textnode", "value": "." }, { "id": 131, "type": "component", "name": "sup", "children": [{ "id": 132, "type": "textnode", "value": "1" }] }] }, { "id": 133, "type": "textnode", "value": "\n    " }] }, { "id": 134, "type": "component", "name": "hr", "children": [] }, { "id": 135, "type": "component", "name": "p", "children": [{ "id": 136, "type": "component", "name": "sup", "children": [{ "id": 137, "type": "textnode", "value": "1 A. Hope Jaren et al. An isotopic method for quantifying sweeteners derived from corn and sugar cane. " }, { "id": 138, "type": "component", "name": "em", "children": [{ "id": 139, "type": "textnode", "value": "The American Journal of Clinical Nutrition" }] }, { "id": 140, "type": "textnode", "value": " 84 (2006): 1380." }] }] }] }, { "id": 141, "type": "component", "name": "Step", "children": [{ "id": 142, "type": "component", "name": "h2", "children": [{ "id": 143, "type": "textnode", "value": "The Mass Spectrometer" }] }, { "id": 144, "type": "component", "name": "p", "children": [{ "id": 145, "type": "textnode", "value": "Here is a scale diagram of the mass spectrometer that will be used for the analysis." }] }, { "id": 146, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in both French and English. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 147, "type": "component", "name": "h3", "children": [{ "id": 148, "type": "textnode", "value": "Technical Detail" }] }, { "id": 149, "type": "component", "name": "h4", "children": [{ "id": 150, "type": "textnode", "value": "Ionization and Acceleration" }] }, { "id": 151, "type": "component", "name": "p", "children": [{ "id": 152, "type": "textnode", "value": "The sample is fed into the spectrometer as a gas. \n    An electron cannon ionizes the atoms, which acquire a positive charge (" }, { "id": 153, "type": "component", "name": "em", "children": [{ "id": 154, "type": "textnode", "value": "q = +e" }] }, { "id": 155, "type": "textnode", "value": "). \n    These ions are then accelerated and directed toward the velocity selector." }] }, { "id": 156, "type": "component", "name": "p", "children": [{ "id": 157, "type": "component", "name": "em", "children": [{ "id": 158, "type": "textnode", "value": "For this problem, your analysis will concentrate on the velocity selector and the magnetic deflector." }] }, { "id": 159, "type": "textnode", "value": "\n    " }, { "id": 160, "type": "component", "name": "em", "children": [{ "id": 161, "type": "textnode", "value": "We will assume therefore that the ionization and acceleration phase go normally and generate accelerated, positively charged ions that can be analysed by the rest of the spectrometer." }] }] }, { "id": 162, "type": "component", "name": "p", "children": [{ "id": 163, "type": "component", "name": "em", "children": [{ "id": 164, "type": "textnode", "value": "Furthermore, we will assume that the spectrometer will be used to analyse atoms produced in the ionization phase." }] }, { "id": 165, "type": "textnode", "value": "\n    " }, { "id": 166, "type": "component", "name": "em", "children": [{ "id": 167, "type": "textnode", "value": "This is a simplification, because in reality, it is the sugar molecules in the maple syrup sample that are analysed, and they contain several atoms." }] }] }, { "id": 168, "type": "component", "name": "h4", "children": [{ "id": 169, "type": "textnode", "value": "Velocity Selector" }] }, { "id": 170, "type": "component", "name": "p", "children": [{ "id": 171, "type": "textnode", "value": "The velocity selector is in a uniform fixed magnetic field of 300 G directed outward. \n    A potential difference, Δ𝑉𝑠, can be applied between the parallel plates of the velocity selector. \n    This potential difference is varied during the analysis. \n    Only the ions that maintain a rectilinear trajectory (straight) in the velocity selector can reach the magnetic deflector." }] }, { "id": 172, "type": "component", "name": "h4", "children": [{ "id": 173, "type": "textnode", "value": "Magnetic Deflector" }] }, { "id": 174, "type": "component", "name": "p", "children": [{ "id": 175, "type": "textnode", "value": "The magnetic deflector is in a uniform fixed magnetic field of 300 G directed outward. \n    The ions are deviated by 90º from their original direction. \n    Only the electrons on the central trajectory in the deflector can reach the detector due to the collimators at the end of the deflector." }] }, { "id": 176, "type": "component", "name": "h4", "children": [{ "id": 177, "type": "textnode", "value": "Detector" }] }, { "id": 178, "type": "component", "name": "p", "children": [{ "id": 179, "type": "textnode", "value": "The ions reach the detector, an electron multiplier, and generate a current proportional to their number. \n    It is the intensity of this current based on the potential difference, Δ𝑉𝑠, that is used to develop the mass spectrum." }] }] }, { "id": 180, "type": "component", "name": "Step", "children": [{ "id": 181, "type": "component", "name": "h2", "children": [{ "id": 182, "type": "textnode", "value": "Low-resolution Spectrum" }] }, { "id": 183, "type": "component", "name": "p", "children": [{ "id": 184, "type": "textnode", "value": "An initial analysis of the sample was carried out to check that the spectrometer is functioning properly. \n    It shows the signal measured in terms of Δ𝑉𝑠. The resolution is weak and is unable to differentiate isotopes of the same element." }] }, { "id": 185, "type": "component", "name": "p", "children": [{ "id": 186, "type": "textnode", "value": "Use this graph to help you determine the settings required to analyze the carbon isotopic ratios." }] }, { "id": 187, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Sample_Graph.png" }, "alt": { "type": "value", "value": "A graph titled \"Low-resolution Analysis of a Maple Syrup Sample.\" The y-axis is labelled \"Intensity (arbitrary units)\" and the x-axis is labelled \"ΔV_s(V).\" Evenly-spaced orizontal Bars run across the graph, and the x-axis is labelled from 0 to 200 in increments of 50. Just to the right of 50 is a peak that reaches 1 bar. At 100 is a peak that is about 1.25 bars tall. Just left of halfway between 100 and 150 is a peak that comes just shy of the fifth bar. A bit left of 150 is a peak that reaches about 1.75. A bit to the right of 150 is a peak that reaches just past the fifth bar. The rest of the graph is a flat line that seems to represent zero on the y-axis." } }, "children": [] }, { "id": 188, "type": "component", "name": "p", "children": [{ "id": 189, "type": "textnode", "value": "The following questions are intended to help you determine which settings to use for your spectrometer.\n    You will need this information for the final question set." }] }, { "id": 190, "type": "component", "name": "p", "children": [{ "id": 191, "type": "component", "name": "strong", "children": [{ "id": 192, "type": "textnode", "value": "Questions:" }] }, { "id": 193, "type": "textnode", "value": "\n" }] }, { "id": 194, "type": "component", "name": "ol", "children": [{ "id": 195, "type": "component", "name": "li", "children": [{ "id": 196, "type": "textnode", "value": "What does the x-axis represent?" }] }, { "id": 197, "type": "component", "name": "li", "children": [{ "id": 198, "type": "textnode", "value": "What does the y-axis represent?" }] }, { "id": 199, "type": "component", "name": "li", "children": [{ "id": 200, "type": "textnode", "value": "What do the peaks correspond to (in general)?" }] }] }] }, { "id": 201, "type": "component", "name": "Step", "children": [{ "id": 202, "type": "component", "name": "h2", "children": [{ "id": 203, "type": "textnode", "value": "High-Resolution Spectrum" }] }, { "id": 204, "type": "component", "name": "p", "children": [{ "id": 205, "type": "textnode", "value": "Calculate the range of voltages, ΔV" }, { "id": 206, "type": "component", "name": "sub", "children": [{ "id": 207, "type": "textnode", "value": "s" }] }, { "id": 208, "type": "textnode", "value": ", required for an accurate analysis of the carbon-12 and -13 isotopes." }] }, { "id": 209, "type": "component", "name": "ol", "children": [{ "id": 210, "type": "component", "name": "li", "children": [{ "id": 211, "type": "textnode", "value": "Do these values correspond to one of the peaks in the low-resolution graph?" }] }, { "id": 212, "type": "component", "name": "li", "children": [{ "id": 213, "type": "textnode", "value": "Which elements correspond to the other peaks?" }] }] }, { "id": 214, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/HighRes_Sample.png" }, "alt": { "type": "value", "value": "A graph much like the one before, but it now has a grid and is numbered differently. The new title is 'High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes.' There is a peak 1 high at 150 and a peak 25 high at 163." } }, "children": [] }, { "id": 215, "type": "component", "name": "p", "children": [{ "id": 216, "type": "textnode", "value": "Based on the high-resolution graph, determine the isotopic ratio δ" }, { "id": 217, "type": "component", "name": "sup", "children": [{ "id": 218, "type": "textnode", "value": "13" }] }, { "id": 219, "type": "textnode", "value": " C of carbon-13.\n    According to these measurements, does the quality of the maple syrup analysed meet the regulations?" }] }, { "id": 220, "type": "component", "name": "em", "children": [{ "id": 221, "type": "textnode", "value": "Note: The quantity of ions detected for a specific mass is proportional to the area under the curve of the corresponding peak." }] }] }] }, { "id": 222, "type": "component", "name": "Scroller", "children": [{ "id": 223, "type": "component", "name": "Step", "children": [{ "id": 224, "type": "component", "name": "h2", "children": [{ "id": 225, "type": "textnode", "value": "Quiz" }] }, { "id": 226, "type": "component", "name": "p", "children": [{ "id": 227, "type": "textnode", "value": "Before you continue, you may find it helpful to review the following questions. \n    If you wish to skip this part, keep going until the background color changes back to white.\n    If you find you are struggling later on, make sure you are able to answer these questions." }] }] }, { "id": 228, "type": "component", "name": "Step", "children": [{ "id": 229, "type": "component", "name": "p", "children": [{ "id": 230, "type": "textnode", "value": "\n    Which of the following are always true for a parallel plate capacitor? You may check as many or as few boxes as you like, including choosing all or none of them. " }, { "id": 231, "type": "component", "name": "br", "children": [] }] }, { "id": 232, "type": "component", "name": "p", "children": [{ "id": 233, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samemag" } }, "children": [] }, { "id": 234, "type": "textnode", "value": " The charges must have the same magnitude. " }, { "id": 235, "type": "component", "name": "br", "children": [] }, { "id": 236, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffmag" } }, "children": [] }, { "id": 237, "type": "textnode", "value": " The charges cannot have the same magnitude. " }, { "id": 238, "type": "component", "name": "br", "children": [] }, { "id": 239, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samesign" } }, "children": [] }, { "id": 240, "type": "textnode", "value": " The charges must have the same sign (both positive or both negative). " }, { "id": 241, "type": "component", "name": "br", "children": [] }, { "id": 242, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffsign" } }, "children": [] }, { "id": 243, "type": "textnode", "value": " The charges must have opposite signs (one positive and one negative). " }, { "id": 244, "type": "component", "name": "br", "children": [] }] }, { "id": 245, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult = true,smans=samemag,dmans=diffmag,ssans=samesign,dsans=diffsign" } }, "children": [{ "id": 246, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 247, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult" } }, "children": [{ "id": 248, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "smans && !dmans && !ssans && dsans" } }, "children": [{ "id": 249, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 250, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!smans || dmans || ssans || !dsans" } }, "children": [{ "id": 251, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 252, "type": "component", "name": "br", "children": [] }, { "id": 253, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "(smans && dmans) || (ssans && dsans)" } }, "children": [{ "id": 254, "type": "textnode", "value": "\n          At least two of your answers appear to be contradictory. Please re-read the options and try again.\n        " }] }, { "id": 255, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!(smans && dmans) && !(ssans && dsans)" } }, "children": [{ "id": 256, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer = true" } }, "children": [{ "id": 257, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 258, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer" } }, "children": [{ "id": 259, "type": "textnode", "value": "\n            A parallel plate capacitor consists of two capacitors with " }, { "id": 260, "type": "component", "name": "strong", "children": [{ "id": 261, "type": "textnode", "value": "opposite charges" }] }, { "id": 262, "type": "textnode", "value": " but the " }, { "id": 263, "type": "component", "name": "strong", "children": [{ "id": 264, "type": "textnode", "value": "same magnitude" }] }, { "id": 265, "type": "textnode", "value": ".\n          " }] }, { "id": 266, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 267, "type": "component", "name": "Step", "children": [{ "id": 268, "type": "component", "name": "p", "children": [{ "id": 269, "type": "textnode", "value": "The result of a cross-product is a vector whose direction is determined by the two original vectors. \n    Which of the following best describes the angle between the resulting vector and either of the original vectors?\n    " }, { "id": 270, "type": "textnode", "value": " " }] }, { "id": 271, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) The resulting vector is perpindicular to both original vectors.\"}]" } }, "children": [] }, { "id": 272, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) The resulting vector is parallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 273, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) The resulting vector is antiparallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 274, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) The resulting vector is at an obtuse angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 275, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) The resulting vector is at an acute angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 276, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult2 = true" } }, "children": [{ "id": 277, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 278, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult2" } }, "children": [{ "id": 279, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"a\"" } }, "children": [{ "id": 280, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 281, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"a\"" } }, "children": [{ "id": 282, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 283, "type": "component", "name": "br", "children": [] }, { "id": 284, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"b\" || radioVal===\"c\"" } }, "children": [{ "id": 285, "type": "textnode", "value": "\n          Is this always possible? (What happens if the original vectors are always pointing in opposite directions?)\n        " }] }, { "id": 286, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer2 = true" } }, "children": [{ "id": 287, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 288, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer2" } }, "children": [{ "id": 289, "type": "textnode", "value": "\n          The result must be " }, { "id": 290, "type": "component", "name": "strong", "children": [{ "id": 291, "type": "textnode", "value": "perpendicular" }] }, { "id": 292, "type": "textnode", "value": " to the original vectors.\n        " }] }, { "id": 293, "type": "textnode", "value": "  " }] }] }] }, { "id": 294, "type": "component", "name": "Step", "children": [{ "id": 295, "type": "component", "name": "p", "children": [{ "id": 296, "type": "textnode", "value": "In our setup, the magnetic field points out of the page and the particle starts out moving to the right.\n    Which direction is\n    " }, { "id": 297, "type": "component", "name": "equation", "children": [{ "id": 298, "type": "textnode", "value": "\\boldsymbol{v} \\times \\boldsymbol{B}" }] }, { "id": 299, "type": "textnode", "value": "\n    ?" }] }, { "id": 300, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "right" } }, "children": [{ "id": 301, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/directions.png" }, "alt": { "type": "value", "value": "A graphic aid for the answers to the left, in which arrows in each direction are labelled with the letter corresponding to one of the answers." } }, "children": [] }] }, { "id": 302, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) Up\"}]" } }, "children": [] }, { "id": 303, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) Down\"}]" } }, "children": [] }, { "id": 304, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) Left\"}]" } }, "children": [] }, { "id": 305, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) Right\"}]" } }, "children": [] }, { "id": 306, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) Into the page\"}]" } }, "children": [] }, { "id": 307, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"f\",label:\"f) Out of the page\"}]" } }, "children": [] }, { "id": 308, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult3 = true" } }, "children": [{ "id": 309, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 310, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult3" } }, "children": [{ "id": 311, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"b\"" } }, "children": [{ "id": 312, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 313, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"b\"" } }, "children": [{ "id": 314, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 315, "type": "component", "name": "br", "children": [] }, { "id": 316, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"c\" || radioVal===\"d\" || radioVal===\"e\" || radioVal===\"f\"" } }, "children": [{ "id": 317, "type": "component", "name": "em", "children": [{ "id": 318, "type": "textnode", "value": "Keep in mind from the previous question that your answer must be perpendicular both to the velocity and the field." }] }, { "id": 319, "type": "textnode", "value": "\n        " }] }, { "id": 320, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"a\"" } }, "children": [{ "id": 321, "type": "textnode", "value": "\n          If you used the right hand rule, check that you are using it correctly. \n          Also keep in mind that the cross product is not commutative; flipping v and B will give you a different answer.\n        " }] }, { "id": 322, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer3 = true" } }, "children": [{ "id": 323, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 324, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer3" } }, "children": [{ "id": 325, "type": "textnode", "value": "\n          The cross product should point " }, { "id": 326, "type": "component", "name": "strong", "children": [{ "id": 327, "type": "textnode", "value": "down" }] }, { "id": 328, "type": "textnode", "value": ".\n        " }] }, { "id": 329, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 330, "type": "component", "name": "Scroller", "children": [{ "id": 331, "type": "component", "name": "Step", "children": [{ "id": 332, "type": "component", "name": "h2", "children": [{ "id": 333, "type": "textnode", "value": "Setup" }] }, { "id": 334, "type": "component", "name": "p", "children": [{ "id": 335, "type": "textnode", "value": "Now we are going to review the diagram and work on the basic aspects of setup --\n    namely, we will determine in a general sense what the charge on each plate should be." }] }, { "id": 336, "type": "component", "name": "p", "children": [{ "id": 337, "type": "textnode", "value": "In the simplified diagram below, the magnetic field is still pointing out of the screen.\n    The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.\n    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move." }] }, { "id": 338, "type": "component", "name": "div", "children": [{ "id": 339, "type": "component", "name": "IdyllApparatusComponent", "properties": { "_url": { "type": "value", "value": "static/SimplifiedSim.json" }, "_regionOfInterest": { "type": "expression", "value": "{ x: [-2, 4], y: [-3, 3] }" }, "_width": { "type": "value", "value": "100%" }, "_height": { "type": "value", "value": 300 }, "particleSign": { "type": "variable", "value": "particleSign" }, "leftSign": { "type": "variable", "value": "leftSign" }, "rightSign": { "type": "variable", "value": "rightSign" }, "topSign": { "type": "variable", "value": "topSign" }, "bottomSign": { "type": "variable", "value": "bottomSign" } }, "children": [] }] }, { "id": 340, "type": "component", "name": "table", "children": [{ "id": 341, "type": "component", "name": "tr", "children": [{ "id": 342, "type": "component", "name": "td", "children": [{ "id": 343, "type": "component", "name": "div", "children": [{ "id": 344, "type": "textnode", "value": "test" }] }] }] }] }, { "id": 345, "type": "component", "name": "div", "properties": { "display": { "type": "value", "value": "inline-block" } }, "children": [{ "id": 346, "type": "component", "name": "strong", "children": [{ "id": 347, "type": "textnode", "value": "The particle is:" }] }, { "id": 348, "type": "textnode", "value": "\n      " }, { "id": 349, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{value:1,label:\"Positively charged.\"}]" } }, "children": [] }, { "id": 350, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{value:0,label:\"Neutral.\"}]" } }, "children": [] }, { "id": 351, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{value:-1,label:\"Negatively charged.\"}]" } }, "children": [] }] }, { "id": 352, "type": "component", "name": "div", "properties": { "display": { "type": "value", "value": "inline-block" } }, "children": [{ "id": 353, "type": "component", "name": "strong", "children": [{ "id": 354, "type": "textnode", "value": "The left plate is:" }] }, { "id": 355, "type": "textnode", "value": "\n      " }, { "id": 356, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "leftSign" }, "onClick": { "type": "expression", "value": "rightSign=-1" }, "options": { "type": "expression", "value": "[{value:1,label:\"Positively Charged.\"}]" } }, "children": [] }, { "id": 357, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "leftSign" }, "onClick": { "type": "expression", "value": "rightSign=0" }, "options": { "type": "expression", "value": "[{value:0,label:\"Neutral.\"}]" } }, "children": [] }, { "id": 358, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "leftSign" }, "onClick": { "type": "expression", "value": "rightSign=1" }, "options": { "type": "expression", "value": "[{value:-1,label:\"Negatively charged.\"}]" } }, "children": [] }] }, { "id": 359, "type": "component", "name": "div", "properties": { "align": { "type": "value", "value": "right" } }, "children": [{ "id": 360, "type": "component", "name": "strong", "children": [{ "id": 361, "type": "textnode", "value": "The top plate is:" }] }, { "id": 362, "type": "textnode", "value": "\n      " }, { "id": 363, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "topSign" }, "onClick": { "type": "expression", "value": "bottomSign=-1" }, "options": { "type": "expression", "value": "[{value:1,label:\"Positively Charged.\"}]" } }, "children": [] }, { "id": 364, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "topSign" }, "onClick": { "type": "expression", "value": "bottomSign=0" }, "options": { "type": "expression", "value": "[{value:0,label:\"Neutral.\"}]" } }, "children": [] }, { "id": 365, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "topSign" }, "onClick": { "type": "expression", "value": "bottomSign=1" }, "options": { "type": "expression", "value": "[{value:-1,label:\"Negatively charged.\"}]" } }, "children": [] }] }, { "id": 366, "type": "component", "name": "em", "children": [{ "id": 367, "type": "textnode", "value": "This simulation is still under construction" }, { "id": 368, "type": "textnode", "value": "!" }] }] }, { "id": 369, "type": "component", "name": "Step", "children": [{ "id": 370, "type": "component", "name": "h2", "children": [{ "id": 371, "type": "textnode", "value": "Settings" }] }, { "id": 372, "type": "component", "name": "p", "children": [{ "id": 373, "type": "textnode", "value": "When choosing your settings, assume that the positioning of everything in the mass spectrometer is static.\n    Also assume that the magnetic field supplied cannot easily be changed.\n    Therefore, the only thing you should be changing are your voltages." }] }, { "id": 374, "type": "component", "name": "p", "children": [{ "id": 375, "type": "textnode", "value": "Here is the setup diagram again for convenience:\n    " }, { "id": 376, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 377, "type": "textnode", "value": "\n    It was mentioned above that the magnetic field is 300[G] (Gauss). \n    You will need to convert this, as the Gauss is not an SI unit.\n    The other known values can be calculated from the diagram." }] }, { "id": 378, "type": "component", "name": "p", "children": [{ "id": 379, "type": "component", "name": "strong", "children": [{ "id": 380, "type": "textnode", "value": "The Question:" }] }, { "id": 381, "type": "textnode", "value": " What is ΔV" }, { "id": 382, "type": "component", "name": "sub", "children": [{ "id": 383, "type": "textnode", "value": "s" }] }, { "id": 384, "type": "textnode", "value": "? You can test this with the simulation in the next step." }] }] }, { "id": 385, "type": "component", "name": "Step", "children": [{ "id": 386, "type": "component", "name": "h2", "children": [{ "id": 387, "type": "textnode", "value": "Simulation" }] }, { "id": 388, "type": "component", "name": "p", "children": [{ "id": 389, "type": "textnode", "value": "This simulation will allow you to change the voltages and see where your carbon atom ends up.\n    " }, { "id": 390, "type": "component", "name": "br", "children": [] }, { "id": 391, "type": "component", "name": "br", "children": [] }, { "id": 392, "type": "component", "name": "em", "children": [{ "id": 393, "type": "textnode", "value": "Simulation coming soon" }, { "id": 394, "type": "textnode", "value": "!" }] }, { "id": 395, "type": "textnode", "value": "(TM)\n  " }] }] }] }, { "id": 396, "type": "component", "name": "TextContainer", "children": [{ "id": 397, "type": "component", "name": "h2", "children": [{ "id": 398, "type": "textnode", "value": "Summary" }] }, { "id": 399, "type": "component", "name": "p", "children": [{ "id": 400, "type": "textnode", "value": "Here I would like to generate a recap of some kind, possibly including expected equations used.\nHowever, I would like for there to be some way to restrict this only to people who have the right answers;\nit doesn’t make sense to lead them through with questions only to have the answer directly provided at the very end." }] }, { "id": 401, "type": "component", "name": "em", "children": [{ "id": 402, "type": "textnode", "value": "Draft Below" }] }, { "id": 403, "type": "component", "name": "p", "children": [{ "id": 404, "type": "textnode", "value": "Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.\nThis required us to understand and apply various relationships, as well as determine where these relationships applied.\nSome relationships you likely used are those between voltage and energy, energy and velocity, velocity and magnetic force, and a central force and the radius of motion that force causes." }] }, { "id": 405, "type": "component", "name": "p", "children": [{ "id": 406, "type": "textnode", "value": "First we had to determine the basics, such as which plates were positive or negative, the distances travelled under certain forces, and where equilibrium had to occur.\nThen we started to determine the specifics, relating magnetic and central forces to determine what the velocity must be:" }] }, { "id": 407, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 408, "type": "textnode", "value": "\\boldsymbol{F}_{central} = \\boldsymbol{F}_{magnetic} = q\\boldsymbol{v}\\times\\boldsymbol{B} = -m\\frac{v^2}{r}\\hat{r}" }] }, { "id": 409, "type": "component", "name": "p", "children": [{ "id": 410, "type": "textnode", "value": "By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.\nDetermining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:" }] }, { "id": 411, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 412, "type": "textnode", "value": "\\boldsymbol{F}_{magnetic} = -\\boldsymbol{F}_{electric} = -q\\boldsymbol{E}" }] }, { "id": 413, "type": "component", "name": "p", "children": [{ "id": 414, "type": "textnode", "value": "While determining the energy allowed us to determine the voltage across the two vertical plates:" }] }, { "id": 415, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 416, "type": "textnode", "value": "KE_{final} = \\Delta KE + KE_{initial} = \\Delta KE = -\\Delta U = -q\\Delta V" }] }, { "id": 417, "type": "component", "name": "p", "children": [{ "id": 418, "type": "textnode", "value": "This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis." }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "state" }, "value": { "type": "value", "value": 0 } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "showResult" }, "value": { "type": "value", "value": false } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer" }, "value": { "type": "value", "value": false } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "samemag" }, "value": { "type": "value", "value": false } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "diffmag" }, "value": { "type": "value", "value": false } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "samesign" }, "value": { "type": "value", "value": false } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "diffsign" }, "value": { "type": "value", "value": false } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "smans" }, "value": { "type": "value", "value": false } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "dmans" }, "value": { "type": "value", "value": false } } }, { "id": 11, "type": "var", "properties": { "name": { "type": "value", "value": "ssans" }, "value": { "type": "value", "value": false } } }, { "id": 12, "type": "var", "properties": { "name": { "type": "value", "value": "dsans" }, "value": { "type": "value", "value": false } } }, { "id": 13, "type": "var", "properties": { "name": { "type": "value", "value": "showResult2" }, "value": { "type": "value", "value": false } } }, { "id": 14, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer2" }, "value": { "type": "value", "value": false } } }, { "id": 15, "type": "var", "properties": { "name": { "type": "value", "value": "radioVal" }, "value": { "type": "value", "value": "null" } } }, { "id": 16, "type": "var", "properties": { "name": { "type": "value", "value": "showResult3" }, "value": { "type": "value", "value": false } } }, { "id": 17, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer3" }, "value": { "type": "value", "value": false } } }, { "id": 18, "type": "var", "properties": { "name": { "type": "variable", "value": "particleSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 19, "type": "var", "properties": { "name": { "type": "variable", "value": "leftSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 20, "type": "var", "properties": { "name": { "type": "variable", "value": "rightSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 21, "type": "var", "properties": { "name": { "type": "variable", "value": "topSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 22, "type": "var", "properties": { "name": { "type": "variable", "value": "bottomSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 23, "type": "component", "name": "TextContainer", "children": [{ "id": 24, "type": "meta", "properties": { "title": { "type": "value", "value": "Maple Syrup Worksheet" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 25, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Maple Syrup" }, "subtitle": { "type": "value", "value": "Mass Spectrometry Analysis" }, "author": { "type": "value", "value": "Olivier Tardif-Paradis, Mathieu Riopel, & Cégep Garneau." }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#222222" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 26, "type": "component", "name": "TextContainer", "children": [{ "id": 27, "type": "component", "name": "p", "children": [{ "id": 28, "type": "textnode", "value": " " }, { "id": 29, "type": "component", "name": "em", "children": [{ "id": 30, "type": "textnode", "value": "This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver." }] }, { "id": 31, "type": "textnode", "value": " \n" }] }, { "id": 32, "type": "component", "name": "p", "children": [{ "id": 33, "type": "component", "name": "em", "children": [{ "id": 34, "type": "textnode", "value": "Original date of creation unknown; date listed is last update of this adaptation." }] }, { "id": 35, "type": "textnode", "value": "\n" }] }, { "id": 36, "type": "component", "name": "hr", "children": [] }, { "id": 37, "type": "component", "name": "p", "children": [{ "id": 38, "type": "textnode", "value": "This worksheet has a lot of information; you will not need it all for each individual question. \nIt’s okay if you need to go back and re-read to answer some of these questions." }] }, { "id": 39, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Pouring_Syrup.png" }, "alt": { "type": "value", "value": "\"A metal jug of syrup being poured over a metal trough full of snow.\"" } }, "children": [] }, { "id": 40, "type": "component", "name": "h2", "children": [{ "id": 41, "type": "textnode", "value": "Background" }] }, { "id": 42, "type": "component", "name": "p", "children": [{ "id": 43, "type": "textnode", "value": "In Québec, the return of the warm weather at the end of winter also signals sugaring off time. \nThe maple syrup produced in our good old sugar shacks is one of our most treasured traditions. \nAnd in fact, about 75% of all the maple syrup consumed in the entire world is produced right here in Québec." }] }, { "id": 44, "type": "component", "name": "p", "children": [{ "id": 45, "type": "textnode", "value": "But with the high demand and drive for expansion and quick profits, some maple culturists sometimes dilute their maple syrup with other, less expensive sugar syrups, like corn syrup. \nThis adulteration process is illegal, since it misleads the consumer and hurts the maple culture industry. \nAnd yet this alteration of our national syrup is hard to detect, since it generally changes neither the flavour nor the colour of the syrup. \nOur maple syrup is therefore subject to frequent controls to certify its quality." }] }, { "id": 46, "type": "component", "name": "p", "children": [{ "id": 47, "type": "textnode", "value": "One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. \nIn brief, this technique measures the relative concentrations of different carbon isotopes in various substances. \nSince corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a " }, { "id": 48, "type": "component", "name": "sup", "children": [{ "id": 49, "type": "textnode", "value": "13" }] }, { "id": 50, "type": "textnode", "value": "C ratio that is lower than normal. \nThis isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers." }] }, { "id": 51, "type": "component", "name": "p", "children": [{ "id": 52, "type": "textnode", "value": "Your role is to analyse a maple syrup sample using mass spectrometry. \nTo do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. \nA detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse." }] }, { "id": 53, "type": "component", "name": "p", "children": [{ "id": 54, "type": "textnode", "value": "Our goal as physicists is to learn how we can apply our knowledge of electric and magnetic fields to set up our mass spectrometer." }] }] }, { "id": 55, "type": "component", "name": "Scroller", "properties": { "currentStep": { "type": "variable", "value": "state" } }, "children": [{ "id": 56, "type": "component", "name": "Step", "children": [{ "id": 57, "type": "component", "name": "h3", "children": [{ "id": 58, "type": "textnode", "value": "Three-Step Cycle" }] }, { "id": 59, "type": "component", "name": "p", "children": [{ "id": 60, "type": "component", "name": "strong", "children": [{ "id": 61, "type": "textnode", "value": "The main question:" }] }, { "id": 62, "type": "textnode", "value": " How can we set the initial voltage for our velocity selector such that we can determine whether the syrup is actually maple syrup?" }] }, { "id": 63, "type": "component", "name": "p", "children": [{ "id": 64, "type": "textnode", "value": "As you read the information below, list all the " }, { "id": 65, "type": "component", "name": "em", "children": [{ "id": 66, "type": "textnode", "value": "relevant" }] }, { "id": 67, "type": "textnode", "value": " information you gathered when you read the problem. \n    Based on this information, state what you need to know to solve the problem. \n    As you discover new information, you should summarize and update the relevant information you have gathered and ask new questions." }] }, { "id": 68, "type": "component", "name": "h3", "children": [{ "id": 69, "type": "textnode", "value": "List the Following:" }] }, { "id": 70, "type": "component", "name": "ul", "children": [{ "id": 71, "type": "component", "name": "li", "children": [{ "id": 72, "type": "textnode", "value": "What We Know" }] }, { "id": 73, "type": "component", "name": "li", "children": [{ "id": 74, "type": "textnode", "value": "To Determine" }] }, { "id": 75, "type": "component", "name": "li", "children": [{ "id": 76, "type": "textnode", "value": "Summary" }] }] }] }, { "id": 77, "type": "component", "name": "Step", "children": [{ "id": 78, "type": "component", "name": "h3", "children": [{ "id": 79, "type": "textnode", "value": "Isotopic Ratios – Standards and Definitions" }] }, { "id": 80, "type": "component", "name": "p", "children": [{ "id": 81, "type": "textnode", "value": "The isotopic signature of a substance is established using the concentration ratios of certain stable isotopes found in the substance. \n    For example, the standard ratio between the isotopes 13C and 12C is:" }] }, { "id": 82, "type": "component", "name": "p", "children": [{ "id": 83, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 84, "type": "textnode", "value": "(\\frac{^{13}C}{^{12}C})_{standard} = 0,0112372011237" }] }] }, { "id": 85, "type": "component", "name": "p", "children": [{ "id": 86, "type": "textnode", "value": "which means that the quantity of " }, { "id": 87, "type": "component", "name": "sup", "children": [{ "id": 88, "type": "textnode", "value": "13" }] }, { "id": 89, "type": "textnode", "value": "C atoms generally found in a substance is far lower than the quantity of " }, { "id": 90, "type": "component", "name": "sup", "children": [{ "id": 91, "type": "textnode", "value": "12" }] }, { "id": 92, "type": "textnode", "value": "C atoms.\n    Different substances have an isotopic ratio for carbon that is slightly different. \n    For example, a given plant might have an isotopic ratio of:" }] }, { "id": 93, "type": "component", "name": "p", "children": [{ "id": 94, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 95, "type": "textnode", "value": "\\frac{^{13}C}{^{12}C} = 0,0115850109" }] }] }, { "id": 96, "type": "component", "name": "p", "children": [{ "id": 97, "type": "textnode", "value": "or slightly higher than the standard. \n    The isotopic signature of this substance is then calculated from its isotopic ratio and the standard ratio, using the following formula:" }] }, { "id": 98, "type": "component", "name": "p", "children": [{ "id": 99, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 100, "type": "textnode", "value": "\\delta^{13} = \n      \\frac{(\\frac{^{13}C}{^{12}C})_{standard} - \\frac{^{13}C}{^{12}C}}{\\frac{^{13}C}{^{12}C}} * 1000\\delta^{13}C" }] }, { "id": 101, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 102, "type": "textnode", "value": "= \\frac{\\frac{^{13}C}{^{12}C} - (\\frac{^{13}C}{^{12}C})_{standard}}{(\\frac{^{13}C}{^{12}C})_{standard}} * 1000" }] }, { "id": 103, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 104, "type": "textnode", "value": "= 0,0115850109" }] }] }, { "id": 105, "type": "component", "name": "p", "children": [{ "id": 106, "type": "textnode", "value": "The isotopic signature is therefore basically a deviation expressed in per mil (‰). For the example cited above, the result is δ" }, { "id": 107, "type": "component", "name": "sup", "children": [{ "id": 108, "type": "textnode", "value": "13" }] }, { "id": 109, "type": "textnode", "value": "C = –30." }] }, { "id": 110, "type": "component", "name": "p", "children": [{ "id": 111, "type": "component", "name": "strong", "children": [{ "id": 112, "type": "textnode", "value": "Pure maple syrup has an isotopic signature of δ" }, { "id": 113, "type": "component", "name": "sup", "children": [{ "id": 114, "type": "textnode", "value": "13" }] }, { "id": 115, "type": "textnode", "value": "C = –" }, { "id": 116, "type": "textnode", "value": "2" }, { "id": 117, "type": "textnode", "value": "3" }, { "id": 118, "type": "textnode", "value": "." }, { "id": 119, "type": "textnode", "value": "8" }, { "id": 120, "type": "textnode", "value": "1 " }, { "id": 121, "type": "textnode", "value": "whereas corn syrup has a ratio of δ" }, { "id": 122, "type": "component", "name": "sup", "children": [{ "id": 123, "type": "textnode", "value": "13" }] }, { "id": 124, "type": "textnode", "value": "C=-" }, { "id": 125, "type": "textnode", "value": "1" }, { "id": 126, "type": "textnode", "value": "0" }, { "id": 127, "type": "textnode", "value": "." }, { "id": 128, "type": "textnode", "value": "2" }, { "id": 129, "type": "textnode", "value": "2" }, { "id": 130, "type": "textnode", "value": "." }, { "id": 131, "type": "component", "name": "sup", "children": [{ "id": 132, "type": "textnode", "value": "1" }] }] }, { "id": 133, "type": "textnode", "value": "\n    " }] }, { "id": 134, "type": "component", "name": "hr", "children": [] }, { "id": 135, "type": "component", "name": "p", "children": [{ "id": 136, "type": "component", "name": "sup", "children": [{ "id": 137, "type": "textnode", "value": "1 A. Hope Jaren et al. An isotopic method for quantifying sweeteners derived from corn and sugar cane. " }, { "id": 138, "type": "component", "name": "em", "children": [{ "id": 139, "type": "textnode", "value": "The American Journal of Clinical Nutrition" }] }, { "id": 140, "type": "textnode", "value": " 84 (2006): 1380." }] }] }] }, { "id": 141, "type": "component", "name": "Step", "children": [{ "id": 142, "type": "component", "name": "h2", "children": [{ "id": 143, "type": "textnode", "value": "The Mass Spectrometer" }] }, { "id": 144, "type": "component", "name": "p", "children": [{ "id": 145, "type": "textnode", "value": "Here is a scale diagram of the mass spectrometer that will be used for the analysis." }] }, { "id": 146, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in both French and English. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 147, "type": "component", "name": "h3", "children": [{ "id": 148, "type": "textnode", "value": "Technical Detail" }] }, { "id": 149, "type": "component", "name": "h4", "children": [{ "id": 150, "type": "textnode", "value": "Ionization and Acceleration" }] }, { "id": 151, "type": "component", "name": "p", "children": [{ "id": 152, "type": "textnode", "value": "The sample is fed into the spectrometer as a gas. \n    An electron cannon ionizes the atoms, which acquire a positive charge (" }, { "id": 153, "type": "component", "name": "em", "children": [{ "id": 154, "type": "textnode", "value": "q = +e" }] }, { "id": 155, "type": "textnode", "value": "). \n    These ions are then accelerated and directed toward the velocity selector." }] }, { "id": 156, "type": "component", "name": "p", "children": [{ "id": 157, "type": "component", "name": "em", "children": [{ "id": 158, "type": "textnode", "value": "For this problem, your analysis will concentrate on the velocity selector and the magnetic deflector." }] }, { "id": 159, "type": "textnode", "value": "\n    " }, { "id": 160, "type": "component", "name": "em", "children": [{ "id": 161, "type": "textnode", "value": "We will assume therefore that the ionization and acceleration phase go normally and generate accelerated, positively charged ions that can be analysed by the rest of the spectrometer." }] }] }, { "id": 162, "type": "component", "name": "p", "children": [{ "id": 163, "type": "component", "name": "em", "children": [{ "id": 164, "type": "textnode", "value": "Furthermore, we will assume that the spectrometer will be used to analyse atoms produced in the ionization phase." }] }, { "id": 165, "type": "textnode", "value": "\n    " }, { "id": 166, "type": "component", "name": "em", "children": [{ "id": 167, "type": "textnode", "value": "This is a simplification, because in reality, it is the sugar molecules in the maple syrup sample that are analysed, and they contain several atoms." }] }] }, { "id": 168, "type": "component", "name": "h4", "children": [{ "id": 169, "type": "textnode", "value": "Velocity Selector" }] }, { "id": 170, "type": "component", "name": "p", "children": [{ "id": 171, "type": "textnode", "value": "The velocity selector is in a uniform fixed magnetic field of 300 G directed outward. \n    A potential difference, Δ𝑉𝑠, can be applied between the parallel plates of the velocity selector. \n    This potential difference is varied during the analysis. \n    Only the ions that maintain a rectilinear trajectory (straight) in the velocity selector can reach the magnetic deflector." }] }, { "id": 172, "type": "component", "name": "h4", "children": [{ "id": 173, "type": "textnode", "value": "Magnetic Deflector" }] }, { "id": 174, "type": "component", "name": "p", "children": [{ "id": 175, "type": "textnode", "value": "The magnetic deflector is in a uniform fixed magnetic field of 300 G directed outward. \n    The ions are deviated by 90º from their original direction. \n    Only the electrons on the central trajectory in the deflector can reach the detector due to the collimators at the end of the deflector." }] }, { "id": 176, "type": "component", "name": "h4", "children": [{ "id": 177, "type": "textnode", "value": "Detector" }] }, { "id": 178, "type": "component", "name": "p", "children": [{ "id": 179, "type": "textnode", "value": "The ions reach the detector, an electron multiplier, and generate a current proportional to their number. \n    It is the intensity of this current based on the potential difference, Δ𝑉𝑠, that is used to develop the mass spectrum." }] }] }, { "id": 180, "type": "component", "name": "Step", "children": [{ "id": 181, "type": "component", "name": "h2", "children": [{ "id": 182, "type": "textnode", "value": "Low-resolution Spectrum" }] }, { "id": 183, "type": "component", "name": "p", "children": [{ "id": 184, "type": "textnode", "value": "An initial analysis of the sample was carried out to check that the spectrometer is functioning properly. \n    It shows the signal measured in terms of Δ𝑉𝑠. The resolution is weak and is unable to differentiate isotopes of the same element." }] }, { "id": 185, "type": "component", "name": "p", "children": [{ "id": 186, "type": "textnode", "value": "Use this graph to help you determine the settings required to analyze the carbon isotopic ratios." }] }, { "id": 187, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Sample_Graph.png" }, "alt": { "type": "value", "value": "A graph titled \"Low-resolution Analysis of a Maple Syrup Sample.\" The y-axis is labelled \"Intensity (arbitrary units)\" and the x-axis is labelled \"ΔV_s(V).\" Evenly-spaced orizontal Bars run across the graph, and the x-axis is labelled from 0 to 200 in increments of 50. Just to the right of 50 is a peak that reaches 1 bar. At 100 is a peak that is about 1.25 bars tall. Just left of halfway between 100 and 150 is a peak that comes just shy of the fifth bar. A bit left of 150 is a peak that reaches about 1.75. A bit to the right of 150 is a peak that reaches just past the fifth bar. The rest of the graph is a flat line that seems to represent zero on the y-axis." } }, "children": [] }, { "id": 188, "type": "component", "name": "p", "children": [{ "id": 189, "type": "textnode", "value": "The following questions are intended to help you determine which settings to use for your spectrometer.\n    You will need this information for the final question set." }] }, { "id": 190, "type": "component", "name": "p", "children": [{ "id": 191, "type": "component", "name": "strong", "children": [{ "id": 192, "type": "textnode", "value": "Questions:" }] }, { "id": 193, "type": "textnode", "value": "\n" }] }, { "id": 194, "type": "component", "name": "ol", "children": [{ "id": 195, "type": "component", "name": "li", "children": [{ "id": 196, "type": "textnode", "value": "What does the x-axis represent?" }] }, { "id": 197, "type": "component", "name": "li", "children": [{ "id": 198, "type": "textnode", "value": "What does the y-axis represent?" }] }, { "id": 199, "type": "component", "name": "li", "children": [{ "id": 200, "type": "textnode", "value": "What do the peaks correspond to (in general)?" }] }] }] }, { "id": 201, "type": "component", "name": "Step", "children": [{ "id": 202, "type": "component", "name": "h2", "children": [{ "id": 203, "type": "textnode", "value": "High-Resolution Spectrum" }] }, { "id": 204, "type": "component", "name": "p", "children": [{ "id": 205, "type": "textnode", "value": "Calculate the range of voltages, ΔV" }, { "id": 206, "type": "component", "name": "sub", "children": [{ "id": 207, "type": "textnode", "value": "s" }] }, { "id": 208, "type": "textnode", "value": ", required for an accurate analysis of the carbon-12 and -13 isotopes." }] }, { "id": 209, "type": "component", "name": "ol", "children": [{ "id": 210, "type": "component", "name": "li", "children": [{ "id": 211, "type": "textnode", "value": "Do these values correspond to one of the peaks in the low-resolution graph?" }] }, { "id": 212, "type": "component", "name": "li", "children": [{ "id": 213, "type": "textnode", "value": "Which elements correspond to the other peaks?" }] }] }, { "id": 214, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/HighRes_Sample.png" }, "alt": { "type": "value", "value": "A graph much like the one before, but it now has a grid and is numbered differently. The new title is 'High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes.' There is a peak 1 high at 150 and a peak 25 high at 163." } }, "children": [] }, { "id": 215, "type": "component", "name": "p", "children": [{ "id": 216, "type": "textnode", "value": "Based on the high-resolution graph, determine the isotopic ratio δ" }, { "id": 217, "type": "component", "name": "sup", "children": [{ "id": 218, "type": "textnode", "value": "13" }] }, { "id": 219, "type": "textnode", "value": " C of carbon-13.\n    According to these measurements, does the quality of the maple syrup analysed meet the regulations?" }] }, { "id": 220, "type": "component", "name": "em", "children": [{ "id": 221, "type": "textnode", "value": "Note: The quantity of ions detected for a specific mass is proportional to the area under the curve of the corresponding peak." }] }] }] }, { "id": 222, "type": "component", "name": "Scroller", "children": [{ "id": 223, "type": "component", "name": "Step", "children": [{ "id": 224, "type": "component", "name": "h2", "children": [{ "id": 225, "type": "textnode", "value": "Quiz" }] }, { "id": 226, "type": "component", "name": "p", "children": [{ "id": 227, "type": "textnode", "value": "Before you continue, you may find it helpful to review the following questions. \n    If you wish to skip this part, keep going until the background color changes back to white.\n    If you find you are struggling later on, make sure you are able to answer these questions." }] }] }, { "id": 228, "type": "component", "name": "Step", "children": [{ "id": 229, "type": "component", "name": "p", "children": [{ "id": 230, "type": "textnode", "value": "\n    Which of the following are always true for a parallel plate capacitor? You may check as many or as few boxes as you like, including choosing all or none of them. " }, { "id": 231, "type": "component", "name": "br", "children": [] }] }, { "id": 232, "type": "component", "name": "p", "children": [{ "id": 233, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samemag" } }, "children": [] }, { "id": 234, "type": "textnode", "value": " The charges must have the same magnitude. " }, { "id": 235, "type": "component", "name": "br", "children": [] }, { "id": 236, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffmag" } }, "children": [] }, { "id": 237, "type": "textnode", "value": " The charges cannot have the same magnitude. " }, { "id": 238, "type": "component", "name": "br", "children": [] }, { "id": 239, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samesign" } }, "children": [] }, { "id": 240, "type": "textnode", "value": " The charges must have the same sign (both positive or both negative). " }, { "id": 241, "type": "component", "name": "br", "children": [] }, { "id": 242, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffsign" } }, "children": [] }, { "id": 243, "type": "textnode", "value": " The charges must have opposite signs (one positive and one negative). " }, { "id": 244, "type": "component", "name": "br", "children": [] }] }, { "id": 245, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult = true,smans=samemag,dmans=diffmag,ssans=samesign,dsans=diffsign" } }, "children": [{ "id": 246, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 247, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult" } }, "children": [{ "id": 248, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "smans && !dmans && !ssans && dsans" } }, "children": [{ "id": 249, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 250, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!smans || dmans || ssans || !dsans" } }, "children": [{ "id": 251, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 252, "type": "component", "name": "br", "children": [] }, { "id": 253, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "(smans && dmans) || (ssans && dsans)" } }, "children": [{ "id": 254, "type": "textnode", "value": "\n          At least two of your answers appear to be contradictory. Please re-read the options and try again.\n        " }] }, { "id": 255, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!(smans && dmans) && !(ssans && dsans)" } }, "children": [{ "id": 256, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer = true" } }, "children": [{ "id": 257, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 258, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer" } }, "children": [{ "id": 259, "type": "textnode", "value": "\n            A parallel plate capacitor consists of two capacitors with " }, { "id": 260, "type": "component", "name": "strong", "children": [{ "id": 261, "type": "textnode", "value": "opposite charges" }] }, { "id": 262, "type": "textnode", "value": " but the " }, { "id": 263, "type": "component", "name": "strong", "children": [{ "id": 264, "type": "textnode", "value": "same magnitude" }] }, { "id": 265, "type": "textnode", "value": ".\n          " }] }, { "id": 266, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 267, "type": "component", "name": "Step", "children": [{ "id": 268, "type": "component", "name": "p", "children": [{ "id": 269, "type": "textnode", "value": "The result of a cross-product is a vector whose direction is determined by the two original vectors. \n    Which of the following best describes the angle between the resulting vector and either of the original vectors?\n    " }, { "id": 270, "type": "textnode", "value": " " }] }, { "id": 271, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) The resulting vector is perpindicular to both original vectors.\"}]" } }, "children": [] }, { "id": 272, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) The resulting vector is parallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 273, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) The resulting vector is antiparallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 274, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) The resulting vector is at an obtuse angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 275, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) The resulting vector is at an acute angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 276, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult2 = true" } }, "children": [{ "id": 277, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 278, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult2" } }, "children": [{ "id": 279, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"a\"" } }, "children": [{ "id": 280, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 281, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"a\"" } }, "children": [{ "id": 282, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 283, "type": "component", "name": "br", "children": [] }, { "id": 284, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"b\" || radioVal===\"c\"" } }, "children": [{ "id": 285, "type": "textnode", "value": "\n          Is this always possible? (What happens if the original vectors are always pointing in opposite directions?)\n        " }] }, { "id": 286, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer2 = true" } }, "children": [{ "id": 287, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 288, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer2" } }, "children": [{ "id": 289, "type": "textnode", "value": "\n          The result must be " }, { "id": 290, "type": "component", "name": "strong", "children": [{ "id": 291, "type": "textnode", "value": "perpendicular" }] }, { "id": 292, "type": "textnode", "value": " to the original vectors.\n        " }] }, { "id": 293, "type": "textnode", "value": "  " }] }] }] }, { "id": 294, "type": "component", "name": "Step", "children": [{ "id": 295, "type": "component", "name": "p", "children": [{ "id": 296, "type": "textnode", "value": "In our setup, the magnetic field points out of the page and the particle starts out moving to the right.\n    Which direction is\n    " }, { "id": 297, "type": "component", "name": "equation", "children": [{ "id": 298, "type": "textnode", "value": "\\boldsymbol{v} \\times \\boldsymbol{B}" }] }, { "id": 299, "type": "textnode", "value": "\n    ?" }] }, { "id": 300, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "right" } }, "children": [{ "id": 301, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/directions.png" }, "alt": { "type": "value", "value": "A graphic aid for the answers to the left, in which arrows in each direction are labelled with the letter corresponding to one of the answers." } }, "children": [] }] }, { "id": 302, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) Up\"}]" } }, "children": [] }, { "id": 303, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) Down\"}]" } }, "children": [] }, { "id": 304, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) Left\"}]" } }, "children": [] }, { "id": 305, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) Right\"}]" } }, "children": [] }, { "id": 306, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) Into the page\"}]" } }, "children": [] }, { "id": 307, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"f\",label:\"f) Out of the page\"}]" } }, "children": [] }, { "id": 308, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult3 = true" } }, "children": [{ "id": 309, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 310, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult3" } }, "children": [{ "id": 311, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"b\"" } }, "children": [{ "id": 312, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 313, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"b\"" } }, "children": [{ "id": 314, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 315, "type": "component", "name": "br", "children": [] }, { "id": 316, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"c\" || radioVal===\"d\" || radioVal===\"e\" || radioVal===\"f\"" } }, "children": [{ "id": 317, "type": "component", "name": "em", "children": [{ "id": 318, "type": "textnode", "value": "Keep in mind from the previous question that your answer must be perpendicular both to the velocity and the field." }] }, { "id": 319, "type": "textnode", "value": "\n        " }] }, { "id": 320, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"a\"" } }, "children": [{ "id": 321, "type": "textnode", "value": "\n          If you used the right hand rule, check that you are using it correctly. \n          Also keep in mind that the cross product is not commutative; flipping v and B will give you a different answer.\n        " }] }, { "id": 322, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer3 = true" } }, "children": [{ "id": 323, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 324, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer3" } }, "children": [{ "id": 325, "type": "textnode", "value": "\n          The cross product should point " }, { "id": 326, "type": "component", "name": "strong", "children": [{ "id": 327, "type": "textnode", "value": "down" }] }, { "id": 328, "type": "textnode", "value": ".\n        " }] }, { "id": 329, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 330, "type": "component", "name": "Scroller", "children": [{ "id": 331, "type": "component", "name": "Step", "children": [{ "id": 332, "type": "component", "name": "h2", "children": [{ "id": 333, "type": "textnode", "value": "Setup" }] }, { "id": 334, "type": "component", "name": "p", "children": [{ "id": 335, "type": "textnode", "value": "Now we are going to review the diagram and work on the basic aspects of setup --\n    namely, we will determine in a general sense what the charge on each plate should be." }] }, { "id": 336, "type": "component", "name": "p", "children": [{ "id": 337, "type": "textnode", "value": "In the simplified diagram below, the magnetic field is still pointing out of the screen.\n    The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.\n    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move." }] }, { "id": 338, "type": "component", "name": "div", "children": [{ "id": 339, "type": "component", "name": "IdyllApparatusComponent", "properties": { "_url": { "type": "value", "value": "static/SimplifiedSim.json" }, "_regionOfInterest": { "type": "expression", "value": "{ x: [-2, 4], y: [-3, 3] }" }, "_width": { "type": "value", "value": "100%" }, "_height": { "type": "value", "value": 300 }, "particleSign": { "type": "variable", "value": "particleSign" }, "leftSign": { "type": "variable", "value": "leftSign" }, "rightSign": { "type": "variable", "value": "rightSign" }, "topSign": { "type": "variable", "value": "topSign" }, "bottomSign": { "type": "variable", "value": "bottomSign" } }, "children": [] }] }, { "id": 340, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "left" } }, "children": [{ "id": 341, "type": "component", "name": "strong", "children": [{ "id": 342, "type": "textnode", "value": "The particle is:" }] }, { "id": 343, "type": "textnode", "value": "\n      " }, { "id": 344, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{value:1,label:\"Positively charged.\"}]" } }, "children": [] }, { "id": 345, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{value:0,label:\"Neutral.\"}]" } }, "children": [] }, { "id": 346, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{value:-1,label:\"Negatively charged.\"}]" } }, "children": [] }] }, { "id": 347, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "right" } }, "children": [{ "id": 348, "type": "component", "name": "strong", "children": [{ "id": 349, "type": "textnode", "value": "The top plate is:" }] }, { "id": 350, "type": "textnode", "value": "\n      " }, { "id": 351, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "topSign" }, "onClick": { "type": "expression", "value": "bottomSign=-1" }, "options": { "type": "expression", "value": "[{value:1,label:\"Positively Charged.\"}]" } }, "children": [] }, { "id": 352, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "topSign" }, "onClick": { "type": "expression", "value": "bottomSign=0" }, "options": { "type": "expression", "value": "[{value:0,label:\"Neutral.\"}]" } }, "children": [] }, { "id": 353, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "topSign" }, "onClick": { "type": "expression", "value": "bottomSign=1" }, "options": { "type": "expression", "value": "[{value:-1,label:\"Negatively charged.\"}]" } }, "children": [] }] }, { "id": 354, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "left" } }, "children": [{ "id": 355, "type": "component", "name": "strong", "children": [{ "id": 356, "type": "textnode", "value": "The left plate is:" }] }, { "id": 357, "type": "textnode", "value": "\n      " }, { "id": 358, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "leftSign" }, "onClick": { "type": "expression", "value": "rightSign=-1" }, "options": { "type": "expression", "value": "[{value:1,label:\"Positively Charged.\"}]" } }, "children": [] }, { "id": 359, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "leftSign" }, "onClick": { "type": "expression", "value": "rightSign=0" }, "options": { "type": "expression", "value": "[{value:0,label:\"Neutral.\"}]" } }, "children": [] }, { "id": 360, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "leftSign" }, "onClick": { "type": "expression", "value": "rightSign=1" }, "options": { "type": "expression", "value": "[{value:-1,label:\"Negatively charged.\"}]" } }, "children": [] }] }, { "id": 361, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "right" } }, "children": [{ "id": 362, "type": "component", "name": "Button", "children": [{ "id": 363, "type": "textnode", "value": " Run! " }] }, { "id": 364, "type": "textnode", "value": " " }, { "id": 365, "type": "component", "name": "em", "children": [{ "id": 366, "type": "textnode", "value": "These buttons are currently useless" }, { "id": 367, "type": "textnode", "value": "!" }] }, { "id": 368, "type": "textnode", "value": "\n      " }, { "id": 369, "type": "component", "name": "EaserToggle", "properties": { "value": { "type": "variable", "value": "time" }, "targetValue": { "type": "variable", "value": "targetTime" }, "time": { "type": "value", "value": 5000 } }, "children": [{ "id": 370, "type": "textnode", "value": " Accelerate! " }] }] }, { "id": 371, "type": "component", "name": "Float", "children": [{ "id": 372, "type": "component", "name": "br", "children": [] }, { "id": 373, "type": "component", "name": "br", "children": [] }, { "id": 374, "type": "component", "name": "em", "children": [{ "id": 375, "type": "textnode", "value": "This simulation is still under construction" }, { "id": 376, "type": "textnode", "value": "!" }] }, { "id": 377, "type": "textnode", "value": "\n    " }] }] }, { "id": 378, "type": "component", "name": "Step", "children": [{ "id": 379, "type": "component", "name": "h2", "children": [{ "id": 380, "type": "textnode", "value": "Settings" }] }, { "id": 381, "type": "component", "name": "p", "children": [{ "id": 382, "type": "textnode", "value": "When choosing your settings, assume that the positioning of everything in the mass spectrometer is static.\n    Also assume that the magnetic field supplied cannot easily be changed.\n    Therefore, the only thing you should be changing are your voltages." }] }, { "id": 383, "type": "component", "name": "p", "children": [{ "id": 384, "type": "textnode", "value": "Here is the setup diagram again for convenience:\n    " }, { "id": 385, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 386, "type": "textnode", "value": "\n    It was mentioned above that the magnetic field is 300[G] (Gauss). \n    You will need to convert this, as the Gauss is not an SI unit.\n    The other known values can be calculated from the diagram." }] }, { "id": 387, "type": "component", "name": "p", "children": [{ "id": 388, "type": "component", "name": "strong", "children": [{ "id": 389, "type": "textnode", "value": "The Question:" }] }, { "id": 390, "type": "textnode", "value": " What is ΔV" }, { "id": 391, "type": "component", "name": "sub", "children": [{ "id": 392, "type": "textnode", "value": "s" }] }, { "id": 393, "type": "textnode", "value": "? You can test this with the simulation in the next step." }] }] }, { "id": 394, "type": "component", "name": "Step", "children": [{ "id": 395, "type": "component", "name": "h2", "children": [{ "id": 396, "type": "textnode", "value": "Simulation" }] }, { "id": 397, "type": "component", "name": "p", "children": [{ "id": 398, "type": "textnode", "value": "This simulation will allow you to change the voltages and see where your carbon atom ends up.\n    " }, { "id": 399, "type": "component", "name": "br", "children": [] }, { "id": 400, "type": "component", "name": "br", "children": [] }, { "id": 401, "type": "component", "name": "em", "children": [{ "id": 402, "type": "textnode", "value": "Simulation coming soon" }, { "id": 403, "type": "textnode", "value": "!" }] }, { "id": 404, "type": "textnode", "value": "(TM)\n  " }] }] }] }, { "id": 405, "type": "component", "name": "TextContainer", "children": [{ "id": 406, "type": "component", "name": "h2", "children": [{ "id": 407, "type": "textnode", "value": "Summary" }] }, { "id": 408, "type": "component", "name": "p", "children": [{ "id": 409, "type": "textnode", "value": "Here I would like to generate a recap of some kind, possibly including expected equations used.\nHowever, I would like for there to be some way to restrict this only to people who have the right answers;\nit doesn’t make sense to lead them through with questions only to have the answer directly provided at the very end." }] }, { "id": 410, "type": "component", "name": "em", "children": [{ "id": 411, "type": "textnode", "value": "Draft Below" }] }, { "id": 412, "type": "component", "name": "p", "children": [{ "id": 413, "type": "textnode", "value": "Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.\nThis required us to understand and apply various relationships, as well as determine where these relationships applied.\nSome relationships you likely used are those between voltage and energy, energy and velocity, velocity and magnetic force, and a central force and the radius of motion that force causes." }] }, { "id": 414, "type": "component", "name": "p", "children": [{ "id": 415, "type": "textnode", "value": "First we had to determine the basics, such as which plates were positive or negative, the distances travelled under certain forces, and where equilibrium had to occur.\nThen we started to determine the specifics, relating magnetic and central forces to determine what the velocity must be:" }] }, { "id": 416, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 417, "type": "textnode", "value": "\\boldsymbol{F}_{central} = \\boldsymbol{F}_{magnetic} = q\\boldsymbol{v}\\times\\boldsymbol{B} = -m\\frac{v^2}{r}\\hat{r}" }] }, { "id": 418, "type": "component", "name": "p", "children": [{ "id": 419, "type": "textnode", "value": "By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.\nDetermining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:" }] }, { "id": 420, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 421, "type": "textnode", "value": "\\boldsymbol{F}_{magnetic} = -\\boldsymbol{F}_{electric} = -q\\boldsymbol{E}" }] }, { "id": 422, "type": "component", "name": "p", "children": [{ "id": 423, "type": "textnode", "value": "While determining the energy allowed us to determine the voltage across the two vertical plates:" }] }, { "id": 424, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 425, "type": "textnode", "value": "KE_{final} = \\Delta KE + KE_{initial} = \\Delta KE = -\\Delta U = -q\\Delta V" }] }, { "id": 426, "type": "component", "name": "p", "children": [{ "id": 427, "type": "textnode", "value": "This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis." }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -87893,10 +86127,10 @@ module.exports = {
 	'radio': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js'),
 	'float': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js'),
 	'idyll-apparatus-component': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js'),
-	'table': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/table.js')
+	'easer-toggle': require('/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js')
 };
 
-},{"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/table.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/table.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js":"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 
 module.exports = function () {
 
