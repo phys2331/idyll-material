@@ -1097,3 +1097,13 @@ img {
     max-height: 200px;
   }
 }
+
+.centerHead h2, h3{
+  text-align: center;
+  color: #111131;
+}
+
+.frameWidth iframe{
+  display:block;
+  margin:auto;
+}

@@ -11,6 +11,8 @@
   color:"#ffffff"
    /]
 
+[div class:"centerHead"]
+
 ## Overview
 
 The following links lead to various resources that will help in Physics II.
@@ -25,3 +27,5 @@ These pages may be referenced in other Idyll applications throughout the course.
 * Problems
 
 * [Simulations and Math Resources](./simulations)
+
+[/div]

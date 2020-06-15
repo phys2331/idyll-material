@@ -7,9 +7,11 @@
   author:"Mary Span"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#222222"
+  background:"#225656"
   color:"#ffffff"
    /]
+
+[div class:"centerHead"]
 
 In three dimensions, a **vector** is a set of three numbers: <x, y, z>.
 
@@ -208,3 +210,5 @@ Can be positive, negative, or zero.
 References
 
 Chabay, R., & Sherwood, B.A. (2015). Matter and Interactions (4th ed.). John Wiley & Sons.
+
+[/div]
