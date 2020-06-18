@@ -1,0 +1,54 @@
+.d3-component svg {
+  background: #ddd;
+  max-height: 300px;
+}
+
+@media all and (max-width: 1000px) {
+  .d3-component svg {
+    max-height: 200px;
+  }
+}
+
+.centerHead h2{
+  text-align: center;
+  color: ##F1948A;
+}
+
+.centerHead h3, h4{
+  text-align: center;
+  color: #000000;
+}
+
+.tabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tabLook button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tabLook button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tabLook button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.problemBody {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}

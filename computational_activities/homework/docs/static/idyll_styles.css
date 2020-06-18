@@ -1087,18 +1087,3 @@ img {
 }
 
 
-.d3-component svg {
-  background: #ddd;
-  max-height: 300px;
-}
-
-@media all and (max-width: 1000px) {
-  .d3-component svg {
-    max-height: 200px;
-  }
-}
-
-.centerHead h2, h3{
-  text-align: center;
-  color: #0580f6;
-}

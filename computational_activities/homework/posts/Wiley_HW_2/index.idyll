@@ -1,0 +1,69 @@
+[meta title:"Wiley Homework 2" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Wiley Homework 2"
+  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
+  author:"Your Name Here"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#F1948A"
+  color:"#ffffff"
+   /]
+
+[var name:"currentValue" value:"" /]
+
+[div class:"tabLook"]
+  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+  [button onClick:`currentValue = "13.47"`]13.47[/Button]
+  [button onClick:`currentValue = "13.49"`]13.49[/Button]
+  [button onClick:`currentValue = "15.22"`]15.22[/Button]
+  [button onClick:`currentValue = "15.28"`]15.28[/Button]
+  [button onClick:`currentValue = "15.26"`]15.26[/Button]
+[/div]
+
+[br /]
+[hr /]
+[br /]
+
+[div class:"problemBody"]
+  [Switch value:currentValue]
+    [Default]
+      [div class:"centerHead"]
+        ## Problem Pages
+
+          Click the tabs to go to the homework problem page for a specific problem.
+
+          Each problem page has the following sections:
+
+          [ul]
+            [li]**Skills Involved**: click these skills to find other problems related
+            to this problem[/li]
+            [li]**Problem**: description of the problem from WileyPlus[/li]
+          [/ul]
+
+        ## Resources
+
+          Need help doing physics problems in Python? Visit the blahblahblah page.
+
+          Need help doing the physics problems? Check out the resources section
+          on each problem page for specific text entries in Matter and Interactions
+          and any outside resource that may help in solving them. Visit the resources
+          page for videos and simulations about the specific physics problem.
+
+      [/div]
+    [/Default]
+    [Case test:"13.47"]
+      [div class:"centerHead"]
+
+        ## 13.47
+
+
+      [/div]
+    [/Case]
+    [Case test:"13.49"]Case 2[/Case]
+    [Case test:"15.22"]Case 3[/Case]
+    [Case test:"15.28"]Case 4[/Case]
+    [Case test:"15.26"]Case 5[/Case]
+  [/Switch]
+[/div]

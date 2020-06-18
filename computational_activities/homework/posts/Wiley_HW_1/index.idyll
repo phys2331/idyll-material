@@ -1,0 +1,236 @@
+[meta title:"Wiley_HW_1" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Wiley Homework 1"
+  subtitle:"Solving problems with Python"
+  author:"Mary Span"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#ff0099"
+  color:"#000000"
+   /]
+
+[var name:"currentValue" value:"" /]
+
+[div class:"tabLook"]
+ [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+ [button onClick:`currentValue = "13.21"`]13.21[/Button]
+ [button onClick:`currentValue = "13.30"`]13.30[/Button]
+ [button onClick:`currentValue = "13.25"`]13.25[/Button]
+[/div]
+
+[br /]
+[br /]
+[hr fullWidth:true /]
+[br /]
+
+[div class:"problemBody" fullWidth:true padding-left:`100%`]
+  [Switch value:currentValue]
+    [Default]
+      [div class:"centerHead"]
+
+        ## Problem Pages
+
+          Click the tabs to go to a specific homework problem page.
+          The problems are included in Homework 1 through WileyPlus. Work
+          through the problems by hand first using the given information, key equations,
+          and references listed. Then, try to use Python to solve the same problem.
+
+          Each problem page has the following sections:
+
+          #### Skills involved
+
+          The skills involved in the particular homework problem will be tagged
+          with other problems in the course that deal with the same content
+          (*TO DO*). Click these to find more problems in these areas. It may
+          help to look at the Resources page for videos and simulations that
+          target specific skills these homework problems involve.
+
+          #### Problem
+
+          The problems will be listed as they are seen in WileyPlus. Note that
+          the values will change for *each* problem.
+
+          This section also includes a computation section.
+
+          #### Important information
+
+          To solve the homework problems, there are several areas that need to
+          be understood. To help, the following sections are available:
+
+          [ul]
+            [li] **Objective**: summarizes what the question is asking. [/li]
+            [li] **Key Equations**: lists the equations that may help in solving
+            and understanding the problem. [/li]
+            [li] **References**: lists the pages of the book where
+            explanations of the concepts in the homework can be found. It may
+            also include outside references that may be useful. [/li]
+            [li] **Things to Think About**: covers tricky aspects of the
+            question that may lead to incorrect answers. Thinking about these
+            may help in solving the question faster. [/li]
+          [/ul]
+
+        ## Resources
+
+          Need help doing physics problems in Python? Visit the blahblahblah page.
+
+          Need help doing the physics problems? Check out the resources section
+          on each problem page for specific text entries in Matter and Interactions
+          and any outside resource that may help in solving them. Visit the resources
+          page for videos and simulations about the specific physics problem.
+2
+      [/div]
+    [/Default]
+    [Case test:"13.21"]
+      [div class:"centerHead"]
+
+        ## 13.21
+
+        [hr /]
+
+        ### Problem
+
+          [img src:"./static/images/P13.21a.png" title:"Problem 13.21 - Matter and Interactions" /]
+          [br /]
+          1. What is the sign of the source charge?
+          [br /]
+          [br /]
+          [img src:"./static/images/P13.21b.png" title:"Problem 13.21 - Matter and Interactions" /]
+          [br /]
+          2. The electric field at location D has the value `< -4000, 4000, 0 > N/C`. What is
+          the unit vector in the direction [equation]\vec{E}[/equation] at this location?
+          [br /]
+          [br /]
+          3. What is the electric force on the [equation]-4 \times 10^{-9} C[/equation] charge?
+
+
+        ### Skills Involved
+
+          [ul]
+            [li]Vectors: Direction[/li]
+            [li]Vectors: Fields[/li]
+            [li]Electric field: Due to Point Charges[/li]
+          [/ul]
+
+        ### Important information
+
+        #### Objective
+
+          Find the sign of the source charge, the direction of the electric
+          force on the charge, the electric field, the electric force, and the direction
+          of the electric force.
+
+        #### Given Information
+
+          [ul]
+            [li] Diagram of point charge and electric field.[/li]
+            [li] Charge of particle placed at a given location.[/li]
+            [li] Electric field at location D. [/li]
+          [/ul]
+
+        #### Key equations
+
+          [Equation]
+          \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+          [/equation]
+
+          [br /]
+          [br /]
+
+          [Equation]
+          \vec{F} = q\vec{E}
+          [/Equation]
+
+        #### References
+
+          [ul]
+            [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+            [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+            [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+            [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+            [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+          [/ul]
+      [/div]
+    [/Case]
+    [Case test:"13.30"]
+      [div class:"centerHead pBwithAside"]
+
+        ## 13.30
+
+        [hr /]
+
+        ### Problem
+
+          In a hydrogen atom in its ground state, the electron is on average a
+          distance of about [Equation] 0.5 \times 10^{-10} [/Equation] m from
+          the proton. What is the magnitude of the electric field due to the
+          proton at this distance from the proton?
+
+        ### Computation
+
+          Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+      [/div]
+      [div class:"extraInfo centerHead"]
+
+        [Aside]
+
+          ### Skills Involved
+
+            [ul]
+              [li]Vectors: Direction[/li]
+              [li]Vectors: Fields[/li]
+              [li]Electric field: Due to Point Charges[/li]
+            [/ul]
+
+          ### Important information
+
+          #### Objective
+
+            Find the sign of the source charge, the direction of the electric
+            force on the charge, the electric field, the electric force, and the direction
+            of the electric force.
+
+          #### Given Information
+
+            [ul]
+              [li] Diagram of point charge and electric field.[/li]
+              [li] Charge of particle placed at a given location.[/li]
+              [li] Electric field at location D. [/li]
+            [/ul]
+
+          #### Key equations
+
+            [Equation]
+            \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+            [/equation]
+
+            [br /]
+            [br /]
+
+            [Equation]
+            \vec{F} = q\vec{E}
+            [/Equation]
+
+          #### References
+
+            [ul]
+              [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+              [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+              [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+              [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+              [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+            [/ul]
+
+        [/Aside]
+
+      [/div]
+    [/Case]
+    [Case test:"13.25"]
+      Case 2
+    [/Case]
+  [/Switch]
+[/div]
