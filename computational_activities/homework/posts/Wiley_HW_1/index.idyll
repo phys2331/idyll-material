@@ -7,13 +7,13 @@
   author:"Mary Span"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#ff0099"
-  color:"#000000"
+  background:"#0B465F"
+  color:"#FFFFFF"
    /]
 
 [var name:"currentValue" value:"" /]
 
-[div class:"tabLook"]
+[div class:"tabLook" fullWidth:true]
  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
  [button onClick:`currentValue = "13.21"`]13.21[/Button]
  [button onClick:`currentValue = "13.30"`]13.30[/Button]
@@ -79,11 +79,11 @@
           on each problem page for specific text entries in Matter and Interactions
           and any outside resource that may help in solving them. Visit the resources
           page for videos and simulations about the specific physics problem.
-2
+
       [/div]
     [/Default]
     [Case test:"13.21"]
-      [div class:"centerHead"]
+      [div class:"centerHead pBwithAside"]
 
         ## 13.21
 
@@ -104,54 +104,84 @@
           [br /]
           3. What is the electric force on the [equation]-4 \times 10^{-9} C[/equation] charge?
 
+        ### Computation
 
-        ### Skills Involved
+        Use the Trinket below to solve the problem using the values listed
+        above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+        ideas on how to solve this problem with python. Reveal the answer by
+        clicking the button below to see if you got the right answer!
 
-          [ul]
-            [li]Vectors: Direction[/li]
-            [li]Vectors: Fields[/li]
-            [li]Electric field: Due to Point Charges[/li]
-          [/ul]
+        [br /]
 
-        ### Important information
+        [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
-        #### Objective
+        [/div]
+        [div class:"extraInfo centerHead"]
 
-          Find the sign of the source charge, the direction of the electric
-          force on the charge, the electric field, the electric force, and the direction
-          of the electric force.
+          [Aside]
 
-        #### Given Information
+            [div class:"asideBox"]
 
-          [ul]
-            [li] Diagram of point charge and electric field.[/li]
-            [li] Charge of particle placed at a given location.[/li]
-            [li] Electric field at location D. [/li]
-          [/ul]
+              ### Skills Involved
 
-        #### Key equations
+              [hr /]
 
-          [Equation]
-          \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-          [/equation]
+                [ul]
+                  [li]Vectors: Direction[/li]
+                  [li]Vectors: Fields[/li]
+                  [li]Electric field: Due to Point Charges[/li]
+                [/ul]
 
-          [br /]
-          [br /]
+            [/div]
+            [br /]
+            [div class: "asideBox"]
+              ### Important information
 
-          [Equation]
-          \vec{F} = q\vec{E}
-          [/Equation]
+              [hr /]
 
-        #### References
+              #### Objective
 
-          [ul]
-            [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-            [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-            [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-            [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-            [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
-          [/ul]
-      [/div]
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              #### Given Information
+
+                [ul]
+                  [li] Diagram of point charge and electric field.[/li]
+                  [li] Charge of particle placed at a given location.[/li]
+                  [li] Electric field at location D. [/li]
+                [/ul]
+
+              #### Key equations
+                [div class:"equations"]
+                  [Equation text-align:center]
+                  \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                  [/equation]
+
+                  [br /]
+                  [br /]
+
+                  [Equation]
+                  \vec{F} = q\vec{E}
+                  [/Equation]
+                [/div]
+
+              #### References
+
+                [ul]
+                  [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                  [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                  [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                  [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                [/ul]
+
+            [/div]
+
+          [/Aside]
+
+        [/div]
     [/Case]
     [Case test:"13.30"]
       [div class:"centerHead pBwithAside"]
@@ -173,57 +203,74 @@
           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
           ideas on how to solve this problem with python. Reveal the answer by
           clicking the button below to see if you got the right answer!
+
+          [br /]
+
+          [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
       [/div]
       [div class:"extraInfo centerHead"]
 
         [Aside]
 
-          ### Skills Involved
+          [div class:"asideBox"]
 
-            [ul]
-              [li]Vectors: Direction[/li]
-              [li]Vectors: Fields[/li]
-              [li]Electric field: Due to Point Charges[/li]
-            [/ul]
+            ### Skills Involved
 
-          ### Important information
+            [hr /]
 
-          #### Objective
+              [ul]
+                [li]Vectors: Direction[/li]
+                [li]Vectors: Fields[/li]
+                [li]Electric field: Due to Point Charges[/li]
+              [/ul]
 
-            Find the sign of the source charge, the direction of the electric
-            force on the charge, the electric field, the electric force, and the direction
-            of the electric force.
+          [/div]
+          [br /]
+          [div class: "asideBox"]
+            ### Important information
 
-          #### Given Information
+            [hr /]
 
-            [ul]
-              [li] Diagram of point charge and electric field.[/li]
-              [li] Charge of particle placed at a given location.[/li]
-              [li] Electric field at location D. [/li]
-            [/ul]
+            #### Objective
 
-          #### Key equations
+              Find the sign of the source charge, the direction of the electric
+              force on the charge, the electric field, the electric force, and the direction
+              of the electric force.
 
-            [Equation]
-            \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-            [/equation]
+            #### Given Information
 
-            [br /]
-            [br /]
+              [ul]
+                [li] Diagram of point charge and electric field.[/li]
+                [li] Charge of particle placed at a given location.[/li]
+                [li] Electric field at location D. [/li]
+              [/ul]
 
-            [Equation]
-            \vec{F} = q\vec{E}
-            [/Equation]
+            #### Key equations
+              [div class:"equations"]
+                [Equation text-align:center]
+                \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                [/equation]
 
-          #### References
+                [br /]
+                [br /]
 
-            [ul]
-              [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-              [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-              [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-              [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-              [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
-            [/ul]
+                [Equation]
+                \vec{F} = q\vec{E}
+                [/Equation]
+              [/div]
+
+            #### References
+
+              [ul]
+                [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+              [/ul]
+
+          [/div]
 
         [/Aside]
 

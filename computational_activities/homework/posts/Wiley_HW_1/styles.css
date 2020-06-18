@@ -11,12 +11,16 @@
 
 .centerHead h2{
   text-align: center;
-  color: #ff6699;
+  color: #0B465F;
 }
 
 .centerHead h3, h4{
   text-align: center;
-  color: #000000;
+  color: #0B465F;
+}
+
+.centerHead h4{
+  font-style: italic;
 }
 
 .tabLook button{
@@ -28,13 +32,18 @@
 /* Style the buttons that are used to open the tab content */
 .tabLook button {
   background-color: inherit;
-  float: left;
+  float:left;
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 14px 16px;
+  //padding: 14px 16px;
   transition: 0.3s;
-
+  margin:auto;
+  font-size: 20px;
+  width: 25%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #0B465F;
 }
 
 /* Change background color of buttons on hover */
@@ -49,25 +58,28 @@
 
 /* Style the tab content */
 .problemBody {
-  padding: 20px 80px;
+  padding: 1px 20px 1px 20px;
   //border: 1px solid #ccc;
   //border-top: none;
   float:right;
+  text-align: justify;
 }
 
 .pBwithAside {
-  //padding: 20px 80px;
+  padding: 1px 20px 1px 20px;
   margin: 0 1.5%;
-  width: 63%;
+  width: 70%;
   float:right;
+  text-align: justify;
 }
 
 .extraInfo {
   float:left;
-  font-size:10px;
-  margin: 0 1.5%;
+  font-size:12px;
+  //margin: 0 0 0 0;
   //width: 30%;
   padding-top: 80px;
+  text-align: justify;
 }
 
 .frameWidth {
@@ -75,4 +87,21 @@
   //width: 100%;
   //margin 0 1.5%;
   //fullWidth: true;
+}
+
+.asideBox {
+  border: 2px solid #0EA7F2;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+hr {
+  border: 0;
+  background: #0EA7F2;
+  height: 2px;
+}
+
+.equations {
+  text-align: center;
+  font-size:18px;
 }
