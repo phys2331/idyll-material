@@ -1124,3 +1124,92 @@ img {
     margin-left: 65vw;
   }
 }
+
+/*--------------------- From parametric press on particle physics ------------------------------*/
+
+.parametric-multi-button-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.parametric-multi-button {
+  background: #c5c5c5;
+  color: #222;
+  margin: 0;
+  padding: 0.5em 1em;
+}
+
+.parametric-multi-button.selected {
+  background: #539987;
+}
+
+.electric-field-interactive {
+  background: #222;
+  color: white;
+  font-family: 'Graphik Web';
+  padding: 1em;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 2em 0;
+}
+
+.electric-field-interactive-hed {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.electric-field-interactive-subhed {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+button.reset {
+  background-color: #c5c5c5;
+  color: #222;
+}
+
+.electric-field-interactive-apparatus-container>div {
+  margin-top: 0 !important;
+}
+
+.electric-field-interactive-metadata {
+  background: #4A4A4A;
+  border-radius: 2px;
+  padding: 1em;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  margin-top: 3em;
+}
+
+.interactive-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+img {
+  /* max-height: 400px; */
+  max-height: 67vh;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+@media all and (max-width: 1000px) {
+  .interactive-flex-row {
+    display: flex;
+    flex-direction: column;
+  }
+  .electric-field-interactive {
+    margin: 2em -1em;
+  }
+  .idyll-text-container img {
+    margin: 0 auto;
+    max-width: 100% !important;
+  }
+}
+
+.comment {
+  color: red;
+  font-style: italic;
+}

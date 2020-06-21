@@ -376,38 +376,29 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
         time:time
       /]
     [/div]
-
-    // Needs to be styled but that can come later
-    // Once it's styled let them change right and left (and top and bottom) independently?
-    // Will also take some more coding
-    [Float position:"left"]
-      **The particle is:**
-      [Radio value:particleSign options:`[{value:1,label:"Positively charged."}]`/]
-      [Radio value:particleSign options:`[{value:0,label:"Neutral."}]`/]
-      [Radio value:particleSign options:`[{value:-1,label:"Negatively charged."}]`/]
-    [/Float]
-    [Float position:"right"]
-      **The top plate is:**
-      [Radio value:topSign onClick:`bottomSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
-      [Radio value:topSign onClick:`bottomSign=0` options:`[{value:0,label:"Neutral."}]`/]
-      [Radio value:topSign onClick:`bottomSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
-    [/Float]
-    [Float position:"left"]
-      **The left plate is:**
-      [Radio value:leftSign onClick:`rightSign=-1` options:`[{value:1,label:"Positively Charged."}]`/]
-      [Radio value:leftSign onClick:`rightSign=0` options:`[{value:0,label:"Neutral."}]`/]
-      [Radio value:leftSign onClick:`rightSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
-    [/Float]
-    [Float position:"right"]
-      [EaserToggle value:time targetValue:100 time:5000 ] Accelerate! [/EaserToggle] // I am not sure what time:5000 does?
-      [Button onClick:`time=0`]Reset [/Button]
-    [/Float]
+    // Apparatus needs updating to care about left and top plate signs.
 
     [Float]
     [br /][br /]
     *This simulation is still under construction!*
     [/Float]
 
+    [div className:"electric-field-interactive"]
+      [div className:"interactive-flex-row"]
+        [div style:`{flex: 1}`]
+          Net charge of the **atom**:
+          [MultiButton reset:time value:particleSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
+          Charge of the **top** plate:
+          [MultiButton reset:time value:topSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
+          Charge of the **bottom** plate:
+          [MultiButton reset:time value:bottomSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
+          Charge of the **left** plate:
+          [MultiButton reset:time value:leftSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
+          Charge of the **right** plate:
+          [MultiButton reset:time value:rightSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
+        [/div]
+      [/div]
+    [/div]
   [/Step]
 
   [Step]
