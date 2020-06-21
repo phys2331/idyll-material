@@ -351,7 +351,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     Now we are going to review the diagram and work on the basic aspects of setup --
     namely, we will determine in a general sense what the charge on each plate should be.
 
-    In the simplified diagram below, the magnetic field is still pointing out of the screen.
+    In the simplified diagram below, the magnetic field is still pointing out of the screen (and only present to the right of the left set of vertical plates).
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
     You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.
 
@@ -361,6 +361,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     [var name:rightSign value:0 /]
     [var name:topSign value:0 /]
     [var name:bottomSign value:0 /]
+    [var name:time value:0 /]
     [div]
       [IdyllApparatusComponent
         _url: "static/SimplifiedSim.json"
@@ -372,6 +373,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
         rightSign:rightSign
         topSign:topSign
         bottomSign:bottomSign
+        time:time
       /]
     [/div]
 
@@ -397,8 +399,8 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
       [Radio value:leftSign onClick:`rightSign=1` options:`[{value:-1,label:"Negatively charged."}]`/]
     [/Float]
     [Float position:"right"]
-      [Button] Run! [/Button] *These buttons are currently useless!*
-      [EaserToggle value:time targetValue:targetTime time:5000 ] Accelerate! [/EaserToggle]
+      [EaserToggle value:time targetValue:100 time:5000 ] Accelerate! [/EaserToggle] // I am not sure what time:5000 does?
+      [Button onClick:`time=0`]Reset [/Button]
     [/Float]
 
     [Float]
