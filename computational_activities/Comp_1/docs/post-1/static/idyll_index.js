@@ -21160,7 +21160,392 @@ var mapChildren = function mapChildren(children, transform) {
 
 module.exports = { filterChildren: filterChildren, mapChildren: mapChildren };
 
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/button.js":[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }return target;
+};
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _objectWithoutProperties(obj, keys) {
+  var target = {};for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+  }return target;
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var Button = function (_React$PureComponent) {
+  _inherits(Button, _React$PureComponent);
+
+  function Button() {
+    _classCallCheck(this, Button);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  Button.prototype.render = function render() {
+    var _props = this.props,
+        onClick = _props.onClick,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        props = _objectWithoutProperties(_props, ['onClick', 'idyll', 'hasError', 'updateProps']);
+
+    return _react2.default.createElement('button', _extends({}, props, { onClick: onClick.bind(this) }), this.props.children);
+  };
+
+  return Button;
+}(_react2.default.PureComponent);
+
+Button.defaultProps = {
+  onClick: function onClick() {}
+};
+
+Button._idyll = {
+  name: 'Button',
+  tagType: 'open',
+  children: ['Click Me.'],
+  props: [{
+    name: 'onClick',
+    type: 'event',
+    example: '`x += 1`',
+    description: 'An event that is fired when the user clicks the button.'
+  }]
+};
+exports.default = Button;
+
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/case.js":[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.__esModule = true;
+
+function _objectWithoutProperties(obj, keys) {
+  var target = {};for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+  }return target;
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var React = require('react');
+
+var Case = function (_React$Component) {
+  _inherits(Case, _React$Component);
+
+  function Case() {
+    _classCallCheck(this, Case);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Case.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        props = _objectWithoutProperties(_props, ['idyll']);
+
+    return React.createElement('div', null, props.children);
+  };
+
+  return Case;
+}(React.Component);
+
+Case._idyll = {
+  name: 'Case',
+  tagType: 'open',
+  children: ['Some text'],
+  props: [{
+    name: 'test',
+    type: 'value',
+    example: '1',
+    description: 'A variable; if this is equal to the parent [Switch /] components value, the children for this case will be rendered, otherwise the default case will be rendered.'
+  }]
+};
+
+exports.default = Case;
+
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/conditional.js":[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+function _objectWithoutProperties(obj, keys) {
+  var target = {};for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+  }return target;
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var React = require('react');
+
+var Conditional = function (_React$Component) {
+  _inherits(Conditional, _React$Component);
+
+  function Conditional() {
+    _classCallCheck(this, Conditional);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Conditional.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps']);
+
+    if (!props.if) {
+      return React.createElement('div', { style: { display: 'none' } }, props.children);
+    }
+
+    return React.createElement('div', null, props.children);
+  };
+
+  return Conditional;
+}(React.Component);
+
+Conditional._idyll = {
+  name: 'Conditional',
+  tagType: 'open',
+  children: ['Some text'],
+  props: [{
+    name: 'if',
+    type: 'expression',
+    example: '`x < 10`',
+    description: 'An expression; if this evaluates to true, the children will be rendered, otherwise nothing will be drawn to the screen'
+  }]
+};
+module.exports = Conditional;
+
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/default.js":[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.__esModule = true;
+
+function _objectWithoutProperties(obj, keys) {
+  var target = {};for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+  }return target;
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var React = require('react');
+
+var Default = function (_React$Component) {
+  _inherits(Default, _React$Component);
+
+  function Default() {
+    _classCallCheck(this, Default);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Default.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        props = _objectWithoutProperties(_props, ['idyll']);
+
+    return React.createElement('div', null, props.children);
+  };
+
+  return Default;
+}(React.Component);
+
+Default._idyll = {
+  name: 'Default',
+  tagType: 'open',
+  children: ['Some text'],
+  props: []
+};
+
+exports.default = Default;
+
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/display.js":[function(require,module,exports){
+'use strict';
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.__esModule = true;
+
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+  return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === "undefined" ? "undefined" : _typeof2(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof2(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var Format = require('d3-format');
+
+var Display = function (_React$PureComponent) {
+  _inherits(Display, _React$PureComponent);
+
+  function Display(props) {
+    _classCallCheck(this, Display);
+
+    var _this = _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
+
+    _this.format = Format.format(props.format || '0.2f');
+    return _this;
+  }
+
+  Display.prototype.formatValue = function formatValue(v) {
+    var t = typeof v === 'undefined' ? 'undefined' : _typeof(v);
+    switch (t) {
+      case 'object':
+        return JSON.stringify(v);
+      case 'number':
+        return this.format(v);
+      case 'string':
+      default:
+        return v;
+    }
+  };
+
+  Display.prototype.render = function render() {
+    var value = this.props.value;
+
+    var v = value !== undefined ? value : this.props.var;
+    return _react2.default.createElement('span', {
+      className: ('idyll-display ' + (this.props.className ? this.props.className : '')).trim()
+    }, this.formatValue(v));
+  };
+
+  return Display;
+}(_react2.default.PureComponent);
+
+Display._idyll = {
+  name: 'Display',
+  tagType: 'closed',
+  displayType: 'inline',
+  props: [{
+    name: 'value',
+    type: 'any',
+    example: 'x',
+    description: 'The value to be displayed.'
+  }, {
+    name: 'format',
+    type: 'string',
+    example: '"0.2f"',
+    description: 'The format to use, powered by [d3-format](https://github.com/d3/d3-format).'
+  }]
+};
+
+exports.default = Display;
+
+},{"d3-format":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/d3-format/build/d3-format.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js":[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21466,6 +21851,71 @@ var H2 = function (_React$PureComponent) {
 }(_react2.default.PureComponent);
 
 exports.default = H2;
+
+},{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h3.js":[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }return target;
+};
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var H3 = function (_React$PureComponent) {
+  _inherits(H3, _React$PureComponent);
+
+  function H3() {
+    _classCallCheck(this, H3);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H3.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '3' }, this.props));
+  };
+
+  return H3;
+}(_react2.default.PureComponent);
+
+exports.default = H3;
 
 },{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h4.js":[function(require,module,exports){
 'use strict';
@@ -21844,99 +22294,7 @@ Link._idyll = {
 
 exports.default = Link;
 
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/step.js":[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }return target;
-};
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-function _objectWithoutProperties(obj, keys) {
-  var target = {};for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
-  }return target;
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var idx = 0;
-
-var Step = function (_React$Component) {
-  _inherits(Step, _React$Component);
-
-  function Step() {
-    _classCallCheck(this, Step);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  Step.prototype.componentDidMount = function componentDidMount() {
-    this.props.registerStep && this.props.registerStep(idx++, this.props.state, (this.props.onEnter || function () {}).bind(this));
-  };
-
-  Step.prototype.render = function render() {
-    var _this2 = this;
-
-    var _props = this.props,
-        idyll = _props.idyll,
-        updateProps = _props.updateProps,
-        hasError = _props.hasError,
-        registerStep = _props.registerStep,
-        onEnter = _props.onEnter,
-        state = _props.state,
-        className = _props.className,
-        props = _objectWithoutProperties(_props, ['idyll', 'updateProps', 'hasError', 'registerStep', 'onEnter', 'state', 'className']);
-
-    return _react2.default.createElement('div', _extends({ ref: function ref(_ref) {
-        return _this2.ref = _ref;
-      }, className: 'idyll-step ' + (className || '') }, props));
-  };
-
-  return Step;
-}(_react2.default.Component);
-
-Step._idyll = {
-  name: "Step",
-  tagType: "open"
-};
-
-exports.default = Step;
-
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper-control.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/switch.js":[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -21969,182 +22327,59 @@ function _inherits(subClass, superClass) {
 
 var React = require('react');
 
-var StepperControl = function (_React$Component) {
-  _inherits(StepperControl, _React$Component);
+var _require = require('idyll-component-children'),
+    filterChildren = _require.filterChildren;
 
-  function StepperControl() {
-    _classCallCheck(this, StepperControl);
+var Switch = function (_React$Component) {
+  _inherits(Switch, _React$Component);
+
+  function Switch() {
+    _classCallCheck(this, Switch);
 
     return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
   }
 
-  StepperControl.prototype.componentDidMount = function componentDidMount() {};
-
-  StepperControl.prototype.render = function render() {
+  Switch.prototype.render = function render() {
     var _props = this.props,
         idyll = _props.idyll,
-        props = _objectWithoutProperties(_props, ['idyll']);
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        value = _props.value,
+        children = _props.children,
+        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps', 'value', 'children']);
 
-    return React.createElement('div', { className: 'idyll-stepper-control' }, React.createElement('div', { className: 'idyll-stepper-control-button idyll-stepper-control-button-previous', onClick: this.props.previous }, "\u2190"), React.createElement('div', { className: 'idyll-stepper-control-button idyll-stepper-control-button-next', onClick: this.props.next }, "\u2192"));
+    if (children) {
+      var matchCase = function matchCase(child) {
+        return child.type.name.toLowerCase() === 'case' && child.props.test === value;
+      };
+      var matchDefault = function matchDefault(child) {
+        return child.type.name.toLowerCase() === 'default';
+      };
 
-    // (
-    //   <div ref={(ref) => this.ref = ref} className={`idyll-step ${className || ''}`}  style={{margin: '10vh 0 60vh 0'}} {...props} />
-    // );
+      var matchedCase = filterChildren(children, matchCase);
+      var defaultCase = filterChildren(children, matchDefault);
+
+      return React.createElement('div', null, matchedCase.length ? matchedCase : defaultCase);
+    }
+    return '';
   };
 
-  return StepperControl;
+  return Switch;
 }(React.Component);
 
-StepperControl._idyll = {
-  name: "StepperControl",
-  tagType: "closed"
-};
-
-exports.default = StepperControl;
-
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper.js":[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-exports.__esModule = true;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
-
-function _objectWithoutProperties(obj, keys) {
-  var target = {};for (var i in obj) {
-    if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
-  }return target;
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _possibleConstructorReturn(self, call) {
-  if (!self) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
-}
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
-
-var _require = require('idyll-component-children'),
-    filterChildren = _require.filterChildren,
-    mapChildren = _require.mapChildren;
-
-var Stepper = function (_React$PureComponent) {
-  _inherits(Stepper, _React$PureComponent);
-
-  function Stepper(props) {
-    _classCallCheck(this, Stepper);
-
-    var _this = _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
-
-    _this.SCROLL_STEP_MAP = {};
-    _this.SCROLL_NAME_MAP = {};
-    return _this;
-  }
-
-  Stepper.prototype.registerStep = function registerStep(elt, name, val) {
-    this.SCROLL_STEP_MAP[elt] = val;
-    this.SCROLL_NAME_MAP[elt] = name;
-  };
-
-  Stepper.prototype.getSteps = function getSteps() {
-    return filterChildren(this.props.children || [], function (c) {
-      return c.type.name && c.type.name.toLowerCase() === 'step';
-    }) || [];
-  };
-
-  Stepper.prototype.next = function next() {
-    this.props.updateProps({
-      currentStep: (this.props.currentStep + 1) % this.getSteps().length
-    });
-  };
-
-  Stepper.prototype.previous = function previous() {
-    var newStep = this.props.currentStep - 1;
-    if (newStep < 0) {
-      newStep = this.getSteps().length + newStep;
-    }
-
-    this.props.updateProps({ currentStep: newStep });
-  };
-
-  Stepper.prototype.getSelectedStep = function getSelectedStep() {
-    var _props = this.props,
-        currentState = _props.currentState,
-        currentStep = _props.currentStep;
-
-    var steps = this.getSteps();
-    if (currentState) {
-      return filterChildren(steps, function (c) {
-        return c.props.state === currentState;
-      })[0];
-    }
-    return steps[currentStep % steps.length];
-  };
-
-  Stepper.prototype.render = function render() {
-    var _this2 = this;
-
-    var _props2 = this.props,
-        children = _props2.children,
-        height = _props2.height,
-        props = _objectWithoutProperties(_props2, ['children', 'height']);
-
-    return _react2.default.createElement('div', {
-      className: 'idyll-stepper',
-      style: { position: 'relative', height: height }
-    }, _react2.default.createElement('div', { className: 'idyll-step-graphic' }, filterChildren(children, function (c) {
-      return c.type.name && c.type.name.toLowerCase() === 'graphic';
-    })), _react2.default.createElement('div', { className: 'idyll-step-content' }, mapChildren(this.getSelectedStep(), function (c) {
-      return _react2.default.cloneElement(c, {
-        registerStep: _this2.registerStep.bind(_this2)
-      });
-    })), mapChildren(filterChildren(children, function (c) {
-      return c.type.name && c.type.name.toLowerCase() === 'steppercontrol';
-    }), function (c) {
-      return _react2.default.cloneElement(c, {
-        next: _this2.next.bind(_this2),
-        previous: _this2.previous.bind(_this2)
-      });
-    }));
-  };
-
-  return Stepper;
-}(_react2.default.PureComponent);
-
-Stepper.defaultProps = {
-  currentStep: 0,
-  height: 500
-};
-
-Stepper._idyll = {
-  name: 'Stepper',
+Switch._idyll = {
+  name: 'Switch',
   tagType: 'open',
-  children: ['\n[Step]This is the content for step 1[/Step]\n[Step]This is the content for step 2[/Step]\n[Step]This is the content for step 3[/Step]'],
+  children: ['Case components'],
   props: [{
-    name: 'currentStep',
-    type: 'number',
-    example: '0',
-    description: 'The index of the currently selected step.'
+    name: 'value',
+    type: 'variable',
+    example: '1',
+    description: 'Value of the child prop to render.'
   }]
 };
-exports.default = Stepper;
+
+exports.default = Switch;
 
 },{"idyll-component-children":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-component-children/dist/cjs/index.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
 'use strict';
@@ -52840,7 +53075,7 @@ function hasOwnProperty(obj, prop) {
 },{"./support/isBuffer":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/support/isBufferBrowser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/process/browser.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/util/node_modules/inherits/inherits_browser.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "stepperIndex" }, "value": { "type": "value", "value": 0 } } }, { "id": 3, "type": "component", "name": "TextContainer", "children": [{ "id": 4, "type": "meta", "properties": { "title": { "type": "value", "value": "Physics_Fundamentals" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 5, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Physics Fundamentals" }, "subtitle": { "type": "value", "value": "Physics II Fundamentals with Python" }, "author": { "type": "value", "value": "Mary Span" }, "authorLink": { "type": "value", "value": "https://idyll-lang.org" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#222222" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 6, "type": "component", "name": "TextContainer", "children": [{ "id": 7, "type": "component", "name": "h2", "children": [{ "id": 8, "type": "textnode", "value": "Magnitude" }] }, { "id": 9, "type": "component", "name": "h5", "children": [{ "id": 10, "type": "textnode", "value": "Question:" }] }, { "id": 11, "type": "component", "name": "p", "children": [{ "id": 12, "type": "textnode", "value": "The vector " }, { "id": 13, "type": "component", "name": "equation", "children": [{ "id": 14, "type": "textnode", "value": "\\vec{a} = \\lt 5\\times 10^{7}, 3.2 \\times 10^{8}, 6.4 \\times 10^{7} \\gt m/s^{2}" }] }, { "id": 15, "type": "textnode", "value": ". What is " }, { "id": 16, "type": "component", "name": "equation", "children": [{ "id": 17, "type": "textnode", "value": "|\\vec{a}|" }] }, { "id": 18, "type": "textnode", "value": "?" }] }, { "id": 19, "type": "component", "name": "h5", "children": [{ "id": 20, "type": "textnode", "value": "Approach:" }] }, { "id": 21, "type": "component", "name": "p", "children": [{ "id": 22, "type": "textnode", "value": "Use " }, { "id": 23, "type": "component", "name": "link", "properties": { "text": { "type": "value", "value": "NumPy" }, "url": { "type": "value", "value": "https://numpy.org/doc/stable/reference/routines.math.html" } }, "children": [] }, { "id": 24, "type": "textnode", "value": ", or numpy, to find the magnitude of the vector." }] }, { "id": 25, "type": "component", "name": "h5", "children": [{ "id": 26, "type": "textnode", "value": "Uses:" }] }, { "id": 27, "type": "component", "name": "p", "children": [{ "id": 28, "type": "textnode", "value": "Power operator, np.sqrt()" }] }, { "id": 29, "type": "component", "name": "p", "children": [{ "id": 30, "type": "textnode", "value": "The code below is split into 4 sections to solve the answer. Click the arrows to learn more about the sections of code used to calculate the magnitude." }] }, { "id": 31, "type": "component", "name": "Stepper", "properties": { "currentStep": { "type": "variable", "value": "stepperIndex" } }, "children": [{ "id": 32, "type": "component", "name": "Step", "children": [{ "id": 33, "type": "component", "name": "h4", "children": [{ "id": 34, "type": "textnode", "value": "Import Statements" }] }, { "id": 35, "type": "component", "name": "p", "children": [{ "id": 36, "type": "textnode", "value": "This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer." }] }, { "id": 37, "type": "component", "name": "p", "children": [{ "id": 38, "type": "textnode", "value": "NumPy is a popular package for science computation in python." }] }, { "id": 39, "type": "component", "name": "p", "children": [{ "id": 40, "type": "component", "name": "strong", "children": [{ "id": 41, "type": "textnode", "value": "import" }] }, { "id": 42, "type": "textnode", "value": " numpy " }, { "id": 43, "type": "component", "name": "strong", "children": [{ "id": 44, "type": "textnode", "value": "as" }] }, { "id": 45, "type": "textnode", "value": " np:" }] }, { "id": 46, "type": "component", "name": "p", "children": [{ "id": 47, "type": "textnode", "value": "allows you to use the modules, functions, and objects within the package. In this problem, we need to take the square root, so np.sqrt() can be used.\n  " }] }] }, { "id": 48, "type": "component", "name": "Step", "children": [{ "id": 49, "type": "component", "name": "h4", "children": [{ "id": 50, "type": "textnode", "value": "Given variables" }] }, { "id": 51, "type": "component", "name": "p", "children": [{ "id": 52, "type": "textnode", "value": "In this section, organize the variables that are given in a problem." }] }, { "id": 53, "type": "component", "name": "p", "children": [{ "id": 54, "type": "textnode", "value": "The format is generally: variable = numbers" }] }, { "id": 55, "type": "component", "name": "p", "children": [{ "id": 56, "type": "textnode", "value": "Note that no units are shown here.\n  " }] }] }, { "id": 57, "type": "component", "name": "Step", "children": [{ "id": 58, "type": "component", "name": "h4", "children": [{ "id": 59, "type": "textnode", "value": "calculate" }] }, { "id": 60, "type": "component", "name": "p", "children": [{ "id": 61, "type": "textnode", "value": "Use the variables listed to solve the problem. Set the problem equal to a unique new variable that you can call later." }] }, { "id": 62, "type": "component", "name": "p", "children": [{ "id": 63, "type": "textnode", "value": "* " }, { "id": 64, "type": "component", "name": "code", "children": [{ "id": 65, "type": "textnode", "value": "new_variable = math" }] }] }] }, { "id": 66, "type": "component", "name": "Step", "children": [{ "id": 67, "type": "component", "name": "h4", "children": [{ "id": 68, "type": "textnode", "value": "Print the answer" }] }, { "id": 69, "type": "component", "name": "p", "children": [{ "id": 70, "type": "textnode", "value": "In this section, take the new variable(s) in the calculation section and output the answer by " }, { "id": 71, "type": "component", "name": "em", "children": [{ "id": 72, "type": "textnode", "value": "printing" }] }, { "id": 73, "type": "textnode", "value": "." }] }, { "id": 74, "type": "component", "name": "pre", "children": [{ "id": 75, "type": "component", "name": "code", "children": [{ "id": 76, "type": "textnode", "value": "      print(new_variable)\n    " }] }] }, { "id": 77, "type": "component", "name": "p", "children": [{ "id": 78, "type": "textnode", "value": "* This will print " }, { "id": 79, "type": "component", "name": "em", "children": [{ "id": 80, "type": "textnode", "value": "only" }] }, { "id": 81, "type": "textnode", "value": " what the new_variable is equal to, typically a number or set of numbers." }] }, { "id": 82, "type": "component", "name": "p", "children": [{ "id": 83, "type": "textnode", "value": "* Words" }] }] }, { "id": 84, "type": "component", "name": "StepperControl", "children": [] }] }, { "id": 85, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/6b7499f4e0" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [{ "id": 86, "type": "textnode", "value": " " }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "vecTabValue" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal" }, "value": { "type": "value", "value": false } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal" }, "value": { "type": "value", "value": false } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal2" }, "value": { "type": "value", "value": false } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal" }, "value": { "type": "value", "value": false } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal2" }, "value": { "type": "value", "value": false } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal" }, "value": { "type": "value", "value": false } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "clickReveal2" }, "value": { "type": "value", "value": false } } }, { "id": 11, "type": "component", "name": "TextContainer", "children": [{ "id": 12, "type": "meta", "properties": { "title": { "type": "value", "value": "Physics_Fundamentals" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 13, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Physics Fundamentals" }, "subtitle": { "type": "value", "value": "Physics II Fundamentals with Python" }, "author": { "type": "value", "value": "Mary Span" }, "authorLink": { "type": "value", "value": "https://idyll-lang.org" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#B2432F" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 14, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 15, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 16, "type": "textnode", "value": "Main" }] }, { "id": 17, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"Vectors\"" } }, "children": [{ "id": 18, "type": "textnode", "value": "Vectors(+, -, dot, cross)" }] }, { "id": 19, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"Magnitude\"" } }, "children": [{ "id": 20, "type": "textnode", "value": "Magnitude" }] }] }, { "id": 21, "type": "component", "name": "TextContainer", "children": [{ "id": 22, "type": "component", "name": "br", "children": [] }, { "id": 23, "type": "component", "name": "br", "children": [] }] }, { "id": 24, "type": "component", "name": "hr", "children": [] }, { "id": 25, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "expression", "value": "100%" } }, "children": [{ "id": 26, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 27, "type": "component", "name": "Default", "children": [{ "id": 28, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 29, "type": "component", "name": "p", "children": [{ "id": 30, "type": "textnode", "value": "\n        Computation and physics requires two levels of understanding: knowing how\n        to tell the application what to do and knowing " }, { "id": 31, "type": "component", "name": "em", "children": [{ "id": 32, "type": "textnode", "value": "how to do" }] }, { "id": 33, "type": "textnode", "value": " the physics.\n        Physics Fundamentals with computation introduces elementary concepts\n        with python. These concepts are " }, { "id": 34, "type": "component", "name": "em", "children": [{ "id": 35, "type": "textnode", "value": "very" }] }, { "id": 36, "type": "textnode", "value": " important and used throughout the\n        course." }] }, { "id": 37, "type": "component", "name": "p", "children": [{ "id": 38, "type": "textnode", "value": "Click the tabs to learn more about these fundamental concepts, how to\n        calculate them, and how to tell the application (Trinket) to calculate it\n        for you." }] }, { "id": 39, "type": "component", "name": "p", "children": [{ "id": 40, "type": "textnode", "value": "Note that Trinket supports two versions of Python, which can be specified\n        at the top of the script. For python 2, add " }, { "id": 41, "type": "component", "name": "code", "children": [{ "id": 42, "type": "textnode", "value": "#!/bin/python2" }] }, { "id": 43, "type": "textnode", "value": " and for python 3,\n        add " }, { "id": 44, "type": "component", "name": "code", "children": [{ "id": 45, "type": "textnode", "value": "#!/bin/python3" }] }, { "id": 46, "type": "textnode", "value": ". Also note that Trinket does not support all python\n        modules. For a list of the currently available modules, click " }, { "id": 47, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://trinket.io/docs/python" } }, "children": [{ "id": 48, "type": "textnode", "value": "HERE" }] }, { "id": 49, "type": "textnode", "value": "." }] }, { "id": 50, "type": "component", "name": "p", "children": [{ "id": 51, "type": "textnode", "value": "Want to learn more about programming in python? Visit these resources:" }] }, { "id": 52, "type": "component", "name": "ul", "children": [{ "id": 53, "type": "component", "name": "li", "children": [{ "id": 54, "type": "textnode", "value": " " }, { "id": 55, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://docs.python.org/2/tutorial" } }, "children": [{ "id": 56, "type": "textnode", "value": "The Python Tutorial" }] }] }, { "id": 57, "type": "component", "name": "li", "children": [{ "id": 58, "type": "textnode", "value": " " }, { "id": 59, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://codeacademy.com/learn/learn-python" } }, "children": [{ "id": 60, "type": "textnode", "value": "Code Academy" }] }] }, { "id": 61, "type": "component", "name": "li", "children": [{ "id": 62, "type": "textnode", "value": " " }, { "id": 63, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://hourofpython.trinket.io/a-visual-introduction-to-python#/welcome/an-hour-of-code" } }, "children": [{ "id": 64, "type": "textnode", "value": "Turtle Programming" }] }] }] }, { "id": 65, "type": "component", "name": "p", "children": [{ "id": 66, "type": "textnode", "value": "Below is an example of Tina the turtle traveling to some specific points.\n        What physics concept can this be related to? Play with the code and see\n        what you can make Tina do. Want to learn more? Visit one of the links above." }] }, { "id": 67, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/e313939670?start=result" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "356" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }] }, { "id": 68, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Vectors" } }, "children": [{ "id": 69, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "subCenterHead" } }, "children": [{ "id": 70, "type": "component", "name": "h2", "children": [{ "id": 71, "type": "textnode", "value": "Vectors" }] }, { "id": 72, "type": "component", "name": "br", "children": [] }, { "id": 73, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "subtabLook" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 74, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "vecTabValue = \"\"" } }, "children": [{ "id": 75, "type": "textnode", "value": "Main" }] }, { "id": 76, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "vecTabValue = \"Adding\"" } }, "children": [{ "id": 77, "type": "textnode", "value": "Adding" }] }, { "id": 78, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "vecTabValue = \"Subtracting\"" } }, "children": [{ "id": 79, "type": "textnode", "value": "Subtracting" }] }, { "id": 80, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "vecTabValue = \"Dot\"" } }, "children": [{ "id": 81, "type": "textnode", "value": "Dot Product" }] }, { "id": 82, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "vecTabValue = \"Cross\"" } }, "children": [{ "id": 83, "type": "textnode", "value": "Cross Product" }] }] }, { "id": 84, "type": "component", "name": "br", "children": [] }, { "id": 85, "type": "component", "name": "br", "children": [] }, { "id": 86, "type": "component", "name": "br", "children": [] }, { "id": 87, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "vecTabValue" } }, "children": [{ "id": 88, "type": "component", "name": "Default", "children": [{ "id": 89, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "subProblemBody" } }, "children": [{ "id": 90, "type": "component", "name": "h4", "children": [{ "id": 91, "type": "textnode", "value": "Overview" }] }, { "id": 92, "type": "component", "name": "p", "children": [{ "id": 93, "type": "textnode", "value": "Click the tabs to complete vector problems in python." }] }, { "id": 94, "type": "component", "name": "p", "children": [{ "id": 95, "type": "textnode", "value": "Need a refresher on vectors? Visit the " }, { "id": 96, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./Vectors_Guide" } }, "children": [{ "id": 97, "type": "textnode", "value": "Vectors Guide" }] }, { "id": 98, "type": "textnode", "value": "!" }] }, { "id": 99, "type": "component", "name": "h4", "children": [{ "id": 100, "type": "textnode", "value": "Trinket" }] }, { "id": 101, "type": "component", "name": "p", "children": [{ "id": 102, "type": "textnode", "value": "Each of the tabs feature a Trinket to execute the code. To save specific Trinkets\n              for your own reference, complete the following steps:" }] }, { "id": 103, "type": "component", "name": "ul", "children": [{ "id": 104, "type": "component", "name": "li", "children": [{ "id": 105, "type": "textnode", "value": " Go to the Trinket " }, { "id": 106, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://trinket.io/signup" } }, "children": [{ "id": 107, "type": "textnode", "value": "sign-up" }] }, { "id": 108, "type": "textnode", "value": " page." }] }, { "id": 109, "type": "component", "name": "li", "children": [{ "id": 110, "type": "textnode", "value": " Create an account. " }] }, { "id": 111, "type": "component", "name": "li", "children": [{ "id": 112, "type": "textnode", "value": " On the embedded Trinket, click the image link on the top right to log in using your account email and password." }] }, { "id": 113, "type": "component", "name": "li", "children": [{ "id": 114, "type": "textnode", "value": " Click the Remix button to save a copy of the code to your Trinket account. " }] }, { "id": 115, "type": "component", "name": "li", "children": [{ "id": 116, "type": "textnode", "value": " Save the Trinkets with a unique name for future reference. " }] }] }] }] }, { "id": 117, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Adding" } }, "children": [{ "id": 118, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "iframe" } }, "children": [{ "id": 119, "type": "component", "name": "h3", "children": [{ "id": 120, "type": "textnode", "value": "Vector Addition" }] }, { "id": 121, "type": "component", "name": "p", "children": [{ "id": 122, "type": "textnode", "value": "What is " }, { "id": 123, "type": "component", "name": "equation", "children": [{ "id": 124, "type": "textnode", "value": "\\vec{a} + \\vec{b}" }] }, { "id": 125, "type": "textnode", "value": "?" }] }, { "id": 126, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 127, "type": "component", "name": "equation", "children": [{ "id": 128, "type": "textnode", "value": "\\vec{a} = \\lt 0, 5, 0 \\gt" }] }, { "id": 129, "type": "component", "name": "br", "children": [] }, { "id": 130, "type": "component", "name": "equation", "children": [{ "id": 131, "type": "textnode", "value": "\\vec{b} = \\lt 5, 5, 0 \\gt" }] }, { "id": 132, "type": "component", "name": "br", "children": [] }] }, { "id": 133, "type": "component", "name": "p", "children": [{ "id": 134, "type": "textnode", "value": "Using the Trinket below, set up the problem." }] }, { "id": 135, "type": "component", "name": "ul", "children": [{ "id": 136, "type": "component", "name": "li", "children": [{ "id": 137, "type": "textnode", "value": " On the first line, add " }, { "id": 138, "type": "component", "name": "code", "children": [{ "id": 139, "type": "textnode", "value": "#!/bin/python3" }] }, { "id": 140, "type": "textnode", "value": ". " }] }, { "id": 141, "type": "component", "name": "li", "children": [{ "id": 142, "type": "textnode", "value": " Import NumPy by adding an import line: " }, { "id": 143, "type": "component", "name": "code", "children": [{ "id": 144, "type": "textnode", "value": "import numpy as np" }] }, { "id": 145, "type": "textnode", "value": ".\n                This will allow you to use np.array to represent the vectors in the code." }] }, { "id": 146, "type": "component", "name": "li", "children": [{ "id": 147, "type": "textnode", "value": " Assign the np.arrays to the a and b variables. Example: " }, { "id": 148, "type": "component", "name": "code", "children": [{ "id": 149, "type": "textnode", "value": "a = np.array([x,y,z])" }] }, { "id": 150, "type": "textnode", "value": "." }] }, { "id": 151, "type": "component", "name": "li", "children": [{ "id": 152, "type": "textnode", "value": " Create another variable that will equal a + b. Example: " }, { "id": 153, "type": "component", "name": "code", "children": [{ "id": 154, "type": "textnode", "value": "ans = a + b" }] }] }, { "id": 155, "type": "component", "name": "li", "children": [{ "id": 156, "type": "textnode", "value": " Print the answer! Add " }, { "id": 157, "type": "component", "name": "code", "children": [{ "id": 158, "type": "textnode", "value": "print(ans)" }] }, { "id": 159, "type": "textnode", "value": ". Note that the print command is slightly different\n                in python 2." }] }, { "id": 160, "type": "component", "name": "li", "children": [{ "id": 161, "type": "textnode", "value": " Click " }, { "id": 162, "type": "component", "name": "code", "children": [{ "id": 163, "type": "textnode", "value": ">_Console" }] }, { "id": 164, "type": "textnode", "value": " to run the code." }] }, { "id": 165, "type": "component", "name": "li", "children": [{ "id": 166, "type": "textnode", "value": " Click the " }, { "id": 167, "type": "component", "name": "strong", "children": [{ "id": 168, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 169, "type": "textnode", "value": " button below the Trinket to check your answer! " }] }] }, { "id": 170, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/8917f592ec?runOption=console" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }, { "id": 171, "type": "component", "name": "br", "children": [] }, { "id": 172, "type": "component", "name": "br", "children": [] }, { "id": 173, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 174, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal = !clickReveal" } }, "children": [{ "id": 175, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 176, "type": "component", "name": "br", "children": [] }, { "id": 177, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal" } }, "children": [{ "id": 178, "type": "component", "name": "em", "children": [{ "id": 179, "type": "textnode", "value": "Answer:" }] }, { "id": 180, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 181, "type": "component", "name": "equation", "children": [{ "id": 182, "type": "textnode", "value": "\\lt 5, 10, 0 \\gt" }] }] }, { "id": 183, "type": "component", "name": "br", "children": [] }, { "id": 184, "type": "component", "name": "em", "children": [{ "id": 185, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 186, "type": "component", "name": "br", "children": [] }, { "id": 187, "type": "component", "name": "br", "children": [] }, { "id": 188, "type": "component", "name": "p", "children": [{ "id": 189, "type": "textnode", "value": "To add vectors together, add each component of each vector (x + x, y + y, z + z):" }] }, { "id": 190, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 191, "type": "component", "name": "equation", "children": [{ "id": 192, "type": "textnode", "value": "\\vec{A} + \\vec{B} = \\lt (A_{x} + B_{x}), (A_{y} + B_{y}), (A_{z} + B_{z}) \\gt" }] }] }, { "id": 193, "type": "component", "name": "br", "children": [] }, { "id": 194, "type": "component", "name": "br", "children": [] }, { "id": 195, "type": "component", "name": "p", "children": [{ "id": 196, "type": "textnode", "value": "Graphically, vectors can be added with the tip-to-tail method and by plotting the vectors on a graph.\n                  " }, { "id": 197, "type": "component", "name": "br", "children": [] }, { "id": 198, "type": "component", "name": "br", "children": [] }, { "id": 199, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://giphy.com/embed/XfOPWFNbnoFC5Io03n" }, "width": { "type": "value", "value": "480" }, "height": { "type": "value", "value": "376" }, "frameBorder": { "type": "value", "value": "0" }, "class": { "type": "value", "value": "giphy-embed" } }, "children": [] }, { "id": 200, "type": "component", "name": "br", "children": [] }, { "id": 201, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://giphy.com/embed/VcBo8oemUA1NG13IYH" }, "width": { "type": "value", "value": "480" }, "height": { "type": "value", "value": "329" }, "frameBorder": { "type": "value", "value": "0" }, "class": { "type": "value", "value": "giphy-embed" } }, "children": [] }] }] }] }, { "id": 202, "type": "component", "name": "p", "children": [{ "id": 203, "type": "textnode", "value": "Use the PhET simulation below to recreate the answer. Can you make it match?\n              Try new numbers and update the Trinket so the computation matches the simulation.\n              Save your Trinket to an account, or email it to yourself to use on future vector\n              addition problems." }] }, { "id": 204, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" }, "width": { "type": "value", "value": "800" }, "height": { "type": "value", "value": "600" }, "scrolling": { "type": "value", "value": "no" } }, "children": [] }] }] }, { "id": 205, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Subtracting" } }, "children": [{ "id": 206, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "iframe" } }, "children": [{ "id": 207, "type": "component", "name": "h3", "children": [{ "id": 208, "type": "textnode", "value": "Vector Subtraction" }] }, { "id": 209, "type": "component", "name": "p", "children": [{ "id": 210, "type": "textnode", "value": "What is " }, { "id": 211, "type": "component", "name": "equation", "children": [{ "id": 212, "type": "textnode", "value": "\\vec{a} - \\vec{b}" }] }, { "id": 213, "type": "textnode", "value": "?" }] }, { "id": 214, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 215, "type": "component", "name": "equation", "children": [{ "id": 216, "type": "textnode", "value": "\\vec{a} = \\lt 3, 9, 0 \\gt" }] }, { "id": 217, "type": "component", "name": "br", "children": [] }, { "id": 218, "type": "component", "name": "equation", "children": [{ "id": 219, "type": "textnode", "value": "\\vec{b} = \\lt 4, 3, 0 \\gt" }] }, { "id": 220, "type": "component", "name": "br", "children": [] }] }, { "id": 221, "type": "component", "name": "p", "children": [{ "id": 222, "type": "textnode", "value": "Using the Trinket below, set up the problem." }] }, { "id": 223, "type": "component", "name": "ul", "children": [{ "id": 224, "type": "component", "name": "li", "children": [{ "id": 225, "type": "textnode", "value": " On the first line, add " }, { "id": 226, "type": "component", "name": "code", "children": [{ "id": 227, "type": "textnode", "value": "#!/bin/python3" }] }, { "id": 228, "type": "textnode", "value": ". " }] }, { "id": 229, "type": "component", "name": "li", "children": [{ "id": 230, "type": "textnode", "value": " Import NumPy by adding an import line: " }, { "id": 231, "type": "component", "name": "code", "children": [{ "id": 232, "type": "textnode", "value": "import numpy as np" }] }, { "id": 233, "type": "textnode", "value": ".\n                This will allow you to use np.array to represent the vectors in the code." }] }, { "id": 234, "type": "component", "name": "li", "children": [{ "id": 235, "type": "textnode", "value": " Assign the np.arrays to the a and b variables. Example: " }, { "id": 236, "type": "component", "name": "code", "children": [{ "id": 237, "type": "textnode", "value": "a = np.array([x,y,z])" }] }, { "id": 238, "type": "textnode", "value": "." }] }, { "id": 239, "type": "component", "name": "li", "children": [{ "id": 240, "type": "textnode", "value": " Create another variable that will equal a + b. Example: " }, { "id": 241, "type": "component", "name": "code", "children": [{ "id": 242, "type": "textnode", "value": "ans = a - b" }] }] }, { "id": 243, "type": "component", "name": "li", "children": [{ "id": 244, "type": "textnode", "value": " Print the answer! Add " }, { "id": 245, "type": "component", "name": "code", "children": [{ "id": 246, "type": "textnode", "value": "print(ans)" }] }, { "id": 247, "type": "textnode", "value": ". Note that the print command is slightly different\n                in python 2." }] }, { "id": 248, "type": "component", "name": "li", "children": [{ "id": 249, "type": "textnode", "value": " Click " }, { "id": 250, "type": "component", "name": "code", "children": [{ "id": 251, "type": "textnode", "value": ">_Console" }] }, { "id": 252, "type": "textnode", "value": " to run the code." }] }, { "id": 253, "type": "component", "name": "li", "children": [{ "id": 254, "type": "textnode", "value": " Click the " }, { "id": 255, "type": "component", "name": "strong", "children": [{ "id": 256, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 257, "type": "textnode", "value": " button below the Trinket to check your answer! " }] }] }, { "id": 258, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/8917f592ec?runOption=console" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }, { "id": 259, "type": "component", "name": "br", "children": [] }, { "id": 260, "type": "component", "name": "br", "children": [] }, { "id": 261, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 262, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal = !clickReveal" } }, "children": [{ "id": 263, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 264, "type": "component", "name": "br", "children": [] }, { "id": 265, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal" } }, "children": [{ "id": 266, "type": "component", "name": "em", "children": [{ "id": 267, "type": "textnode", "value": "Answer:" }] }, { "id": 268, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 269, "type": "component", "name": "equation", "children": [{ "id": 270, "type": "textnode", "value": "\\lt -1, 6, 0 \\gt" }] }] }, { "id": 271, "type": "component", "name": "br", "children": [] }, { "id": 272, "type": "component", "name": "em", "children": [{ "id": 273, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 274, "type": "component", "name": "br", "children": [] }, { "id": 275, "type": "component", "name": "br", "children": [] }, { "id": 276, "type": "component", "name": "p", "children": [{ "id": 277, "type": "textnode", "value": "To subtract a vector from another vector, subtract each component of each vector (x - x, y - y, z - z):" }] }, { "id": 278, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 279, "type": "component", "name": "equation", "children": [{ "id": 280, "type": "textnode", "value": "\\vec{A} - \\vec{B} = \\lt (A_{x} - B_{x}), (A_{y} - B_{y}), (A_{z} - B_{z}) \\gt" }] }] }, { "id": 281, "type": "component", "name": "br", "children": [] }, { "id": 282, "type": "component", "name": "br", "children": [] }, { "id": 283, "type": "component", "name": "p", "children": [{ "id": 284, "type": "textnode", "value": "Graphically, vectors can be subtracted in a few different ways.\n                  " }, { "id": 285, "type": "component", "name": "br", "children": [] }, { "id": 286, "type": "component", "name": "br", "children": [] }, { "id": 287, "type": "textnode", "value": "\n                  Insert gifs of subtracting vectors." }] }] }] }, { "id": 288, "type": "component", "name": "p", "children": [{ "id": 289, "type": "textnode", "value": "Now let’s think about three dimensions. Using the same x and y components,\n              add a z to each of the vectors:" }] }, { "id": 290, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 291, "type": "component", "name": "equation", "children": [{ "id": 292, "type": "textnode", "value": "\\vec{a} = \\lt 3, 9, 5 \\gt" }] }, { "id": 293, "type": "component", "name": "br", "children": [] }, { "id": 294, "type": "component", "name": "equation", "children": [{ "id": 295, "type": "textnode", "value": "\\vec{b} = \\lt 4, 3, 6 \\gt" }] }, { "id": 296, "type": "component", "name": "br", "children": [] }] }, { "id": 297, "type": "component", "name": "br", "children": [] }, { "id": 298, "type": "component", "name": "p", "children": [{ "id": 299, "type": "textnode", "value": "Change the Trinket above and rerun the code. Click " }, { "id": 300, "type": "component", "name": "em", "children": [{ "id": 301, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 302, "type": "textnode", "value": " to\n            check your answer." }] }, { "id": 303, "type": "component", "name": "br", "children": [] }, { "id": 304, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 305, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal2 = !clickReveal2" } }, "children": [{ "id": 306, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 307, "type": "component", "name": "br", "children": [] }, { "id": 308, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal2" } }, "children": [{ "id": 309, "type": "component", "name": "em", "children": [{ "id": 310, "type": "textnode", "value": "Answer:" }] }, { "id": 311, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 312, "type": "component", "name": "equation", "children": [{ "id": 313, "type": "textnode", "value": "\\lt -1, 6, -1 \\gt" }] }] }, { "id": 314, "type": "component", "name": "br", "children": [] }, { "id": 315, "type": "component", "name": "em", "children": [{ "id": 316, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 317, "type": "component", "name": "br", "children": [] }, { "id": 318, "type": "component", "name": "br", "children": [] }] }] }] }] }, { "id": 319, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Dot" } }, "children": [{ "id": 320, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "iframe" } }, "children": [{ "id": 321, "type": "component", "name": "h3", "children": [{ "id": 322, "type": "textnode", "value": "The Dot Product" }] }, { "id": 323, "type": "component", "name": "p", "children": [{ "id": 324, "type": "textnode", "value": "What is " }, { "id": 325, "type": "component", "name": "equation", "children": [{ "id": 326, "type": "textnode", "value": "\\vec{a} \\bullet \\vec{b}" }] }, { "id": 327, "type": "textnode", "value": "?" }] }, { "id": 328, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 329, "type": "component", "name": "equation", "children": [{ "id": 330, "type": "textnode", "value": "\\vec{a} = \\lt 7, 2, 5 \\gt" }] }, { "id": 331, "type": "component", "name": "br", "children": [] }, { "id": 332, "type": "component", "name": "equation", "children": [{ "id": 333, "type": "textnode", "value": "\\vec{b} = \\lt 3, 8, 2 \\gt" }] }, { "id": 334, "type": "component", "name": "br", "children": [] }] }, { "id": 335, "type": "component", "name": "p", "children": [{ "id": 336, "type": "textnode", "value": "Using the Trinket below, set up the problem." }] }, { "id": 337, "type": "component", "name": "ul", "children": [{ "id": 338, "type": "component", "name": "li", "children": [{ "id": 339, "type": "textnode", "value": " On the first line, add " }, { "id": 340, "type": "component", "name": "code", "children": [{ "id": 341, "type": "textnode", "value": "#!/bin/python3" }] }, { "id": 342, "type": "textnode", "value": ". " }] }, { "id": 343, "type": "component", "name": "li", "children": [{ "id": 344, "type": "textnode", "value": " Import NumPy by adding an import line: " }, { "id": 345, "type": "component", "name": "code", "children": [{ "id": 346, "type": "textnode", "value": "import numpy as np" }] }, { "id": 347, "type": "textnode", "value": ".\n                This will allow you to use np.array to represent the vectors in the code." }] }, { "id": 348, "type": "component", "name": "li", "children": [{ "id": 349, "type": "textnode", "value": " Assign the np.arrays to the a and b variables. Example: " }, { "id": 350, "type": "component", "name": "code", "children": [{ "id": 351, "type": "textnode", "value": "a = np.array([x,y,z])" }] }, { "id": 352, "type": "textnode", "value": "." }] }, { "id": 353, "type": "component", "name": "li", "children": [{ "id": 354, "type": "textnode", "value": " Create another variable that will equal a " }, { "id": 355, "type": "component", "name": "em", "children": [{ "id": 356, "type": "textnode", "value": "dot" }] }, { "id": 357, "type": "textnode", "value": " b. Example: " }, { "id": 358, "type": "component", "name": "code", "children": [{ "id": 359, "type": "textnode", "value": "ans = a.dot(b)" }] }] }, { "id": 360, "type": "component", "name": "li", "children": [{ "id": 361, "type": "textnode", "value": " Print the answer! Add " }, { "id": 362, "type": "component", "name": "code", "children": [{ "id": 363, "type": "textnode", "value": "print(ans)" }] }, { "id": 364, "type": "textnode", "value": ". Note that the print command is slightly different\n                in python 2." }] }, { "id": 365, "type": "component", "name": "li", "children": [{ "id": 366, "type": "textnode", "value": " Click " }, { "id": 367, "type": "component", "name": "code", "children": [{ "id": 368, "type": "textnode", "value": ">_Console" }] }, { "id": 369, "type": "textnode", "value": " to run the code." }] }, { "id": 370, "type": "component", "name": "li", "children": [{ "id": 371, "type": "textnode", "value": " Click the " }, { "id": 372, "type": "component", "name": "strong", "children": [{ "id": 373, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 374, "type": "textnode", "value": " button below the Trinket to check your answer! " }] }] }, { "id": 375, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/8917f592ec?runOption=console" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }, { "id": 376, "type": "component", "name": "br", "children": [] }, { "id": 377, "type": "component", "name": "br", "children": [] }, { "id": 378, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 379, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal = !clickReveal" } }, "children": [{ "id": 380, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 381, "type": "component", "name": "br", "children": [] }, { "id": 382, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal" } }, "children": [{ "id": 383, "type": "component", "name": "em", "children": [{ "id": 384, "type": "textnode", "value": "Answer:" }] }, { "id": 385, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 386, "type": "textnode", "value": "47" }] }, { "id": 387, "type": "component", "name": "br", "children": [] }, { "id": 388, "type": "component", "name": "em", "children": [{ "id": 389, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 390, "type": "component", "name": "br", "children": [] }, { "id": 391, "type": "component", "name": "br", "children": [] }, { "id": 392, "type": "component", "name": "p", "children": [{ "id": 393, "type": "textnode", "value": "To find the dot product of two vectors, multiply each component of each vector (x * x, y * y, z * z) and add them together:" }] }, { "id": 394, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 395, "type": "component", "name": "equation", "children": [{ "id": 396, "type": "textnode", "value": "\\vec{A} \\bullet \\vec{B} = (A_{x} \\times B_{x}) + (A_{y} \\times B_{y}) + (A_{z} \\times B_{z})" }] }] }, { "id": 397, "type": "component", "name": "br", "children": [] }, { "id": 398, "type": "component", "name": "p", "children": [{ "id": 399, "type": "textnode", "value": "Note that the dot product gives you a " }, { "id": 400, "type": "component", "name": "strong", "children": [{ "id": 401, "type": "textnode", "value": "scalar" }] }, { "id": 402, "type": "textnode", "value": " quantity (just magnitude)! This means that it results in a " }, { "id": 403, "type": "component", "name": "em", "children": [{ "id": 404, "type": "textnode", "value": "single" }] }, { "id": 405, "type": "textnode", "value": " number\n                  representing a quantity. This differs from the " }, { "id": 406, "type": "component", "name": "em", "children": [{ "id": 407, "type": "textnode", "value": "cross product" }] }, { "id": 408, "type": "textnode", "value": " which yields a " }, { "id": 409, "type": "component", "name": "strong", "children": [{ "id": 410, "type": "textnode", "value": "vector" }] }, { "id": 411, "type": "textnode", "value": " quantity, which has\n                  magnitude " }, { "id": 412, "type": "component", "name": "em", "children": [{ "id": 413, "type": "textnode", "value": "and" }] }, { "id": 414, "type": "textnode", "value": " direction." }] }, { "id": 415, "type": "component", "name": "br", "children": [] }, { "id": 416, "type": "component", "name": "br", "children": [] }] }] }, { "id": 417, "type": "component", "name": "p", "children": [{ "id": 418, "type": "textnode", "value": "Insert second thing to do." }] }, { "id": 419, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 420, "type": "textnode", "value": "\n                Insert Vectors\n                " }, { "id": 421, "type": "component", "name": "br", "children": [] }] }, { "id": 422, "type": "component", "name": "br", "children": [] }, { "id": 423, "type": "component", "name": "p", "children": [{ "id": 424, "type": "textnode", "value": "Change the Trinket above and rerun the code. Click " }, { "id": 425, "type": "component", "name": "em", "children": [{ "id": 426, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 427, "type": "textnode", "value": " to\n            check your answer." }] }, { "id": 428, "type": "component", "name": "br", "children": [] }, { "id": 429, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 430, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal2 = !clickReveal2" } }, "children": [{ "id": 431, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 432, "type": "component", "name": "br", "children": [] }, { "id": 433, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal2" } }, "children": [{ "id": 434, "type": "component", "name": "em", "children": [{ "id": 435, "type": "textnode", "value": "Answer:" }] }, { "id": 436, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 437, "type": "textnode", "value": "\n                    The second answer\n                  " }] }, { "id": 438, "type": "component", "name": "br", "children": [] }, { "id": 439, "type": "component", "name": "em", "children": [{ "id": 440, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 441, "type": "component", "name": "br", "children": [] }, { "id": 442, "type": "component", "name": "p", "children": [{ "id": 443, "type": "textnode", "value": "We shall see.\n                  \n                  " }, { "id": 444, "type": "component", "name": "br", "children": [] }] }] }] }] }] }, { "id": 445, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Cross" } }, "children": [{ "id": 446, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "iframe" } }, "children": [{ "id": 447, "type": "component", "name": "h3", "children": [{ "id": 448, "type": "textnode", "value": "The Cross Product" }] }, { "id": 449, "type": "component", "name": "p", "children": [{ "id": 450, "type": "textnode", "value": "What is " }, { "id": 451, "type": "component", "name": "equation", "children": [{ "id": 452, "type": "textnode", "value": "\\vec{a} \\times \\vec{b}" }] }, { "id": 453, "type": "textnode", "value": "?" }] }, { "id": 454, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 455, "type": "component", "name": "equation", "children": [{ "id": 456, "type": "textnode", "value": "\\vec{a} = \\lt 15, 12, 0 \\gt" }] }, { "id": 457, "type": "component", "name": "br", "children": [] }, { "id": 458, "type": "component", "name": "equation", "children": [{ "id": 459, "type": "textnode", "value": "\\vec{b} = \\lt 6, 4, 11 \\gt" }] }, { "id": 460, "type": "component", "name": "br", "children": [] }] }, { "id": 461, "type": "component", "name": "p", "children": [{ "id": 462, "type": "textnode", "value": "Using the Trinket below, set up the problem." }] }, { "id": 463, "type": "component", "name": "ul", "children": [{ "id": 464, "type": "component", "name": "li", "children": [{ "id": 465, "type": "textnode", "value": " On the first line, add " }, { "id": 466, "type": "component", "name": "code", "children": [{ "id": 467, "type": "textnode", "value": "#!/bin/python3" }] }, { "id": 468, "type": "textnode", "value": ". " }] }, { "id": 469, "type": "component", "name": "li", "children": [{ "id": 470, "type": "textnode", "value": " Import NumPy by adding an import line: " }, { "id": 471, "type": "component", "name": "code", "children": [{ "id": 472, "type": "textnode", "value": "import numpy as np" }] }, { "id": 473, "type": "textnode", "value": ".\n                This will allow you to use np.array to represent the vectors in the code." }] }, { "id": 474, "type": "component", "name": "li", "children": [{ "id": 475, "type": "textnode", "value": " Assign the np.arrays to the a and b variables. Example: " }, { "id": 476, "type": "component", "name": "code", "children": [{ "id": 477, "type": "textnode", "value": "a = np.array([x,y,z])" }] }, { "id": 478, "type": "textnode", "value": "." }] }, { "id": 479, "type": "component", "name": "li", "children": [{ "id": 480, "type": "textnode", "value": " blahblahblah" }] }, { "id": 481, "type": "component", "name": "li", "children": [{ "id": 482, "type": "textnode", "value": " Print the answer! Add " }, { "id": 483, "type": "component", "name": "code", "children": [{ "id": 484, "type": "textnode", "value": "print(ans)" }] }, { "id": 485, "type": "textnode", "value": ". Note that the print command is slightly different\n                in python 2." }] }, { "id": 486, "type": "component", "name": "li", "children": [{ "id": 487, "type": "textnode", "value": " Click " }, { "id": 488, "type": "component", "name": "code", "children": [{ "id": 489, "type": "textnode", "value": ">_Console" }] }, { "id": 490, "type": "textnode", "value": " to run the code." }] }, { "id": 491, "type": "component", "name": "li", "children": [{ "id": 492, "type": "textnode", "value": " Click the " }, { "id": 493, "type": "component", "name": "strong", "children": [{ "id": 494, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 495, "type": "textnode", "value": " button below the Trinket to check your answer! " }] }] }, { "id": 496, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/8917f592ec?runOption=console" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }, { "id": 497, "type": "component", "name": "br", "children": [] }, { "id": 498, "type": "component", "name": "br", "children": [] }, { "id": 499, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 500, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal = !clickReveal" } }, "children": [{ "id": 501, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 502, "type": "component", "name": "br", "children": [] }, { "id": 503, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal" } }, "children": [{ "id": 504, "type": "component", "name": "em", "children": [{ "id": 505, "type": "textnode", "value": "Answer:" }] }, { "id": 506, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 507, "type": "component", "name": "equation", "children": [{ "id": 508, "type": "textnode", "value": "\\lt 132, -165, -12 \\gt" }] }] }, { "id": 509, "type": "component", "name": "br", "children": [] }, { "id": 510, "type": "component", "name": "em", "children": [{ "id": 511, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 512, "type": "component", "name": "br", "children": [] }, { "id": 513, "type": "component", "name": "br", "children": [] }, { "id": 514, "type": "component", "name": "p", "children": [{ "id": 515, "type": "textnode", "value": "To find the cross product of two vectors:" }] }, { "id": 516, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 517, "type": "textnode", "value": "\n                    Insert cross explanation\n                  " }] }] }] }, { "id": 518, "type": "component", "name": "p", "children": [{ "id": 519, "type": "textnode", "value": "Insert another problem:" }] }, { "id": 520, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "questions" } }, "children": [{ "id": 521, "type": "textnode", "value": "\n                Two new vectors\n              " }] }, { "id": 522, "type": "component", "name": "br", "children": [] }, { "id": 523, "type": "component", "name": "p", "children": [{ "id": 524, "type": "textnode", "value": "Change the Trinket above and rerun the code. Click " }, { "id": 525, "type": "component", "name": "em", "children": [{ "id": 526, "type": "textnode", "value": "Reveal Answer" }] }, { "id": 527, "type": "textnode", "value": " to\n            check your answer." }] }, { "id": 528, "type": "component", "name": "br", "children": [] }, { "id": 529, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "revealButtons" } }, "children": [{ "id": 530, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "clickReveal2 = !clickReveal2" } }, "children": [{ "id": 531, "type": "component", "name": "Display", "properties": { "value": { "type": "expression", "value": "clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'" } }, "children": [] }] }, { "id": 532, "type": "component", "name": "br", "children": [] }, { "id": 533, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "clickReveal2" } }, "children": [{ "id": 534, "type": "component", "name": "em", "children": [{ "id": 535, "type": "textnode", "value": "Answer:" }] }, { "id": 536, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "equations" } }, "children": [{ "id": 537, "type": "textnode", "value": "\n                    A new answer\n                  " }] }, { "id": 538, "type": "component", "name": "br", "children": [] }, { "id": 539, "type": "component", "name": "em", "children": [{ "id": 540, "type": "textnode", "value": "Why is this the answer?" }] }, { "id": 541, "type": "component", "name": "br", "children": [] }, { "id": 542, "type": "component", "name": "br", "children": [] }] }] }] }] }] }] }] }, { "id": 543, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Magnitude" } }, "children": [{ "id": 544, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "subCenterHead" } }, "children": [{ "id": 545, "type": "component", "name": "h2", "children": [{ "id": 546, "type": "textnode", "value": "Magnitude" }] }, { "id": 547, "type": "component", "name": "hr", "children": [] }, { "id": 548, "type": "component", "name": "strong", "children": [{ "id": 549, "type": "textnode", "value": "What is a vector?" }] }, { "id": 550, "type": "component", "name": "p", "children": [{ "id": 551, "type": "textnode", "value": "The vector quantity" }] }, { "id": 552, "type": "component", "name": "h5", "children": [{ "id": 553, "type": "textnode", "value": "Question:" }] }, { "id": 554, "type": "component", "name": "p", "children": [{ "id": 555, "type": "textnode", "value": "The vector " }, { "id": 556, "type": "component", "name": "equation", "children": [{ "id": 557, "type": "textnode", "value": "\\vec{a} = \\lt 5\\times 10^{7}, 3.2 \\times 10^{8}, 6.4 \\times 10^{7} \\gt m/s^{2}" }] }, { "id": 558, "type": "textnode", "value": ". What is " }, { "id": 559, "type": "component", "name": "equation", "children": [{ "id": 560, "type": "textnode", "value": "|\\vec{a}|" }] }, { "id": 561, "type": "textnode", "value": "?" }] }, { "id": 562, "type": "component", "name": "h5", "children": [{ "id": 563, "type": "textnode", "value": "Approach:" }] }, { "id": 564, "type": "component", "name": "p", "children": [{ "id": 565, "type": "textnode", "value": "Use " }, { "id": 566, "type": "component", "name": "link", "properties": { "text": { "type": "value", "value": "NumPy" }, "url": { "type": "value", "value": "https://numpy.org/doc/stable/reference/routines.math.html" } }, "children": [] }, { "id": 567, "type": "textnode", "value": ", or numpy, to find the magnitude of the vector." }] }, { "id": 568, "type": "component", "name": "h5", "children": [{ "id": 569, "type": "textnode", "value": "Uses:" }] }, { "id": 570, "type": "component", "name": "p", "children": [{ "id": 571, "type": "textnode", "value": "Power operator, np.sqrt()" }] }, { "id": 572, "type": "component", "name": "p", "children": [{ "id": 573, "type": "textnode", "value": "The code below is split into 4 sections to solve the answer. Click the arrows to learn more about the sections of code used to calculate the magnitude." }] }, { "id": 574, "type": "component", "name": "h4", "children": [{ "id": 575, "type": "textnode", "value": "Import Statements" }] }, { "id": 576, "type": "component", "name": "p", "children": [{ "id": 577, "type": "textnode", "value": "This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer." }] }, { "id": 578, "type": "component", "name": "p", "children": [{ "id": 579, "type": "textnode", "value": "NumPy is a popular package for science computation in python." }] }, { "id": 580, "type": "component", "name": "p", "children": [{ "id": 581, "type": "component", "name": "strong", "children": [{ "id": 582, "type": "textnode", "value": "import" }] }, { "id": 583, "type": "textnode", "value": " numpy " }, { "id": 584, "type": "component", "name": "strong", "children": [{ "id": 585, "type": "textnode", "value": "as" }] }, { "id": 586, "type": "textnode", "value": " np:" }] }, { "id": 587, "type": "component", "name": "p", "children": [{ "id": 588, "type": "textnode", "value": "allows you to use the modules, functions, and objects within the package. In this problem, we need to take the square root, so np.sqrt() can be used." }] }, { "id": 589, "type": "component", "name": "h4", "children": [{ "id": 590, "type": "textnode", "value": "Given variables" }] }, { "id": 591, "type": "component", "name": "p", "children": [{ "id": 592, "type": "textnode", "value": "In this section, organize the variables that are given in a problem." }] }, { "id": 593, "type": "component", "name": "p", "children": [{ "id": 594, "type": "textnode", "value": "The format is generally: variable = numbers" }] }, { "id": 595, "type": "component", "name": "p", "children": [{ "id": 596, "type": "textnode", "value": "Note that no units are shown here." }] }, { "id": 597, "type": "component", "name": "h4", "children": [{ "id": 598, "type": "textnode", "value": "calculate" }] }, { "id": 599, "type": "component", "name": "p", "children": [{ "id": 600, "type": "textnode", "value": "Use the variables listed to solve the problem. Set the problem equal to a unique new variable that you can call later." }] }, { "id": 601, "type": "component", "name": "p", "children": [{ "id": 602, "type": "textnode", "value": "* " }, { "id": 603, "type": "component", "name": "code", "children": [{ "id": 604, "type": "textnode", "value": "new_variable = math" }] }] }, { "id": 605, "type": "component", "name": "h4", "children": [{ "id": 606, "type": "textnode", "value": "Print the answer" }] }, { "id": 607, "type": "component", "name": "p", "children": [{ "id": 608, "type": "textnode", "value": "In this section, take the new variable(s) in the calculation section and output the answer by " }, { "id": 609, "type": "component", "name": "em", "children": [{ "id": 610, "type": "textnode", "value": "printing" }] }, { "id": 611, "type": "textnode", "value": "." }] }, { "id": 612, "type": "component", "name": "code", "children": [{ "id": 613, "type": "textnode", "value": "print(new_variable)" }] }, { "id": 614, "type": "component", "name": "p", "children": [{ "id": 615, "type": "textnode", "value": "* This will print " }, { "id": 616, "type": "component", "name": "em", "children": [{ "id": 617, "type": "textnode", "value": "only" }] }, { "id": 618, "type": "textnode", "value": " what the new_variable is equal to, typically a number or set of numbers." }] }, { "id": 619, "type": "component", "name": "p", "children": [{ "id": 620, "type": "textnode", "value": "* Words" }] }, { "id": 621, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python/6b7499f4e0" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [{ "id": 622, "type": "textnode", "value": " " }] }] }] }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -52848,17 +53083,21 @@ module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "
 module.exports = {
 	'text-container': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js'),
 	'header': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js'),
+	'button': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/button.js'),
+	'default': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/default.js'),
 	'h2': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js'),
-	'h5': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h5.js'),
-	'equation': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js'),
-	'link': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js'),
 	'h4': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h4.js'),
-	'step': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/step.js'),
-	'stepper-control': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper-control.js'),
-	'stepper': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper.js')
+	'h3': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h3.js'),
+	'equation': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js'),
+	'display': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/display.js'),
+	'conditional': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/conditional.js'),
+	'case': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/case.js'),
+	'switch': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/switch.js'),
+	'h5': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h5.js'),
+	'link': require('/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js')
 };
 
-},{"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h4.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h4.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h5.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h5.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/step.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/step.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper-control.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper-control.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/stepper.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/button.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/button.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/case.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/case.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/conditional.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/conditional.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/default.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/default.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/display.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/display.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/equation.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h2.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h3.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h3.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h4.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h4.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h5.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/h5.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/header.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/link.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/switch.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/switch.js","/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js":"/home/drlmnop/Documents/PhysLab/idyll-material/computational_activities/Comp_1/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 "use strict";
 
 module.exports = function () {};

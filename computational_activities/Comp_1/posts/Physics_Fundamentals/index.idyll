@@ -7,68 +7,604 @@
   author:"Mary Span"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#222222"
+  background:"#B2432F"
   color:"#ffffff"
    /]
 
-## Magnitude
+[var name:"currentValue" value:"" /]
 
-##### Question:
-The vector [Equation]\vec{a} = \lt 5\times 10^{7}, 3.2 \times 10^{8}, 6.4 \times 10^{7} \gt m/s^{2} [/Equation]. What is [Equation]|\vec{a}|[/Equation]?
+[div class:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Main[/Button]
+  [button onClick:`currentValue = "Vectors"`]Vectors(+, -, dot, cross)[/Button]
+  [button onClick:`currentValue = "Magnitude"`]Magnitude[/Button]
+[/div]
 
-##### Approach:
-Use [link text:"NumPy" url: "https://numpy.org/doc/stable/reference/routines.math.html" /], or numpy, to find the magnitude of the vector.
+[br /]
+[br /]
+[hr fullWidth:true /]
 
-##### Uses:
-Power operator, np.sqrt()
+[div class:"problemBody" fullWidth:true padding-left:`100%`]
+  [Switch value:currentValue]
+    [Default]
+      [div class:"centerHead"]
+        Computation and physics requires two levels of understanding: knowing how
+        to tell the application what to do and knowing *how to do* the physics.
+        Physics Fundamentals with computation introduces elementary concepts
+        with python. These concepts are *very* important and used throughout the
+        course.
 
-The code below is split into 4 sections to solve the answer. Click the arrows to learn more about the sections of code used to calculate the magnitude.
+        Click the tabs to learn more about these fundamental concepts, how to
+        calculate them, and how to tell the application (Trinket) to calculate it
+        for you.
 
-[var name:"stepperIndex" value:0 /]
+        Note that Trinket supports two versions of Python, which can be specified
+        at the top of the script. For python 2, add `#!/bin/python2` and for python 3,
+        add `#!/bin/python3`. Also note that Trinket does not support all python
+        modules. For a list of the currently available modules, click [HERE](https://trinket.io/docs/python).
 
-[Stepper currentStep:stepperIndex]
-  [Step]
-    #### Import Statements
+        Want to learn more about programming in python? Visit these resources:
 
-      This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer.
+        [ul]
+          [li] [The Python Tutorial](https://docs.python.org/2/tutorial)[/li]
+          [li] [Code Academy](https://codeacademy.com/learn/learn-python)[/li]
+          [li] [Turtle Programming](https://hourofpython.trinket.io/a-visual-introduction-to-python#/welcome/an-hour-of-code)[/li]
+        [/ul]
 
-      NumPy is a popular package for science computation in python.
+        Below is an example of Tina the turtle traveling to some specific points.
+        What physics concept can this be related to? Play with the code and see
+        what you can make Tina do. Want to learn more? Visit one of the links above.
 
-      **import** numpy **as** np:
+        [iframe src:"https://trinket.io/embed/python/e313939670?start=result" width:"100%" height:"356" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
-        allows you to use the modules, functions, and objects within the package. In this problem, we need to take the square root, so np.sqrt() can be used.
-  [/Step]
-  [Step]
-    #### Given variables
+      [/div]
+    [/Default]
+    [Case test:"Vectors"]
+      [div class:"subCenterHead"]
 
-      In this section, organize the variables that are given in a problem.
+        ## Vectors
 
-      The format is generally: variable = numbers
+        [br /]
 
-      Note that no units are shown here.
-  [/Step]
-  [Step]
-    #### calculate
+        [var name:"vecTabValue" value:"" /]
 
-      Use the variables listed to solve the problem. Set the problem equal to a unique new variable that you can call later.
+        [div class:"subtabLook" fullWidth:true]
+          [button onClick:`vecTabValue = ""`]Main[/Button]
+          [button onClick:`vecTabValue = "Adding"`]Adding[/Button]
+          [button onClick:`vecTabValue = "Subtracting"`]Subtracting[/Button]
+          [button onClick:`vecTabValue = "Dot"`]Dot Product[/Button]
+          [button onClick:`vecTabValue = "Cross"`]Cross Product[/Button]
+        [/div]
 
-      * `new_variable = math`
-  [/Step]
-  [Step]
-    #### Print the answer
+        [br /]
+        [br /]
+        [br /]
 
-    In this section, take the new variable(s) in the calculation section and output the answer by *printing*.
+        [Switch value:vecTabValue]
+          [Default]
+            [div class:"subProblemBody"]
 
-    ```
-      print(new_variable)
-    ```
+              #### Overview
 
-    * This will print *only* what the new_variable is equal to, typically a number or set of numbers.
+              Click the tabs to complete vector problems in python.
 
-    * Words
+              Need a refresher on vectors? Visit the [Vectors Guide](./Vectors_Guide)!
 
-  [/Step]
-  [StepperControl /]
-[/Stepper]
+              #### Trinket
 
-[iframe src:"https://trinket.io/embed/python/6b7499f4e0" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
+              Each of the tabs feature a Trinket to execute the code. To save specific Trinkets
+              for your own reference, complete the following steps:
+
+              [ul]
+                [li] Go to the Trinket [sign-up](https://trinket.io/signup) page.[/li]
+                [li] Create an account. [/li]
+                [li] On the embedded Trinket, click the image link on the top right to log in using your account email and password.[/li]
+                [li] Click the Remix button to save a copy of the code to your Trinket account. [/li]
+                [li] Save the Trinkets with a unique name for future reference. [/li]
+              [/ul]
+
+            [/div]
+          [/Default]
+          [Case test:"Adding"]
+            [div class:"iframe"]
+
+              ### Vector Addition
+
+              What is [Equation]\vec{a} + \vec{b}[/Equation]?
+
+                [div class: "questions"]
+                  [Equation]\vec{a} = \lt 0, 5, 0 \gt [/Equation]
+                  [br /]
+                  [Equation]\vec{b} = \lt 5, 5, 0 \gt [/Equation]
+                  [br /]
+                [/div]
+
+              Using the Trinket below, set up the problem.
+
+              [ul]
+                [li] On the first line, add `#!/bin/python3`. [/li]
+                [li] Import NumPy by adding an import line: `import numpy as np`.
+                This will allow you to use np.array to represent the vectors in the code.[/li]
+                [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
+                [li] Create another variable that will equal a + b. Example: `ans = a + b`[/li]
+                [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
+                in python 2.[/li]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+              [/ul]
+
+
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+              [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation] \lt 5, 10, 0 \gt [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                  To add vectors together, add each component of each vector (x + x, y + y, z + z):
+
+                  [div class:"equations"]
+                    [Equation]\vec{A} + \vec{B} = \lt (A_{x} + B_{x}), (A_{y} + B_{y}), (A_{z} + B_{z}) \gt[/Equation]
+                  [/div]
+
+                  [br /]
+                  [br /]
+
+                  Graphically, vectors can be added with the tip-to-tail method and by plotting the vectors on a graph.
+                  [br /]
+                  [br /]
+                  [iframe src:"https://giphy.com/embed/XfOPWFNbnoFC5Io03n" width:"480" height:"376" frameBorder:"0" class:"giphy-embed"][/iframe]
+                  [br /]
+                  [iframe src:"https://giphy.com/embed/VcBo8oemUA1NG13IYH" width:"480" height:"329" frameBorder:"0" class:"giphy-embed"][/iframe]
+
+                [/Conditional]
+
+              [/div]
+
+              Use the PhET simulation below to recreate the answer. Can you make it match?
+              Try new numbers and update the Trinket so the computation matches the simulation.
+              Save your Trinket to an account, or email it to yourself to use on future vector
+              addition problems.
+
+              [iframe src:"https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+            [/div]
+          [/Case]
+          [Case test:"Subtracting"]
+            [div class:"iframe"]
+
+              ### Vector Subtraction
+
+              What is [Equation]\vec{a} - \vec{b}[/Equation]?
+
+                [div class: "questions"]
+                  [Equation]\vec{a} = \lt 3, 9, 0 \gt [/Equation]
+                  [br /]
+                  [Equation]\vec{b} = \lt 4, 3, 0 \gt [/Equation]
+                  [br /]
+                [/div]
+
+              Using the Trinket below, set up the problem.
+
+              [ul]
+                [li] On the first line, add `#!/bin/python3`. [/li]
+                [li] Import NumPy by adding an import line: `import numpy as np`.
+                This will allow you to use np.array to represent the vectors in the code.[/li]
+                [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
+                [li] Create another variable that will equal a + b. Example: `ans = a - b`[/li]
+                [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
+                in python 2.[/li]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+              [/ul]
+
+
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+              [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation] \lt -1, 6, 0 \gt [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                  To subtract a vector from another vector, subtract each component of each vector (x - x, y - y, z - z):
+
+                  [div class:"equations"]
+                    [Equation]\vec{A} - \vec{B} = \lt (A_{x} - B_{x}), (A_{y} - B_{y}), (A_{z} - B_{z}) \gt[/Equation]
+                  [/div]
+
+                  [br /]
+                  [br /]
+
+                  Graphically, vectors can be subtracted in a few different ways.
+                  [br /]
+                  [br /]
+                  Insert gifs of subtracting vectors.
+
+                [/Conditional]
+
+              [/div]
+
+              Now let's think about three dimensions. Using the same x and y components,
+              add a z to each of the vectors:
+
+              [div class: "questions"]
+                [Equation]\vec{a} = \lt 3, 9, 5 \gt [/Equation]
+                [br /]
+                [Equation]\vec{b} = \lt 4, 3, 6 \gt [/Equation]
+                [br /]
+              [/div]
+
+            [br /]
+
+            Change the Trinket above and rerun the code. Click *Reveal Answer* to
+            check your answer.
+
+            [br /]
+
+              [div class:"revealButtons"]
+                [var name:"clickReveal2" value:false /]
+
+                [button onClick:`clickReveal2 = !clickReveal2`]
+                  [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal2`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation] \lt -1, 6, -1 \gt [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                [/Conditional]
+              [/div]
+            [/div]
+          [/Case]
+          [Case test:"Dot"]
+            [div class:"iframe"]
+
+              ### The Dot Product
+
+              What is [Equation]\vec{a} \bullet \vec{b}[/Equation]?
+
+                [div class: "questions"]
+                  [Equation]\vec{a} = \lt 7, 2, 5 \gt [/Equation]
+                  [br /]
+                  [Equation]\vec{b} = \lt 3, 8, 2 \gt [/Equation]
+                  [br /]
+                [/div]
+
+              Using the Trinket below, set up the problem.
+
+              [ul]
+                [li] On the first line, add `#!/bin/python3`. [/li]
+                [li] Import NumPy by adding an import line: `import numpy as np`.
+                This will allow you to use np.array to represent the vectors in the code.[/li]
+                [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
+                [li] Create another variable that will equal a *dot* b. Example: `ans = a.dot(b)`[/li]
+                [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
+                in python 2.[/li]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+              [/ul]
+
+
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+              [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    47
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                  To find the dot product of two vectors, multiply each component of each vector (x * x, y * y, z * z) and add them together:
+
+                  [div class:"equations"]
+                    [Equation]\vec{A} \bullet \vec{B} = (A_{x} \times B_{x}) + (A_{y} \times B_{y}) + (A_{z} \times B_{z})[/Equation]
+                  [/div]
+
+                  [br /]
+
+                  Note that the dot product gives you a **scalar** quantity (just magnitude)! This means that it results in a *single* number
+                  representing a quantity. This differs from the *cross product* which yields a **vector** quantity, which has
+                  magnitude *and* direction.
+
+                  [br /]
+                  [br /]
+
+                [/Conditional]
+
+              [/div]
+
+              Insert second thing to do.
+
+              [div class: "questions"]
+                Insert Vectors
+                [br /]
+              [/div]
+
+            [br /]
+
+            Change the Trinket above and rerun the code. Click *Reveal Answer* to
+            check your answer.
+
+            [br /]
+
+              [div class:"revealButtons"]
+                [var name:"clickReveal2" value:false /]
+
+                [button onClick:`clickReveal2 = !clickReveal2`]
+                  [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal2`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    The second answer
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+
+                  We shall see.
+                  
+                  [br /]
+
+                [/Conditional]
+              [/div]
+            [/div]
+          [/Case]
+          [Case test:"Cross"]
+            [div class:"iframe"]
+
+              ### The Cross Product
+
+              What is [Equation]\vec{a} \times \vec{b}[/Equation]?
+
+                [div class: "questions"]
+                  [Equation]\vec{a} = \lt 15, 12, 0 \gt [/Equation]
+                  [br /]
+                  [Equation]\vec{b} = \lt 6, 4, 11 \gt [/Equation]
+                  [br /]
+                [/div]
+
+              Using the Trinket below, set up the problem.
+
+              [ul]
+                [li] On the first line, add `#!/bin/python3`. [/li]
+                [li] Import NumPy by adding an import line: `import numpy as np`.
+                This will allow you to use np.array to represent the vectors in the code.[/li]
+                [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
+                [li] blahblahblah[/li]
+                [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
+                in python 2.[/li]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+              [/ul]
+
+
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+              [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation]
+                      \lt 132, -165, -12 \gt
+                    [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                  To find the cross product of two vectors:
+
+                  [div class:"equations"]
+                    Insert cross explanation
+                  [/div]
+
+                [/Conditional]
+
+              [/div]
+
+              Insert another problem:
+
+              [div class: "questions"]
+                Two new vectors
+              [/div]
+
+            [br /]
+
+            Change the Trinket above and rerun the code. Click *Reveal Answer* to
+            check your answer.
+
+            [br /]
+
+              [div class:"revealButtons"]
+                [var name:"clickReveal2" value:false /]
+
+                [button onClick:`clickReveal2 = !clickReveal2`]
+                  [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal2`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    A new answer
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                [/Conditional]
+              [/div]
+            [/div]
+          [/Case]
+        [/Switch]
+
+      [/div]
+    [/Case]
+    [Case test:"Magnitude"]
+      [div class:"subCenterHead"]
+
+        ## Magnitude
+
+        [hr /]
+
+        **What is a vector?**
+
+        The vector quantity
+
+        ##### Question:
+        The vector [Equation]\vec{a} = \lt 5\times 10^{7}, 3.2 \times 10^{8}, 6.4 \times 10^{7} \gt m/s^{2} [/Equation]. What is [Equation]|\vec{a}|[/Equation]?
+
+        ##### Approach:
+        Use [link text:"NumPy" url: "https://numpy.org/doc/stable/reference/routines.math.html" /], or numpy, to find the magnitude of the vector.
+
+        ##### Uses:
+        Power operator, np.sqrt()
+
+        The code below is split into 4 sections to solve the answer. Click the arrows to learn more about the sections of code used to calculate the magnitude.
+
+            #### Import Statements
+
+              This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer.
+
+              NumPy is a popular package for science computation in python.
+
+              **import** numpy **as** np:
+
+                allows you to use the modules, functions, and objects within the package. In this problem, we need to take the square root, so np.sqrt() can be used.
+
+            #### Given variables
+
+              In this section, organize the variables that are given in a problem.
+
+              The format is generally: variable = numbers
+
+              Note that no units are shown here.
+
+            #### calculate
+
+              Use the variables listed to solve the problem. Set the problem equal to a unique new variable that you can call later.
+
+              * `new_variable = math`
+
+            #### Print the answer
+
+            In this section, take the new variable(s) in the calculation section and output the answer by *printing*.
+
+
+              `print(new_variable)`
+
+            * This will print *only* what the new_variable is equal to, typically a number or set of numbers.
+
+            * Words
+
+        [iframe src:"https://trinket.io/embed/python/6b7499f4e0" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
+
+      [/div]
+    [/Case]
+  [/Switch]
+[/div]

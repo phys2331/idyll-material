@@ -8,3 +8,147 @@
     max-height: 200px;
   }
 }
+
+hr {
+  border: 0;
+  background: #8A655F;
+  height: 2px;
+}
+
+.tabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tabLook button {
+  background-color: inherit;
+  float:left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 20px;
+  width: 33%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #B2432F;
+}
+
+/* Change background color of buttons on hover */
+.tabLook button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tabLook button.active {
+  background-color: #ccc;
+}
+
+.centerHead h2{
+  text-align: center;
+  color: #0B465F;
+}
+
+.centerHead h3, h4{
+  text-align: center;
+  color: #0B465F;
+}
+
+.centerHead h4{
+  font-style: italic;
+}
+
+.problemBody {
+  padding: 1px 20px 1px 20px;
+  text-align: justify;
+  margin: 2%;
+}
+
+.subtabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.subtabLook button {
+  background-color: #ccc;
+  float:left;
+  border: none;
+  padding: 1%;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 15px;
+  width: 20%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #23460A;
+}
+
+/* Change background color of buttons on hover */
+.subtabLook button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.subtabLook button.active {
+  background-color: #ccc;
+}
+
+.subProblemBody {
+  //padding: 100px 20px 1px 20px;
+  text-align: justify;
+  margin: 1%;
+}
+
+.subCenterHead h2{
+  text-align: center;
+  color: #23460A;
+}
+
+.subCenterHead h3, h4{
+  text-align: center;
+  color: #23460A;
+}
+
+.subCenterHead h4{
+  font-style: italic;
+}
+
+.questions {
+  text-align: center;
+}
+
+.revealButtons button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 15px;
+  width: 20%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #23460A;
+  overflow: hidden;
+}
+
+.revealButtons iframe {
+  display: block;
+  margin: auto;
+}
+
+.equations {
+  text-align: center;
+}
+
+.iframe iframe {
+  display: block;
+  margin: auto;
+}
