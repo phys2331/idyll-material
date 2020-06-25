@@ -363,6 +363,9 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     [var name:bottomSign value:0 /]
     [var name:time value:0 /]
 
+
+    // If you want to copy this layout the best way to go is to just copy everything below as well as styles.css
+    // This layout follows example from Parametric Press: https://github.com/ParametricPress/01-on-particle-physics
     [div className:"electric-field-interactive"]
       [div className:"interactive-flex-row"]
         [div style:`{flex: 1}`]
