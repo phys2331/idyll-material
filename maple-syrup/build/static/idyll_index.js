@@ -1,4 +1,127 @@
-require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js":[function(require,module,exports){
+require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _tween2 = require('tween.js');
+
+var _tween3 = _interopRequireDefault(_tween2);
+
+var _raf = require('raf');
+
+var _raf2 = _interopRequireDefault(_raf);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// Example:
+// [EaserToggle value:time targetValue:10 ] Start! [/easer]
+
+var stages = {
+  INITIAL: 0,
+  ANIMATING: 1,
+  FINAL: 2
+};
+
+var isEasing = false;
+
+var animate = function animate() {
+  var update = _tween3.default.update();
+  requestAnimationFrame(animate);
+};
+
+var EaserToggle = function (_React$PureComponent) {
+  _inherits(EaserToggle, _React$PureComponent);
+
+  function EaserToggle(props) {
+    _classCallCheck(this, EaserToggle);
+
+    var _this = _possibleConstructorReturn(this, (EaserToggle.__proto__ || Object.getPrototypeOf(EaserToggle)).call(this, props));
+
+    _this._initialValue = _this.value;
+    _this.state = {
+      stage: stages.INITIAL,
+      isToggleOn: true
+    };
+    // This binding is necessary to make `this` work in the callback
+    _this.handleClick = _this.handleClick.bind(_this);
+    return _this;
+  }
+
+  _createClass(EaserToggle, [{
+    key: 'handleClick',
+    value: function handleClick() {
+      this.setState(function (prevState) {
+        if (this.state.isToggleOn) {
+          this.onClick();
+        } else {
+          this.onStop();
+        }
+        return { isToggleOn: !prevState.isToggleOn };
+      });
+    }
+  }, {
+    key: 'onClick',
+    value: function onClick() {
+      var _this2 = this;
+
+      if (isEasing || this.state.stage !== stages.INITIAL) {
+        return;
+      }
+      isEasing = true;
+      _tween3.default.removeAll();
+      this.setState({ stage: stages.ANIMATING });
+      var _tween = { value: +this.props.value };
+      new _tween3.default.Tween(_tween).to({ value: this.props.targetValue }, 3000) // TODO: add 'time' variable
+      .easing(_tween3.default.Easing.Linear.None).onUpdate(function () {
+        _this2.props.updateProps({ value: _tween.value });
+      }).onStop(function () {
+        _this2.setState({ stage: stages.INITIAL });
+      }).onComplete(function () {
+        isEasing = false;
+        _this2.setState({ stage: stages.INITIAL });
+        _this2.handleClick();
+      }).start();
+
+      animate();
+    }
+  }, {
+    key: 'onStop',
+    value: function onStop() {
+      isEasing = false;
+      _tween3.default.removeAll();
+      this.setState({ stage: stages.INITIAL });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'button',
+        { onClick: this.handleClick },
+        this.state.isToggleOn ? 'Go!' : 'Stop.'
+      );
+    }
+  }]);
+
+  return EaserToggle;
+}(_react2.default.PureComponent);
+
+exports.default = EaserToggle;
+
+},{"raf":"/mnt/d/git/idyll-material/maple-syrup/node_modules/raf/index.js","react":"react","tween.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/tween.js/src/Tween.js"}],"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -46504,7 +46627,47 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '/')
 }
 
-},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/process-nextick-args/index.js":[function(require,module,exports){
+},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/performance-now/lib/performance-now.js":[function(require,module,exports){
+(function (process){
+// Generated by CoffeeScript 1.12.2
+(function() {
+  var getNanoSeconds, hrtime, loadTime, moduleLoadTime, nodeLoadTime, upTime;
+
+  if ((typeof performance !== "undefined" && performance !== null) && performance.now) {
+    module.exports = function() {
+      return performance.now();
+    };
+  } else if ((typeof process !== "undefined" && process !== null) && process.hrtime) {
+    module.exports = function() {
+      return (getNanoSeconds() - nodeLoadTime) / 1e6;
+    };
+    hrtime = process.hrtime;
+    getNanoSeconds = function() {
+      var hr;
+      hr = hrtime();
+      return hr[0] * 1e9 + hr[1];
+    };
+    moduleLoadTime = getNanoSeconds();
+    upTime = process.uptime() * 1e9;
+    nodeLoadTime = moduleLoadTime - upTime;
+  } else if (Date.now) {
+    module.exports = function() {
+      return Date.now() - loadTime;
+    };
+    loadTime = Date.now();
+  } else {
+    module.exports = function() {
+      return new Date().getTime() - loadTime;
+    };
+    loadTime = new Date().getTime();
+  }
+
+}).call(this);
+
+
+
+}).call(this,require('_process'))
+},{"_process":"/mnt/d/git/idyll-material/maple-syrup/node_modules/process/browser.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/process-nextick-args/index.js":[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -47537,7 +47700,86 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 
 module.exports = ReactPropTypesSecret;
 
-},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-dom-factories/index.js":[function(require,module,exports){
+},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/raf/index.js":[function(require,module,exports){
+(function (global){
+var now = require('performance-now')
+  , root = typeof window === 'undefined' ? global : window
+  , vendors = ['moz', 'webkit']
+  , suffix = 'AnimationFrame'
+  , raf = root['request' + suffix]
+  , caf = root['cancel' + suffix] || root['cancelRequest' + suffix]
+
+for(var i = 0; !raf && i < vendors.length; i++) {
+  raf = root[vendors[i] + 'Request' + suffix]
+  caf = root[vendors[i] + 'Cancel' + suffix]
+      || root[vendors[i] + 'CancelRequest' + suffix]
+}
+
+// Some versions of FF have rAF but not cAF
+if(!raf || !caf) {
+  var last = 0
+    , id = 0
+    , queue = []
+    , frameDuration = 1000 / 60
+
+  raf = function(callback) {
+    if(queue.length === 0) {
+      var _now = now()
+        , next = Math.max(0, frameDuration - (_now - last))
+      last = next + _now
+      setTimeout(function() {
+        var cp = queue.slice(0)
+        // Clear queue here to prevent
+        // callbacks from appending listeners
+        // to the current frame's queue
+        queue.length = 0
+        for(var i = 0; i < cp.length; i++) {
+          if(!cp[i].cancelled) {
+            try{
+              cp[i].callback(last)
+            } catch(e) {
+              setTimeout(function() { throw e }, 0)
+            }
+          }
+        }
+      }, Math.round(next))
+    }
+    queue.push({
+      handle: ++id,
+      callback: callback,
+      cancelled: false
+    })
+    return id
+  }
+
+  caf = function(handle) {
+    for(var i = 0; i < queue.length; i++) {
+      if(queue[i].handle === handle) {
+        queue[i].cancelled = true
+      }
+    }
+  }
+}
+
+module.exports = function(fn) {
+  // Wrap in a new function to prevent
+  // `cancel` potentially being assigned
+  // to the native rAF function
+  return raf.call(root, fn)
+}
+module.exports.cancel = function() {
+  caf.apply(root, arguments)
+}
+module.exports.polyfill = function(object) {
+  if (!object) {
+    object = root;
+  }
+  object.requestAnimationFrame = raf
+  object.cancelAnimationFrame = caf
+}
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"performance-now":"/mnt/d/git/idyll-material/maple-syrup/node_modules/performance-now/lib/performance-now.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-dom-factories/index.js":[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -82901,7 +83143,893 @@ module.exports = function (value, locale) {
   })
 }
 
-},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js","upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case/upper-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case-first/upper-case-first.js":[function(require,module,exports){
+},{"no-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/no-case/no-case.js","upper-case":"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case/upper-case.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/tween.js/src/Tween.js":[function(require,module,exports){
+(function (process){
+/**
+ * Tween.js - Licensed under the MIT license
+ * https://github.com/tweenjs/tween.js
+ * ----------------------------------------------
+ *
+ * See https://github.com/tweenjs/tween.js/graphs/contributors for the full list of contributors.
+ * Thank you all, you're awesome!
+ */
+
+var TWEEN = TWEEN || (function () {
+
+	var _tweens = [];
+
+	return {
+
+		getAll: function () {
+
+			return _tweens;
+
+		},
+
+		removeAll: function () {
+
+			_tweens = [];
+
+		},
+
+		add: function (tween) {
+
+			_tweens.push(tween);
+
+		},
+
+		remove: function (tween) {
+
+			var i = _tweens.indexOf(tween);
+
+			if (i !== -1) {
+				_tweens.splice(i, 1);
+			}
+
+		},
+
+		update: function (time, preserve) {
+
+			if (_tweens.length === 0) {
+				return false;
+			}
+
+			var i = 0;
+
+			time = time !== undefined ? time : TWEEN.now();
+
+			while (i < _tweens.length) {
+
+				if (_tweens[i].update(time) || preserve) {
+					i++;
+				} else {
+					_tweens.splice(i, 1);
+				}
+
+			}
+
+			return true;
+
+		}
+	};
+
+})();
+
+
+// Include a performance.now polyfill.
+// In node.js, use process.hrtime.
+if (typeof (window) === 'undefined' && typeof (process) !== 'undefined') {
+	TWEEN.now = function () {
+		var time = process.hrtime();
+
+		// Convert [seconds, nanoseconds] to milliseconds.
+		return time[0] * 1000 + time[1] / 1000000;
+	};
+}
+// In a browser, use window.performance.now if it is available.
+else if (typeof (window) !== 'undefined' &&
+         window.performance !== undefined &&
+		 window.performance.now !== undefined) {
+	// This must be bound, because directly assigning this function
+	// leads to an invocation exception in Chrome.
+	TWEEN.now = window.performance.now.bind(window.performance);
+}
+// Use Date.now if it is available.
+else if (Date.now !== undefined) {
+	TWEEN.now = Date.now;
+}
+// Otherwise, use 'new Date().getTime()'.
+else {
+	TWEEN.now = function () {
+		return new Date().getTime();
+	};
+}
+
+
+TWEEN.Tween = function (object) {
+
+	var _object = object;
+	var _valuesStart = {};
+	var _valuesEnd = {};
+	var _valuesStartRepeat = {};
+	var _duration = 1000;
+	var _repeat = 0;
+	var _repeatDelayTime;
+	var _yoyo = false;
+	var _isPlaying = false;
+	var _reversed = false;
+	var _delayTime = 0;
+	var _startTime = null;
+	var _easingFunction = TWEEN.Easing.Linear.None;
+	var _interpolationFunction = TWEEN.Interpolation.Linear;
+	var _chainedTweens = [];
+	var _onStartCallback = null;
+	var _onStartCallbackFired = false;
+	var _onUpdateCallback = null;
+	var _onCompleteCallback = null;
+	var _onStopCallback = null;
+
+	this.to = function (properties, duration) {
+
+		_valuesEnd = properties;
+
+		if (duration !== undefined) {
+			_duration = duration;
+		}
+
+		return this;
+
+	};
+
+	this.start = function (time) {
+
+		TWEEN.add(this);
+
+		_isPlaying = true;
+
+		_onStartCallbackFired = false;
+
+		_startTime = time !== undefined ? time : TWEEN.now();
+		_startTime += _delayTime;
+
+		for (var property in _valuesEnd) {
+
+			// Check if an Array was provided as property value
+			if (_valuesEnd[property] instanceof Array) {
+
+				if (_valuesEnd[property].length === 0) {
+					continue;
+				}
+
+				// Create a local copy of the Array with the start value at the front
+				_valuesEnd[property] = [_object[property]].concat(_valuesEnd[property]);
+
+			}
+
+			// If `to()` specifies a property that doesn't exist in the source object,
+			// we should not set that property in the object
+			if (_object[property] === undefined) {
+				continue;
+			}
+
+			// Save the starting value.
+			_valuesStart[property] = _object[property];
+
+			if ((_valuesStart[property] instanceof Array) === false) {
+				_valuesStart[property] *= 1.0; // Ensures we're using numbers, not strings
+			}
+
+			_valuesStartRepeat[property] = _valuesStart[property] || 0;
+
+		}
+
+		return this;
+
+	};
+
+	this.stop = function () {
+
+		if (!_isPlaying) {
+			return this;
+		}
+
+		TWEEN.remove(this);
+		_isPlaying = false;
+
+		if (_onStopCallback !== null) {
+			_onStopCallback.call(_object, _object);
+		}
+
+		this.stopChainedTweens();
+		return this;
+
+	};
+
+	this.end = function () {
+
+		this.update(_startTime + _duration);
+		return this;
+
+	};
+
+	this.stopChainedTweens = function () {
+
+		for (var i = 0, numChainedTweens = _chainedTweens.length; i < numChainedTweens; i++) {
+			_chainedTweens[i].stop();
+		}
+
+	};
+
+	this.delay = function (amount) {
+
+		_delayTime = amount;
+		return this;
+
+	};
+
+	this.repeat = function (times) {
+
+		_repeat = times;
+		return this;
+
+	};
+
+	this.repeatDelay = function (amount) {
+
+		_repeatDelayTime = amount;
+		return this;
+
+	};
+
+	this.yoyo = function (yoyo) {
+
+		_yoyo = yoyo;
+		return this;
+
+	};
+
+
+	this.easing = function (easing) {
+
+		_easingFunction = easing;
+		return this;
+
+	};
+
+	this.interpolation = function (interpolation) {
+
+		_interpolationFunction = interpolation;
+		return this;
+
+	};
+
+	this.chain = function () {
+
+		_chainedTweens = arguments;
+		return this;
+
+	};
+
+	this.onStart = function (callback) {
+
+		_onStartCallback = callback;
+		return this;
+
+	};
+
+	this.onUpdate = function (callback) {
+
+		_onUpdateCallback = callback;
+		return this;
+
+	};
+
+	this.onComplete = function (callback) {
+
+		_onCompleteCallback = callback;
+		return this;
+
+	};
+
+	this.onStop = function (callback) {
+
+		_onStopCallback = callback;
+		return this;
+
+	};
+
+	this.update = function (time) {
+
+		var property;
+		var elapsed;
+		var value;
+
+		if (time < _startTime) {
+			return true;
+		}
+
+		if (_onStartCallbackFired === false) {
+
+			if (_onStartCallback !== null) {
+				_onStartCallback.call(_object, _object);
+			}
+
+			_onStartCallbackFired = true;
+		}
+
+		elapsed = (time - _startTime) / _duration;
+		elapsed = elapsed > 1 ? 1 : elapsed;
+
+		value = _easingFunction(elapsed);
+
+		for (property in _valuesEnd) {
+
+			// Don't update properties that do not exist in the source object
+			if (_valuesStart[property] === undefined) {
+				continue;
+			}
+
+			var start = _valuesStart[property] || 0;
+			var end = _valuesEnd[property];
+
+			if (end instanceof Array) {
+
+				_object[property] = _interpolationFunction(end, value);
+
+			} else {
+
+				// Parses relative end values with start as base (e.g.: +10, -3)
+				if (typeof (end) === 'string') {
+
+					if (end.charAt(0) === '+' || end.charAt(0) === '-') {
+						end = start + parseFloat(end);
+					} else {
+						end = parseFloat(end);
+					}
+				}
+
+				// Protect against non numeric properties.
+				if (typeof (end) === 'number') {
+					_object[property] = start + (end - start) * value;
+				}
+
+			}
+
+		}
+
+		if (_onUpdateCallback !== null) {
+			_onUpdateCallback.call(_object, value);
+		}
+
+		if (elapsed === 1) {
+
+			if (_repeat > 0) {
+
+				if (isFinite(_repeat)) {
+					_repeat--;
+				}
+
+				// Reassign starting values, restart by making startTime = now
+				for (property in _valuesStartRepeat) {
+
+					if (typeof (_valuesEnd[property]) === 'string') {
+						_valuesStartRepeat[property] = _valuesStartRepeat[property] + parseFloat(_valuesEnd[property]);
+					}
+
+					if (_yoyo) {
+						var tmp = _valuesStartRepeat[property];
+
+						_valuesStartRepeat[property] = _valuesEnd[property];
+						_valuesEnd[property] = tmp;
+					}
+
+					_valuesStart[property] = _valuesStartRepeat[property];
+
+				}
+
+				if (_yoyo) {
+					_reversed = !_reversed;
+				}
+
+				if (_repeatDelayTime !== undefined) {
+					_startTime = time + _repeatDelayTime;
+				} else {
+					_startTime = time + _delayTime;
+				}
+
+				return true;
+
+			} else {
+
+				if (_onCompleteCallback !== null) {
+
+					_onCompleteCallback.call(_object, _object);
+				}
+
+				for (var i = 0, numChainedTweens = _chainedTweens.length; i < numChainedTweens; i++) {
+					// Make the chained tweens start exactly at the time they should,
+					// even if the `update()` method was called way past the duration of the tween
+					_chainedTweens[i].start(_startTime + _duration);
+				}
+
+				return false;
+
+			}
+
+		}
+
+		return true;
+
+	};
+
+};
+
+
+TWEEN.Easing = {
+
+	Linear: {
+
+		None: function (k) {
+
+			return k;
+
+		}
+
+	},
+
+	Quadratic: {
+
+		In: function (k) {
+
+			return k * k;
+
+		},
+
+		Out: function (k) {
+
+			return k * (2 - k);
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k;
+			}
+
+			return - 0.5 * (--k * (k - 2) - 1);
+
+		}
+
+	},
+
+	Cubic: {
+
+		In: function (k) {
+
+			return k * k * k;
+
+		},
+
+		Out: function (k) {
+
+			return --k * k * k + 1;
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k * k;
+			}
+
+			return 0.5 * ((k -= 2) * k * k + 2);
+
+		}
+
+	},
+
+	Quartic: {
+
+		In: function (k) {
+
+			return k * k * k * k;
+
+		},
+
+		Out: function (k) {
+
+			return 1 - (--k * k * k * k);
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k * k * k;
+			}
+
+			return - 0.5 * ((k -= 2) * k * k * k - 2);
+
+		}
+
+	},
+
+	Quintic: {
+
+		In: function (k) {
+
+			return k * k * k * k * k;
+
+		},
+
+		Out: function (k) {
+
+			return --k * k * k * k * k + 1;
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return 0.5 * k * k * k * k * k;
+			}
+
+			return 0.5 * ((k -= 2) * k * k * k * k + 2);
+
+		}
+
+	},
+
+	Sinusoidal: {
+
+		In: function (k) {
+
+			return 1 - Math.cos(k * Math.PI / 2);
+
+		},
+
+		Out: function (k) {
+
+			return Math.sin(k * Math.PI / 2);
+
+		},
+
+		InOut: function (k) {
+
+			return 0.5 * (1 - Math.cos(Math.PI * k));
+
+		}
+
+	},
+
+	Exponential: {
+
+		In: function (k) {
+
+			return k === 0 ? 0 : Math.pow(1024, k - 1);
+
+		},
+
+		Out: function (k) {
+
+			return k === 1 ? 1 : 1 - Math.pow(2, - 10 * k);
+
+		},
+
+		InOut: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			if ((k *= 2) < 1) {
+				return 0.5 * Math.pow(1024, k - 1);
+			}
+
+			return 0.5 * (- Math.pow(2, - 10 * (k - 1)) + 2);
+
+		}
+
+	},
+
+	Circular: {
+
+		In: function (k) {
+
+			return 1 - Math.sqrt(1 - k * k);
+
+		},
+
+		Out: function (k) {
+
+			return Math.sqrt(1 - (--k * k));
+
+		},
+
+		InOut: function (k) {
+
+			if ((k *= 2) < 1) {
+				return - 0.5 * (Math.sqrt(1 - k * k) - 1);
+			}
+
+			return 0.5 * (Math.sqrt(1 - (k -= 2) * k) + 1);
+
+		}
+
+	},
+
+	Elastic: {
+
+		In: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			return -Math.pow(2, 10 * (k - 1)) * Math.sin((k - 1.1) * 5 * Math.PI);
+
+		},
+
+		Out: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			return Math.pow(2, -10 * k) * Math.sin((k - 0.1) * 5 * Math.PI) + 1;
+
+		},
+
+		InOut: function (k) {
+
+			if (k === 0) {
+				return 0;
+			}
+
+			if (k === 1) {
+				return 1;
+			}
+
+			k *= 2;
+
+			if (k < 1) {
+				return -0.5 * Math.pow(2, 10 * (k - 1)) * Math.sin((k - 1.1) * 5 * Math.PI);
+			}
+
+			return 0.5 * Math.pow(2, -10 * (k - 1)) * Math.sin((k - 1.1) * 5 * Math.PI) + 1;
+
+		}
+
+	},
+
+	Back: {
+
+		In: function (k) {
+
+			var s = 1.70158;
+
+			return k * k * ((s + 1) * k - s);
+
+		},
+
+		Out: function (k) {
+
+			var s = 1.70158;
+
+			return --k * k * ((s + 1) * k + s) + 1;
+
+		},
+
+		InOut: function (k) {
+
+			var s = 1.70158 * 1.525;
+
+			if ((k *= 2) < 1) {
+				return 0.5 * (k * k * ((s + 1) * k - s));
+			}
+
+			return 0.5 * ((k -= 2) * k * ((s + 1) * k + s) + 2);
+
+		}
+
+	},
+
+	Bounce: {
+
+		In: function (k) {
+
+			return 1 - TWEEN.Easing.Bounce.Out(1 - k);
+
+		},
+
+		Out: function (k) {
+
+			if (k < (1 / 2.75)) {
+				return 7.5625 * k * k;
+			} else if (k < (2 / 2.75)) {
+				return 7.5625 * (k -= (1.5 / 2.75)) * k + 0.75;
+			} else if (k < (2.5 / 2.75)) {
+				return 7.5625 * (k -= (2.25 / 2.75)) * k + 0.9375;
+			} else {
+				return 7.5625 * (k -= (2.625 / 2.75)) * k + 0.984375;
+			}
+
+		},
+
+		InOut: function (k) {
+
+			if (k < 0.5) {
+				return TWEEN.Easing.Bounce.In(k * 2) * 0.5;
+			}
+
+			return TWEEN.Easing.Bounce.Out(k * 2 - 1) * 0.5 + 0.5;
+
+		}
+
+	}
+
+};
+
+TWEEN.Interpolation = {
+
+	Linear: function (v, k) {
+
+		var m = v.length - 1;
+		var f = m * k;
+		var i = Math.floor(f);
+		var fn = TWEEN.Interpolation.Utils.Linear;
+
+		if (k < 0) {
+			return fn(v[0], v[1], f);
+		}
+
+		if (k > 1) {
+			return fn(v[m], v[m - 1], m - f);
+		}
+
+		return fn(v[i], v[i + 1 > m ? m : i + 1], f - i);
+
+	},
+
+	Bezier: function (v, k) {
+
+		var b = 0;
+		var n = v.length - 1;
+		var pw = Math.pow;
+		var bn = TWEEN.Interpolation.Utils.Bernstein;
+
+		for (var i = 0; i <= n; i++) {
+			b += pw(1 - k, n - i) * pw(k, i) * v[i] * bn(n, i);
+		}
+
+		return b;
+
+	},
+
+	CatmullRom: function (v, k) {
+
+		var m = v.length - 1;
+		var f = m * k;
+		var i = Math.floor(f);
+		var fn = TWEEN.Interpolation.Utils.CatmullRom;
+
+		if (v[0] === v[m]) {
+
+			if (k < 0) {
+				i = Math.floor(f = m * (1 + k));
+			}
+
+			return fn(v[(i - 1 + m) % m], v[i], v[(i + 1) % m], v[(i + 2) % m], f - i);
+
+		} else {
+
+			if (k < 0) {
+				return v[0] - (fn(v[0], v[0], v[1], v[1], -f) - v[0]);
+			}
+
+			if (k > 1) {
+				return v[m] - (fn(v[m], v[m], v[m - 1], v[m - 1], f - m) - v[m]);
+			}
+
+			return fn(v[i ? i - 1 : 0], v[i], v[m < i + 1 ? m : i + 1], v[m < i + 2 ? m : i + 2], f - i);
+
+		}
+
+	},
+
+	Utils: {
+
+		Linear: function (p0, p1, t) {
+
+			return (p1 - p0) * t + p0;
+
+		},
+
+		Bernstein: function (n, i) {
+
+			var fc = TWEEN.Interpolation.Utils.Factorial;
+
+			return fc(n) / fc(i) / fc(n - i);
+
+		},
+
+		Factorial: (function () {
+
+			var a = [1];
+
+			return function (n) {
+
+				var s = 1;
+
+				if (a[n]) {
+					return a[n];
+				}
+
+				for (var i = n; i > 1; i--) {
+					s *= i;
+				}
+
+				a[n] = s;
+				return s;
+
+			};
+
+		})(),
+
+		CatmullRom: function (p0, p1, p2, p3, t) {
+
+			var v0 = (p2 - p0) * 0.5;
+			var v1 = (p3 - p1) * 0.5;
+			var t2 = t * t;
+			var t3 = t * t2;
+
+			return (2 * p1 - 2 * p2 + v0 + v1) * t3 + (- 3 * p1 + 3 * p2 - 2 * v0 - v1) * t2 + v0 * t + p1;
+
+		}
+
+	}
+
+};
+
+// UMD (Universal Module Definition)
+(function (root) {
+
+	if (typeof define === 'function' && define.amd) {
+
+		// AMD
+		define([], function () {
+			return TWEEN;
+		});
+
+	} else if (typeof module !== 'undefined' && typeof exports === 'object') {
+
+		// Node.js
+		module.exports = TWEEN;
+
+	} else if (root !== undefined) {
+
+		// Global variable
+		root.TWEEN = TWEEN;
+
+	}
+
+})(this);
+
+}).call(this,require('_process'))
+},{"_process":"/mnt/d/git/idyll-material/maple-syrup/node_modules/process/browser.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/upper-case-first/upper-case-first.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 
 /**
@@ -85059,7 +86187,7 @@ function hasOwnProperty(obj, prop) {
 },{"./support/isBuffer":"/mnt/d/git/idyll-material/maple-syrup/node_modules/util/support/isBufferBrowser.js","_process":"/mnt/d/git/idyll-material/maple-syrup/node_modules/process/browser.js","inherits":"/mnt/d/git/idyll-material/maple-syrup/node_modules/util/node_modules/inherits/inherits_browser.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "state" }, "value": { "type": "value", "value": 0 } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "showResult" }, "value": { "type": "value", "value": false } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer" }, "value": { "type": "value", "value": false } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "samemag" }, "value": { "type": "value", "value": false } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "diffmag" }, "value": { "type": "value", "value": false } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "samesign" }, "value": { "type": "value", "value": false } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "diffsign" }, "value": { "type": "value", "value": false } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "smans" }, "value": { "type": "value", "value": false } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "dmans" }, "value": { "type": "value", "value": false } } }, { "id": 11, "type": "var", "properties": { "name": { "type": "value", "value": "ssans" }, "value": { "type": "value", "value": false } } }, { "id": 12, "type": "var", "properties": { "name": { "type": "value", "value": "dsans" }, "value": { "type": "value", "value": false } } }, { "id": 13, "type": "var", "properties": { "name": { "type": "value", "value": "showResult2" }, "value": { "type": "value", "value": false } } }, { "id": 14, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer2" }, "value": { "type": "value", "value": false } } }, { "id": 15, "type": "var", "properties": { "name": { "type": "value", "value": "radioVal" }, "value": { "type": "value", "value": "null" } } }, { "id": 16, "type": "var", "properties": { "name": { "type": "value", "value": "showResult3" }, "value": { "type": "value", "value": false } } }, { "id": 17, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer3" }, "value": { "type": "value", "value": false } } }, { "id": 18, "type": "var", "properties": { "name": { "type": "variable", "value": "particleSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 19, "type": "var", "properties": { "name": { "type": "variable", "value": "leftSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 20, "type": "var", "properties": { "name": { "type": "variable", "value": "rightSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 21, "type": "var", "properties": { "name": { "type": "variable", "value": "topSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 22, "type": "var", "properties": { "name": { "type": "variable", "value": "bottomSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 23, "type": "var", "properties": { "name": { "type": "variable", "value": "time" }, "value": { "type": "value", "value": 0 } } }, { "id": 24, "type": "component", "name": "TextContainer", "children": [{ "id": 25, "type": "meta", "properties": { "title": { "type": "value", "value": "Maple Syrup Worksheet" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 26, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Maple Syrup" }, "subtitle": { "type": "value", "value": "Mass Spectrometry Analysis" }, "author": { "type": "value", "value": "Olivier Tardif-Paradis, Mathieu Riopel, & Cégep Garneau." }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#222222" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 27, "type": "component", "name": "TextContainer", "children": [{ "id": 28, "type": "component", "name": "p", "children": [{ "id": 29, "type": "textnode", "value": " " }, { "id": 30, "type": "component", "name": "em", "children": [{ "id": 31, "type": "textnode", "value": "This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver." }] }, { "id": 32, "type": "textnode", "value": " \n" }] }, { "id": 33, "type": "component", "name": "p", "children": [{ "id": 34, "type": "component", "name": "em", "children": [{ "id": 35, "type": "textnode", "value": "Original date of creation unknown; date listed is last update of this adaptation." }] }, { "id": 36, "type": "textnode", "value": "\n" }] }, { "id": 37, "type": "component", "name": "hr", "children": [] }, { "id": 38, "type": "component", "name": "p", "children": [{ "id": 39, "type": "textnode", "value": "This worksheet has a lot of information; you will not need it all for each individual question. \nIt’s okay if you need to go back and re-read to answer some of these questions." }] }, { "id": 40, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Pouring_Syrup.png" }, "alt": { "type": "value", "value": "\"A metal jug of syrup being poured over a metal trough full of snow.\"" } }, "children": [] }, { "id": 41, "type": "component", "name": "h2", "children": [{ "id": 42, "type": "textnode", "value": "Background" }] }, { "id": 43, "type": "component", "name": "p", "children": [{ "id": 44, "type": "textnode", "value": "In Québec, the return of the warm weather at the end of winter also signals sugaring off time. \nThe maple syrup produced in our good old sugar shacks is one of our most treasured traditions. \nAnd in fact, about 75% of all the maple syrup consumed in the entire world is produced right here in Québec." }] }, { "id": 45, "type": "component", "name": "p", "children": [{ "id": 46, "type": "textnode", "value": "But with the high demand and drive for expansion and quick profits, some maple culturists sometimes dilute their maple syrup with other, less expensive sugar syrups, like corn syrup. \nThis adulteration process is illegal, since it misleads the consumer and hurts the maple culture industry. \nAnd yet this alteration of our national syrup is hard to detect, since it generally changes neither the flavour nor the colour of the syrup. \nOur maple syrup is therefore subject to frequent controls to certify its quality." }] }, { "id": 47, "type": "component", "name": "p", "children": [{ "id": 48, "type": "textnode", "value": "One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. \nIn brief, this technique measures the relative concentrations of different carbon isotopes in various substances. \nSince corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a " }, { "id": 49, "type": "component", "name": "sup", "children": [{ "id": 50, "type": "textnode", "value": "13" }] }, { "id": 51, "type": "textnode", "value": "C ratio that is lower than normal. \nThis isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers." }] }, { "id": 52, "type": "component", "name": "p", "children": [{ "id": 53, "type": "textnode", "value": "Your role is to analyse a maple syrup sample using mass spectrometry. \nTo do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. \nA detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse." }] }, { "id": 54, "type": "component", "name": "p", "children": [{ "id": 55, "type": "textnode", "value": "Our goal as physicists is to learn how we can apply our knowledge of electric and magnetic fields to set up our mass spectrometer." }] }] }, { "id": 56, "type": "component", "name": "Scroller", "properties": { "currentStep": { "type": "variable", "value": "state" } }, "children": [{ "id": 57, "type": "component", "name": "Step", "children": [{ "id": 58, "type": "component", "name": "h3", "children": [{ "id": 59, "type": "textnode", "value": "Three-Step Cycle" }] }, { "id": 60, "type": "component", "name": "p", "children": [{ "id": 61, "type": "component", "name": "strong", "children": [{ "id": 62, "type": "textnode", "value": "The main question:" }] }, { "id": 63, "type": "textnode", "value": " How can we set the initial voltage for our velocity selector such that we can determine whether the syrup is actually maple syrup?" }] }, { "id": 64, "type": "component", "name": "p", "children": [{ "id": 65, "type": "textnode", "value": "As you read the information below, list all the " }, { "id": 66, "type": "component", "name": "em", "children": [{ "id": 67, "type": "textnode", "value": "relevant" }] }, { "id": 68, "type": "textnode", "value": " information you gathered when you read the problem. \n    Based on this information, state what you need to know to solve the problem. \n    As you discover new information, you should summarize and update the relevant information you have gathered and ask new questions." }] }, { "id": 69, "type": "component", "name": "h3", "children": [{ "id": 70, "type": "textnode", "value": "List the Following:" }] }, { "id": 71, "type": "component", "name": "ul", "children": [{ "id": 72, "type": "component", "name": "li", "children": [{ "id": 73, "type": "textnode", "value": "What We Know" }] }, { "id": 74, "type": "component", "name": "li", "children": [{ "id": 75, "type": "textnode", "value": "To Determine" }] }, { "id": 76, "type": "component", "name": "li", "children": [{ "id": 77, "type": "textnode", "value": "Summary" }] }] }] }, { "id": 78, "type": "component", "name": "Step", "children": [{ "id": 79, "type": "component", "name": "h3", "children": [{ "id": 80, "type": "textnode", "value": "Isotopic Ratios – Standards and Definitions" }] }, { "id": 81, "type": "component", "name": "p", "children": [{ "id": 82, "type": "textnode", "value": "The isotopic signature of a substance is established using the concentration ratios of certain stable isotopes found in the substance. \n    For example, the standard ratio between the isotopes 13C and 12C is:" }] }, { "id": 83, "type": "component", "name": "p", "children": [{ "id": 84, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 85, "type": "textnode", "value": "(\\frac{^{13}C}{^{12}C})_{standard} = 0,0112372011237" }] }] }, { "id": 86, "type": "component", "name": "p", "children": [{ "id": 87, "type": "textnode", "value": "which means that the quantity of " }, { "id": 88, "type": "component", "name": "sup", "children": [{ "id": 89, "type": "textnode", "value": "13" }] }, { "id": 90, "type": "textnode", "value": "C atoms generally found in a substance is far lower than the quantity of " }, { "id": 91, "type": "component", "name": "sup", "children": [{ "id": 92, "type": "textnode", "value": "12" }] }, { "id": 93, "type": "textnode", "value": "C atoms.\n    Different substances have an isotopic ratio for carbon that is slightly different. \n    For example, a given plant might have an isotopic ratio of:" }] }, { "id": 94, "type": "component", "name": "p", "children": [{ "id": 95, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 96, "type": "textnode", "value": "\\frac{^{13}C}{^{12}C} = 0,0115850109" }] }] }, { "id": 97, "type": "component", "name": "p", "children": [{ "id": 98, "type": "textnode", "value": "or slightly higher than the standard. \n    The isotopic signature of this substance is then calculated from its isotopic ratio and the standard ratio, using the following formula:" }] }, { "id": 99, "type": "component", "name": "p", "children": [{ "id": 100, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 101, "type": "textnode", "value": "\\delta^{13} = \n      \\frac{(\\frac{^{13}C}{^{12}C})_{standard} - \\frac{^{13}C}{^{12}C}}{\\frac{^{13}C}{^{12}C}} * 1000\\delta^{13}C" }] }, { "id": 102, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 103, "type": "textnode", "value": "= \\frac{\\frac{^{13}C}{^{12}C} - (\\frac{^{13}C}{^{12}C})_{standard}}{(\\frac{^{13}C}{^{12}C})_{standard}} * 1000" }] }, { "id": 104, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 105, "type": "textnode", "value": "= 0,0115850109" }] }] }, { "id": 106, "type": "component", "name": "p", "children": [{ "id": 107, "type": "textnode", "value": "The isotopic signature is therefore basically a deviation expressed in per mil (‰). For the example cited above, the result is δ" }, { "id": 108, "type": "component", "name": "sup", "children": [{ "id": 109, "type": "textnode", "value": "13" }] }, { "id": 110, "type": "textnode", "value": "C = –30." }] }, { "id": 111, "type": "component", "name": "p", "children": [{ "id": 112, "type": "component", "name": "strong", "children": [{ "id": 113, "type": "textnode", "value": "Pure maple syrup has an isotopic signature of δ" }, { "id": 114, "type": "component", "name": "sup", "children": [{ "id": 115, "type": "textnode", "value": "13" }] }, { "id": 116, "type": "textnode", "value": "C = –" }, { "id": 117, "type": "textnode", "value": "2" }, { "id": 118, "type": "textnode", "value": "3" }, { "id": 119, "type": "textnode", "value": "." }, { "id": 120, "type": "textnode", "value": "8" }, { "id": 121, "type": "textnode", "value": "1 " }, { "id": 122, "type": "textnode", "value": "whereas corn syrup has a ratio of δ" }, { "id": 123, "type": "component", "name": "sup", "children": [{ "id": 124, "type": "textnode", "value": "13" }] }, { "id": 125, "type": "textnode", "value": "C=-" }, { "id": 126, "type": "textnode", "value": "1" }, { "id": 127, "type": "textnode", "value": "0" }, { "id": 128, "type": "textnode", "value": "." }, { "id": 129, "type": "textnode", "value": "2" }, { "id": 130, "type": "textnode", "value": "2" }, { "id": 131, "type": "textnode", "value": "." }, { "id": 132, "type": "component", "name": "sup", "children": [{ "id": 133, "type": "textnode", "value": "1" }] }] }, { "id": 134, "type": "textnode", "value": "\n    " }] }, { "id": 135, "type": "component", "name": "hr", "children": [] }, { "id": 136, "type": "component", "name": "p", "children": [{ "id": 137, "type": "component", "name": "sup", "children": [{ "id": 138, "type": "textnode", "value": "1 A. Hope Jaren et al. An isotopic method for quantifying sweeteners derived from corn and sugar cane. " }, { "id": 139, "type": "component", "name": "em", "children": [{ "id": 140, "type": "textnode", "value": "The American Journal of Clinical Nutrition" }] }, { "id": 141, "type": "textnode", "value": " 84 (2006): 1380." }] }] }] }, { "id": 142, "type": "component", "name": "Step", "children": [{ "id": 143, "type": "component", "name": "h2", "children": [{ "id": 144, "type": "textnode", "value": "The Mass Spectrometer" }] }, { "id": 145, "type": "component", "name": "p", "children": [{ "id": 146, "type": "textnode", "value": "Here is a scale diagram of the mass spectrometer that will be used for the analysis." }] }, { "id": 147, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in both French and English. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 148, "type": "component", "name": "h3", "children": [{ "id": 149, "type": "textnode", "value": "Technical Detail" }] }, { "id": 150, "type": "component", "name": "h4", "children": [{ "id": 151, "type": "textnode", "value": "Ionization and Acceleration" }] }, { "id": 152, "type": "component", "name": "p", "children": [{ "id": 153, "type": "textnode", "value": "The sample is fed into the spectrometer as a gas. \n    An electron cannon ionizes the atoms, which acquire a positive charge (" }, { "id": 154, "type": "component", "name": "em", "children": [{ "id": 155, "type": "textnode", "value": "q = +e" }] }, { "id": 156, "type": "textnode", "value": "). \n    These ions are then accelerated and directed toward the velocity selector." }] }, { "id": 157, "type": "component", "name": "p", "children": [{ "id": 158, "type": "component", "name": "em", "children": [{ "id": 159, "type": "textnode", "value": "For this problem, your analysis will concentrate on the velocity selector and the magnetic deflector." }] }, { "id": 160, "type": "textnode", "value": "\n    " }, { "id": 161, "type": "component", "name": "em", "children": [{ "id": 162, "type": "textnode", "value": "We will assume therefore that the ionization and acceleration phase go normally and generate accelerated, positively charged ions that can be analysed by the rest of the spectrometer." }] }] }, { "id": 163, "type": "component", "name": "p", "children": [{ "id": 164, "type": "component", "name": "em", "children": [{ "id": 165, "type": "textnode", "value": "Furthermore, we will assume that the spectrometer will be used to analyse atoms produced in the ionization phase." }] }, { "id": 166, "type": "textnode", "value": "\n    " }, { "id": 167, "type": "component", "name": "em", "children": [{ "id": 168, "type": "textnode", "value": "This is a simplification, because in reality, it is the sugar molecules in the maple syrup sample that are analysed, and they contain several atoms." }] }] }, { "id": 169, "type": "component", "name": "h4", "children": [{ "id": 170, "type": "textnode", "value": "Velocity Selector" }] }, { "id": 171, "type": "component", "name": "p", "children": [{ "id": 172, "type": "textnode", "value": "The velocity selector is in a uniform fixed magnetic field of 300 G directed outward. \n    A potential difference, Δ𝑉𝑠, can be applied between the parallel plates of the velocity selector. \n    This potential difference is varied during the analysis. \n    Only the ions that maintain a rectilinear trajectory (straight) in the velocity selector can reach the magnetic deflector." }] }, { "id": 173, "type": "component", "name": "h4", "children": [{ "id": 174, "type": "textnode", "value": "Magnetic Deflector" }] }, { "id": 175, "type": "component", "name": "p", "children": [{ "id": 176, "type": "textnode", "value": "The magnetic deflector is in a uniform fixed magnetic field of 300 G directed outward. \n    The ions are deviated by 90º from their original direction. \n    Only the electrons on the central trajectory in the deflector can reach the detector due to the collimators at the end of the deflector." }] }, { "id": 177, "type": "component", "name": "h4", "children": [{ "id": 178, "type": "textnode", "value": "Detector" }] }, { "id": 179, "type": "component", "name": "p", "children": [{ "id": 180, "type": "textnode", "value": "The ions reach the detector, an electron multiplier, and generate a current proportional to their number. \n    It is the intensity of this current based on the potential difference, Δ𝑉𝑠, that is used to develop the mass spectrum." }] }] }, { "id": 181, "type": "component", "name": "Step", "children": [{ "id": 182, "type": "component", "name": "h2", "children": [{ "id": 183, "type": "textnode", "value": "Low-resolution Spectrum" }] }, { "id": 184, "type": "component", "name": "p", "children": [{ "id": 185, "type": "textnode", "value": "An initial analysis of the sample was carried out to check that the spectrometer is functioning properly. \n    It shows the signal measured in terms of Δ𝑉𝑠. The resolution is weak and is unable to differentiate isotopes of the same element." }] }, { "id": 186, "type": "component", "name": "p", "children": [{ "id": 187, "type": "textnode", "value": "Use this graph to help you determine the settings required to analyze the carbon isotopic ratios." }] }, { "id": 188, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Sample_Graph.png" }, "alt": { "type": "value", "value": "A graph titled \"Low-resolution Analysis of a Maple Syrup Sample.\" The y-axis is labelled \"Intensity (arbitrary units)\" and the x-axis is labelled \"ΔV_s(V).\" Evenly-spaced orizontal Bars run across the graph, and the x-axis is labelled from 0 to 200 in increments of 50. Just to the right of 50 is a peak that reaches 1 bar. At 100 is a peak that is about 1.25 bars tall. Just left of halfway between 100 and 150 is a peak that comes just shy of the fifth bar. A bit left of 150 is a peak that reaches about 1.75. A bit to the right of 150 is a peak that reaches just past the fifth bar. The rest of the graph is a flat line that seems to represent zero on the y-axis." } }, "children": [] }, { "id": 189, "type": "component", "name": "p", "children": [{ "id": 190, "type": "textnode", "value": "The following questions are intended to help you determine which settings to use for your spectrometer.\n    You will need this information for the final question set." }] }, { "id": 191, "type": "component", "name": "p", "children": [{ "id": 192, "type": "component", "name": "strong", "children": [{ "id": 193, "type": "textnode", "value": "Questions:" }] }, { "id": 194, "type": "textnode", "value": "\n" }] }, { "id": 195, "type": "component", "name": "ol", "children": [{ "id": 196, "type": "component", "name": "li", "children": [{ "id": 197, "type": "textnode", "value": "What does the x-axis represent?" }] }, { "id": 198, "type": "component", "name": "li", "children": [{ "id": 199, "type": "textnode", "value": "What does the y-axis represent?" }] }, { "id": 200, "type": "component", "name": "li", "children": [{ "id": 201, "type": "textnode", "value": "What do the peaks correspond to (in general)?" }] }] }] }, { "id": 202, "type": "component", "name": "Step", "children": [{ "id": 203, "type": "component", "name": "h2", "children": [{ "id": 204, "type": "textnode", "value": "High-Resolution Spectrum" }] }, { "id": 205, "type": "component", "name": "p", "children": [{ "id": 206, "type": "textnode", "value": "Calculate the range of voltages, ΔV" }, { "id": 207, "type": "component", "name": "sub", "children": [{ "id": 208, "type": "textnode", "value": "s" }] }, { "id": 209, "type": "textnode", "value": ", required for an accurate analysis of the carbon-12 and -13 isotopes." }] }, { "id": 210, "type": "component", "name": "ol", "children": [{ "id": 211, "type": "component", "name": "li", "children": [{ "id": 212, "type": "textnode", "value": "Do these values correspond to one of the peaks in the low-resolution graph?" }] }, { "id": 213, "type": "component", "name": "li", "children": [{ "id": 214, "type": "textnode", "value": "Which elements correspond to the other peaks?" }] }] }, { "id": 215, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/HighRes_Sample.png" }, "alt": { "type": "value", "value": "A graph much like the one before, but it now has a grid and is numbered differently. The new title is 'High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes.' There is a peak 1 high at 150 and a peak 25 high at 163." } }, "children": [] }, { "id": 216, "type": "component", "name": "p", "children": [{ "id": 217, "type": "textnode", "value": "Based on the high-resolution graph, determine the isotopic ratio δ" }, { "id": 218, "type": "component", "name": "sup", "children": [{ "id": 219, "type": "textnode", "value": "13" }] }, { "id": 220, "type": "textnode", "value": " C of carbon-13.\n    According to these measurements, does the quality of the maple syrup analysed meet the regulations?" }] }, { "id": 221, "type": "component", "name": "em", "children": [{ "id": 222, "type": "textnode", "value": "Note: The quantity of ions detected for a specific mass is proportional to the area under the curve of the corresponding peak." }] }] }] }, { "id": 223, "type": "component", "name": "Scroller", "children": [{ "id": 224, "type": "component", "name": "Step", "children": [{ "id": 225, "type": "component", "name": "h2", "children": [{ "id": 226, "type": "textnode", "value": "Quiz" }] }, { "id": 227, "type": "component", "name": "p", "children": [{ "id": 228, "type": "textnode", "value": "Before you continue, you may find it helpful to review the following questions. \n    If you wish to skip this part, keep going until the background color changes back to white.\n    If you find you are struggling later on, make sure you are able to answer these questions." }] }] }, { "id": 229, "type": "component", "name": "Step", "children": [{ "id": 230, "type": "component", "name": "p", "children": [{ "id": 231, "type": "textnode", "value": "\n    Which of the following are always true for a parallel plate capacitor? You may check as many or as few boxes as you like, including choosing all or none of them. " }, { "id": 232, "type": "component", "name": "br", "children": [] }] }, { "id": 233, "type": "component", "name": "p", "children": [{ "id": 234, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samemag" } }, "children": [] }, { "id": 235, "type": "textnode", "value": " The charges must have the same magnitude. " }, { "id": 236, "type": "component", "name": "br", "children": [] }, { "id": 237, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffmag" } }, "children": [] }, { "id": 238, "type": "textnode", "value": " The charges cannot have the same magnitude. " }, { "id": 239, "type": "component", "name": "br", "children": [] }, { "id": 240, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samesign" } }, "children": [] }, { "id": 241, "type": "textnode", "value": " The charges must have the same sign (both positive or both negative). " }, { "id": 242, "type": "component", "name": "br", "children": [] }, { "id": 243, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffsign" } }, "children": [] }, { "id": 244, "type": "textnode", "value": " The charges must have opposite signs (one positive and one negative). " }, { "id": 245, "type": "component", "name": "br", "children": [] }] }, { "id": 246, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult = true,smans=samemag,dmans=diffmag,ssans=samesign,dsans=diffsign" } }, "children": [{ "id": 247, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 248, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult" } }, "children": [{ "id": 249, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "smans && !dmans && !ssans && dsans" } }, "children": [{ "id": 250, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 251, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!smans || dmans || ssans || !dsans" } }, "children": [{ "id": 252, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 253, "type": "component", "name": "br", "children": [] }, { "id": 254, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "(smans && dmans) || (ssans && dsans)" } }, "children": [{ "id": 255, "type": "textnode", "value": "\n          At least two of your answers appear to be contradictory. Please re-read the options and try again.\n        " }] }, { "id": 256, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!(smans && dmans) && !(ssans && dsans)" } }, "children": [{ "id": 257, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer = true" } }, "children": [{ "id": 258, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 259, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer" } }, "children": [{ "id": 260, "type": "textnode", "value": "\n            A parallel plate capacitor consists of two capacitors with " }, { "id": 261, "type": "component", "name": "strong", "children": [{ "id": 262, "type": "textnode", "value": "opposite charges" }] }, { "id": 263, "type": "textnode", "value": " but the " }, { "id": 264, "type": "component", "name": "strong", "children": [{ "id": 265, "type": "textnode", "value": "same magnitude" }] }, { "id": 266, "type": "textnode", "value": ".\n          " }] }, { "id": 267, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 268, "type": "component", "name": "Step", "children": [{ "id": 269, "type": "component", "name": "p", "children": [{ "id": 270, "type": "textnode", "value": "The result of a cross-product is a vector whose direction is determined by the two original vectors. \n    Which of the following best describes the angle between the resulting vector and either of the original vectors?\n    " }, { "id": 271, "type": "textnode", "value": " " }] }, { "id": 272, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) The resulting vector is perpindicular to both original vectors.\"}]" } }, "children": [] }, { "id": 273, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) The resulting vector is parallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 274, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) The resulting vector is antiparallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 275, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) The resulting vector is at an obtuse angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 276, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) The resulting vector is at an acute angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 277, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult2 = true" } }, "children": [{ "id": 278, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 279, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult2" } }, "children": [{ "id": 280, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"a\"" } }, "children": [{ "id": 281, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 282, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"a\"" } }, "children": [{ "id": 283, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 284, "type": "component", "name": "br", "children": [] }, { "id": 285, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"b\" || radioVal===\"c\"" } }, "children": [{ "id": 286, "type": "textnode", "value": "\n          Is this always possible? (What happens if the original vectors are always pointing in opposite directions?)\n        " }] }, { "id": 287, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer2 = true" } }, "children": [{ "id": 288, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 289, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer2" } }, "children": [{ "id": 290, "type": "textnode", "value": "\n          The result must be " }, { "id": 291, "type": "component", "name": "strong", "children": [{ "id": 292, "type": "textnode", "value": "perpendicular" }] }, { "id": 293, "type": "textnode", "value": " to the original vectors.\n        " }] }, { "id": 294, "type": "textnode", "value": "  " }] }] }] }, { "id": 295, "type": "component", "name": "Step", "children": [{ "id": 296, "type": "component", "name": "p", "children": [{ "id": 297, "type": "textnode", "value": "In our setup, the magnetic field points out of the page and the particle starts out moving to the right.\n    Which direction is\n    " }, { "id": 298, "type": "component", "name": "equation", "children": [{ "id": 299, "type": "textnode", "value": "\\boldsymbol{v} \\times \\boldsymbol{B}" }] }, { "id": 300, "type": "textnode", "value": "\n    ?" }] }, { "id": 301, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "right" } }, "children": [{ "id": 302, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/directions.png" }, "alt": { "type": "value", "value": "A graphic aid for the answers to the left, in which arrows in each direction are labelled with the letter corresponding to one of the answers." } }, "children": [] }] }, { "id": 303, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) Up\"}]" } }, "children": [] }, { "id": 304, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) Down\"}]" } }, "children": [] }, { "id": 305, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) Left\"}]" } }, "children": [] }, { "id": 306, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) Right\"}]" } }, "children": [] }, { "id": 307, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) Into the page\"}]" } }, "children": [] }, { "id": 308, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"f\",label:\"f) Out of the page\"}]" } }, "children": [] }, { "id": 309, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult3 = true" } }, "children": [{ "id": 310, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 311, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult3" } }, "children": [{ "id": 312, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"b\"" } }, "children": [{ "id": 313, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 314, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"b\"" } }, "children": [{ "id": 315, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 316, "type": "component", "name": "br", "children": [] }, { "id": 317, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"c\" || radioVal===\"d\" || radioVal===\"e\" || radioVal===\"f\"" } }, "children": [{ "id": 318, "type": "component", "name": "em", "children": [{ "id": 319, "type": "textnode", "value": "Keep in mind from the previous question that your answer must be perpendicular both to the velocity and the field." }] }, { "id": 320, "type": "textnode", "value": "\n        " }] }, { "id": 321, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"a\"" } }, "children": [{ "id": 322, "type": "textnode", "value": "\n          If you used the right hand rule, check that you are using it correctly. \n          Also keep in mind that the cross product is not commutative; flipping v and B will give you a different answer.\n        " }] }, { "id": 323, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer3 = true" } }, "children": [{ "id": 324, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 325, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer3" } }, "children": [{ "id": 326, "type": "textnode", "value": "\n          The cross product should point " }, { "id": 327, "type": "component", "name": "strong", "children": [{ "id": 328, "type": "textnode", "value": "down" }] }, { "id": 329, "type": "textnode", "value": ".\n        " }] }, { "id": 330, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 331, "type": "component", "name": "Scroller", "children": [{ "id": 332, "type": "component", "name": "Step", "children": [{ "id": 333, "type": "component", "name": "h2", "children": [{ "id": 334, "type": "textnode", "value": "Setup" }] }, { "id": 335, "type": "component", "name": "p", "children": [{ "id": 336, "type": "textnode", "value": "Now we are going to review the diagram and work on the basic aspects of setup --\n    namely, we will determine in a general sense what the charge on each plate should be." }] }, { "id": 337, "type": "component", "name": "p", "children": [{ "id": 338, "type": "textnode", "value": "In the simplified diagram below, the magnetic field is still pointing out of the screen (and only present to the right of the left set of vertical plates).\n    The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.\n    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move." }] }, { "id": 339, "type": "component", "name": "div", "children": [{ "id": 340, "type": "component", "name": "IdyllApparatusComponent", "properties": { "_url": { "type": "value", "value": "static/SimplifiedSim.json" }, "_regionOfInterest": { "type": "expression", "value": "{ x: [-2, 4], y: [-3, 3] }" }, "_width": { "type": "value", "value": "100%" }, "_height": { "type": "value", "value": 300 }, "particleSign": { "type": "variable", "value": "particleSign" }, "leftSign": { "type": "variable", "value": "leftSign" }, "rightSign": { "type": "variable", "value": "rightSign" }, "topSign": { "type": "variable", "value": "topSign" }, "bottomSign": { "type": "variable", "value": "bottomSign" }, "time": { "type": "variable", "value": "time" } }, "children": [] }] }, { "id": 341, "type": "component", "name": "Float", "children": [{ "id": 342, "type": "component", "name": "br", "children": [] }, { "id": 343, "type": "component", "name": "br", "children": [] }, { "id": 344, "type": "component", "name": "em", "children": [{ "id": 345, "type": "textnode", "value": "This simulation is still under construction" }, { "id": 346, "type": "textnode", "value": "!" }] }, { "id": 347, "type": "textnode", "value": "\n    " }] }, { "id": 348, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "electric-field-interactive" } }, "children": [{ "id": 349, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "interactive-flex-row" } }, "children": [{ "id": 350, "type": "component", "name": "div", "properties": { "style": { "type": "expression", "value": "{flex: 1}" } }, "children": [{ "id": 351, "type": "textnode", "value": "\n          Net charge of the " }, { "id": 352, "type": "component", "name": "strong", "children": [{ "id": 353, "type": "textnode", "value": "atom" }] }, { "id": 354, "type": "textnode", "value": ":\n          " }, { "id": 355, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 356, "type": "textnode", "value": "\n          Charge of the " }, { "id": 357, "type": "component", "name": "strong", "children": [{ "id": 358, "type": "textnode", "value": "top" }] }, { "id": 359, "type": "textnode", "value": " plate:\n          " }, { "id": 360, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "topSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 361, "type": "textnode", "value": "\n          Charge of the " }, { "id": 362, "type": "component", "name": "strong", "children": [{ "id": 363, "type": "textnode", "value": "bottom" }] }, { "id": 364, "type": "textnode", "value": " plate:\n          " }, { "id": 365, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "bottomSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 366, "type": "textnode", "value": "\n          Charge of the " }, { "id": 367, "type": "component", "name": "strong", "children": [{ "id": 368, "type": "textnode", "value": "left" }] }, { "id": 369, "type": "textnode", "value": " plate:\n          " }, { "id": 370, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "leftSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 371, "type": "textnode", "value": "\n          Charge of the " }, { "id": 372, "type": "component", "name": "strong", "children": [{ "id": 373, "type": "textnode", "value": "right" }] }, { "id": 374, "type": "textnode", "value": " plate:\n          " }, { "id": 375, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "rightSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }] }] }] }] }, { "id": 376, "type": "component", "name": "Step", "children": [{ "id": 377, "type": "component", "name": "h2", "children": [{ "id": 378, "type": "textnode", "value": "Settings" }] }, { "id": 379, "type": "component", "name": "p", "children": [{ "id": 380, "type": "textnode", "value": "When choosing your settings, assume that the positioning of everything in the mass spectrometer is static.\n    Also assume that the magnetic field supplied cannot easily be changed.\n    Therefore, the only thing you should be changing are your voltages." }] }, { "id": 381, "type": "component", "name": "p", "children": [{ "id": 382, "type": "textnode", "value": "Here is the setup diagram again for convenience:\n    " }, { "id": 383, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 384, "type": "textnode", "value": "\n    It was mentioned above that the magnetic field is 300[G] (Gauss). \n    You will need to convert this, as the Gauss is not an SI unit.\n    The other known values can be calculated from the diagram." }] }, { "id": 385, "type": "component", "name": "p", "children": [{ "id": 386, "type": "component", "name": "strong", "children": [{ "id": 387, "type": "textnode", "value": "The Question:" }] }, { "id": 388, "type": "textnode", "value": " What is ΔV" }, { "id": 389, "type": "component", "name": "sub", "children": [{ "id": 390, "type": "textnode", "value": "s" }] }, { "id": 391, "type": "textnode", "value": "? You can test this with the simulation in the next step." }] }] }, { "id": 392, "type": "component", "name": "Step", "children": [{ "id": 393, "type": "component", "name": "h2", "children": [{ "id": 394, "type": "textnode", "value": "Simulation" }] }, { "id": 395, "type": "component", "name": "p", "children": [{ "id": 396, "type": "textnode", "value": "This simulation will allow you to change the voltages and see where your carbon atom ends up.\n    " }, { "id": 397, "type": "component", "name": "br", "children": [] }, { "id": 398, "type": "component", "name": "br", "children": [] }, { "id": 399, "type": "component", "name": "em", "children": [{ "id": 400, "type": "textnode", "value": "Simulation coming soon" }, { "id": 401, "type": "textnode", "value": "!" }] }, { "id": 402, "type": "textnode", "value": "(TM)\n  " }] }] }] }, { "id": 403, "type": "component", "name": "TextContainer", "children": [{ "id": 404, "type": "component", "name": "h2", "children": [{ "id": 405, "type": "textnode", "value": "Summary" }] }, { "id": 406, "type": "component", "name": "p", "children": [{ "id": 407, "type": "textnode", "value": "Here I would like to generate a recap of some kind, possibly including expected equations used.\nHowever, I would like for there to be some way to restrict this only to people who have the right answers;\nit doesn’t make sense to lead them through with questions only to have the answer directly provided at the very end." }] }, { "id": 408, "type": "component", "name": "em", "children": [{ "id": 409, "type": "textnode", "value": "Draft Below" }] }, { "id": 410, "type": "component", "name": "p", "children": [{ "id": 411, "type": "textnode", "value": "Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.\nThis required us to understand and apply various relationships, as well as determine where these relationships applied.\nSome relationships you likely used are those between voltage and energy, energy and velocity, velocity and magnetic force, and a central force and the radius of motion that force causes." }] }, { "id": 412, "type": "component", "name": "p", "children": [{ "id": 413, "type": "textnode", "value": "First we had to determine the basics, such as which plates were positive or negative, the distances travelled under certain forces, and where equilibrium had to occur.\nThen we started to determine the specifics, relating magnetic and central forces to determine what the velocity must be:" }] }, { "id": 414, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 415, "type": "textnode", "value": "\\boldsymbol{F}_{central} = \\boldsymbol{F}_{magnetic} = q\\boldsymbol{v}\\times\\boldsymbol{B} = -m\\frac{v^2}{r}\\hat{r}" }] }, { "id": 416, "type": "component", "name": "p", "children": [{ "id": 417, "type": "textnode", "value": "By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.\nDetermining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:" }] }, { "id": 418, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 419, "type": "textnode", "value": "\\boldsymbol{F}_{magnetic} = -\\boldsymbol{F}_{electric} = -q\\boldsymbol{E}" }] }, { "id": 420, "type": "component", "name": "p", "children": [{ "id": 421, "type": "textnode", "value": "While determining the energy allowed us to determine the voltage across the two vertical plates:" }] }, { "id": 422, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 423, "type": "textnode", "value": "KE_{final} = \\Delta KE + KE_{initial} = \\Delta KE = -\\Delta U = -q\\Delta V" }] }, { "id": 424, "type": "component", "name": "p", "children": [{ "id": 425, "type": "textnode", "value": "This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis." }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "state" }, "value": { "type": "value", "value": 0 } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "showResult" }, "value": { "type": "value", "value": false } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer" }, "value": { "type": "value", "value": false } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "samemag" }, "value": { "type": "value", "value": false } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "diffmag" }, "value": { "type": "value", "value": false } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "samesign" }, "value": { "type": "value", "value": false } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "diffsign" }, "value": { "type": "value", "value": false } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "smans" }, "value": { "type": "value", "value": false } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "dmans" }, "value": { "type": "value", "value": false } } }, { "id": 11, "type": "var", "properties": { "name": { "type": "value", "value": "ssans" }, "value": { "type": "value", "value": false } } }, { "id": 12, "type": "var", "properties": { "name": { "type": "value", "value": "dsans" }, "value": { "type": "value", "value": false } } }, { "id": 13, "type": "var", "properties": { "name": { "type": "value", "value": "showResult2" }, "value": { "type": "value", "value": false } } }, { "id": 14, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer2" }, "value": { "type": "value", "value": false } } }, { "id": 15, "type": "var", "properties": { "name": { "type": "value", "value": "radioVal" }, "value": { "type": "value", "value": "null" } } }, { "id": 16, "type": "var", "properties": { "name": { "type": "value", "value": "showResult3" }, "value": { "type": "value", "value": false } } }, { "id": 17, "type": "var", "properties": { "name": { "type": "value", "value": "showAnswer3" }, "value": { "type": "value", "value": false } } }, { "id": 18, "type": "var", "properties": { "name": { "type": "variable", "value": "particleSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 19, "type": "var", "properties": { "name": { "type": "variable", "value": "leftSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 20, "type": "var", "properties": { "name": { "type": "variable", "value": "rightSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 21, "type": "var", "properties": { "name": { "type": "variable", "value": "topSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 22, "type": "var", "properties": { "name": { "type": "variable", "value": "bottomSign" }, "value": { "type": "value", "value": 0 } } }, { "id": 23, "type": "var", "properties": { "name": { "type": "variable", "value": "time" }, "value": { "type": "value", "value": 0 } } }, { "id": 24, "type": "component", "name": "TextContainer", "children": [{ "id": 25, "type": "meta", "properties": { "title": { "type": "value", "value": "Maple Syrup Worksheet" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 26, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Maple Syrup" }, "subtitle": { "type": "value", "value": "Mass Spectrometry Analysis" }, "author": { "type": "value", "value": "Olivier Tardif-Paradis, Mathieu Riopel, & Cégep Garneau." }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#222222" }, "color": { "type": "value", "value": "#ffffff" } }, "children": [] }, { "id": 27, "type": "component", "name": "TextContainer", "children": [{ "id": 28, "type": "component", "name": "p", "children": [{ "id": 29, "type": "textnode", "value": " " }, { "id": 30, "type": "component", "name": "em", "children": [{ "id": 31, "type": "textnode", "value": "This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver." }] }, { "id": 32, "type": "textnode", "value": " \n" }] }, { "id": 33, "type": "component", "name": "p", "children": [{ "id": 34, "type": "component", "name": "em", "children": [{ "id": 35, "type": "textnode", "value": "Original date of creation unknown; date listed is last update of this adaptation." }] }, { "id": 36, "type": "textnode", "value": "\n" }] }, { "id": 37, "type": "component", "name": "hr", "children": [] }, { "id": 38, "type": "component", "name": "p", "children": [{ "id": 39, "type": "textnode", "value": "This worksheet has a lot of information; you will not need it all for each individual question. \nIt’s okay if you need to go back and re-read to answer some of these questions." }] }, { "id": 40, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Pouring_Syrup.png" }, "alt": { "type": "value", "value": "\"A metal jug of syrup being poured over a metal trough full of snow.\"" } }, "children": [] }, { "id": 41, "type": "component", "name": "h2", "children": [{ "id": 42, "type": "textnode", "value": "Background" }] }, { "id": 43, "type": "component", "name": "p", "children": [{ "id": 44, "type": "textnode", "value": "In Québec, the return of the warm weather at the end of winter also signals sugaring off time. \nThe maple syrup produced in our good old sugar shacks is one of our most treasured traditions. \nAnd in fact, about 75% of all the maple syrup consumed in the entire world is produced right here in Québec." }] }, { "id": 45, "type": "component", "name": "p", "children": [{ "id": 46, "type": "textnode", "value": "But with the high demand and drive for expansion and quick profits, some maple culturists sometimes dilute their maple syrup with other, less expensive sugar syrups, like corn syrup. \nThis adulteration process is illegal, since it misleads the consumer and hurts the maple culture industry. \nAnd yet this alteration of our national syrup is hard to detect, since it generally changes neither the flavour nor the colour of the syrup. \nOur maple syrup is therefore subject to frequent controls to certify its quality." }] }, { "id": 47, "type": "component", "name": "p", "children": [{ "id": 48, "type": "textnode", "value": "One of the most common techniques for checking the authenticity of syrup is to analyse the isotopic ratios using mass spectrometry. \nIn brief, this technique measures the relative concentrations of different carbon isotopes in various substances. \nSince corn syrup has slightly less 13C than maple syrup, its presence is detected when a maple syrup sample has a " }, { "id": 49, "type": "component", "name": "sup", "children": [{ "id": 50, "type": "textnode", "value": "13" }] }, { "id": 51, "type": "textnode", "value": "C ratio that is lower than normal. \nThis isotopic signature specific to maple syrup can only be measured by highly sensitive devices, though, such as mass spectrometers." }] }, { "id": 52, "type": "component", "name": "p", "children": [{ "id": 53, "type": "textnode", "value": "Your role is to analyse a maple syrup sample using mass spectrometry. \nTo do this, you will have to determine the different settings to use on the spectrometer and carry out an appropriate analysis of the data collected. \nA detailed description of the spectrometer will be given to you, along with a basic spectrum of the sample to analyse." }] }, { "id": 54, "type": "component", "name": "p", "children": [{ "id": 55, "type": "textnode", "value": "Our goal as physicists is to learn how we can apply our knowledge of electric and magnetic fields to set up our mass spectrometer." }] }] }, { "id": 56, "type": "component", "name": "Scroller", "properties": { "currentStep": { "type": "variable", "value": "state" } }, "children": [{ "id": 57, "type": "component", "name": "Step", "children": [{ "id": 58, "type": "component", "name": "h3", "children": [{ "id": 59, "type": "textnode", "value": "Three-Step Cycle" }] }, { "id": 60, "type": "component", "name": "p", "children": [{ "id": 61, "type": "component", "name": "strong", "children": [{ "id": 62, "type": "textnode", "value": "The main question:" }] }, { "id": 63, "type": "textnode", "value": " How can we set the initial voltage for our velocity selector such that we can determine whether the syrup is actually maple syrup?" }] }, { "id": 64, "type": "component", "name": "p", "children": [{ "id": 65, "type": "textnode", "value": "As you read the information below, list all the " }, { "id": 66, "type": "component", "name": "em", "children": [{ "id": 67, "type": "textnode", "value": "relevant" }] }, { "id": 68, "type": "textnode", "value": " information you gathered when you read the problem. \n    Based on this information, state what you need to know to solve the problem. \n    As you discover new information, you should summarize and update the relevant information you have gathered and ask new questions." }] }, { "id": 69, "type": "component", "name": "h3", "children": [{ "id": 70, "type": "textnode", "value": "List the Following:" }] }, { "id": 71, "type": "component", "name": "ul", "children": [{ "id": 72, "type": "component", "name": "li", "children": [{ "id": 73, "type": "textnode", "value": "What We Know" }] }, { "id": 74, "type": "component", "name": "li", "children": [{ "id": 75, "type": "textnode", "value": "To Determine" }] }, { "id": 76, "type": "component", "name": "li", "children": [{ "id": 77, "type": "textnode", "value": "Summary" }] }] }] }, { "id": 78, "type": "component", "name": "Step", "children": [{ "id": 79, "type": "component", "name": "h3", "children": [{ "id": 80, "type": "textnode", "value": "Isotopic Ratios – Standards and Definitions" }] }, { "id": 81, "type": "component", "name": "p", "children": [{ "id": 82, "type": "textnode", "value": "The isotopic signature of a substance is established using the concentration ratios of certain stable isotopes found in the substance. \n    For example, the standard ratio between the isotopes 13C and 12C is:" }] }, { "id": 83, "type": "component", "name": "p", "children": [{ "id": 84, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 85, "type": "textnode", "value": "(\\frac{^{13}C}{^{12}C})_{standard} = 0,0112372011237" }] }] }, { "id": 86, "type": "component", "name": "p", "children": [{ "id": 87, "type": "textnode", "value": "which means that the quantity of " }, { "id": 88, "type": "component", "name": "sup", "children": [{ "id": 89, "type": "textnode", "value": "13" }] }, { "id": 90, "type": "textnode", "value": "C atoms generally found in a substance is far lower than the quantity of " }, { "id": 91, "type": "component", "name": "sup", "children": [{ "id": 92, "type": "textnode", "value": "12" }] }, { "id": 93, "type": "textnode", "value": "C atoms.\n    Different substances have an isotopic ratio for carbon that is slightly different. \n    For example, a given plant might have an isotopic ratio of:" }] }, { "id": 94, "type": "component", "name": "p", "children": [{ "id": 95, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 96, "type": "textnode", "value": "\\frac{^{13}C}{^{12}C} = 0,0115850109" }] }] }, { "id": 97, "type": "component", "name": "p", "children": [{ "id": 98, "type": "textnode", "value": "or slightly higher than the standard. \n    The isotopic signature of this substance is then calculated from its isotopic ratio and the standard ratio, using the following formula:" }] }, { "id": 99, "type": "component", "name": "p", "children": [{ "id": 100, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 101, "type": "textnode", "value": "\\delta^{13} = \n      \\frac{(\\frac{^{13}C}{^{12}C})_{standard} - \\frac{^{13}C}{^{12}C}}{\\frac{^{13}C}{^{12}C}} * 1000\\delta^{13}C" }] }, { "id": 102, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 103, "type": "textnode", "value": "= \\frac{\\frac{^{13}C}{^{12}C} - (\\frac{^{13}C}{^{12}C})_{standard}}{(\\frac{^{13}C}{^{12}C})_{standard}} * 1000" }] }, { "id": 104, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 105, "type": "textnode", "value": "= 0,0115850109" }] }] }, { "id": 106, "type": "component", "name": "p", "children": [{ "id": 107, "type": "textnode", "value": "The isotopic signature is therefore basically a deviation expressed in per mil (‰). For the example cited above, the result is δ" }, { "id": 108, "type": "component", "name": "sup", "children": [{ "id": 109, "type": "textnode", "value": "13" }] }, { "id": 110, "type": "textnode", "value": "C = –30." }] }, { "id": 111, "type": "component", "name": "p", "children": [{ "id": 112, "type": "component", "name": "strong", "children": [{ "id": 113, "type": "textnode", "value": "Pure maple syrup has an isotopic signature of δ" }, { "id": 114, "type": "component", "name": "sup", "children": [{ "id": 115, "type": "textnode", "value": "13" }] }, { "id": 116, "type": "textnode", "value": "C = –" }, { "id": 117, "type": "textnode", "value": "2" }, { "id": 118, "type": "textnode", "value": "3" }, { "id": 119, "type": "textnode", "value": "." }, { "id": 120, "type": "textnode", "value": "8" }, { "id": 121, "type": "textnode", "value": "1 " }, { "id": 122, "type": "textnode", "value": "whereas corn syrup has a ratio of δ" }, { "id": 123, "type": "component", "name": "sup", "children": [{ "id": 124, "type": "textnode", "value": "13" }] }, { "id": 125, "type": "textnode", "value": "C=-" }, { "id": 126, "type": "textnode", "value": "1" }, { "id": 127, "type": "textnode", "value": "0" }, { "id": 128, "type": "textnode", "value": "." }, { "id": 129, "type": "textnode", "value": "2" }, { "id": 130, "type": "textnode", "value": "2" }, { "id": 131, "type": "textnode", "value": "." }, { "id": 132, "type": "component", "name": "sup", "children": [{ "id": 133, "type": "textnode", "value": "1" }] }] }, { "id": 134, "type": "textnode", "value": "\n    " }] }, { "id": 135, "type": "component", "name": "hr", "children": [] }, { "id": 136, "type": "component", "name": "p", "children": [{ "id": 137, "type": "component", "name": "sup", "children": [{ "id": 138, "type": "textnode", "value": "1 A. Hope Jaren et al. An isotopic method for quantifying sweeteners derived from corn and sugar cane. " }, { "id": 139, "type": "component", "name": "em", "children": [{ "id": 140, "type": "textnode", "value": "The American Journal of Clinical Nutrition" }] }, { "id": 141, "type": "textnode", "value": " 84 (2006): 1380." }] }] }] }, { "id": 142, "type": "component", "name": "Step", "children": [{ "id": 143, "type": "component", "name": "h2", "children": [{ "id": 144, "type": "textnode", "value": "The Mass Spectrometer" }] }, { "id": 145, "type": "component", "name": "p", "children": [{ "id": 146, "type": "textnode", "value": "Here is a scale diagram of the mass spectrometer that will be used for the analysis." }] }, { "id": 147, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in both French and English. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 148, "type": "component", "name": "h3", "children": [{ "id": 149, "type": "textnode", "value": "Technical Detail" }] }, { "id": 150, "type": "component", "name": "h4", "children": [{ "id": 151, "type": "textnode", "value": "Ionization and Acceleration" }] }, { "id": 152, "type": "component", "name": "p", "children": [{ "id": 153, "type": "textnode", "value": "The sample is fed into the spectrometer as a gas. \n    An electron cannon ionizes the atoms, which acquire a positive charge (" }, { "id": 154, "type": "component", "name": "em", "children": [{ "id": 155, "type": "textnode", "value": "q = +e" }] }, { "id": 156, "type": "textnode", "value": "). \n    These ions are then accelerated and directed toward the velocity selector." }] }, { "id": 157, "type": "component", "name": "p", "children": [{ "id": 158, "type": "component", "name": "em", "children": [{ "id": 159, "type": "textnode", "value": "For this problem, your analysis will concentrate on the velocity selector and the magnetic deflector." }] }, { "id": 160, "type": "textnode", "value": "\n    " }, { "id": 161, "type": "component", "name": "em", "children": [{ "id": 162, "type": "textnode", "value": "We will assume therefore that the ionization and acceleration phase go normally and generate accelerated, positively charged ions that can be analysed by the rest of the spectrometer." }] }] }, { "id": 163, "type": "component", "name": "p", "children": [{ "id": 164, "type": "component", "name": "em", "children": [{ "id": 165, "type": "textnode", "value": "Furthermore, we will assume that the spectrometer will be used to analyse atoms produced in the ionization phase." }] }, { "id": 166, "type": "textnode", "value": "\n    " }, { "id": 167, "type": "component", "name": "em", "children": [{ "id": 168, "type": "textnode", "value": "This is a simplification, because in reality, it is the sugar molecules in the maple syrup sample that are analysed, and they contain several atoms." }] }] }, { "id": 169, "type": "component", "name": "h4", "children": [{ "id": 170, "type": "textnode", "value": "Velocity Selector" }] }, { "id": 171, "type": "component", "name": "p", "children": [{ "id": 172, "type": "textnode", "value": "The velocity selector is in a uniform fixed magnetic field of 300 G directed outward. \n    A potential difference, Δ𝑉𝑠, can be applied between the parallel plates of the velocity selector. \n    This potential difference is varied during the analysis. \n    Only the ions that maintain a rectilinear trajectory (straight) in the velocity selector can reach the magnetic deflector." }] }, { "id": 173, "type": "component", "name": "h4", "children": [{ "id": 174, "type": "textnode", "value": "Magnetic Deflector" }] }, { "id": 175, "type": "component", "name": "p", "children": [{ "id": 176, "type": "textnode", "value": "The magnetic deflector is in a uniform fixed magnetic field of 300 G directed outward. \n    The ions are deviated by 90º from their original direction. \n    Only the electrons on the central trajectory in the deflector can reach the detector due to the collimators at the end of the deflector." }] }, { "id": 177, "type": "component", "name": "h4", "children": [{ "id": 178, "type": "textnode", "value": "Detector" }] }, { "id": 179, "type": "component", "name": "p", "children": [{ "id": 180, "type": "textnode", "value": "The ions reach the detector, an electron multiplier, and generate a current proportional to their number. \n    It is the intensity of this current based on the potential difference, Δ𝑉𝑠, that is used to develop the mass spectrum." }] }] }, { "id": 181, "type": "component", "name": "Step", "children": [{ "id": 182, "type": "component", "name": "h2", "children": [{ "id": 183, "type": "textnode", "value": "Low-resolution Spectrum" }] }, { "id": 184, "type": "component", "name": "p", "children": [{ "id": 185, "type": "textnode", "value": "An initial analysis of the sample was carried out to check that the spectrometer is functioning properly. \n    It shows the signal measured in terms of Δ𝑉𝑠. The resolution is weak and is unable to differentiate isotopes of the same element." }] }, { "id": 186, "type": "component", "name": "p", "children": [{ "id": 187, "type": "textnode", "value": "Use this graph to help you determine the settings required to analyze the carbon isotopic ratios." }] }, { "id": 188, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Sample_Graph.png" }, "alt": { "type": "value", "value": "A graph titled \"Low-resolution Analysis of a Maple Syrup Sample.\" The y-axis is labelled \"Intensity (arbitrary units)\" and the x-axis is labelled \"ΔV_s(V).\" Evenly-spaced orizontal Bars run across the graph, and the x-axis is labelled from 0 to 200 in increments of 50. Just to the right of 50 is a peak that reaches 1 bar. At 100 is a peak that is about 1.25 bars tall. Just left of halfway between 100 and 150 is a peak that comes just shy of the fifth bar. A bit left of 150 is a peak that reaches about 1.75. A bit to the right of 150 is a peak that reaches just past the fifth bar. The rest of the graph is a flat line that seems to represent zero on the y-axis." } }, "children": [] }, { "id": 189, "type": "component", "name": "p", "children": [{ "id": 190, "type": "textnode", "value": "The following questions are intended to help you determine which settings to use for your spectrometer.\n    You will need this information for the final question set." }] }, { "id": 191, "type": "component", "name": "p", "children": [{ "id": 192, "type": "component", "name": "strong", "children": [{ "id": 193, "type": "textnode", "value": "Questions:" }] }, { "id": 194, "type": "textnode", "value": "\n" }] }, { "id": 195, "type": "component", "name": "ol", "children": [{ "id": 196, "type": "component", "name": "li", "children": [{ "id": 197, "type": "textnode", "value": "What does the x-axis represent?" }] }, { "id": 198, "type": "component", "name": "li", "children": [{ "id": 199, "type": "textnode", "value": "What does the y-axis represent?" }] }, { "id": 200, "type": "component", "name": "li", "children": [{ "id": 201, "type": "textnode", "value": "What do the peaks correspond to (in general)?" }] }] }] }, { "id": 202, "type": "component", "name": "Step", "children": [{ "id": 203, "type": "component", "name": "h2", "children": [{ "id": 204, "type": "textnode", "value": "High-Resolution Spectrum" }] }, { "id": 205, "type": "component", "name": "p", "children": [{ "id": 206, "type": "textnode", "value": "Calculate the range of voltages, ΔV" }, { "id": 207, "type": "component", "name": "sub", "children": [{ "id": 208, "type": "textnode", "value": "s" }] }, { "id": 209, "type": "textnode", "value": ", required for an accurate analysis of the carbon-12 and -13 isotopes." }] }, { "id": 210, "type": "component", "name": "ol", "children": [{ "id": 211, "type": "component", "name": "li", "children": [{ "id": 212, "type": "textnode", "value": "Do these values correspond to one of the peaks in the low-resolution graph?" }] }, { "id": 213, "type": "component", "name": "li", "children": [{ "id": 214, "type": "textnode", "value": "Which elements correspond to the other peaks?" }] }] }, { "id": 215, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/HighRes_Sample.png" }, "alt": { "type": "value", "value": "A graph much like the one before, but it now has a grid and is numbered differently. The new title is 'High-resolution Analysis of a Maple Syrup Sample: Peaks for Carbon-12 and -13 Isotopes.' There is a peak 1 high at 150 and a peak 25 high at 163." } }, "children": [] }, { "id": 216, "type": "component", "name": "p", "children": [{ "id": 217, "type": "textnode", "value": "Based on the high-resolution graph, determine the isotopic ratio δ" }, { "id": 218, "type": "component", "name": "sup", "children": [{ "id": 219, "type": "textnode", "value": "13" }] }, { "id": 220, "type": "textnode", "value": " C of carbon-13.\n    According to these measurements, does the quality of the maple syrup analysed meet the regulations?" }] }, { "id": 221, "type": "component", "name": "em", "children": [{ "id": 222, "type": "textnode", "value": "Note: The quantity of ions detected for a specific mass is proportional to the area under the curve of the corresponding peak." }] }] }] }, { "id": 223, "type": "component", "name": "Scroller", "children": [{ "id": 224, "type": "component", "name": "Step", "children": [{ "id": 225, "type": "component", "name": "h2", "children": [{ "id": 226, "type": "textnode", "value": "Quiz" }] }, { "id": 227, "type": "component", "name": "p", "children": [{ "id": 228, "type": "textnode", "value": "Before you continue, you may find it helpful to review the following questions. \n    If you wish to skip this part, keep going until the background color changes back to white.\n    If you find you are struggling later on, make sure you are able to answer these questions." }] }] }, { "id": 229, "type": "component", "name": "Step", "children": [{ "id": 230, "type": "component", "name": "p", "children": [{ "id": 231, "type": "textnode", "value": "\n    Which of the following are always true for a parallel plate capacitor? You may check as many or as few boxes as you like, including choosing all or none of them. " }, { "id": 232, "type": "component", "name": "br", "children": [] }] }, { "id": 233, "type": "component", "name": "p", "children": [{ "id": 234, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samemag" } }, "children": [] }, { "id": 235, "type": "textnode", "value": " The charges must have the same magnitude. " }, { "id": 236, "type": "component", "name": "br", "children": [] }, { "id": 237, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffmag" } }, "children": [] }, { "id": 238, "type": "textnode", "value": " The charges cannot have the same magnitude. " }, { "id": 239, "type": "component", "name": "br", "children": [] }, { "id": 240, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "samesign" } }, "children": [] }, { "id": 241, "type": "textnode", "value": " The charges must have the same sign (both positive or both negative). " }, { "id": 242, "type": "component", "name": "br", "children": [] }, { "id": 243, "type": "component", "name": "Boolean", "properties": { "value": { "type": "variable", "value": "diffsign" } }, "children": [] }, { "id": 244, "type": "textnode", "value": " The charges must have opposite signs (one positive and one negative). " }, { "id": 245, "type": "component", "name": "br", "children": [] }] }, { "id": 246, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult = true,smans=samemag,dmans=diffmag,ssans=samesign,dsans=diffsign" } }, "children": [{ "id": 247, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 248, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult" } }, "children": [{ "id": 249, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "smans && !dmans && !ssans && dsans" } }, "children": [{ "id": 250, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 251, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!smans || dmans || ssans || !dsans" } }, "children": [{ "id": 252, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 253, "type": "component", "name": "br", "children": [] }, { "id": 254, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "(smans && dmans) || (ssans && dsans)" } }, "children": [{ "id": 255, "type": "textnode", "value": "\n          At least two of your answers appear to be contradictory. Please re-read the options and try again.\n        " }] }, { "id": 256, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "!(smans && dmans) && !(ssans && dsans)" } }, "children": [{ "id": 257, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer = true" } }, "children": [{ "id": 258, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 259, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer" } }, "children": [{ "id": 260, "type": "textnode", "value": "\n            A parallel plate capacitor consists of two capacitors with " }, { "id": 261, "type": "component", "name": "strong", "children": [{ "id": 262, "type": "textnode", "value": "opposite charges" }] }, { "id": 263, "type": "textnode", "value": " but the " }, { "id": 264, "type": "component", "name": "strong", "children": [{ "id": 265, "type": "textnode", "value": "same magnitude" }] }, { "id": 266, "type": "textnode", "value": ".\n          " }] }, { "id": 267, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 268, "type": "component", "name": "Step", "children": [{ "id": 269, "type": "component", "name": "p", "children": [{ "id": 270, "type": "textnode", "value": "The result of a cross-product is a vector whose direction is determined by the two original vectors. \n    Which of the following best describes the angle between the resulting vector and either of the original vectors?\n    " }, { "id": 271, "type": "textnode", "value": " " }] }, { "id": 272, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) The resulting vector is perpindicular to both original vectors.\"}]" } }, "children": [] }, { "id": 273, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) The resulting vector is parallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 274, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) The resulting vector is antiparallel to both of the original vectors.\"}]" } }, "children": [] }, { "id": 275, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) The resulting vector is at an obtuse angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 276, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult2=false,showAnswer2=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) The resulting vector is at an acute angle to both of the original vectors.\"}]" } }, "children": [] }, { "id": 277, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult2 = true" } }, "children": [{ "id": 278, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 279, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult2" } }, "children": [{ "id": 280, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"a\"" } }, "children": [{ "id": 281, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 282, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"a\"" } }, "children": [{ "id": 283, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 284, "type": "component", "name": "br", "children": [] }, { "id": 285, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"b\" || radioVal===\"c\"" } }, "children": [{ "id": 286, "type": "textnode", "value": "\n          Is this always possible? (What happens if the original vectors are always pointing in opposite directions?)\n        " }] }, { "id": 287, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer2 = true" } }, "children": [{ "id": 288, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 289, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer2" } }, "children": [{ "id": 290, "type": "textnode", "value": "\n          The result must be " }, { "id": 291, "type": "component", "name": "strong", "children": [{ "id": 292, "type": "textnode", "value": "perpendicular" }] }, { "id": 293, "type": "textnode", "value": " to the original vectors.\n        " }] }, { "id": 294, "type": "textnode", "value": "  " }] }] }] }, { "id": 295, "type": "component", "name": "Step", "children": [{ "id": 296, "type": "component", "name": "p", "children": [{ "id": 297, "type": "textnode", "value": "In our setup, the magnetic field points out of the page and the particle starts out moving to the right.\n    Which direction is\n    " }, { "id": 298, "type": "component", "name": "equation", "children": [{ "id": 299, "type": "textnode", "value": "\\boldsymbol{v} \\times \\boldsymbol{B}" }] }, { "id": 300, "type": "textnode", "value": "\n    ?" }] }, { "id": 301, "type": "component", "name": "Float", "properties": { "position": { "type": "value", "value": "right" } }, "children": [{ "id": 302, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/directions.png" }, "alt": { "type": "value", "value": "A graphic aid for the answers to the left, in which arrows in each direction are labelled with the letter corresponding to one of the answers." } }, "children": [] }] }, { "id": 303, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"a\",label:\"a) Up\"}]" } }, "children": [] }, { "id": 304, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"b\",label:\"b) Down\"}]" } }, "children": [] }, { "id": 305, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"c\",label:\"c) Left\"}]" } }, "children": [] }, { "id": 306, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"d\",label:\"d) Right\"}]" } }, "children": [] }, { "id": 307, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"e\",label:\"e) Into the page\"}]" } }, "children": [] }, { "id": 308, "type": "component", "name": "Radio", "properties": { "value": { "type": "variable", "value": "radioVal" }, "onClick": { "type": "expression", "value": "showResult3=false,showAnswer3=false" }, "options": { "type": "expression", "value": "[{value:\"f\",label:\"f) Out of the page\"}]" } }, "children": [] }, { "id": 309, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showResult3 = true" } }, "children": [{ "id": 310, "type": "textnode", "value": "\n      Check Answer\n    " }] }, { "id": 311, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showResult3" } }, "children": [{ "id": 312, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal === \"b\"" } }, "children": [{ "id": 313, "type": "textnode", "value": "\n        Correct!" }] }, { "id": 314, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal != \"b\"" } }, "children": [{ "id": 315, "type": "textnode", "value": "\n        Your answer is incorrect. " }, { "id": 316, "type": "component", "name": "br", "children": [] }, { "id": 317, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"c\" || radioVal===\"d\" || radioVal===\"e\" || radioVal===\"f\"" } }, "children": [{ "id": 318, "type": "component", "name": "em", "children": [{ "id": 319, "type": "textnode", "value": "Keep in mind from the previous question that your answer must be perpendicular both to the velocity and the field." }] }, { "id": 320, "type": "textnode", "value": "\n        " }] }, { "id": 321, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "radioVal===\"a\"" } }, "children": [{ "id": 322, "type": "textnode", "value": "\n          If you used the right hand rule, check that you are using it correctly. \n          Also keep in mind that the cross product is not commutative; flipping v and B will give you a different answer.\n        " }] }, { "id": 323, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "showAnswer3 = true" } }, "children": [{ "id": 324, "type": "textnode", "value": "Show Correct Answer" }] }, { "id": 325, "type": "component", "name": "Conditional", "properties": { "if": { "type": "expression", "value": "showAnswer3" } }, "children": [{ "id": 326, "type": "textnode", "value": "\n          The cross product should point " }, { "id": 327, "type": "component", "name": "strong", "children": [{ "id": 328, "type": "textnode", "value": "down" }] }, { "id": 329, "type": "textnode", "value": ".\n        " }] }, { "id": 330, "type": "textnode", "value": "  " }] }] }] }] }, { "id": 331, "type": "component", "name": "Scroller", "children": [{ "id": 332, "type": "component", "name": "Step", "children": [{ "id": 333, "type": "component", "name": "h2", "children": [{ "id": 334, "type": "textnode", "value": "Setup" }] }, { "id": 335, "type": "component", "name": "p", "children": [{ "id": 336, "type": "textnode", "value": "Now we are going to review the diagram and work on the basic aspects of setup --\n    namely, we will determine in a general sense what the charge on each plate should be." }] }, { "id": 337, "type": "component", "name": "p", "children": [{ "id": 338, "type": "textnode", "value": "In the simplified diagram below, the magnetic field is still pointing out of the screen (and only present to the right of the left set of vertical plates).\n    The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.\n    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move." }] }, { "id": 339, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "electric-field-interactive" } }, "children": [{ "id": 340, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "interactive-flex-row" } }, "children": [{ "id": 341, "type": "component", "name": "div", "properties": { "style": { "type": "expression", "value": "{flex: 1}" } }, "children": [{ "id": 342, "type": "textnode", "value": "\n          Net charge of the " }, { "id": 343, "type": "component", "name": "strong", "children": [{ "id": 344, "type": "textnode", "value": "atom" }] }, { "id": 345, "type": "textnode", "value": ":\n          " }, { "id": 346, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "particleSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 347, "type": "textnode", "value": "\n          Charge of the " }, { "id": 348, "type": "component", "name": "strong", "children": [{ "id": 349, "type": "textnode", "value": "top" }] }, { "id": 350, "type": "textnode", "value": " plate:\n          " }, { "id": 351, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "topSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 352, "type": "textnode", "value": "\n          Charge of the " }, { "id": 353, "type": "component", "name": "strong", "children": [{ "id": 354, "type": "textnode", "value": "bottom" }] }, { "id": 355, "type": "textnode", "value": " plate:\n          " }, { "id": 356, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "bottomSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 357, "type": "textnode", "value": "\n          Charge of the " }, { "id": 358, "type": "component", "name": "strong", "children": [{ "id": 359, "type": "textnode", "value": "left" }] }, { "id": 360, "type": "textnode", "value": " plate:\n          " }, { "id": 361, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "leftSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }, { "id": 362, "type": "textnode", "value": "\n          Charge of the " }, { "id": 363, "type": "component", "name": "strong", "children": [{ "id": 364, "type": "textnode", "value": "right" }] }, { "id": 365, "type": "textnode", "value": " plate:\n          " }, { "id": 366, "type": "component", "name": "MultiButton", "properties": { "reset": { "type": "variable", "value": "time" }, "value": { "type": "variable", "value": "rightSign" }, "options": { "type": "expression", "value": "[{ value:-1,label:\"-\"},{value:0,label:\"=\"},{value:1,label:\"+\"}]" } }, "children": [] }] }, { "id": 367, "type": "component", "name": "div", "properties": { "style": { "type": "expression", "value": "{flex: 2}" }, "className": { "type": "value", "value": "electric-field-interactive-apparatus-container" } }, "children": [{ "id": 368, "type": "component", "name": "IdyllApparatusComponent", "properties": { "_url": { "type": "value", "value": "static/SimplifiedSim.json" }, "_regionOfInterest": { "type": "expression", "value": "{ x: [-2, 4], y: [-3, 3] }" }, "_width": { "type": "value", "value": "100%" }, "_height": { "type": "value", "value": 300 }, "particleSign": { "type": "variable", "value": "particleSign" }, "leftSign": { "type": "variable", "value": "leftSign" }, "rightSign": { "type": "variable", "value": "rightSign" }, "topSign": { "type": "variable", "value": "topSign" }, "bottomSign": { "type": "variable", "value": "bottomSign" }, "time": { "type": "variable", "value": "time" } }, "children": [] }, { "id": 369, "type": "component", "name": "div", "properties": { "style": { "type": "expression", "value": "{display:'flex', flexDirection:'row'}" } }, "children": [{ "id": 370, "type": "component", "name": "EaserToggle", "properties": { "value": { "type": "variable", "value": "time" }, "targetValue": { "type": "value", "value": 100 }, "time": { "type": "value", "value": 5000 } }, "children": [{ "id": 371, "type": "textnode", "value": "Accelerate!" }] }, { "id": 372, "type": "component", "name": "Button", "properties": { "onClick": { "type": "expression", "value": "time=0" } }, "children": [{ "id": 373, "type": "textnode", "value": "Reset" }] }] }] }] }] }] }, { "id": 374, "type": "component", "name": "Step", "children": [{ "id": 375, "type": "component", "name": "h2", "children": [{ "id": 376, "type": "textnode", "value": "Settings" }] }, { "id": 377, "type": "component", "name": "p", "children": [{ "id": 378, "type": "textnode", "value": "When choosing your settings, assume that the positioning of everything in the mass spectrometer is static.\n    Also assume that the magnetic field supplied cannot easily be changed.\n    Therefore, the only thing you should be changing are your voltages." }] }, { "id": 379, "type": "component", "name": "p", "children": [{ "id": 380, "type": "textnode", "value": "Here is the setup diagram again for convenience:\n    " }, { "id": 381, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "static/images/Spectrometer_Diagram.png" }, "alt": { "type": "value", "value": "A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector." } }, "children": [] }, { "id": 382, "type": "textnode", "value": "\n    It was mentioned above that the magnetic field is 300[G] (Gauss). \n    You will need to convert this, as the Gauss is not an SI unit.\n    The other known values can be calculated from the diagram." }] }, { "id": 383, "type": "component", "name": "p", "children": [{ "id": 384, "type": "component", "name": "strong", "children": [{ "id": 385, "type": "textnode", "value": "The Question:" }] }, { "id": 386, "type": "textnode", "value": " What is ΔV" }, { "id": 387, "type": "component", "name": "sub", "children": [{ "id": 388, "type": "textnode", "value": "s" }] }, { "id": 389, "type": "textnode", "value": "? You can test this with the simulation in the next step." }] }] }, { "id": 390, "type": "component", "name": "Step", "children": [{ "id": 391, "type": "component", "name": "h2", "children": [{ "id": 392, "type": "textnode", "value": "Simulation" }] }, { "id": 393, "type": "component", "name": "p", "children": [{ "id": 394, "type": "textnode", "value": "This simulation will allow you to change the voltages and see where your carbon atom ends up.\n    " }, { "id": 395, "type": "component", "name": "br", "children": [] }, { "id": 396, "type": "component", "name": "br", "children": [] }, { "id": 397, "type": "component", "name": "em", "children": [{ "id": 398, "type": "textnode", "value": "Simulation coming soon" }, { "id": 399, "type": "textnode", "value": "!" }] }, { "id": 400, "type": "textnode", "value": "(TM)\n  " }] }] }] }, { "id": 401, "type": "component", "name": "TextContainer", "children": [{ "id": 402, "type": "component", "name": "h2", "children": [{ "id": 403, "type": "textnode", "value": "Summary" }] }, { "id": 404, "type": "component", "name": "p", "children": [{ "id": 405, "type": "textnode", "value": "Here I would like to generate a recap of some kind, possibly including expected equations used.\nHowever, I would like for there to be some way to restrict this only to people who have the right answers;\nit doesn’t make sense to lead them through with questions only to have the answer directly provided at the very end." }] }, { "id": 406, "type": "component", "name": "em", "children": [{ "id": 407, "type": "textnode", "value": "Draft Below" }] }, { "id": 408, "type": "component", "name": "p", "children": [{ "id": 409, "type": "textnode", "value": "Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.\nThis required us to understand and apply various relationships, as well as determine where these relationships applied.\nSome relationships you likely used are those between voltage and energy, energy and velocity, velocity and magnetic force, and a central force and the radius of motion that force causes." }] }, { "id": 410, "type": "component", "name": "p", "children": [{ "id": 411, "type": "textnode", "value": "First we had to determine the basics, such as which plates were positive or negative, the distances travelled under certain forces, and where equilibrium had to occur.\nThen we started to determine the specifics, relating magnetic and central forces to determine what the velocity must be:" }] }, { "id": 412, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 413, "type": "textnode", "value": "\\boldsymbol{F}_{central} = \\boldsymbol{F}_{magnetic} = q\\boldsymbol{v}\\times\\boldsymbol{B} = -m\\frac{v^2}{r}\\hat{r}" }] }, { "id": 414, "type": "component", "name": "p", "children": [{ "id": 415, "type": "textnode", "value": "By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.\nDetermining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:" }] }, { "id": 416, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 417, "type": "textnode", "value": "\\boldsymbol{F}_{magnetic} = -\\boldsymbol{F}_{electric} = -q\\boldsymbol{E}" }] }, { "id": 418, "type": "component", "name": "p", "children": [{ "id": 419, "type": "textnode", "value": "While determining the energy allowed us to determine the voltage across the two vertical plates:" }] }, { "id": 420, "type": "component", "name": "equation", "properties": { "display": { "type": "value", "value": "true" } }, "children": [{ "id": 421, "type": "textnode", "value": "KE_{final} = \\Delta KE + KE_{initial} = \\Delta KE = -\\Delta U = -q\\Delta V" }] }, { "id": 422, "type": "component", "name": "p", "children": [{ "id": 423, "type": "textnode", "value": "This information allowed us to determine the voltages across both sets of parallel plates, setting up our velocity selector for analysis." }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -85078,11 +86206,12 @@ module.exports = {
 	'conditional': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js'),
 	'radio': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js'),
 	'float': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js'),
+	'multi-button': require('/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js'),
 	'idyll-apparatus-component': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js'),
-	'multi-button': require('/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js')
+	'easer-toggle': require('/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js')
 };
 
-},{"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js":"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js":"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js","/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js":"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 
 module.exports = function () {
 

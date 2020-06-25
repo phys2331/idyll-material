@@ -1,3 +1,4 @@
+/* -------------------------- Defaults -----------------------------------*/
 .d3-component svg {
   background: #b95;
   max-height: 300px;
@@ -24,10 +25,10 @@
 }
 @media only screen and (max-width: 600px) {
   .idyll-scroll .idyll-text-container {
-    max-width: 57vw;
+    /*max-width: 57vw;*/
   }
   .idyll-scroll-text .idyll-step {
-    max-width: 57vw;
+    /*max-width: 57vw;*/
   }
   .d3-component-container {
     height: 31vw;
@@ -55,12 +56,12 @@
 }
 
 .electric-field-interactive {
-  background: #222;
+  background: #333;
   color: white;
   font-family: 'Graphik Web';
   padding: 1em;
   font-size: 14px;
-  font-weight: bold;
+  /*font-weight: bold;*/
   margin: 2em 0;
 }
 

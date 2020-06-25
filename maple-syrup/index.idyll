@@ -362,26 +362,6 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     [var name:topSign value:0 /]
     [var name:bottomSign value:0 /]
     [var name:time value:0 /]
-    [div]
-      [IdyllApparatusComponent
-        _url: "static/SimplifiedSim.json"
-        _regionOfInterest: `{ x: [-2, 4], y: [-3, 3] }`
-        _width: '100%'
-        _height: 300
-        particleSign:particleSign
-        leftSign:leftSign
-        rightSign:rightSign
-        topSign:topSign
-        bottomSign:bottomSign
-        time:time
-      /]
-    [/div]
-    // Apparatus needs updating to care about left and top plate signs.
-
-    [Float]
-    [br /][br /]
-    *This simulation is still under construction!*
-    [/Float]
 
     [div className:"electric-field-interactive"]
       [div className:"interactive-flex-row"]
@@ -396,6 +376,24 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
           [MultiButton reset:time value:leftSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
           Charge of the **right** plate:
           [MultiButton reset:time value:rightSign options:`[{ value:-1,label:"-"},{value:0,label:"="},{value:1,label:"+"}]` /]
+        [/div]
+        [div style:`{flex: 2}` className:"electric-field-interactive-apparatus-container"]
+          [IdyllApparatusComponent
+            _url: "static/SimplifiedSim.json"
+            _regionOfInterest: `{ x: [-2, 4], y: [-3, 3] }`
+            _width: '100%'
+            _height: 300
+            particleSign:particleSign
+            leftSign:leftSign
+            rightSign:rightSign
+            topSign:topSign
+            bottomSign:bottomSign
+            time:time
+          /]
+          [div style:`{display:'flex', flexDirection:'row'}`]
+            [EaserToggle value:time targetValue:100 time:5000 ]Accelerate![/EaserToggle]
+            [Button onClick:`time=0`]Reset[/time]
+          [/div]
         [/div]
       [/div]
     [/div]
