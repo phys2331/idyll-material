@@ -7,23 +7,81 @@
   author:"murr"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#DFE583"
-  color:"#000000"
+  background:"#56136B"
+  color:"#FFFFFF"
    /]
 
-Click the following concepts to highlight the pertaining equations (*To do*):
+[div class:"mainBody" fullWidth:true]
+  [div class:"asideTabs"]
+    [Aside]
+      [div class:"asideBox"]
 
-Equations to start with on exams!
-Force
-Electric Fields
-Magnetic Fields
-Circuits
+        Click the following concepts to list the pertaining equations:
 
-Click the equation name to learn more about that equation, including how to get
-to the final units and the algebraic breakdown (*To Do*).
+        [var name:"currentValue" value:"" /]
 
-**Force due to an electric field**
+        [div class:"tabLook"]
+         [button onClick:`currentValue = ""`]All Equations[/Button]
+         [button onClick:`currentValue = "examEquations"`]Equations to start with on exams![/Button]
+         [button onClick:`currentValue = "Force"`]Force[/Button]
+         [button onClick:`currentValue = "Electric Fields"`]Electric Fields[/Button]
+         [button onClick:`currentValue = "Magnetic Fields"`]Circuits[/Button]
+        [/div]
 
-[Equation]
-  \vec{F} = q\vec{E}
-[/Equation]
+      [/div]
+    [/Aside]
+  [/div]
+
+  [div class:"bodywAside"]
+    [Switch value:currentValue]
+      [Default]
+        ## All Equations
+
+        [div class:"row"]
+          [div class:"column"]
+            ### Equation
+            [hr /]
+
+            [Equation]
+              |\vec{r}| = \sqrt{r^{2}_{x} + r^{2}_{y} + r^{2}_{z}}
+            [/Equation]
+            [br /]
+            [br /]
+            [Equation]
+              \hat{r} = \frac{\vec{r}}{|\vec{r}|}
+            [/Equation]
+          [/div]
+          [div class:"column"]
+            ### Application
+            [hr /]
+
+            Magnitude of a vector
+
+            Unit Vector
+          [/div]
+        [/div]
+
+
+      [/Default]
+      [Case test:"examEquations"]
+      Click the equation name to learn more about that equation, including how to get
+      to the final units and the algebraic breakdown (*To Do*).
+
+      **Force due to an electric field**
+
+      [Equation]
+        \vec{F} = q\vec{E}
+      [/Equation]
+      [/Case]
+      [Case test:"Force"]
+        Force Equations
+      [/Case]
+      [Case test:"Electric Fields"]
+        Electric Field Equations
+      [/Case]
+      [Case test:"Magnetic Fields"]
+        Magnetic Fields
+      [/Case]
+    [/Switch]
+  [/div]
+[/div]

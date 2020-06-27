@@ -20562,7 +20562,249 @@ module.exports = {
     return input.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   }
 };
-},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js":[function(require,module,exports){
+},{}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-component-children/dist/cjs/index.js":[function(require,module,exports){
+'use strict';
+
+var React = require('react');
+
+var filterChildren = function filterChildren(children, f) {
+  if (children) {
+    return React.Children.toArray(children).filter(function (c) {
+      if (c && c.type && c.type.name && c.type.name.toLowerCase() === 'wrapper') {
+        return f(c.props.children[0]);
+      }
+      return f(c);
+    });
+  }
+  return children;
+};
+
+var mapChildren = function mapChildren(children, transform) {
+  if (children) {
+    return React.Children.map(children, function (c, i) {
+      if (c && c.type && c.type.name && c.type.name.toLowerCase() === 'wrapper') {
+        return React.cloneElement(c, {
+          children: mapChildren(c.props.children, transform)
+        });
+      }
+      return transform(c, i);
+    });
+  }
+  return children;
+};
+
+module.exports = { filterChildren: filterChildren, mapChildren: mapChildren };
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/aside.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Aside = function (_React$PureComponent) {
+  _inherits(Aside, _React$PureComponent);
+
+  function Aside() {
+    _classCallCheck(this, Aside);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  Aside.prototype.render = function render() {
+    return _react2.default.createElement(
+      'span',
+      { className: 'aside-container' },
+      _react2.default.createElement(
+        'span',
+        { className: 'aside' },
+        this.props.children
+      )
+    );
+  };
+
+  return Aside;
+}(_react2.default.PureComponent);
+
+Aside._idyll = {
+  name: 'Aside',
+  tagType: 'open'
+};
+
+exports.default = Aside;
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/button.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Button = function (_React$PureComponent) {
+  _inherits(Button, _React$PureComponent);
+
+  function Button() {
+    _classCallCheck(this, Button);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  Button.prototype.render = function render() {
+    var _props = this.props,
+        onClick = _props.onClick,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        props = _objectWithoutProperties(_props, ['onClick', 'idyll', 'hasError', 'updateProps']);
+
+    return _react2.default.createElement(
+      'button',
+      _extends({}, props, { onClick: onClick.bind(this) }),
+      this.props.children
+    );
+  };
+
+  return Button;
+}(_react2.default.PureComponent);
+
+Button.defaultProps = {
+  onClick: function onClick() {}
+};
+
+Button._idyll = {
+  name: 'Button',
+  tagType: 'open',
+  children: ['Click Me.'],
+  props: [{
+    name: 'onClick',
+    type: 'event',
+    example: '`x += 1`',
+    description: 'An event that is fired when the user clicks the button.'
+  }]
+};
+exports.default = Button;
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/case.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require('react');
+
+var Case = function (_React$Component) {
+  _inherits(Case, _React$Component);
+
+  function Case() {
+    _classCallCheck(this, Case);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Case.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        props = _objectWithoutProperties(_props, ['idyll']);
+
+    return React.createElement(
+      'div',
+      null,
+      props.children
+    );
+  };
+
+  return Case;
+}(React.Component);
+
+Case._idyll = {
+  name: 'Case',
+  tagType: 'open',
+  children: ['Some text'],
+  props: [{
+    name: 'test',
+    type: 'value',
+    example: '1',
+    description: 'A variable; if this is equal to the parent [Switch /] components value, the children for this case will be rendered, otherwise the default case will be rendered.'
+  }]
+};
+
+exports.default = Case;
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/default.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require('react');
+
+var Default = function (_React$Component) {
+  _inherits(Default, _React$Component);
+
+  function Default() {
+    _classCallCheck(this, Default);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Default.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        props = _objectWithoutProperties(_props, ['idyll']);
+
+    return React.createElement(
+      'div',
+      null,
+      props.children
+    );
+  };
+
+  return Default;
+}(React.Component);
+
+Default._idyll = {
+  name: 'Default',
+  tagType: 'open',
+  children: ['Some text'],
+  props: []
+};
+
+exports.default = Default;
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20754,7 +20996,130 @@ Equation._idyll = {
 };
 
 exports.default = Equation;
-},{"d3-format":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/d3-format/build/d3-format.js","d3-selection":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/d3-selection/dist/d3-selection.js","react":"react","react-dom":"react-dom","react-latex-patched":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/react-latex-patched/build/latex.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
+},{"d3-format":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/d3-format/build/d3-format.js","d3-selection":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/d3-selection/dist/d3-selection.js","react":"react","react-dom":"react-dom","react-latex-patched":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/react-latex-patched/build/latex.js"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/generateHeaders.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+var generateId = function generateId() {
+  var headerText = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+  return headerText.toString().trim().replace(/\s+/g, '-').toLowerCase();
+};
+
+var GenerateHeaders = function GenerateHeaders(props) {
+  var idyll = props.idyll,
+      hasError = props.hasError,
+      updateProps = props.updateProps,
+      size = props.size,
+      _props$children = props.children,
+      children = _props$children === undefined ? [] : _props$children,
+      attributeProps = _objectWithoutProperties(props, ['idyll', 'hasError', 'updateProps', 'size', 'children']);
+
+  var headerText = children.join('');
+  var HeaderTag = 'h' + size;
+
+  if (!attributeProps.id) {
+    attributeProps.id = generateId(headerText);
+  }
+
+  return _react2.default.createElement(
+    HeaderTag,
+    attributeProps,
+    children
+  );
+};
+
+exports.default = GenerateHeaders;
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H2 = function (_React$PureComponent) {
+  _inherits(H2, _React$PureComponent);
+
+  function H2() {
+    _classCallCheck(this, H2);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H2.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '2' }, this.props));
+  };
+
+  return H2;
+}(_react2.default.PureComponent);
+
+exports.default = H2;
+},{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h3.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H3 = function (_React$PureComponent) {
+  _inherits(H3, _React$PureComponent);
+
+  function H3() {
+    _classCallCheck(this, H3);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H3.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '3' }, this.props));
+  };
+
+  return H3;
+}(_react2.default.PureComponent);
+
+exports.default = H3;
+},{"./generateHeaders":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -20925,7 +21290,79 @@ Header._idyll = {
 };
 
 exports.default = Header;
-},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
+},{"react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/switch.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require('react');
+
+var _require = require('idyll-component-children'),
+    filterChildren = _require.filterChildren;
+
+var Switch = function (_React$Component) {
+  _inherits(Switch, _React$Component);
+
+  function Switch() {
+    _classCallCheck(this, Switch);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Switch.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        value = _props.value,
+        children = _props.children,
+        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps', 'value', 'children']);
+
+    if (children) {
+      var matchCase = function matchCase(child) {
+        return child.type.name.toLowerCase() === 'case' && child.props.test === value;
+      };
+      var matchDefault = function matchDefault(child) {
+        return child.type.name.toLowerCase() === 'default';
+      };
+
+      var matchedCase = filterChildren(children, matchCase);
+      var defaultCase = filterChildren(children, matchDefault);
+
+      return React.createElement(
+        'div',
+        null,
+        matchedCase.length ? matchedCase : defaultCase
+      );
+    }
+    return '';
+  };
+
+  return Switch;
+}(React.Component);
+
+Switch._idyll = {
+  name: 'Switch',
+  tagType: 'open',
+  children: ['Case components'],
+  props: [{
+    name: 'value',
+    type: 'variable',
+    example: '1',
+    description: 'Value of the child prop to render.'
+  }]
+};
+
+exports.default = Switch;
+},{"idyll-component-children":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-component-children/dist/cjs/index.js","react":"react"}],"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -83155,7 +83592,7 @@ function hasOwnProperty(obj, prop) {
 },{"./support/isBuffer":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/util/support/isBufferBrowser.js","_process":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/process/browser.js","inherits":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/util/node_modules/inherits/inherits_browser.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "component", "name": "TextContainer", "children": [{ "id": 3, "type": "meta", "properties": { "title": { "type": "value", "value": "Equation Sheet" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 4, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Physics II Equations" }, "subtitle": { "type": "value", "value": "" }, "author": { "type": "value", "value": "murr" }, "authorLink": { "type": "value", "value": "https://idyll-lang.org" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#DFE583" }, "color": { "type": "value", "value": "#000000" } }, "children": [] }, { "id": 5, "type": "component", "name": "TextContainer", "children": [{ "id": 6, "type": "component", "name": "p", "children": [{ "id": 7, "type": "textnode", "value": "Click the following concepts to highlight the pertaining equations (" }, { "id": 8, "type": "component", "name": "em", "children": [{ "id": 9, "type": "textnode", "value": "To do" }] }, { "id": 10, "type": "textnode", "value": "):" }] }, { "id": 11, "type": "component", "name": "p", "children": [{ "id": 12, "type": "textnode", "value": "Equations to start with on exams!\nForce\nElectric Fields\nMagnetic Fields\nCircuits" }] }, { "id": 13, "type": "component", "name": "p", "children": [{ "id": 14, "type": "textnode", "value": "Click the equation name to learn more about that equation, including how to get\nto the final units and the algebraic breakdown (" }, { "id": 15, "type": "component", "name": "em", "children": [{ "id": 16, "type": "textnode", "value": "To Do" }] }, { "id": 17, "type": "textnode", "value": ")." }] }, { "id": 18, "type": "component", "name": "strong", "children": [{ "id": 19, "type": "textnode", "value": "Force due to an electric field" }] }, { "id": 20, "type": "component", "name": "equation", "children": [{ "id": 21, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "component", "name": "TextContainer", "children": [{ "id": 4, "type": "meta", "properties": { "title": { "type": "value", "value": "Equation Sheet" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 5, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "Physics II Equations" }, "subtitle": { "type": "value", "value": "" }, "author": { "type": "value", "value": "murr" }, "authorLink": { "type": "value", "value": "https://idyll-lang.org" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#56136B" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 6, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "mainBody" } }, "children": [{ "id": 7, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "asideTabs" } }, "children": [{ "id": 8, "type": "component", "name": "Aside", "children": [{ "id": 9, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "asideBox" } }, "children": [{ "id": 10, "type": "component", "name": "p", "children": [{ "id": 11, "type": "textnode", "value": "Click the following concepts to list the pertaining equations:" }] }, { "id": 12, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 13, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 14, "type": "textnode", "value": "All Equations" }] }, { "id": 15, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"examEquations\"" } }, "children": [{ "id": 16, "type": "textnode", "value": "Equations to start with on exams!" }] }, { "id": 17, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"Force\"" } }, "children": [{ "id": 18, "type": "textnode", "value": "Force" }] }, { "id": 19, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"Electric Fields\"" } }, "children": [{ "id": 20, "type": "textnode", "value": "Electric Fields" }] }, { "id": 21, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"Magnetic Fields\"" } }, "children": [{ "id": 22, "type": "textnode", "value": "Circuits" }] }] }] }] }] }, { "id": 23, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "bodywAside" } }, "children": [{ "id": 24, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 25, "type": "component", "name": "Default", "children": [{ "id": 26, "type": "component", "name": "h2", "children": [{ "id": 27, "type": "textnode", "value": "All Equations" }] }, { "id": 28, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "row" } }, "children": [{ "id": 29, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "column" } }, "children": [{ "id": 30, "type": "component", "name": "h3", "children": [{ "id": 31, "type": "textnode", "value": "Equation" }] }, { "id": 32, "type": "component", "name": "hr", "children": [] }, { "id": 33, "type": "component", "name": "equation", "children": [{ "id": 34, "type": "textnode", "value": "|\\vec{r}| = \\sqrt{r^{2}_{x} + r^{2}_{y} + r^{2}_{z}}" }] }, { "id": 35, "type": "component", "name": "br", "children": [] }, { "id": 36, "type": "component", "name": "br", "children": [] }, { "id": 37, "type": "component", "name": "equation", "children": [{ "id": 38, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|}" }] }] }, { "id": 39, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "column" } }, "children": [{ "id": 40, "type": "component", "name": "h3", "children": [{ "id": 41, "type": "textnode", "value": "Application" }] }, { "id": 42, "type": "component", "name": "hr", "children": [] }, { "id": 43, "type": "component", "name": "p", "children": [{ "id": 44, "type": "textnode", "value": "Magnitude of a vector" }] }, { "id": 45, "type": "component", "name": "p", "children": [{ "id": 46, "type": "textnode", "value": "Unit Vector\n          " }] }] }] }] }, { "id": 47, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "examEquations" } }, "children": [{ "id": 48, "type": "component", "name": "p", "children": [{ "id": 49, "type": "textnode", "value": "\n      Click the equation name to learn more about that equation, including how to get\n      to the final units and the algebraic breakdown (" }, { "id": 50, "type": "component", "name": "em", "children": [{ "id": 51, "type": "textnode", "value": "To Do" }] }, { "id": 52, "type": "textnode", "value": ")." }] }, { "id": 53, "type": "component", "name": "strong", "children": [{ "id": 54, "type": "textnode", "value": "Force due to an electric field" }] }, { "id": 55, "type": "component", "name": "equation", "children": [{ "id": 56, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }, { "id": 57, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Force" } }, "children": [{ "id": 58, "type": "textnode", "value": "\n        Force Equations\n      " }] }, { "id": 59, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Electric Fields" } }, "children": [{ "id": 60, "type": "textnode", "value": "\n        Electric Field Equations\n      " }] }, { "id": 61, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Magnetic Fields" } }, "children": [{ "id": 62, "type": "textnode", "value": "\n        Magnetic Fields\n      " }] }] }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -83163,10 +83600,17 @@ module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "
 module.exports = {
 	'text-container': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js'),
 	'header': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js'),
-	'equation': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js')
+	'button': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/button.js'),
+	'aside': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/aside.js'),
+	'h2': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h2.js'),
+	'h3': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h3.js'),
+	'equation': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js'),
+	'default': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/default.js'),
+	'case': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/case.js'),
+	'switch': require('/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/switch.js')
 };
 
-},{"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/aside.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/aside.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/button.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/button.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/case.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/case.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/default.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/default.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/equation.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h2.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h2.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h3.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/h3.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/header.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/switch.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/switch.js","/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js":"/home/drlmnop/Documents/PhysLab/idyll-material/Physics_2_Resources/Resources/posts/equation_sheet/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 
 module.exports = function () {
 

@@ -1,116 +1,192 @@
-[meta title:"Electric_Fields" description:"Short description of your project" /]
+[meta title:"Electric_Fields" description:"Short description of your project"/]
 
 [Header
   fullWidth:true
   title:"Electric Fields"
-  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
-  author:"Your Name Here"
+  subtitle:" & Python"
+  author:"murr"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#222222"
+  background:"#084CA5"
   color:"#ffffff"
    /]
 
-## Introduction
 
-This is an Idyll post. It is generated via
-the file `index.idyll`. To compile this post using
-idyll, run the command `idyll` inside of this directory.
+ [var name:"currentValue" value:"" /]
 
+ [div class:"tabLook" fullWidth:true]
+   [button onClick:`currentValue = ""`]Overview[/Button]
+   [button onClick:`currentValue = "elecChargeForce"`]Electric Charge and Force[/Button]
+   [button onClick:`currentValue = "elecField"`]The Electric Field[/Button]
+   [button onClick:`currentValue = "elecFieldDist"`]The Electric Field and Distributed Charges[/Button]
+ [/div]
 
-Idyll posts are designed to support interaction and
-data-driven graphics.
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
 
-[var name:"state" value:0 /]
-[CustomD3Component className:"d3-component" state:state /]
-[button onClick:`state++`]
-  Click Me.
-[/button]
+ [div class:"problemBody" fullWidth:true padding-left:`100%`]
+   [Switch value:currentValue]
+     [Default]
+       [div class:"centerHead"]
+          ## An overview of some sort.
 
-Configuration can be done via the `idyll` field in `package.json`.
+          [ul]
+            [li]Electric Charge and force[/li]
+            [ul]
+              [li]Coulomb's Force Law for Point Particles[/li]
+            [/ul]
+            [li]The Electric Field[/li]
+            [ul]
+              [li]Point Charges[/li]
+              [li]Uniformly Charged Sphere[/li]
+              [li]Dipoles[/li]
+              [li]Dipole Moment[/li]
+              [li]Polarizability[/li]
+              [li]Drift Speed[/li]
+            [/ul]
+            [li]The Electric Field and Distributed Charges[/li]
+            [ul]
+              [li]Uniformly Charged Thin Rod[/li]
+              [li]Uniformly Charged Thin Ring[/li]
+              [li]Uniformly Charged Disk[/li]
+              [li]Capacitors[/li]
+              [li]Spherical Shell of Charge[/li]
+              [li]Solid Sphere of Charge[/li]
+            [/ul]
+          [/ul]
 
-## Markup
+          #### Overview
 
-Idyll is based on Markdown.
-
-You can use familiar syntax
-to create **bold** (`**bold**` ) and *italic* (``*italic*` ) styles,
-
-* lists
-* of
-* items,
-
-```
-* lists
-* of
-* items,
-```
-
-1. and numbered
-2. lists
-3. of items,
-
-
-```
-1. and numbered
-2. lists
-3. of items,
-```
-
-in addition to [hyperlinks](https://idyll-lang.org) and images:
-
-![quill](static/images/quill.svg)
-
-```
-![quill](static/images/quill.svg)
-```
-
-## Components
-
-Components can be embedded using a bracket syntax:
-
-```
-[Range /]
-```
-
-and can contain nested content:
-
-```
-[Equation]e = mc^{2}[/Equation]
-```
-
-Components accept properties:
-
-```
-[Range value:x min:0 max:1 /]
-```
-
-that can be bound to variables to achieve interactivity (more in next section).
+          Click the tabs to learn more about electric fields and complete
+          problems in python.
 
 
-A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
+          #### Trinket
 
-To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+          Each of the tabs feature a Trinket to execute the code. To save specific Trinkets
+          for your own reference, complete the following steps:
+
+          [ul]
+            [li] Go to the Trinket [sign-up](https://trinket.io/signup) page.[/li]
+            [li] Create an account. [/li]
+            [li] On the embedded Trinket, click the image link on the top right to log in using your account email and password.[/li]
+            [li] Click the Remix button to save a copy of the code to your Trinket account. [/li]
+            [li] Save the Trinkets with a unique name for future reference. [/li]
+          [/ul]
+
+       [/div]
+     [/Default]
+     [Case test:"elecChargeForce"]
+       [div class:"subCenterHead"]
+
+          ## Electric Charge and Force
+
+          [br /]
+
+          Click the point charge:
+
+          Insert images of various things. Make them all right and then explain
+          why all can be considered point charges.
+
+          Have a PhET and make them answer which way the vectors point with
+          different types of charges. Play with magnitude and such. Ask questions.
+
+          Coulomb Force Law for Point Particles - Do a computation problem.
+
+          List the charges of the particles
+
+       [/div]
+     [/Case]
+     [Case test:"elecField"]
+       [div class:"subCenterHead"]
+
+         ## The Electric Field
+
+         [br /]
+
+         [var name:"elecFieldTabValue" value:"" /]
+
+         [div class:"subtabLook" fullWidth:true]
+           [button onClick:`elecFieldTabValue = ""`]Point Charges[/Button]
+           [button onClick:`elecFieldTabValue = "sphere"`]Uniformly Charged Sphere[/Button]
+           [button onClick:`elecFieldTabValue = "dipoles"`]Dipoles[/Button]
+           [button onClick:`elecFieldTabValue = "dipMom"`]Dipole Moment[/Button]
+           [button onClick:`elecFieldTabValue = "polar"`]Polarizability[/Button]
+           [button onClick:`elecFieldTabValue = "drift"`]Drift Speed[/Button]
+         [/div]
+
+         [br /]
+         [br /]
+         [br /]
+         [hr /]
+
+         [Switch value:elecFieldTabValue]
+           [Default]
+             [div class:"subProblemBody"]
 
 
 
-## Interactivity
+             [/div]
+           [/Default]
+           [Case test:"sphere"]
+           [/Case]
+           [Case test:"dipoles"]
+           [/Case]
+           [Case test:"dipMom"]
+           [/Case]
+           [Case test:"polar"]
+           [/Case]
+           [Case test:"drift"]
+           [/Case]
+        [/Switch]
 
-Here is how you can instantiate a variable and bind it to a component:
+       [/div]
+     [/Case]
+     [Case test:"elecFieldDist"]
+       [div class:"subCenterHead"]
 
-[var name:"exampleVar" value:5 /]
+         ## The Electric Field and Distributed Charges
 
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
+         [br /]
 
-```
-[var name:"exampleVar" value:5 /]
+         [var name:"elecFieldDistTabValue" value:"" /]
 
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-```
+         [div class:"subtabLook" fullWidth:true]
 
-## Learn More
+           [button onClick:`elecFieldDistTabValue = ""`]Uniformly Charged Thin Rod[/Button]
+           [button onClick:`elecFieldDistTabValue = "ring"`]Uniformly Charged Thin Ring[/Button]
+           [button onClick:`elecFieldDistTabValue = "disk"`]Uniformly Charged Disk[/Button]
+           [button onClick:`elecFieldDistTabValue = "cap"`]Capacitors[/Button]
+           [button onClick:`elecFieldDistTabValue = "shell"`]Spherical Shell of Charge[/Button]
+           [button onClick:`elecFieldDistTabValue = "sphere"`]Solid Sphere of Charge[/Button]
+         [/div]
 
-To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
-join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
+         [br /]
+         [br /]
+         [br /]
+         [hr /]
+
+         [Switch value:elecFieldDistTabValue]
+           [Default]
+             [div class:"subProblemBody"]
+
+
+
+             [/div]
+           [/Default]
+           [Case test:"ring"]
+           [/Case]
+           [Case test:"disk"]
+           [/Case]
+           [Case test:"cap"]
+           [/Case]
+           [Case test:"shell"]
+           [/Case]
+           [Case test:"sphere"]
+           [/Case]
+        [/Switch]
+     [/div]
+     [/Case]
+   [/Switch]
+ [/div]

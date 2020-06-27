@@ -1097,3 +1097,86 @@ img {
     max-height: 200px;
   }
 }
+
+.mainBody {
+  margin: 5%;
+
+}
+
+.asideTabs {
+  float:left;
+  //font-size:12px;
+  //padding-top: 80px;
+  text-align: justify;
+}
+
+.bodywAside {
+  //padding: 1px 20px 1px 20px;
+  //margin: 0 1.5%;
+  width: 70%;
+  float:right;
+  text-align: center;
+}
+
+.tabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tabLook button {
+  background-color: inherit;
+  //float:left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 18px;
+  //width: 25%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #0B465F;
+}
+
+/* Change background color of buttons on hover */
+.tabLook button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tabLook button.active {
+  background-color: #ccc;
+}
+
+.asideBox {
+  border: 2px solid #0EA7F2;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+table {
+  font-family: arial;
+  width: 100%;
+}
+
+td, th {
+  padding: 8px;
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.column Equation{
+  padding: 50%;
+}
