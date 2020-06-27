@@ -130,7 +130,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
 
     The sample is fed into the spectrometer as a gas. 
     An electron cannon ionizes the atoms, which acquire a positive charge (*q = +e*). 
-    These ions are then accelerated and directed toward the velocity selector.
+    These ions are then accelerated by the accelerating plates (voltage ΔV[sub]a[/sub]) and directed toward the velocity selector.
 
     *For this problem, your analysis will concentrate on the velocity selector and the magnetic deflector.*
     *We will assume therefore that the ionization and acceleration phase go normally and generate accelerated, positively charged ions that can be analysed by the rest of the spectrometer.*
@@ -414,27 +414,31 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     ![A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector.](static/images/Spectrometer_Diagram.png)
     It was mentioned above that the magnetic field is 300\[G\] (Gauss). 
     You will need to convert this, as the Gauss is not an SI unit.
-    The other known values can be calculated from the diagram.
+    The other known values can be looked up or calculated from the diagram.
+    The spectrum provided the value of ΔV[sub]s[/sub].
 
-    **The Question:** What is ΔV[sub]s[/sub]? You can test this with the simulation in the next step.
+    **The Question:** If you want [sup]13[/sup]C[sup]+[/sup] to make it through to the detector, what should you make ΔV[sub]1[/sub] (the voltage of the accelerating plates on the left)? You can test this with the simulation in the next step.
 
   [/Step]
 
   [Step]
     ## Simulation
-    This simulation will allow you to change the voltages and see where your carbon atom ends up.
+    This simulation will allow you to change the accelerating voltage and see where your carbon atom ends up.
     [br /][br /]
-    *Simulation coming soon!*(TM)
+    *This simulation is still under construction!*
+    [IdyllApparatusComponent
+        _url: "static/FullSim.json"
+        _regionOfInterest: `{ x: [2, 4], y: [-0.5, 7] }`
+        _width: '100%'
+        _height: 600
+        Va:Va
+        t:t
+      /]
   [/Step]
 
 [/Scroller]
 
 ## Summary
-Here I would like to generate a recap of some kind, possibly including expected equations used.
-However, I would like for there to be some way to restrict this only to people who have the right answers;
-it doesn't make sense to lead them through with questions only to have the answer directly provided at the very end.
-
-*Draft Below*
 
 Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.
 This required us to understand and apply various relationships, as well as determine where these relationships applied.

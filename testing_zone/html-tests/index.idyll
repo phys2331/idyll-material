@@ -1,0 +1,85 @@
+[meta title:"Html Tests" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Html Tests"
+  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
+  author:"Your Name Here"
+  authorLink:"https://idyll-lang.org"
+  date:`(new Date()).toDateString()`
+  background:"#222222"
+  color:"#ffffff"
+   /]
+
+[style]
+.test {
+  background-color: black;
+  color: white;
+  margin: 20px;
+  padding: 20px;
+}
+[/style]
+
+## Introduction
+
+The purpose of this is to make sure I understand how the html tags work in Idyll.
+Once I've accomplished this, I will be able to write the documentation requested in [Issue #621](https://github.com/idyll-lang/idyll/issues/621).
+
+### Basics of Syntax
+
+So I believe the translations are:
+* Change angle brackets to square ones: `<tag>` becomes `[tag]`
+* Change attribute definitions: `style="color:red"` becomes ```style:`{color: 'red'}` ``` (need example which includes a list of style items) // " kill weirdness
+* Single-entry tags have the slash moved to the end: `</br>` becomes `[br /]`
+
+### Useful Things
+
+`[p]`, `[div]`, [s]`[float]`[/s] and `[span]` are all useful in HTML and therefore are usefully here too, huzzah!  [br /]
+Float is handled by idyll specifically
+
+Maybe also list tags since they do sub-bullets?
+
+[s]Test tables today because Mary was asking about them yesterday or maybe the day before[/s] These are listed as a custom component; not an html issue.
+
+### Things to focus on
+
+Setting class names 
+* this is all done through CSS right? Maybe not now I am unsure.
+* couldn't figure out a syntax for defining class names in the header
+* after the header, you can create a `style` section. It uses plain ol' html syntax.
+* classes can be used with `div`, `p`, or `span`
+* only one inline style can be used at a time? (ex, can't do color and background-color)
+
+[u]Elements usable with style:[/u]
+* `background-color` - changes background color of relevant block. Colors can be a 6-digit hex code, rgba, hsl, hsla or a [color name](https://www.w3schools.com/colors/colors_names.asp).
+* `color` - changes text color
+* `margin` - margin outside the box, px = in pixels, affects all sides
+* `padding` - margin but *inside* the box
+* `font-size` - percentage, px, or [category](https://www.w3schools.com/cssref/pr_font_font-size.asp).
+* `font-weight` - normal/bold or a number (normal=400, bold=700). [More options](https://www.w3schools.com/csSref/pr_font_weight.asp)
+* `font-style` - normal/italic/oblique (like italic but literally just slanted letters, no change of the characters themselves)
+
+Inline styles
+* this is the use of `style` as an HTML tag attribute.
+
+## Some Tests
+
+### Inline
+
+[div style:`{color: 'green'}`]
+this is green. I couldn't do two properties at a time
+[/div]
+
+### Class Use
+
+[div className:"test"]
+this one's a div
+[/div]
+
+[p className:"test"]
+this one's a p
+[/p]
+
+[span className:"test"]
+this one's a span
+[/span]
