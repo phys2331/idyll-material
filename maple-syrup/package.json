@@ -12,7 +12,7 @@
     "d3": "^4.0.0",
     "d3-ease": "^1.0.6",
     "httpplease": "^0.16.4",
-    "idyll": "^4.10.3",
+    "idyll": "^4.12.1",
     "idyll-apparatus-component": "^1.0.7",
     "idyll-d3-component": "^2.1.0",
     "parametric-components": "^2.1.7",

@@ -49,7 +49,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
 
 [var name:"state" value:0 /]
 
-[Scroller currentStep:state]
+[Scroller currentStep:state fullWidth:true]
 
   [Step]
     ### Three-Step Cycle 
