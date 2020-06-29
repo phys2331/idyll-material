@@ -20837,1246 +20837,6 @@ var mapChildren = function mapChildren(children, transform) {
 };
 
 module.exports = { filterChildren: filterChildren, mapChildren: mapChildren };
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Boolean = function (_React$PureComponent) {
-  _inherits(Boolean, _React$PureComponent);
-
-  function Boolean(props) {
-    _classCallCheck(this, Boolean);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
-  }
-
-  Boolean.prototype.toggleCheckbox = function toggleCheckbox() {
-    this.props.updateProps({
-      value: !this.props.value
-    });
-  };
-
-  Boolean.prototype.render = function render() {
-    var value = this.props.value;
-
-    return _react2.default.createElement('input', {
-      type: 'checkbox',
-      onChange: this.toggleCheckbox.bind(this),
-      value: value
-    });
-  };
-
-  return Boolean;
-}(_react2.default.PureComponent);
-
-Boolean.defaultProps = {
-  value: false
-};
-
-Boolean._idyll = {
-  name: 'Boolean',
-  tagType: 'closed',
-  props: [{
-    name: 'value',
-    type: 'boolean',
-    example: 'x',
-    description: 'A value for the checkbox. If this value is truthy, the checkbox will be shown.'
-  }]
-};
-
-exports.default = Boolean;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Button = function (_React$PureComponent) {
-  _inherits(Button, _React$PureComponent);
-
-  function Button() {
-    _classCallCheck(this, Button);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  Button.prototype.render = function render() {
-    var _props = this.props,
-        onClick = _props.onClick,
-        idyll = _props.idyll,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        props = _objectWithoutProperties(_props, ['onClick', 'idyll', 'hasError', 'updateProps']);
-
-    return _react2.default.createElement(
-      'button',
-      _extends({}, props, { onClick: onClick.bind(this) }),
-      this.props.children
-    );
-  };
-
-  return Button;
-}(_react2.default.PureComponent);
-
-Button.defaultProps = {
-  onClick: function onClick() {}
-};
-
-Button._idyll = {
-  name: 'Button',
-  tagType: 'open',
-  children: ['Click Me.'],
-  props: [{
-    name: 'onClick',
-    type: 'event',
-    example: '`x += 1`',
-    description: 'An event that is fired when the user clicks the button.'
-  }]
-};
-exports.default = Button;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js":[function(require,module,exports){
-'use strict';
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require('react');
-
-var Conditional = function (_React$Component) {
-  _inherits(Conditional, _React$Component);
-
-  function Conditional() {
-    _classCallCheck(this, Conditional);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  Conditional.prototype.render = function render() {
-    var _props = this.props,
-        idyll = _props.idyll,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps']);
-
-    if (!props.if) {
-      return React.createElement(
-        'div',
-        { style: { display: 'none' } },
-        props.children
-      );
-    }
-
-    return React.createElement(
-      'div',
-      null,
-      props.children
-    );
-  };
-
-  return Conditional;
-}(React.Component);
-
-Conditional._idyll = {
-  name: 'Conditional',
-  tagType: 'open',
-  children: ['Some text'],
-  props: [{
-    name: 'if',
-    type: 'expression',
-    example: '`x < 10`',
-    description: 'An expression; if this evaluates to true, the children will be rendered, otherwise nothing will be drawn to the screen'
-  }]
-};
-module.exports = Conditional;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ReactDOM = require('react-dom');
-var Latex = require('react-latex-patched');
-var select = require('d3-selection').select;
-var format = require('d3-format').format;
-
-var allowedProps = ['domain', 'step', 'children'];
-
-var Equation = function (_React$PureComponent) {
-  _inherits(Equation, _React$PureComponent);
-
-  function Equation(props) {
-    _classCallCheck(this, Equation);
-
-    var _this = _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
-
-    _this.state = {
-      showRange: false
-    };
-    return _this;
-  }
-
-  Equation.prototype.handleChange = function handleChange(event) {
-    this.props.updateProps({
-      value: +event.target.value
-    });
-  };
-
-  Equation.prototype.componentDidMount = function componentDidMount() {
-    var dom = void 0;
-
-    var cssId = 'idyll-equation-css'; // you could encode the css path itself to generate id..
-    var cssURL = '//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css';
-    if (document && !document.getElementById(cssId) && !this.props.skipCSS && !select('link[href=\'' + cssURL + '\']').size()) {
-      var heads = document.getElementsByTagName('head');
-      if (heads.length) {
-        var head = heads[0];
-        var link = document.createElement('link');
-        link.id = cssId;
-        link.href = cssURL;
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.media = 'all';
-        head.appendChild(link);
-      }
-    }
-
-    try {
-      dom = ReactDOM.findDOMNode(this);
-    } catch (e) {}
-    if (!dom) {
-      return;
-    }
-
-    this.propNodes = {};
-    var self = this;
-    select(dom).selectAll('.mord').each(function (d) {
-      var $this = select(this);
-      Object.keys(self.props).filter(function (prop) {
-        return allowedProps.indexOf(prop) === -1;
-      }).forEach(function (prop) {
-        if ($this.text() === prop) {
-          self.propNodes[prop] = $this;
-          $this.style('cursor', 'pointer');
-          $this.on('mouseover', function () {
-            $this.style('color', 'red');
-          }).on('mouseout', function () {
-            if (!(self.state.showRange && self.state.var === prop)) {
-              $this.style('color', 'black');
-            }
-          }).on('click', function () {
-            if (!(self.state.showRange && self.state.var === prop)) {
-              self.setState({
-                showRange: true,
-                var: prop
-              });
-              $this.text(self.props[prop]);
-              $this.style('color', 'red');
-              Object.keys(self.propNodes).filter(function (d) {
-                return d !== prop;
-              }).forEach(function (d) {
-                self.propNodes[d].text(d);
-                self.propNodes[d].style('color', 'black');
-              });
-            } else {
-              self.setState({
-                showRange: false,
-                var: prop
-              });
-              $this.style('color', 'black');
-              $this.text(prop);
-            }
-          });
-        }
-      });
-    });
-  };
-
-  Equation.prototype.handleRangeUpdate = function handleRangeUpdate(event) {
-    var newProps = {};
-    var val = +event.target.value;
-    newProps[this.state.var] = val;
-    this.props.updateProps(newProps);
-    this.propNodes[this.state.var].text(val);
-  };
-
-  Equation.prototype.renderEditing = function renderEditing() {
-    if (!this.state.showRange) {
-      return null;
-    }
-
-    var d = (this.props.domain || {})[this.state.var] || [-10, 10];
-    var step = (this.props.step || {})[this.state.var] || 0.1;
-    return _react2.default.createElement(
-      'div',
-      { style: { paddingTop: 15, textAlign: 'center' } },
-      _react2.default.createElement('input', {
-        type: 'range',
-        value: format('0.1f')(this.props[this.state.var]),
-        min: d[0],
-        max: d[1],
-        onChange: this.handleRangeUpdate.bind(this),
-        step: step
-      })
-    );
-  };
-
-  Equation.prototype.getLatex = function getLatex() {
-    if (this.props.latex) {
-      return this.props.latex;
-    }
-    return this.props.children && this.props.children[0] ? this.props.children[0] : '';
-  };
-
-  Equation.prototype.render = function render() {
-    var latexChar = '$';
-    var latexString = latexChar + this.getLatex() + latexChar;
-
-    var style = void 0;
-    if (this.state.showRange) {
-      style = this.props.style;
-    } else {
-      style = Object.assign({
-        display: this.props.display ? 'block' : 'inline-block'
-      }, this.props.style);
-    }
-
-    return _react2.default.createElement(
-      'span',
-      { style: style },
-      _react2.default.createElement(
-        Latex,
-        { displayMode: this.props.display },
-        latexString
-      ),
-      this.renderEditing()
-    );
-  };
-
-  return Equation;
-}(_react2.default.PureComponent);
-
-Equation._idyll = {
-  name: 'Equation',
-  tagType: 'open',
-  children: 'y = x^2',
-  props: [{
-    name: 'display',
-    type: 'boolean',
-    example: 'true',
-    defaultValue: 'false',
-    description: 'Set to `true` for a centered, standalone equation, set to `false` for an inline equation.'
-  }]
-};
-
-exports.default = Equation;
-},{"d3-format":"/mnt/d/git/idyll-material/maple-syrup/node_modules/d3-format/build/d3-format.js","d3-selection":"/mnt/d/git/idyll-material/maple-syrup/node_modules/d3-selection/dist/d3-selection.js","react":"react","react-dom":"react-dom","react-latex-patched":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-latex-patched/build/latex.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Float = function (_React$PureComponent) {
-  _inherits(Float, _React$PureComponent);
-
-  function Float() {
-    _classCallCheck(this, Float);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  Float.prototype.render = function render() {
-    return _react2.default.createElement(
-      'div',
-      {
-        className: 'float ' + this.props.position,
-        style: { float: this.props.position, width: this.props.width || '50%' }
-      },
-      this.props.children
-    );
-  };
-
-  return Float;
-}(_react2.default.PureComponent);
-
-Float._idyll = {
-  name: 'Float',
-  tagType: 'open',
-  props: [{
-    name: 'position',
-    type: 'string',
-    example: '"left"',
-    description: 'the float position: left or right.'
-  }, {
-    name: 'width',
-    type: 'string',
-    example: '"50%"',
-    defaultValue: '"50%"',
-    description: 'the width of the component, specified in pixels or percentage.'
-  }]
-};
-
-exports.default = Float;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/generateHeaders.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-var generateId = function generateId() {
-  var headerText = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-
-  return headerText.toString().trim().replace(/\s+/g, '-').toLowerCase();
-};
-
-var GenerateHeaders = function GenerateHeaders(props) {
-  var idyll = props.idyll,
-      hasError = props.hasError,
-      updateProps = props.updateProps,
-      size = props.size,
-      _props$children = props.children,
-      children = _props$children === undefined ? [] : _props$children,
-      attributeProps = _objectWithoutProperties(props, ['idyll', 'hasError', 'updateProps', 'size', 'children']);
-
-  var headerText = children.join('');
-  var HeaderTag = 'h' + size;
-
-  if (!attributeProps.id) {
-    attributeProps.id = generateId(headerText);
-  }
-
-  return _react2.default.createElement(
-    HeaderTag,
-    attributeProps,
-    children
-  );
-};
-
-exports.default = GenerateHeaders;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _generateHeaders = require('./generateHeaders');
-
-var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var H2 = function (_React$PureComponent) {
-  _inherits(H2, _React$PureComponent);
-
-  function H2() {
-    _classCallCheck(this, H2);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  H2.prototype.render = function render() {
-    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '2' }, this.props));
-  };
-
-  return H2;
-}(_react2.default.PureComponent);
-
-exports.default = H2;
-},{"./generateHeaders":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _generateHeaders = require('./generateHeaders');
-
-var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var H3 = function (_React$PureComponent) {
-  _inherits(H3, _React$PureComponent);
-
-  function H3() {
-    _classCallCheck(this, H3);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  H3.prototype.render = function render() {
-    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '3' }, this.props));
-  };
-
-  return H3;
-}(_react2.default.PureComponent);
-
-exports.default = H3;
-},{"./generateHeaders":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _generateHeaders = require('./generateHeaders');
-
-var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var H4 = function (_React$PureComponent) {
-  _inherits(H4, _React$PureComponent);
-
-  function H4() {
-    _classCallCheck(this, H4);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  H4.prototype.render = function render() {
-    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '4' }, this.props));
-  };
-
-  return H4;
-}(_react2.default.PureComponent);
-
-exports.default = H4;
-},{"./generateHeaders":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var byLineDefault = { prefix: 'By:', joint: ',', suffix: 'and' };
-
-var additionalTextByIndex = function additionalTextByIndex(authors, suffix, joint, index) {
-  var _map;
-
-  var map = (_map = {}, _map[authors.length - 1] = '', _map[authors.length - 2] = ' ' + suffix + ' ', _map);
-
-  return index in map ? map[index] : joint + ' ';
-};
-
-var AuthorLink = function AuthorLink(_ref) {
-  var name = _ref.name,
-      link = _ref.link;
-  return _react2.default.createElement(
-    'a',
-    { href: link },
-    name
-  );
-};
-
-var ByLineMultipleAuthors = function ByLineMultipleAuthors(_ref2) {
-  var authors = _ref2.authors,
-      prefix = _ref2.prefix,
-      joint = _ref2.joint,
-      suffix = _ref2.suffix;
-  return _react2.default.createElement(
-    'div',
-    { className: 'byline' },
-    prefix + ' ',
-    authors.map(function (author, i) {
-      var authorDisplay = typeof author === 'string' ? author : author.name;
-
-      return _react2.default.createElement(
-        'span',
-        { key: authorDisplay },
-        typeof author.link === 'string' ? _react2.default.createElement(AuthorLink, author) : authorDisplay,
-        additionalTextByIndex(authors, suffix, joint, i)
-      );
-    })
-  );
-};
-
-var Header = function (_React$PureComponent) {
-  _inherits(Header, _React$PureComponent);
-
-  function Header() {
-    _classCallCheck(this, Header);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  Header.prototype.render = function render() {
-    var _props = this.props,
-        background = _props.background,
-        color = _props.color,
-        byLineTemplate = _props.byLineTemplate;
-
-    var _byLineDefault$byLine = _extends({}, byLineDefault, byLineTemplate),
-        joint = _byLineDefault$byLine.joint,
-        prefix = _byLineDefault$byLine.prefix,
-        suffix = _byLineDefault$byLine.suffix;
-
-    return _react2.default.createElement(
-      'div',
-      { className: 'article-header', style: { background: background, color: color } },
-      _react2.default.createElement(
-        'h1',
-        { className: 'hed' },
-        this.props.title
-      ),
-      this.props.subtitle && _react2.default.createElement(
-        'h2',
-        { className: 'dek' },
-        this.props.subtitle
-      ),
-      this.props.author && _react2.default.createElement(
-        'div',
-        { className: 'byline' },
-        prefix.trim() + ' ',
-        _react2.default.createElement(
-          'a',
-          { href: this.props.authorLink },
-          this.props.author
-        )
-      ),
-      !!this.props.authors && _react2.default.createElement(ByLineMultipleAuthors, {
-        authors: this.props.authors,
-        prefix: prefix.trim(),
-        joint: joint.trim(),
-        suffix: suffix.trim()
-      }),
-      this.props.date && _react2.default.createElement(
-        'div',
-        { className: 'idyll-pub-date' },
-        this.props.date
-      )
-    );
-  };
-
-  return Header;
-}(_react2.default.PureComponent);
-
-Header._idyll = {
-  name: 'Header',
-  tagType: 'closed',
-  props: [{
-    name: 'title',
-    type: 'string',
-    example: '"Article Title"'
-  }, {
-    name: 'subtitle',
-    type: 'string',
-    example: '"Article subtitle."'
-  }, {
-    name: 'author',
-    type: 'string',
-    example: '"Author Name"'
-  }, {
-    name: 'authorLink',
-    type: 'string',
-    example: '"author.website"'
-  }, {
-    name: 'authors',
-    type: 'array',
-    example: "`[{name: 'Jane Doe', link: 'https://website.com'}]`",
-    description: 'An array of authors. Each element of the array can be an object or a string.'
-  }, {
-    name: 'date',
-    type: 'string',
-    example: '"December 25, 2018"',
-    description: 'The publication date.'
-  }, {
-    name: 'background',
-    type: 'string',
-    example: '"blue"',
-    defaultValue: '"#222"',
-    description: 'The background of the header. Can pass a color or a url().'
-  }, {
-    name: 'byLineTemplate',
-    type: 'object',
-    example: "{ prefix: 'Made by', joint: ' ', suffix: '&' }",
-    description: 'Optional template to use in by line.'
-  }, {
-    name: 'color',
-    type: 'string',
-    example: '"#000"',
-    defaultValue: '"#fff"',
-    description: 'The text color of the header.'
-  }]
-};
-
-exports.default = Header;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var ReactDOM = require('react-dom');
-var id = 0;
-
-var Radio = function (_React$PureComponent) {
-  _inherits(Radio, _React$PureComponent);
-
-  function Radio(props) {
-    _classCallCheck(this, Radio);
-
-    var _this = _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
-
-    _this.onChange = _this.onChange.bind(_this);
-    _this.id = id++;
-    return _this;
-  }
-
-  Radio.prototype.onChange = function onChange(e) {
-    this.props.updateProps({ value: e.target.value });
-  };
-
-  Radio.prototype.render = function render() {
-    var _this2 = this;
-
-    var _props = this.props,
-        idyll = _props.idyll,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        options = _props.options,
-        value = _props.value,
-        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps', 'options', 'value']);
-
-    return _react2.default.createElement(
-      'div',
-      props,
-      options.map(function (d) {
-        if (typeof d === 'string') {
-          return _react2.default.createElement(
-            'label',
-            { key: d },
-            _react2.default.createElement('input', {
-              type: 'radio',
-              checked: d === value,
-              onChange: _this2.onChange,
-              value: d,
-              name: _this2.id
-            }),
-            d
-          );
-        }
-        return _react2.default.createElement(
-          'label',
-          { key: d.value },
-          _react2.default.createElement('input', {
-            type: 'radio',
-            checked: d.value === value,
-            onChange: _this2.onChange,
-            value: d.value,
-            name: _this2.id
-          }),
-          d.label || d.value
-        );
-      })
-    );
-  };
-
-  return Radio;
-}(_react2.default.PureComponent);
-
-Radio.defaultProps = {
-  options: []
-};
-
-Radio._idyll = {
-  name: 'Radio',
-  tagType: 'closed',
-  props: [{
-    name: 'value',
-    type: 'string',
-    example: 'x',
-    description: 'The value of the "checked" radio button'
-  }, {
-    name: 'options',
-    type: 'array',
-    example: '`["option1", "option2"]`',
-    description: 'an array representing the different buttons. Can be an array of strings like `["val1", "val2"]` or an array of objects `[{ value: "val1", label: "Value 1" }, { value: "val2", label: "Value 2" }]`.'
-  }]
-};
-
-exports.default = Radio;
-},{"react":"react","react-dom":"react-dom"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _textContainer = require('./text-container');
-
-var _textContainer2 = _interopRequireDefault(_textContainer);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var React = require('react');
-
-var _require = require('idyll-component-children'),
-    filterChildren = _require.filterChildren,
-    mapChildren = _require.mapChildren;
-
-var d3 = require('d3-selection');
-
-var styles = {
-  SCROLL_GRAPHIC: {
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 'auto',
-    height: '100vh',
-    width: '100%',
-    transform: 'translate3d(0, 0, 0)',
-    zIndex: -1
-  },
-
-  SCROLL_GRAPHIC_INNER: {
-    position: 'absolute',
-    // right: '1rem',
-    left: 0,
-    right: 0,
-    top: '50%',
-    transform: 'translateY(-50%)'
-  }
-};
-
-var id = 0;
-
-var Scroller = function (_React$Component) {
-  _inherits(Scroller, _React$Component);
-
-  function Scroller(props) {
-    _classCallCheck(this, Scroller);
-
-    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
-
-    _this.id = id++;
-    _this.state = {
-      graphicHeight: 0,
-      graphicWidth: 0
-    };
-
-    _this.SCROLL_STEP_MAP = {};
-    _this.SCROLL_NAME_MAP = {};
-    return _this;
-  }
-
-  Scroller.prototype.componentDidMount = function componentDidMount() {
-    require('intersection-observer');
-    var scrollama = require('scrollama');
-    // instantiate the scrollama
-    var scroller = scrollama();
-    this.handleResize();
-
-    // setup the instance, pass callback functions
-    scroller.setup({
-      step: '#idyll-scroll-' + this.id + ' .idyll-step', // required
-      container: '#idyll-scroll-' + this.id, // required (for sticky)
-      graphic: '#idyll-scroll-' + this.id + ' .idyll-scroll-graphic', // required (for sticky)
-      progress: this.props.progress !== undefined ? true : false
-    }).onStepEnter(this.handleStepEnter.bind(this)).onStepProgress(this.handleStepProgress.bind(this))
-    // .onStepExit(handleStepExit)
-    .onContainerEnter(this.handleContainerEnter.bind(this));
-    //.onContainerExit(this.handleContainerExit.bind(this));
-
-    // setup resize event
-    window.addEventListener('resize', this.handleResize.bind(this));
-  };
-
-  Scroller.prototype.handleStepEnter = function handleStepEnter(_ref) {
-    var element = _ref.element,
-        index = _ref.index,
-        direction = _ref.direction;
-
-    this.SCROLL_STEP_MAP[index] && this.SCROLL_STEP_MAP[index]();
-    var update = { currentStep: index };
-    if (this.SCROLL_NAME_MAP[index]) {
-      update.currentState = this.SCROLL_NAME_MAP[index];
-    }
-    this.props.updateProps && this.props.updateProps(update);
-    if (index === Object.keys(this.SCROLL_STEP_MAP).length - 1) {
-      d3.select('body').style('overflow', 'auto');
-    }
-  };
-
-  Scroller.prototype.handleResize = function handleResize() {
-    this.setState({
-      graphicHeight: window.innerHeight + 'px',
-      graphicWidth: window.innerWidth + 'px'
-    });
-  };
-
-  Scroller.prototype.handleContainerEnter = function handleContainerEnter(response) {
-    if (this.props.disableScroll && (!this.props.currentStep || this.props.currentStep < Object.keys(this.SCROLL_STEP_MAP).length - 1)) {
-      d3.select('body').style('overflow', 'hidden');
-    }
-  };
-
-  Scroller.prototype.handleStepProgress = function handleStepProgress(response) {
-    var progress = response.progress;
-
-    var update = { progress: progress };
-    this.props.updateProps && this.props.updateProps(update);
-  };
-
-  Scroller.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-    var _this2 = this;
-
-    if (nextProps.disableScroll && this.props.currentStep !== nextProps.currentStep) {
-      d3.selectAll('#idyll-scroll-' + this.id + ' .idyll-step').filter(function (d, i) {
-        return i === nextProps.currentStep;
-      }).node().scrollIntoView({ behavior: 'smooth' });
-    }
-    if (nextProps.disableScroll && this.props.currentState !== nextProps.currentState) {
-      d3.selectAll('#idyll-scroll-' + this.id + ' .idyll-step').filter(function (d, i) {
-        return nextProps.currentState === _this2.SCROLL_NAME_MAP[i];
-      }).node().scrollIntoView({ behavior: 'smooth' });
-    }
-    if (nextProps.disableScroll && (!nextProps.currentStep || nextProps.currentStep < Object.keys(this.SCROLL_STEP_MAP).length - 1)) {
-      d3.select('body').style('overflow', 'hidden');
-    }
-  };
-
-  Scroller.prototype.registerStep = function registerStep(elt, name, val) {
-    this.SCROLL_STEP_MAP[elt] = val;
-    this.SCROLL_NAME_MAP[elt] = name;
-  };
-
-  Scroller.prototype.render = function render() {
-    var _this3 = this;
-
-    var _props = this.props,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        idyll = _props.idyll,
-        children = _props.children,
-        props = _objectWithoutProperties(_props, ['hasError', 'updateProps', 'idyll', 'children']);
-
-    var _state = this.state,
-        graphicHeight = _state.graphicHeight,
-        graphicWidth = _state.graphicWidth;
-
-
-    var graphicChildren = filterChildren(children, function (c) {
-      return c.type.name && c.type.name.toLowerCase() === 'graphic';
-    });
-
-    return React.createElement(
-      'div',
-      {
-        ref: function ref(_ref2) {
-          return _this3.ref = _ref2;
-        },
-        className: 'idyll-scroll',
-        id: 'idyll-scroll-' + this.id,
-        style: Object.assign({ position: 'relative' })
-      },
-      graphicChildren && graphicChildren.length ? React.createElement(
-        'div',
-        {
-          className: 'idyll-scroll-graphic',
-          style: Object.assign({ height: graphicHeight }, styles.SCROLL_GRAPHIC)
-        },
-        React.createElement(
-          'div',
-          {
-            style: Object.assign({ width: graphicWidth }, styles.SCROLL_GRAPHIC_INNER)
-          },
-          graphicChildren
-        )
-      ) : null,
-      React.createElement(
-        _textContainer2.default,
-        { idyll: idyll },
-        React.createElement(
-          'div',
-          { className: 'idyll-scroll-text' },
-          mapChildren(filterChildren(children, function (c) {
-            return !c.type.name || c.type.name.toLowerCase() === 'step';
-          }), function (c) {
-            return React.cloneElement(c, {
-              registerStep: _this3.registerStep.bind(_this3)
-            });
-          })
-        )
-      )
-    );
-  };
-
-  return Scroller;
-}(React.Component);
-
-Scroller._idyll = {
-  name: 'Scroller',
-  tagType: 'open',
-  children: ['\n  [Graphic] This graphic stays fixed in the background.[/Graphic]\n  [Step]This is the content for step 1[/Step]\n  [Step]This is the content for step 2[/Step]\n  [Step]This is the content for step 3[/Step]'],
-  props: [{
-    name: 'currentStep',
-    type: 'integer',
-    example: '0',
-    description: 'The index of the currently selected step.'
-  }, {
-    name: 'currentState',
-    type: 'object',
-    example: '`{}`',
-    description: 'The state value associated with the currently selected step. Note you must set the state property on the step components for this value to update.'
-  }, {
-    name: 'progress',
-    type: 'number',
-    example: '0',
-    description: 'The percent of completion (0-1) of the currently selected step'
-  }]
-};
-
-exports.default = Scroller;
-},{"./text-container":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js","d3-selection":"/mnt/d/git/idyll-material/maple-syrup/node_modules/d3-selection/dist/d3-selection.js","idyll-component-children":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-component-children/dist/cjs/index.js","intersection-observer":"/mnt/d/git/idyll-material/maple-syrup/node_modules/intersection-observer/intersection-observer.js","react":"react","scrollama":"/mnt/d/git/idyll-material/maple-syrup/node_modules/scrollama/build/scrollama.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var idx = 0;
-
-var Step = function (_React$Component) {
-  _inherits(Step, _React$Component);
-
-  function Step() {
-    _classCallCheck(this, Step);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  Step.prototype.componentDidMount = function componentDidMount() {
-    this.props.registerStep && this.props.registerStep(idx++, this.props.state, (this.props.onEnter || function () {}).bind(this));
-  };
-
-  Step.prototype.render = function render() {
-    var _this2 = this;
-
-    var _props = this.props,
-        idyll = _props.idyll,
-        updateProps = _props.updateProps,
-        hasError = _props.hasError,
-        registerStep = _props.registerStep,
-        onEnter = _props.onEnter,
-        state = _props.state,
-        className = _props.className,
-        props = _objectWithoutProperties(_props, ['idyll', 'updateProps', 'hasError', 'registerStep', 'onEnter', 'state', 'className']);
-
-    return _react2.default.createElement('div', _extends({ ref: function ref(_ref) {
-        return _this2.ref = _ref;
-      }, className: 'idyll-step ' + (className || '') }, props));
-  };
-
-  return Step;
-}(_react2.default.Component);
-
-Step._idyll = {
-  name: "Step",
-  tagType: "open"
-};
-
-exports.default = Step;
-},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TextContainer = function (_React$PureComponent) {
-  _inherits(TextContainer, _React$PureComponent);
-
-  function TextContainer() {
-    _classCallCheck(this, TextContainer);
-
-    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
-  }
-
-  TextContainer.prototype.render = function render() {
-    var _props = this.props,
-        idyll = _props.idyll,
-        children = _props.children,
-        className = _props.className,
-        hasError = _props.hasError,
-        updateProps = _props.updateProps,
-        props = _objectWithoutProperties(_props, ['idyll', 'children', 'className', 'hasError', 'updateProps']);
-
-    var _idyll$layout = idyll.layout,
-        styles = _idyll$layout.styles,
-        layout = _objectWithoutProperties(_idyll$layout, ['styles']);
-
-    var _idyll$theme = idyll.theme,
-        _ = _idyll$theme.styles,
-        theme = _objectWithoutProperties(_idyll$theme, ['styles']);
-
-    var cn = (className || '') + ' idyll-text-container';
-    return _react2.default.createElement(
-      'div',
-      _extends({}, props, { className: cn }),
-      children
-    );
-  };
-
-  return TextContainer;
-}(_react2.default.PureComponent);
-
-TextContainer._idyll = {
-  name: "TextContainer",
-  tagType: "open"
-};
-exports.default = TextContainer;
 },{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-document/dist/cjs/components/author-tool.js":[function(require,module,exports){
 'use strict';
 
@@ -24059,7 +22819,1252 @@ exports.__esModule = true;
 exports.default = function () {
   return "\n@charset \"UTF-8\";\n\n/* Import ET Book styles\n   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: italic; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: bold;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book-roman-old-style\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n\n             .ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n             ReactTable .-pagination .-btn {\n              margin: 0;\n            }\n/* Tufte CSS styles */\n\nhtml {\n  font-size: 15px;\n}\n\nbody {\n  background-color: #fffff8;\n}\n\nbody { font-family: et-book, Palatino, \"Palatino Linotype\", \"Palatino LT STD\", \"Book Antiqua\", Georgia, serif;\n       background-color: #fffff8;\n       color: #111;\n       counter-reset: sidenote-counter; }\n\n\n.idyll-root { position: relative;\n          padding: 5rem 0rem;\n          margin-left: 0;\n          width: auto;\n          margin: auto; }\n\nh1, .hed { font-weight: 400;\n     margin-top: 4rem;\n     margin-bottom: 1.5rem;\n     font-size: 3.2rem;\n     line-height: 1; }\n\nh2 { font-style: italic;\n     font-weight: 400;\n     margin-top: 2.1rem;\n     margin-bottom: 0;\n     font-size: 2.2rem;\n     line-height: 1; }\n\nh3 { font-style: italic;\n     font-weight: 400;\n     font-size: 1.7rem;\n     margin-top: 2rem;\n     margin-bottom: 0;\n     line-height: 1; }\n\nhr { display: block;\n     height: 1px;\n     width: 55%;\n     border: 0;\n     border-top: 1px solid #ccc;\n     margin: 1em 0;\n     padding: 0; }\n\np.subtitle,\n.dek { font-style: italic;\n             margin-top: 1rem;\n             margin-bottom: 1rem;\n             font-size: 1.8rem;\n             display: block;\n             line-height: 1; }\n\n.numeral { font-family: et-book-roman-old-style; }\n\n.danger { color: red; }\n\nsection { padding-top: 1rem;\n          padding-bottom: 1rem; }\n\np, ol, ul { font-size: 1.4rem; }\n\np { line-height: 2rem;\n    margin-top: 1.4rem;\n    margin-bottom: 1.4rem;\n    padding-right: 0;\n    vertical-align: baseline; }\n\n/* Chapter Epigraphs */\ndiv.epigraph { margin: 5em 0; }\n\ndiv.epigraph > blockquote { margin-top: 3em;\n                            margin-bottom: 3em; }\n\ndiv.epigraph > blockquote, div.epigraph > blockquote > p { font-style: italic; }\n\ndiv.epigraph > blockquote > footer { font-style: normal; }\n\ndiv.epigraph > blockquote > footer > cite { font-style: italic; }\n/* end chapter epigraphs styles */\n\nblockquote { font-size: 1.4rem; }\n\nblockquote p { width: 55%;\n               margin-right: 40px; }\n\nblockquote footer { width: 55%;\n                    font-size: 1.1rem;\n                    text-align: right; }\n\nsection>ol, section>ul { width: 45%;\n                         -webkit-padding-start: 5%;\n                         -webkit-padding-end: 5%; }\n\nli { padding: 0.5rem 0; }\n\nfigure { padding: 0;\n         border: 0;\n         font-size: 100%;\n         font: inherit;\n         vertical-align: baseline;\n         max-width: 55%;\n         -webkit-margin-start: 0;\n         -webkit-margin-end: 0;\n         margin: 0 0 3em 0; }\n\nfigcaption { float: right;\n             clear: right;\n             margin-top: 0;\n             margin-bottom: 0;\n             font-size: 1.1rem;\n             line-height: 1.6;\n             vertical-align: baseline;\n             position: relative;\n             max-width: 40%; }\n\nfigure.fullwidth figcaption { margin-right: 24%; }\n\n/* Links: replicate underline that clears descenders */\na:link, a:visited { color: inherit; }\n\n@media screen and (-webkit-min-device-pixel-ratio: 0) { a:link { background-position-y: 87%, 87%, 87%; } }\n\n\na:link::-moz-selection { text-shadow: 0.03em 0 #b4d5fe, -0.03em 0 #b4d5fe, 0 0.03em #b4d5fe, 0 -0.03em #b4d5fe, 0.06em 0 #b4d5fe, -0.06em 0 #b4d5fe, 0.09em 0 #b4d5fe, -0.09em 0 #b4d5fe, 0.12em 0 #b4d5fe, -0.12em 0 #b4d5fe, 0.15em 0 #b4d5fe, -0.15em 0 #b4d5fe;\n                         background: #b4d5fe; }\n\n/* Sidenotes, margin notes, figures, captions */\nimg { max-width: 100%; }\n\n.aside, .sidenote, .marginnote { float: right;\n                         clear: right;\n                         margin-right: -60%;\n                         width: 50%;\n                         margin-top: 0;\n                         margin-bottom: 0;\n                         font-size: 1.1rem;\n                         line-height: 1.3;\n                         vertical-align: baseline;\n                         position: relative; }\n\n.sidenote-number { counter-increment: sidenote-counter; }\n\n.sidenote-number:after, .sidenote:before { content: counter(sidenote-counter) \" \";\n                                           font-family: et-book-roman-old-style;\n                                           position: relative;\n                                           vertical-align: baseline; }\n\n.sidenote-number:after { content: counter(sidenote-counter);\n                         font-size: 1rem;\n                         top: -0.5rem;\n                         left: 0.1rem; }\n\n.sidenote:before { content: counter(sidenote-counter) \" \";\n                   top: -0.5rem; }\n\nblockquote .sidenote, blockquote .marginnote, blockquote .aside { margin-right: -82%;\n                                               min-width: 59%;\n                                               text-align: left; }\n\n.aside-container {\n  position: static;\n  width: 55%;\n}\ndiv.fullwidth, table.fullwidth { width: 100%; }\n\ndiv.table-wrapper { overflow-x: auto;\n                    font-family: \"Trebuchet MS\", \"Gill Sans\", \"Gill Sans MT\", sans-serif; }\n\n.sans { font-family: \"Gill Sans\", \"Gill Sans MT\", Calibri, sans-serif;\n        letter-spacing: .03em; }\n\ncode { font-family: Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n       font-size: 1.0rem;\n       line-height: 1.42; }\n\n.sans > code { font-size: 1.2rem; }\n\nh1 > code, h2 > code, h3 > code { font-size: 0.80em; }\n\n.marginnote > code, .sidenote > code { font-size: 1rem; }\n\npre.code { font-size: 0.9rem;\n           width: 52.5%;\n           margin-left: 2.5%;\n           overflow-x: auto; }\n\npre.code.fullwidth { width: 90%; }\n\n.fullwidth { max-width: 90%;\n             clear:both; }\n\nspan.newthought { font-variant: small-caps;\n                  font-size: 1.2em; }\n\ninput.margin-toggle { display: none; }\n\nlabel.sidenote-number { display: inline; }\n\nlabel.margin-toggle:not(.sidenote-number) { display: none; }\n\n@media (max-width: 760px) { p, footer { width: 100%; }\n                            pre.code { width: 97%; }\n                            ul { width: 85%; }\n                            figure { max-width: 90%; }\n                            figcaption, figure.fullwidth figcaption { margin-right: 0%;\n                                                                      max-width: none; }\n                            blockquote { margin-left: 1.5em;\n                                         margin-right: 0em; }\n                            blockquote p, blockquote footer { width: 100%; }\n                            label.margin-toggle:not(.sidenote-number) { display: inline; }\n                            .sidenote, .marginnote { display: none; }\n                            .margin-toggle:checked + .sidenote,\n                            .margin-toggle:checked + .marginnote { display: block;\n                                                                   float: left;\n                                                                   left: 1rem;\n                                                                   clear: both;\n                                                                   width: 95%;\n                                                                   margin: 1rem 2.5%;\n                                                                   vertical-align: baseline;\n                                                                   position: relative; }\n                            label { cursor: pointer; }\n                            div.table-wrapper, table { width: 85%; }\n                            img { width: 100%; } }\n\n\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: #fff;\n  border: solid 1px #111;\n}\n\n.idyll-scroll-text .idyll-step h2 {\n  margin-top: 0;\n}\n\npre {\n  background: #f3f3f3;\n  padding: 15px;\n  overflow-x: auto;\n}\n\n";
 };
-},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/src/client/build.js":[function(require,module,exports){
+},{}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/boolean.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Boolean = function (_React$PureComponent) {
+  _inherits(Boolean, _React$PureComponent);
+
+  function Boolean(props) {
+    _classCallCheck(this, Boolean);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
+  }
+
+  Boolean.prototype.toggleCheckbox = function toggleCheckbox() {
+    this.props.updateProps({
+      value: !this.props.value
+    });
+  };
+
+  Boolean.prototype.render = function render() {
+    var _props = this.props,
+        value = _props.value,
+        className = _props.className,
+        style = _props.style;
+
+    return _react2.default.createElement('input', {
+      type: 'checkbox',
+      onChange: this.toggleCheckbox.bind(this),
+      checked: value,
+      className: ('idyll-checkbox ' + (className ? className : '')).trim(),
+      style: style
+    });
+  };
+
+  return Boolean;
+}(_react2.default.PureComponent);
+
+Boolean.defaultProps = {
+  value: false
+};
+
+Boolean._idyll = {
+  name: 'Boolean',
+  tagType: 'closed',
+  props: [{
+    name: 'value',
+    type: 'boolean',
+    example: 'x',
+    description: 'A value for the checkbox. If this value is truthy, the checkbox will be shown.'
+  }]
+};
+
+exports.default = Boolean;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Button = function (_React$PureComponent) {
+  _inherits(Button, _React$PureComponent);
+
+  function Button() {
+    _classCallCheck(this, Button);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  Button.prototype.render = function render() {
+    var _props = this.props,
+        onClick = _props.onClick,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        props = _objectWithoutProperties(_props, ['onClick', 'idyll', 'hasError', 'updateProps']);
+
+    return _react2.default.createElement(
+      'button',
+      _extends({}, props, { onClick: onClick.bind(this) }),
+      this.props.children
+    );
+  };
+
+  return Button;
+}(_react2.default.PureComponent);
+
+Button.defaultProps = {
+  onClick: function onClick() {}
+};
+
+Button._idyll = {
+  name: 'Button',
+  tagType: 'open',
+  children: ['Click Me.'],
+  props: [{
+    name: 'onClick',
+    type: 'event',
+    example: '`x += 1`',
+    description: 'An event that is fired when the user clicks the button.'
+  }]
+};
+exports.default = Button;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/conditional.js":[function(require,module,exports){
+'use strict';
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require('react');
+
+var Conditional = function (_React$Component) {
+  _inherits(Conditional, _React$Component);
+
+  function Conditional() {
+    _classCallCheck(this, Conditional);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Conditional.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps']);
+
+    if (!props.if) {
+      return React.createElement(
+        'div',
+        { style: { display: 'none' } },
+        props.children
+      );
+    }
+
+    return React.createElement(
+      'div',
+      null,
+      props.children
+    );
+  };
+
+  return Conditional;
+}(React.Component);
+
+Conditional._idyll = {
+  name: 'Conditional',
+  tagType: 'open',
+  children: ['Some text'],
+  props: [{
+    name: 'if',
+    type: 'expression',
+    example: '`x < 10`',
+    description: 'An expression; if this evaluates to true, the children will be rendered, otherwise nothing will be drawn to the screen'
+  }]
+};
+module.exports = Conditional;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ReactDOM = require('react-dom');
+var Latex = require('react-latex-patched');
+var select = require('d3-selection').select;
+var format = require('d3-format').format;
+
+var allowedProps = ['domain', 'step', 'children'];
+
+var Equation = function (_React$PureComponent) {
+  _inherits(Equation, _React$PureComponent);
+
+  function Equation(props) {
+    _classCallCheck(this, Equation);
+
+    var _this = _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
+
+    _this.state = {
+      showRange: false
+    };
+    return _this;
+  }
+
+  Equation.prototype.handleChange = function handleChange(event) {
+    this.props.updateProps({
+      value: +event.target.value
+    });
+  };
+
+  Equation.prototype.componentDidMount = function componentDidMount() {
+    var dom = void 0;
+
+    var cssId = 'idyll-equation-css'; // you could encode the css path itself to generate id..
+    var cssURL = '//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css';
+    if (document && !document.getElementById(cssId) && !this.props.skipCSS && !select('link[href=\'' + cssURL + '\']').size()) {
+      var heads = document.getElementsByTagName('head');
+      if (heads.length) {
+        var head = heads[0];
+        var link = document.createElement('link');
+        link.id = cssId;
+        link.href = cssURL;
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.media = 'all';
+        head.appendChild(link);
+      }
+    }
+
+    try {
+      dom = ReactDOM.findDOMNode(this);
+    } catch (e) {}
+    if (!dom) {
+      return;
+    }
+
+    this.propNodes = {};
+    var self = this;
+    select(dom).selectAll('.mord').each(function (d) {
+      var $this = select(this);
+      Object.keys(self.props).filter(function (prop) {
+        return allowedProps.indexOf(prop) === -1;
+      }).forEach(function (prop) {
+        if ($this.text() === prop) {
+          self.propNodes[prop] = $this;
+          $this.style('cursor', 'pointer');
+          $this.on('mouseover', function () {
+            $this.style('color', 'red');
+          }).on('mouseout', function () {
+            if (!(self.state.showRange && self.state.var === prop)) {
+              $this.style('color', 'black');
+            }
+          }).on('click', function () {
+            if (!(self.state.showRange && self.state.var === prop)) {
+              self.setState({
+                showRange: true,
+                var: prop
+              });
+              $this.text(self.props[prop]);
+              $this.style('color', 'red');
+              Object.keys(self.propNodes).filter(function (d) {
+                return d !== prop;
+              }).forEach(function (d) {
+                self.propNodes[d].text(d);
+                self.propNodes[d].style('color', 'black');
+              });
+            } else {
+              self.setState({
+                showRange: false,
+                var: prop
+              });
+              $this.style('color', 'black');
+              $this.text(prop);
+            }
+          });
+        }
+      });
+    });
+  };
+
+  Equation.prototype.handleRangeUpdate = function handleRangeUpdate(event) {
+    var newProps = {};
+    var val = +event.target.value;
+    newProps[this.state.var] = val;
+    this.props.updateProps(newProps);
+    this.propNodes[this.state.var].text(val);
+  };
+
+  Equation.prototype.renderEditing = function renderEditing() {
+    if (!this.state.showRange) {
+      return null;
+    }
+
+    var d = (this.props.domain || {})[this.state.var] || [-10, 10];
+    var step = (this.props.step || {})[this.state.var] || 0.1;
+    return _react2.default.createElement(
+      'div',
+      { style: { paddingTop: 15, textAlign: 'center' } },
+      _react2.default.createElement('input', {
+        type: 'range',
+        value: format('0.1f')(this.props[this.state.var]),
+        min: d[0],
+        max: d[1],
+        onChange: this.handleRangeUpdate.bind(this),
+        step: step
+      })
+    );
+  };
+
+  Equation.prototype.getLatex = function getLatex() {
+    if (this.props.latex) {
+      return this.props.latex;
+    }
+    return this.props.children && this.props.children[0] ? this.props.children[0] : '';
+  };
+
+  Equation.prototype.render = function render() {
+    var latexChar = '$';
+    var latexString = latexChar + this.getLatex() + latexChar;
+
+    var style = void 0;
+    if (this.state.showRange) {
+      style = this.props.style;
+    } else {
+      style = Object.assign({
+        display: this.props.display ? 'block' : 'inline-block'
+      }, this.props.style);
+    }
+
+    return _react2.default.createElement(
+      'span',
+      { style: style },
+      _react2.default.createElement(
+        Latex,
+        { displayMode: this.props.display },
+        latexString
+      ),
+      this.renderEditing()
+    );
+  };
+
+  return Equation;
+}(_react2.default.PureComponent);
+
+Equation._idyll = {
+  name: 'Equation',
+  tagType: 'open',
+  children: 'y = x^2',
+  props: [{
+    name: 'display',
+    type: 'boolean',
+    example: 'true',
+    defaultValue: 'false',
+    description: 'Set to `true` for a centered, standalone equation, set to `false` for an inline equation.'
+  }]
+};
+
+exports.default = Equation;
+},{"d3-format":"/mnt/d/git/idyll-material/maple-syrup/node_modules/d3-format/build/d3-format.js","d3-selection":"/mnt/d/git/idyll-material/maple-syrup/node_modules/d3-selection/dist/d3-selection.js","react":"react","react-dom":"react-dom","react-latex-patched":"/mnt/d/git/idyll-material/maple-syrup/node_modules/react-latex-patched/build/latex.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/float.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Float = function (_React$PureComponent) {
+  _inherits(Float, _React$PureComponent);
+
+  function Float() {
+    _classCallCheck(this, Float);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  Float.prototype.render = function render() {
+    return _react2.default.createElement(
+      'div',
+      {
+        className: 'float ' + this.props.position,
+        style: { float: this.props.position, width: this.props.width || '50%' }
+      },
+      this.props.children
+    );
+  };
+
+  return Float;
+}(_react2.default.PureComponent);
+
+Float._idyll = {
+  name: 'Float',
+  tagType: 'open',
+  props: [{
+    name: 'position',
+    type: 'string',
+    example: '"left"',
+    description: 'the float position: left or right.'
+  }, {
+    name: 'width',
+    type: 'string',
+    example: '"50%"',
+    defaultValue: '"50%"',
+    description: 'the width of the component, specified in pixels or percentage.'
+  }]
+};
+
+exports.default = Float;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+var generateId = function generateId() {
+  var headerText = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+  return headerText.toString().trim().replace(/\s+/g, '-').toLowerCase();
+};
+
+var GenerateHeaders = function GenerateHeaders(props) {
+  var idyll = props.idyll,
+      hasError = props.hasError,
+      updateProps = props.updateProps,
+      size = props.size,
+      _props$children = props.children,
+      children = _props$children === undefined ? [] : _props$children,
+      attributeProps = _objectWithoutProperties(props, ['idyll', 'hasError', 'updateProps', 'size', 'children']);
+
+  var headerText = children.join('');
+  var HeaderTag = 'h' + size;
+
+  if (!attributeProps.id) {
+    attributeProps.id = generateId(headerText);
+  }
+
+  return _react2.default.createElement(
+    HeaderTag,
+    attributeProps,
+    children
+  );
+};
+
+exports.default = GenerateHeaders;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H2 = function (_React$PureComponent) {
+  _inherits(H2, _React$PureComponent);
+
+  function H2() {
+    _classCallCheck(this, H2);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H2.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '2' }, this.props));
+  };
+
+  return H2;
+}(_react2.default.PureComponent);
+
+exports.default = H2;
+},{"./generateHeaders":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H3 = function (_React$PureComponent) {
+  _inherits(H3, _React$PureComponent);
+
+  function H3() {
+    _classCallCheck(this, H3);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H3.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '3' }, this.props));
+  };
+
+  return H3;
+}(_react2.default.PureComponent);
+
+exports.default = H3;
+},{"./generateHeaders":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H4 = function (_React$PureComponent) {
+  _inherits(H4, _React$PureComponent);
+
+  function H4() {
+    _classCallCheck(this, H4);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H4.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '4' }, this.props));
+  };
+
+  return H4;
+}(_react2.default.PureComponent);
+
+exports.default = H4;
+},{"./generateHeaders":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var byLineDefault = { prefix: 'By:', joint: ',', suffix: 'and' };
+
+var additionalTextByIndex = function additionalTextByIndex(authors, suffix, joint, index) {
+  var _map;
+
+  var map = (_map = {}, _map[authors.length - 1] = '', _map[authors.length - 2] = ' ' + suffix + ' ', _map);
+
+  return index in map ? map[index] : joint + ' ';
+};
+
+var AuthorLink = function AuthorLink(_ref) {
+  var name = _ref.name,
+      link = _ref.link;
+  return _react2.default.createElement(
+    'a',
+    { href: link },
+    name
+  );
+};
+
+var ByLineMultipleAuthors = function ByLineMultipleAuthors(_ref2) {
+  var authors = _ref2.authors,
+      prefix = _ref2.prefix,
+      joint = _ref2.joint,
+      suffix = _ref2.suffix;
+  return _react2.default.createElement(
+    'div',
+    { className: 'byline' },
+    prefix + ' ',
+    authors.map(function (author, i) {
+      var authorDisplay = typeof author === 'string' ? author : author.name;
+
+      return _react2.default.createElement(
+        'span',
+        { key: authorDisplay },
+        typeof author.link === 'string' ? _react2.default.createElement(AuthorLink, author) : authorDisplay,
+        additionalTextByIndex(authors, suffix, joint, i)
+      );
+    })
+  );
+};
+
+var Header = function (_React$PureComponent) {
+  _inherits(Header, _React$PureComponent);
+
+  function Header() {
+    _classCallCheck(this, Header);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  Header.prototype.render = function render() {
+    var _props = this.props,
+        background = _props.background,
+        color = _props.color,
+        byLineTemplate = _props.byLineTemplate;
+
+    var _byLineDefault$byLine = _extends({}, byLineDefault, byLineTemplate),
+        joint = _byLineDefault$byLine.joint,
+        prefix = _byLineDefault$byLine.prefix,
+        suffix = _byLineDefault$byLine.suffix;
+
+    return _react2.default.createElement(
+      'div',
+      { className: 'article-header', style: { background: background, color: color } },
+      _react2.default.createElement(
+        'h1',
+        { className: 'hed' },
+        this.props.title
+      ),
+      this.props.subtitle && _react2.default.createElement(
+        'h2',
+        { className: 'dek' },
+        this.props.subtitle
+      ),
+      this.props.author && _react2.default.createElement(
+        'div',
+        { className: 'byline' },
+        prefix.trim() + ' ',
+        _react2.default.createElement(
+          'a',
+          { href: this.props.authorLink },
+          this.props.author
+        )
+      ),
+      !!this.props.authors && _react2.default.createElement(ByLineMultipleAuthors, {
+        authors: this.props.authors,
+        prefix: prefix.trim(),
+        joint: joint.trim(),
+        suffix: suffix.trim()
+      }),
+      this.props.date && _react2.default.createElement(
+        'div',
+        { className: 'idyll-pub-date' },
+        this.props.date
+      )
+    );
+  };
+
+  return Header;
+}(_react2.default.PureComponent);
+
+Header._idyll = {
+  name: 'Header',
+  tagType: 'closed',
+  props: [{
+    name: 'title',
+    type: 'string',
+    example: '"Article Title"'
+  }, {
+    name: 'subtitle',
+    type: 'string',
+    example: '"Article subtitle."'
+  }, {
+    name: 'author',
+    type: 'string',
+    example: '"Author Name"'
+  }, {
+    name: 'authorLink',
+    type: 'string',
+    example: '"author.website"'
+  }, {
+    name: 'authors',
+    type: 'array',
+    example: "`[{name: 'Jane Doe', link: 'https://website.com'}]`",
+    description: 'An array of authors. Each element of the array can be an object or a string.'
+  }, {
+    name: 'date',
+    type: 'string',
+    example: '"December 25, 2018"',
+    description: 'The publication date.'
+  }, {
+    name: 'background',
+    type: 'string',
+    example: '"blue"',
+    defaultValue: '"#222"',
+    description: 'The background of the header. Can pass a color or a url().'
+  }, {
+    name: 'byLineTemplate',
+    type: 'object',
+    example: "{ prefix: 'Made by', joint: ' ', suffix: '&' }",
+    description: 'Optional template to use in by line.'
+  }, {
+    name: 'color',
+    type: 'string',
+    example: '"#000"',
+    defaultValue: '"#fff"',
+    description: 'The text color of the header.'
+  }]
+};
+
+exports.default = Header;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/radio.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var ReactDOM = require('react-dom');
+var id = 0;
+
+var Radio = function (_React$PureComponent) {
+  _inherits(Radio, _React$PureComponent);
+
+  function Radio(props) {
+    _classCallCheck(this, Radio);
+
+    var _this = _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
+
+    _this.onChange = _this.onChange.bind(_this);
+    _this.id = id++;
+    return _this;
+  }
+
+  Radio.prototype.onChange = function onChange(e) {
+    this.props.updateProps({ value: e.target.value });
+  };
+
+  Radio.prototype.render = function render() {
+    var _this2 = this;
+
+    var _props = this.props,
+        idyll = _props.idyll,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        options = _props.options,
+        value = _props.value,
+        props = _objectWithoutProperties(_props, ['idyll', 'hasError', 'updateProps', 'options', 'value']);
+
+    return _react2.default.createElement(
+      'div',
+      props,
+      options.map(function (d) {
+        if (typeof d === 'string') {
+          return _react2.default.createElement(
+            'label',
+            { key: d },
+            _react2.default.createElement('input', {
+              type: 'radio',
+              checked: d === value,
+              onChange: _this2.onChange,
+              value: d,
+              name: _this2.id
+            }),
+            d
+          );
+        }
+        return _react2.default.createElement(
+          'label',
+          { key: d.value },
+          _react2.default.createElement('input', {
+            type: 'radio',
+            checked: d.value === value,
+            onChange: _this2.onChange,
+            value: d.value,
+            name: _this2.id
+          }),
+          d.label || d.value
+        );
+      })
+    );
+  };
+
+  return Radio;
+}(_react2.default.PureComponent);
+
+Radio.defaultProps = {
+  options: []
+};
+
+Radio._idyll = {
+  name: 'Radio',
+  tagType: 'closed',
+  props: [{
+    name: 'value',
+    type: 'string',
+    example: 'x',
+    description: 'The value of the "checked" radio button'
+  }, {
+    name: 'options',
+    type: 'array',
+    example: '`["option1", "option2"]`',
+    description: 'an array representing the different buttons. Can be an array of strings like `["val1", "val2"]` or an array of objects `[{ value: "val1", label: "Value 1" }, { value: "val2", label: "Value 2" }]`.'
+  }]
+};
+
+exports.default = Radio;
+},{"react":"react","react-dom":"react-dom"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/scroller.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _textContainer = require('./text-container');
+
+var _textContainer2 = _interopRequireDefault(_textContainer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var React = require('react');
+
+var _require = require('idyll-component-children'),
+    filterChildren = _require.filterChildren,
+    mapChildren = _require.mapChildren;
+
+var d3 = require('d3-selection');
+
+var styles = {
+  SCROLL_GRAPHIC: {
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 'auto',
+    height: '100vh',
+    width: '100%',
+    transform: 'translate3d(0, 0, 0)',
+    zIndex: -1
+  },
+
+  SCROLL_GRAPHIC_INNER: {
+    position: 'absolute',
+    // right: '1rem',
+    left: 0,
+    right: 0,
+    top: '50%',
+    transform: 'translateY(-50%)'
+  }
+};
+
+var id = 0;
+
+var Scroller = function (_React$Component) {
+  _inherits(Scroller, _React$Component);
+
+  function Scroller(props) {
+    _classCallCheck(this, Scroller);
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
+
+    _this.id = id++;
+    _this.state = {
+      graphicHeight: 0,
+      graphicWidth: 0
+    };
+
+    _this.SCROLL_STEP_MAP = {};
+    _this.SCROLL_NAME_MAP = {};
+    return _this;
+  }
+
+  Scroller.prototype.componentDidMount = function componentDidMount() {
+    require('intersection-observer');
+    var scrollama = require('scrollama');
+    // instantiate the scrollama
+    var scroller = scrollama();
+    this.handleResize();
+
+    // setup the instance, pass callback functions
+    scroller.setup({
+      step: '#idyll-scroll-' + this.id + ' .idyll-step', // required
+      container: '#idyll-scroll-' + this.id, // required (for sticky)
+      graphic: '#idyll-scroll-' + this.id + ' .idyll-scroll-graphic', // required (for sticky)
+      progress: this.props.progress !== undefined ? true : false
+    }).onStepEnter(this.handleStepEnter.bind(this)).onStepProgress(this.handleStepProgress.bind(this))
+    // .onStepExit(handleStepExit)
+    .onContainerEnter(this.handleContainerEnter.bind(this));
+    //.onContainerExit(this.handleContainerExit.bind(this));
+
+    // setup resize event
+    window.addEventListener('resize', this.handleResize.bind(this));
+  };
+
+  Scroller.prototype.handleStepEnter = function handleStepEnter(_ref) {
+    var element = _ref.element,
+        index = _ref.index,
+        direction = _ref.direction;
+
+    this.SCROLL_STEP_MAP[index] && this.SCROLL_STEP_MAP[index]();
+    var update = { currentStep: index };
+    if (this.SCROLL_NAME_MAP[index]) {
+      update.currentState = this.SCROLL_NAME_MAP[index];
+    }
+    this.props.updateProps && this.props.updateProps(update);
+    if (index === Object.keys(this.SCROLL_STEP_MAP).length - 1) {
+      d3.select('body').style('overflow', 'auto');
+    }
+  };
+
+  Scroller.prototype.handleResize = function handleResize() {
+    this.setState({
+      graphicHeight: window.innerHeight + 'px',
+      graphicWidth: window.innerWidth + 'px'
+    });
+  };
+
+  Scroller.prototype.handleContainerEnter = function handleContainerEnter(response) {
+    if (this.props.disableScroll && (!this.props.currentStep || this.props.currentStep < Object.keys(this.SCROLL_STEP_MAP).length - 1)) {
+      d3.select('body').style('overflow', 'hidden');
+    }
+  };
+
+  Scroller.prototype.handleStepProgress = function handleStepProgress(response) {
+    var progress = response.progress;
+
+    var update = { progress: progress };
+    this.props.updateProps && this.props.updateProps(update);
+  };
+
+  Scroller.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+    var _this2 = this;
+
+    if (nextProps.disableScroll && this.props.currentStep !== nextProps.currentStep) {
+      d3.selectAll('#idyll-scroll-' + this.id + ' .idyll-step').filter(function (d, i) {
+        return i === nextProps.currentStep;
+      }).node().scrollIntoView({ behavior: 'smooth' });
+    }
+    if (nextProps.disableScroll && this.props.currentState !== nextProps.currentState) {
+      d3.selectAll('#idyll-scroll-' + this.id + ' .idyll-step').filter(function (d, i) {
+        return nextProps.currentState === _this2.SCROLL_NAME_MAP[i];
+      }).node().scrollIntoView({ behavior: 'smooth' });
+    }
+    if (nextProps.disableScroll && (!nextProps.currentStep || nextProps.currentStep < Object.keys(this.SCROLL_STEP_MAP).length - 1)) {
+      d3.select('body').style('overflow', 'hidden');
+    }
+  };
+
+  Scroller.prototype.registerStep = function registerStep(elt, name, val) {
+    this.SCROLL_STEP_MAP[elt] = val;
+    this.SCROLL_NAME_MAP[elt] = name;
+  };
+
+  Scroller.prototype.render = function render() {
+    var _this3 = this;
+
+    var _props = this.props,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        idyll = _props.idyll,
+        children = _props.children,
+        props = _objectWithoutProperties(_props, ['hasError', 'updateProps', 'idyll', 'children']);
+
+    var _state = this.state,
+        graphicHeight = _state.graphicHeight,
+        graphicWidth = _state.graphicWidth;
+
+
+    var graphicChildren = filterChildren(children, function (c) {
+      return c.type.name && c.type.name.toLowerCase() === 'graphic';
+    });
+
+    return React.createElement(
+      'div',
+      {
+        ref: function ref(_ref2) {
+          return _this3.ref = _ref2;
+        },
+        className: 'idyll-scroll',
+        id: 'idyll-scroll-' + this.id,
+        style: Object.assign({ position: 'relative' })
+      },
+      graphicChildren && graphicChildren.length ? React.createElement(
+        'div',
+        {
+          className: 'idyll-scroll-graphic',
+          style: Object.assign({ height: graphicHeight }, styles.SCROLL_GRAPHIC)
+        },
+        React.createElement(
+          'div',
+          {
+            style: Object.assign({ width: graphicWidth }, styles.SCROLL_GRAPHIC_INNER)
+          },
+          graphicChildren
+        )
+      ) : null,
+      React.createElement(
+        _textContainer2.default,
+        { idyll: idyll },
+        React.createElement(
+          'div',
+          { className: 'idyll-scroll-text' },
+          mapChildren(filterChildren(children, function (c) {
+            return !c.type.name || c.type.name.toLowerCase() === 'step';
+          }), function (c) {
+            return React.cloneElement(c, {
+              registerStep: _this3.registerStep.bind(_this3)
+            });
+          })
+        )
+      )
+    );
+  };
+
+  return Scroller;
+}(React.Component);
+
+Scroller._idyll = {
+  name: 'Scroller',
+  tagType: 'open',
+  children: ['\n  [Graphic] This graphic stays fixed in the background.[/Graphic]\n  [Step]This is the content for step 1[/Step]\n  [Step]This is the content for step 2[/Step]\n  [Step]This is the content for step 3[/Step]'],
+  props: [{
+    name: 'currentStep',
+    type: 'integer',
+    example: '0',
+    description: 'The index of the currently selected step.'
+  }, {
+    name: 'currentState',
+    type: 'object',
+    example: '`{}`',
+    description: 'The state value associated with the currently selected step. Note you must set the state property on the step components for this value to update.'
+  }, {
+    name: 'progress',
+    type: 'number',
+    example: '0',
+    description: 'The percent of completion (0-1) of the currently selected step'
+  }]
+};
+
+exports.default = Scroller;
+},{"./text-container":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js","d3-selection":"/mnt/d/git/idyll-material/maple-syrup/node_modules/d3-selection/dist/d3-selection.js","idyll-component-children":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-component-children/dist/cjs/index.js","intersection-observer":"/mnt/d/git/idyll-material/maple-syrup/node_modules/intersection-observer/intersection-observer.js","react":"react","scrollama":"/mnt/d/git/idyll-material/maple-syrup/node_modules/scrollama/build/scrollama.js"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/step.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var idx = 0;
+
+var Step = function (_React$Component) {
+  _inherits(Step, _React$Component);
+
+  function Step() {
+    _classCallCheck(this, Step);
+
+    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+  }
+
+  Step.prototype.componentDidMount = function componentDidMount() {
+    this.props.registerStep && this.props.registerStep(idx++, this.props.state, (this.props.onEnter || function () {}).bind(this));
+  };
+
+  Step.prototype.render = function render() {
+    var _this2 = this;
+
+    var _props = this.props,
+        idyll = _props.idyll,
+        updateProps = _props.updateProps,
+        hasError = _props.hasError,
+        registerStep = _props.registerStep,
+        onEnter = _props.onEnter,
+        state = _props.state,
+        className = _props.className,
+        props = _objectWithoutProperties(_props, ['idyll', 'updateProps', 'hasError', 'registerStep', 'onEnter', 'state', 'className']);
+
+    return _react2.default.createElement('div', _extends({ ref: function ref(_ref) {
+        return _this2.ref = _ref;
+      }, className: 'idyll-step ' + (className || '') }, props));
+  };
+
+  return Step;
+}(_react2.default.Component);
+
+Step._idyll = {
+  name: "Step",
+  tagType: "open"
+};
+
+exports.default = Step;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TextContainer = function (_React$PureComponent) {
+  _inherits(TextContainer, _React$PureComponent);
+
+  function TextContainer() {
+    _classCallCheck(this, TextContainer);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  TextContainer.prototype.render = function render() {
+    var _props = this.props,
+        idyll = _props.idyll,
+        children = _props.children,
+        className = _props.className,
+        hasError = _props.hasError,
+        updateProps = _props.updateProps,
+        props = _objectWithoutProperties(_props, ['idyll', 'children', 'className', 'hasError', 'updateProps']);
+
+    var _idyll$layout = idyll.layout,
+        styles = _idyll$layout.styles,
+        layout = _objectWithoutProperties(_idyll$layout, ['styles']);
+
+    var _idyll$theme = idyll.theme,
+        _ = _idyll$theme.styles,
+        theme = _objectWithoutProperties(_idyll$theme, ['styles']);
+
+    var cn = (className || '') + ' idyll-text-container';
+    return _react2.default.createElement(
+      'div',
+      _extends({}, props, { className: cn }),
+      children
+    );
+  };
+
+  return TextContainer;
+}(_react2.default.PureComponent);
+
+TextContainer._idyll = {
+  name: "TextContainer",
+  tagType: "open"
+};
+exports.default = TextContainer;
+},{"react":"react"}],"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/src/client/build.js":[function(require,module,exports){
 /**
  * NOTE - this file does not get compiled from
  * ES6 --> ES5. Everything in here should be
@@ -86193,25 +86198,25 @@ module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "
 'use strict';
 
 module.exports = {
-	'text-container': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js'),
-	'header': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js'),
-	'h2': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js'),
-	'h3': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js'),
-	'step': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js'),
-	'equation': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js'),
-	'h4': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js'),
-	'scroller': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js'),
-	'boolean': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js'),
-	'button': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js'),
-	'conditional': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js'),
-	'radio': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js'),
-	'float': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js'),
+	'text-container': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js'),
+	'header': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js'),
+	'h2': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js'),
+	'h3': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js'),
+	'step': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/step.js'),
+	'equation': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js'),
+	'h4': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js'),
+	'scroller': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/scroller.js'),
+	'boolean': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/boolean.js'),
+	'button': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js'),
+	'conditional': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/conditional.js'),
+	'radio': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/radio.js'),
+	'float': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/float.js'),
 	'multi-button': require('/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js'),
 	'idyll-apparatus-component': require('/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js'),
 	'easer-toggle': require('/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js')
 };
 
-},{"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js":"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js","/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js":"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/boolean.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/conditional.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/equation.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/float.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h2.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h3.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/h4.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/header.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/radio.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/scroller.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/step.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js":"/mnt/d/git/idyll-material/maple-syrup/components/easer-toggle.js","/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js":"/mnt/d/git/idyll-material/maple-syrup/components/multi-button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll-apparatus-component/lib.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/boolean.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/boolean.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/conditional.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/conditional.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/float.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/float.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/radio.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/radio.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/scroller.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/scroller.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/step.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/step.js","/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js":"/mnt/d/git/idyll-material/maple-syrup/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 
 module.exports = function () {
 
