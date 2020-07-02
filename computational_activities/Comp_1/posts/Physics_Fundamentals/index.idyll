@@ -7,15 +7,15 @@
   author:"Mary Span"
   authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#B2432F"
+  background:"#C33214"
   color:"#ffffff"
    /]
 
 [var name:"currentValue" value:"" /]
 
 [div class:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main[/Button]
-  [button onClick:`currentValue = "Vectors"`]Vectors(+, -, dot, cross)[/Button]
+  [button onClick:`currentValue = ""`]Overview[/Button]
+  [button onClick:`currentValue = "Vectors"`]Vectors ([Equation]+, -, \bullet, \times [/Equation])[/Button]
   [button onClick:`currentValue = "Magnitude"`]Magnitude[/Button]
 [/div]
 
@@ -26,7 +26,12 @@
 [div class:"problemBody" fullWidth:true padding-left:`100%`]
   [Switch value:currentValue]
     [Default]
-      [div class:"centerHead"]
+      [div class:"centerHead iframe"]
+
+        ### Overview
+
+        [br /]
+
         Computation and physics requires two levels of understanding: knowing how
         to tell the application what to do and knowing *how to do* the physics.
         Physics Fundamentals with computation introduces elementary concepts
@@ -50,16 +55,65 @@
           [li] [Turtle Programming](https://hourofpython.trinket.io/a-visual-introduction-to-python#/welcome/an-hour-of-code)[/li]
         [/ul]
 
+        ### Trinket
+
+        [br /]
+
         Below is an example of Tina the turtle traveling to some specific points.
         What physics concept can this be related to? Play with the code and see
         what you can make Tina do. Want to learn more? Visit one of the links above.
 
         [iframe src:"https://trinket.io/embed/python/e313939670?start=result" width:"100%" height:"356" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
+        [br /]
+
+        Each of the tabs feature a Trinket like the one above (minus Tina) to
+        execute the code. To save specific Trinkets for your own reference,
+        complete the following steps:
+
+        [ul]
+          [li] Go to the Trinket [sign-up](https://trinket.io/signup) page.[/li]
+          [li] Create an account. [/li]
+          [li] On the embedded Trinket, click the image link on the top right to log in using your account email and password.[/li]
+          [li] Click the Remix button to save a copy of the code to your Trinket account. [/li]
+          [li] Save the Trinkets with a unique name for future reference. [/li]
+        [/ul]
+
+        ### Module Content
+
+        #### Vectors!
+
+        View the following video for a quick summary of vectors and why they are useful
+        in various fields. Need an extra refresher? Visit the [Vectors Guide](./Vectors_Guide)!
+
+        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ml4NSzCQobk" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+        [br /]
+
+        Click the Vectors tab to explore how to compute the following vector operations
+        in Python.
+
+        [ul]
+          [li]Addition[/li]
+          [li]Subtraction[/li]
+          [li]Multiplying a vector by a scalar[/li]
+          [li]Dot product[/li]
+          [li]Cross product[/li]
+        [/ul]
       [/div]
+
+      #### Magnitude!
+
+      Finding the magnitude is *essential* in Physics II. In fact, it's a skill
+      tested in the very first question of the Wiley Plus homework. Click the
+      Magnitude tab to figure out how to calculate magnitude in Python.
+
+
+      **Ready for more?** Visit the [Electric Fields & Python](../../electric-fields/) page!
+
     [/Default]
     [Case test:"Vectors"]
-      [div class:"subCenterHead"]
+      [div class:"subCenterHead iframe"]
 
         ## Vectors
 
@@ -68,9 +122,9 @@
         [var name:"vecTabValue" value:"" /]
 
         [div class:"subtabLook" fullWidth:true]
-          [button onClick:`vecTabValue = ""`]Main[/Button]
-          [button onClick:`vecTabValue = "Adding"`]Adding[/Button]
+          [button onClick:`vecTabValue = ""`]Adding[/Button]
           [button onClick:`vecTabValue = "Subtracting"`]Subtracting[/Button]
+          [button onClick:`vecTabValue = "Scale"`]*Scaling* with Scalars[/Button]
           [button onClick:`vecTabValue = "Dot"`]Dot Product[/Button]
           [button onClick:`vecTabValue = "Cross"`]Cross Product[/Button]
         [/div]
@@ -78,60 +132,60 @@
         [br /]
         [br /]
         [br /]
+        [hr /]
+        [br /]
 
         [Switch value:vecTabValue]
           [Default]
             [div class:"subProblemBody"]
 
-              #### Overview
-
-              Click the tabs to complete vector problems in python.
-
-              Need a refresher on vectors? Visit the [Vectors Guide](./Vectors_Guide)!
-
-              #### Trinket
-
-              Each of the tabs feature a Trinket to execute the code. To save specific Trinkets
-              for your own reference, complete the following steps:
-
-              [ul]
-                [li] Go to the Trinket [sign-up](https://trinket.io/signup) page.[/li]
-                [li] Create an account. [/li]
-                [li] On the embedded Trinket, click the image link on the top right to log in using your account email and password.[/li]
-                [li] Click the Remix button to save a copy of the code to your Trinket account. [/li]
-                [li] Save the Trinkets with a unique name for future reference. [/li]
-              [/ul]
-
-            [/div]
-          [/Default]
-          [Case test:"Adding"]
-            [div class:"iframe"]
-
               ### Vector Addition
 
-              What is [Equation]\vec{a} + \vec{b}[/Equation]?
+              [br /]
 
-                [div class: "questions"]
-                  [Equation]\vec{a} = \lt 0, 5, 0 \gt [/Equation]
-                  [br /]
-                  [Equation]\vec{b} = \lt 5, 5, 0 \gt [/Equation]
-                  [br /]
-                [/div]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ci29I7a0HI8" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+              [br /]
+
+              #### Question
+
+              [br /]
+
+              [div class:"questions"]
+
+                What is [Equation]\vec{a} + \vec{b}[/Equation]?
+
+                [br /]
+
+                  //[div class: "questionsMore"]
+                    [Equation]\vec{a} = \lt 0, 5, 0 \gt [/Equation]
+                    [br /]
+                    [Equation]\vec{b} = \lt 5, 5, 0 \gt [/Equation]
+                    [br /]
+                  //[/div]
+
+              [/div]
+
+              [br /]
+
+              #### Solve
+
+              [br /]
 
               Using the Trinket below, set up the problem.
 
               [ul]
-                [li] On the first line, add `#!/bin/python3`. [/li]
                 [li] Import NumPy by adding an import line: `import numpy as np`.
                 This will allow you to use np.array to represent the vectors in the code.[/li]
                 [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
-                [li] Create another variable that will equal a + b. Example: `ans = a + b`[/li]
+                [li] Create another variable that equals a + b. Example: `ans = a + b`[/li]
                 [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
                 in python 2.[/li]
                 [li] Click `>_Console` to run the code.[/li]
-                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer! 
+                *Note*: it will output `array([x, y, z], '<class 'int'>')` where
+                the three components of the array is equal to the answer. [/li]
               [/ul]
-
 
               [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
@@ -179,7 +233,6 @@
                   [iframe src:"https://giphy.com/embed/VcBo8oemUA1NG13IYH" width:"480" height:"329" frameBorder:"0" class:"giphy-embed"][/iframe]
 
                 [/Conditional]
-
               [/div]
 
               Use the PhET simulation below to recreate the answer. Can you make it match?
@@ -188,8 +241,10 @@
               addition problems.
 
               [iframe src:"https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+
+
             [/div]
-          [/Case]
+          [/Default]
           [Case test:"Subtracting"]
             [div class:"iframe"]
 
@@ -310,6 +365,39 @@
               [/div]
             [/div]
           [/Case]
+          [Case test:"Scale"]
+            [div class:"iframe"]
+
+              ### Multiplying a Vector by a Scalar
+
+              What is [Equation]16 \times \vec{c}[/Equation]?
+
+              [div class: "questions"]
+                [Equation]\vec{c} = \lt 4, 10, 7 \gt [/Equation]
+              [/div]
+
+              [br /]
+
+              Using the Trinket below, set up the problem.
+
+              [ul]
+                [li] Import NumPy by adding an import line: `import numpy as np`.
+                This will allow you to use np.array to represent the vector in the code.[/li]
+                [li] Assign the np.arrays to the c variable. Example: `c = np.array([x,y,z])`.[/li]
+                [li] Assign a variable that equals the scalar.[/li]
+                [li] Create another variable that equals the scalar and the vector. Example: `ans = c * s`.[/li]
+                [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
+                in python 2, but both `print(ans)` and `print ans` should output without errors.[/li]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+              [/ul]
+
+              [iframe src:"https://trinket.io/embed/python/8434fe5a43" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+
+            [/div]
+          [/Case]
           [Case test:"Dot"]
             [div class:"iframe"]
 
@@ -424,7 +512,7 @@
                   [br /]
 
                   We shall see.
-                  
+
                   [br /]
 
                 [/Conditional]

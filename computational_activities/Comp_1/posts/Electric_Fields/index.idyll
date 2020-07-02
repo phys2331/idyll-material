@@ -78,7 +78,7 @@
        [/div]
      [/Default]
      [Case test:"elecChargeForce"]
-       [div class:"subCenterHead"]
+       [div class:"subCenterHead iframe"]
 
           ## Electric Charge and Force
 
@@ -95,6 +95,32 @@
           Coulomb Force Law for Point Particles - Do a computation problem.
 
           List the charges of the particles
+
+          Sisyphus and Prometheus have been ordered to push charges against
+          each other at the macro and atomic levels for all of eternity.
+
+          [iframe src:"https://phet.colorado.edu/sims/html/coulombs-law/latest/coulombs-law_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+
+          ### Coulomb Force Law
+
+          [br /]
+
+          [div class:"equationStyle"]
+            [Equation]
+              |\vec{F}| = \frac{1}{4\pi \epsilon_{0}} \frac{|Q_{1}Q_{2}|}{r^{2}}
+            [/Equation]
+          [/div]
+
+          Trinket Directions:
+
+          [ul]
+            [li]Type `import math` to import the math.fabs (absolute value) function.[/li]
+            [li]Set variable `k` equal to `9 * 10**9`[/li]
+              [ul]
+                [li]Why do this? Calculate [Equation]\frac{1}{4\pi \epsilon_{0}}[/Equation]
+                where [Equation]E_{0} = 8.85 \times 10^{-12} \frac{C^{2}}{Nm^{2}} [/Equation][/li]
+              [/ul]
+          [/ul]
 
        [/div]
      [/Case]

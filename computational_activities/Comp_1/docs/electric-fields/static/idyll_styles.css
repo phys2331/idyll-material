@@ -1206,6 +1206,11 @@ hr {
   font-style: italic;
 }
 
+.equationStyle {
+  font-size: 30px;
+  text-align: center;
+}
+
 .questions {
   text-align: center;
 }
@@ -1228,10 +1233,6 @@ hr {
 .revealButtons iframe {
   display: block;
   margin: auto;
-}
-
-.equations {
-  text-align: center;
 }
 
 .iframe iframe {
