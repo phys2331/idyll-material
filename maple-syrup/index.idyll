@@ -425,15 +425,22 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     This simulation will allow you to change the accelerating voltage and see where your carbon atom ends up.
     [br /][br /]
     *This simulation is still under construction!*
+    
+    [var name:textval value:"1" /]
+    [var name:t value:0 /]
+    [Equation display:false]\Delta V_1[/Equation]: [TextInput value:textval /]
+
     [IdyllApparatusComponent
         _url: "static/FullSim.json"
         _regionOfInterest: `{ x: [2, 4], y: [-0.5, 7] }`
         _width: '100%'
         _height: 600
-        Va:Va
+        V1:`parseFloat(textval)`
         t:t
       /]
-  [/Step]
+      [EaserToggle value:t targetValue:100 time:5000 ]Accelerate![/EaserToggle]
+      [Button onClick:`time=0`]Reset[/time]
+  [/Step] 
 
 [/Scroller]
 
