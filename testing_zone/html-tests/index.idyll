@@ -50,14 +50,14 @@ Setting class names
 * classes can be used with `div`, `p`, or `span`
 * only one inline style can be used at a time? (ex, can't do color and background-color)
 
-[u]Elements usable with style:[/u]
-* `background-color` - changes background color of relevant block. Colors can be a 6-digit hex code, rgba, hsl, hsla or a [color name](https://www.w3schools.com/colors/colors_names.asp).
+[u]Elements usable with `style`:[/u]
+* `background-color` - changes background color of relevant block. Colors can be a 6-digit hex code, rgba, hsl, hsla or a [color name](https://www.w3schools.com/colors/colors_names.asp). Seems to only work with css, not inline
 * `color` - changes text color
 * `margin` - margin outside the box, px = in pixels, affects all sides
 * `padding` - margin but *inside* the box
 * `font-size` - percentage, px, or [category](https://www.w3schools.com/cssref/pr_font_font-size.asp).
 * `font-weight` - normal/bold or a number (normal=400, bold=700). [More options](https://www.w3schools.com/csSref/pr_font_weight.asp)
-* `font-style` - normal/italic/oblique (like italic but literally just slanted letters, no change of the characters themselves)
+* `font-style` - normal/italic/oblique (like italic but literally just slanted letters, no change of the characters themselves) - not really working?
 
 Inline styles
 * this is the use of `style` as an HTML tag attribute.
@@ -67,7 +67,47 @@ Inline styles
 ### Inline
 
 [div style:`{color: 'green'}`]
-this is green. I couldn't do two properties at a time
+this is green.
+[/div]
+
+[div style:`{background-color: 'green'}`]
+this is supposed to be on a green background.
+[/div]
+
+[div style:`{font-style: 'italic'}`]
+this is supposed to be italic. but that's not a big deal because of the markup syntax.
+[/div]
+
+[div style:`{font-weight: 'bold'}`]
+this is supposed to be bold. but that's not a big deal because of the markup syntax.
+[/div]
+
+[div style:`{color: 'red'}`]
+this is red, because now I'm questioning whether I just broke everything.
+[/div]
+
+[div style:`{font-size: '3px'}`]
+this is supposed to be tiny.
+[/div]
+
+[div style:`{padding: '20px'}`]
+this has padding.
+[/div]
+
+[div style:`{margin: '20px'}`]
+this has a margin.
+[/div]
+
+here's some normal text for comparison. There is a line break after because the spacing bug comes back up.
+
+[div style:`{color: 'green', padding: '20px'}`]
+this is green with padding using one div
+[/div]
+
+[div style:`{padding: '20px'}`]
+[div style:`{color: 'green'}`]
+this is green with padding using multiple divs.
+[/div]
 [/div]
 
 ### Class Use
