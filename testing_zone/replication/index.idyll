@@ -34,3 +34,35 @@ asdf
 
 [p]
 [/p]
+
+
+## Tables
+[var name:"value" value:"hi" /]
+So here's the example, which has two rows and two columns:
+
+[Table value:`[{columnName1: value, columnName2: value}, {columnName1: value, columnName2: value}]` /]
+
+
+Here's a modified version where I call them rowname instead of columnname:
+
+[Table value:`[{rowName1: value, rowName2: value}, {rowName1: value, rowName2: value}]` /]
+
+
+Here's a version where I give values instead of calling value:
+
+[Table value:`[{columnName1: 1, columnName2: 2}, {columnName1: 3, columnName2: 4}]` /]
+
+
+Here's a version where I do both!
+
+[Table value:`[{rowName1: 1, rowName2: 2}, {rowName1: 3, rowName2: 4}]` /]
+
+
+What if the values are strings?
+
+[Table value:`[{columnName1: "1", columnName2: "2"}, {columnName1: "3", columnName2: "4"}]` /]
+
+
+I bet this isn't going to work either, using strings and "rowName" (which I'm pretty sure is just the name of the row anyway).
+
+[Table value:`[{rowName1: "1", rowName2: "2"}, {rowName1: "3", rowName2: "4"}]` /]
