@@ -438,8 +438,8 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
         V1:`parseFloat(textval)`
         t:t
       /]
-      [EaserToggle value:t targetValue:100 time:5000 ]Accelerate![/EaserToggle]
-      [Button onClick:`time=0`]Reset[/time]
+      [EaserToggle value:t targetValue:0.001 time:5000 ]Accelerate![/EaserToggle]
+      [Button onClick:`t=0`]Reset[/time]
   [/Step] 
 
 [/Scroller]
