@@ -11,9 +11,11 @@
 
 .idyll-scroll .idyll-text-container {
   min-width: 50vw;
+  max-width: 70vw;
 }
 .idyll-scroll-text .idyll-step {
   min-width: 45vw;
+  max-width: 65vw;
 }
 .d3-component-container {
   height: 20vw;
