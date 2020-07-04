@@ -424,7 +424,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     ## Simulation
     This simulation will allow you to change the accelerating voltage and see where your carbon atom ends up.
     [br /][br /]
-    *This simulation is still under construction!*
+    *This simulation is still under construction. It will always put you on the right path, because I haven't added the acceleration in the center region yet!*
     
     [var name:textval value:"1" /]
     [var name:t value:0 /]
@@ -438,8 +438,8 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
         V1:`parseFloat(textval)`
         t:t
       /]
-      [EaserToggle value:t targetValue:0.001 time:5000 ]Accelerate![/EaserToggle]
-      [Button onClick:`t=0`]Reset[/time]
+      [Float position:"left"][EaserToggle value:t targetValue:0.0004 ]Accelerate![/EaserToggle][/float]
+      [Float position:"right"][Button onClick:`t=0`]Reset[/Button][/float]
   [/Step] 
 
 [/Scroller]
