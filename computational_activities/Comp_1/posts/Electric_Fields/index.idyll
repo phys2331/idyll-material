@@ -4,8 +4,6 @@
   fullWidth:true
   title:"Electric Fields"
   subtitle:" & Python"
-  author:"murr"
-  authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
   background:"#084CA5"
   color:"#ffffff"
@@ -28,38 +26,20 @@
  [div class:"problemBody" fullWidth:true padding-left:`100%`]
    [Switch value:currentValue]
      [Default]
-       [div class:"centerHead"]
-          ## An overview of some sort.
+       [div class:"centerHead iframe"]
 
-          [ul]
-            [li]Electric Charge and force[/li]
-            [ul]
-              [li]Coulomb's Force Law for Point Particles[/li]
-            [/ul]
-            [li]The Electric Field[/li]
-            [ul]
-              [li]Point Charges[/li]
-              [li]Uniformly Charged Sphere[/li]
-              [li]Dipoles[/li]
-              [li]Dipole Moment[/li]
-              [li]Polarizability[/li]
-              [li]Drift Speed[/li]
-            [/ul]
-            [li]The Electric Field and Distributed Charges[/li]
-            [ul]
-              [li]Uniformly Charged Thin Rod[/li]
-              [li]Uniformly Charged Thin Ring[/li]
-              [li]Uniformly Charged Disk[/li]
-              [li]Capacitors[/li]
-              [li]Spherical Shell of Charge[/li]
-              [li]Solid Sphere of Charge[/li]
-            [/ul]
-          [/ul]
+          ### Overview
 
-          #### Overview
+          [br /]
 
-          Click the tabs to learn more about electric fields and complete
-          problems in python.
+          Click the tabs to learn about electric field concepts, how to
+          calculate them, and how to tell the application (Trinket) to calculate it
+          for you.
+
+          Note that Trinket supports two versions of Python, which can be specified
+          at the top of the script. For python 2, add `#!/bin/python2` and for python 3,
+          add `#!/bin/python3`. Also note that Trinket does not support all python
+          modules. For a list of the currently available modules, click [HERE](https://trinket.io/docs/python).
 
 
           #### Trinket
@@ -75,6 +55,67 @@
             [li] Save the Trinkets with a unique name for future reference. [/li]
           [/ul]
 
+          Want to learn more about programming in python? Visit these resources:
+
+          [ul]
+            [li] [The Python Tutorial](https://docs.python.org/2/tutorial)[/li]
+            [li] [Code Academy](https://codeacademy.com/learn/learn-python)[/li]
+            [li] [Turtle Programming](https://hourofpython.trinket.io/a-visual-introduction-to-python#/welcome/an-hour-of-code)[/li]
+          [/ul]
+
+          ### Module Content
+
+          [br /]
+
+          [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mdulzEfQXDE" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+          #### Electric Charge and Force
+
+          Click the Electric Charge and Force tab to explore how to compute the
+          following problem types in python.
+
+          [ul]
+            [li] Coulomb's Force Law for Point Particles[/li]
+          [/ul]
+
+          #### The Electric Field
+
+          Click the Electric Field tab to explore how to compute the
+          following problem types in python.
+
+          [ul]
+            [li] Point Charges[/li]
+            [li] Uniformly Charged Sphere[/li]
+            [li] Dipoles[/li]
+            [li] Dipole Moment[/li]
+            [li] Polarizability[/li]
+            [li] Drift Speed[/li]
+          [/ul]
+
+          #### The Electric Field and Distributed Charges
+
+          Click the Electric Field tab to explore how to compute the
+          following problem types in python.
+
+          [ul]
+            [li] Uniformly Charged Thin Rod[/li]
+            [li] Uniformly Charged Thin Ring[/li]
+            [li] Uniformly Charged Disk[/li]
+            [li] Capacitors[/li]
+            [li] Spherical Shell of Charge[/li]
+            [li] Solid Sphere of Charge[/li]
+          [/ul]
+
+          [br /]
+          [hr /]
+
+          [div class:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            Feedback Form *Insert Link*
+          [/div]
+
        [/div]
      [/Default]
      [Case test:"elecChargeForce"]
@@ -84,22 +125,7 @@
 
           [br /]
 
-          Click the point charge:
-
-          Insert images of various things. Make them all right and then explain
-          why all can be considered point charges.
-
-          Have a PhET and make them answer which way the vectors point with
-          different types of charges. Play with magnitude and such. Ask questions.
-
-          Coulomb Force Law for Point Particles - Do a computation problem.
-
-          List the charges of the particles
-
-          Sisyphus and Prometheus have been ordered to push charges against
-          each other at the macro and atomic levels for all of eternity.
-
-          [iframe src:"https://phet.colorado.edu/sims/html/coulombs-law/latest/coulombs-law_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+          [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/pFM-a7_qjFM" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
           ### Coulomb Force Law
 
@@ -111,16 +137,87 @@
             [/Equation]
           [/div]
 
+          [br /]
+
+          #### Questions
+
+          [br /]
+
+          [div class:"questions"]
+
+            [br /]
+
+            [p]
+              Sisyphus and Prometheus have been ordered to push\pull charges against\into
+              each other at the macro and atomic levels for all of eternity.
+            [/p]
+
+            [p]
+              [ul]
+                [li] Click Macro Scale.[/li]
+                [li] Set both charges to [Equation]0 \mu C[/Equation] using the
+                arrows or sliders. The particles should be white.[/li]
+                [li] Slide Sisyphus and Prometheus to 2 cm and 9 cm.[/li]
+                [li] Continue to the questions below.[/li]
+              [/ul]
+            [/p]
+
+            [iframe src:"https://phet.colorado.edu/sims/html/coulombs-law/latest/coulombs-law_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+
+            [br /]
+
+            [div class:"radioQs"]
+              // Question 1
+              [var name:"showResult" value:false /]
+              [var name:"showAnswer" value:false /]
+
+              Leaving one charge at 0 uc and increasing the other particle to a
+              positive charge will:
+              [var name:"radioVal" value:"null" /] // Define value
+              // Set up radio buttons. If they are not separate entries the spacing is wrong.
+              [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"a",label:"a) Increase both forces."}]`/]
+              [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"b",label:"b) Decrease both forces "}]`/]
+              [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"c",label:"c) Increase one force and decrease the other."}]`/]
+              [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"d",label:"d) Do nothing to the forces - they will stay at 0"}]`/]
+              [Radio value:radioVal onClick:`showResult2=false,showAnswer2=false` options:`[{value:"e",label:"e) Push Sisyphus and/or Prometheus toward each other"}]`/]
+
+              [Button onClick:`showResult = true`]
+                Check Answer
+              [/Button]
+
+              [Conditional if:`showResult`]
+                [Conditional if:`radioVal === "d"`]
+                  Correct!
+                [/Conditional]
+                [Conditional if:`radioVal != "d"`]
+                  Your answer is incorrect. [br/]
+                  [Conditional if:`radioVal==="b" || radioVal==="c"`]
+                    Is this always possible? (What happens if the original vectors are always pointing in opposite directions?)
+                  [/Conditional]
+                  [Button onClick:`showAnswer = true`]Show Correct Answer[/Button]
+                  [Conditional if:`showAnswer`]
+                    The result must be **perpendicular** to the original vectors.
+                  [/Conditional]
+                [/Conditional]
+              [/Conditional]
+            [/div]
+          [/div]
+
+          [br /]
+
           Trinket Directions:
 
-          [ul]
-            [li]Type `import math` to import the math.fabs (absolute value) function.[/li]
-            [li]Set variable `k` equal to `9 * 10**9`[/li]
-              [ul]
-                [li]Why do this? Calculate [Equation]\frac{1}{4\pi \epsilon_{0}}[/Equation]
-                where [Equation]E_{0} = 8.85 \times 10^{-12} \frac{C^{2}}{Nm^{2}} [/Equation][/li]
-              [/ul]
-          [/ul]
+          [iframe src:"https://trinket.io/embed/python/c79663816a" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+          [br /]
+          [hr /]
+
+          [div class:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            Feedback Form *Insert Link*
+          [/div]
 
        [/div]
      [/Case]
