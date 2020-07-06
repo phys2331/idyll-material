@@ -11,7 +11,7 @@
 
 hr {
   border: 0;
-  background: #C33214;
+  background: #009999;
   height: 2px;
 }
 
@@ -33,7 +33,7 @@ hr {
   width: 33%;
   font-family: Arial;
   font-weight: bold;
-  color: #000000;
+  color: #003366;
 }
 
 .tabLook button:hover {
@@ -46,12 +46,12 @@ hr {
 
 .centerHead h2{
   text-align: center;
-  color: #0B465F;
+  color: #009999;
 }
 
 .centerHead h3, h4{
   text-align: center;
-  color: #0B465F;
+  color: #009999;
 }
 
 .centerHead h4{
@@ -83,7 +83,7 @@ hr {
   width: 20%;
   font-family: Arial;
   font-weight: bold;
-  color: #800000;
+  color: #003366;
 }
 
 .subtabLook button:hover {
@@ -106,12 +106,12 @@ hr {
 
 .subCenterHead h2{
   text-align: center;
-  color: #800000;
+  color: #009999;
 }
 
 .subCenterHead h3, h4{
   text-align: center;
-  color: #800000;
+  color: #009999;
 }
 
 .subCenterHead h4{
@@ -133,7 +133,7 @@ hr {
   width: 20%;
   font-family: Arial;
   font-weight: bold;
-  color: #800000;
+  color: #009999;
   overflow: hidden;
 }
 
@@ -158,4 +158,13 @@ hr {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
+}
+
+.centerPara {
+  text-align: center;
+}
+
+.equationStyle {
+  font-size: 20px;
+  text-align: center;
 }

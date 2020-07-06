@@ -4,10 +4,8 @@
   fullWidth:true
   title:"Physics Fundamentals"
   subtitle:"Physics II Fundamentals with Python"
-  author:"Mary Span"
-  authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
-  background:"#C33214"
+  background:"#009999"
   color:"#ffffff"
    /]
 
@@ -74,9 +72,9 @@
         [ul]
           [li] Go to the Trinket [sign-up](https://trinket.io/signup) page.[/li]
           [li] Create an account. [/li]
-          [li] On the embedded Trinket, click the image link on the top right to log in using your account email and password.[/li]
-          [li] Click the Remix button to save a copy of the code to your Trinket account. [/li]
-          [li] Save the Trinkets with a unique name for future reference. [/li]
+          [li] On the embedded Trinket, click [Inline][img src:"./static/images/trinket_login.png" title:"Log into Trinket" /][/Inline] on the top right to log in using your account email and password.[/li]
+          [li] Click [Inline][img src:"./static/images/trinket_remix.png" title:"Remix the Trinket" /][/Inline] to save a copy of the code to your Trinket account. [/li]
+          [li] Save the Trinket with a unique name for future reference. [/li]
         [/ul]
 
         ### Module Content
@@ -84,7 +82,7 @@
         #### Vectors!
 
         View the following video for a quick summary of vectors and why they are useful
-        in various fields. Need an extra refresher? Visit the [Vectors Guide](./Vectors_Guide)!
+        in various fields. Need an extra refresher? Visit the [Vectors Guide](./Vectors_Guide)! *Fix Link*
 
         [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ml4NSzCQobk" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
@@ -108,8 +106,21 @@
       tested in the very first question of the Wiley Plus homework. Click the
       Magnitude tab to figure out how to calculate magnitude in Python.
 
+      [br /]
 
-      **Ready for more?** Visit the [Electric Fields & Python](../../electric-fields/) page!
+      [div class:"centerPara"]
+        **Ready for more?** Visit the [Electric Fields & Python](../../electric-fields/) page!
+      [/div]
+
+      [br /]
+      [hr /]
+
+      [div class:"centerPara"]
+        [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+        [Physics Department](https://clas.ucdenver.edu/physics/)
+        [br /]
+        Feedback Form *Insert Link*
+      [/div]
 
     [/Default]
     [Case test:"Vectors"]
@@ -182,9 +193,9 @@
                 [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
                 in python 2.[/li]
                 [li] Click `>_Console` to run the code.[/li]
-                [li] Click the **Reveal Answer** button below the Trinket to check your answer! 
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer!
                 *Note*: it will output `array([x, y, z], '<class 'int'>')` where
-                the three components of the array is equal to the answer. [/li]
+                the three components of the array are equal to the answer. [/li]
               [/ul]
 
               [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
@@ -242,27 +253,50 @@
 
               [iframe src:"https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
 
+              [hr /]
+
+              [div class:"centerPara"]
+                [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+                [Physics Department](https://clas.ucdenver.edu/physics/)
+                [br /]
+                Feedback Form *Insert Link*
+              [/div]
 
             [/div]
           [/Default]
           [Case test:"Subtracting"]
-            [div class:"iframe"]
+            [div class:"subProblemBody iframe"]
 
               ### Vector Subtraction
 
-              What is [Equation]\vec{a} - \vec{b}[/Equation]?
+              [br /]
 
-                [div class: "questions"]
-                  [Equation]\vec{a} = \lt 3, 9, 0 \gt [/Equation]
-                  [br /]
-                  [Equation]\vec{b} = \lt 4, 3, 0 \gt [/Equation]
-                  [br /]
-                [/div]
+              View the video on the Vector Addition page.
+
+              #### Question
+
+              [br /]
+
+              [div class:"questions"]
+
+                What is [Equation]\vec{a} - \vec{b}[/Equation]?
+
+                [br /]
+
+                  //[div class: "questionsMore"]
+                    [Equation]\vec{a} = \lt 3, 9, 0 \gt [/Equation]
+                    [br /]
+                    [Equation]\vec{b} = \lt 4, 3, 0 \gt [/Equation]
+                    [br /]
+                  //[/div]
+
+              [/div]
+
+              #### Solve
 
               Using the Trinket below, set up the problem.
 
               [ul]
-                [li] On the first line, add `#!/bin/python3`. [/li]
                 [li] Import NumPy by adding an import line: `import numpy as np`.
                 This will allow you to use np.array to represent the vectors in the code.[/li]
                 [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
@@ -270,7 +304,9 @@
                 [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
                 in python 2.[/li]
                 [li] Click `>_Console` to run the code.[/li]
-                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer!
+                *Note*: it will output `array([x, y, z], '<class 'int'>')` where
+                the three components of the array are equal to the answer.[/li]
               [/ul]
 
 
@@ -361,8 +397,26 @@
                   [br /]
                   [br /]
 
+                  Remember that each component of the second vector is subtracted
+                  from each component of the first vector. See *Why is this the
+                  answer?* above. Need more practice? Complete the WileyPlus
+                  vectors homework questions.
+
+                  [br /]
+                  [br /]
+
                 [/Conditional]
               [/div]
+
+              [hr /]
+
+              [div class:"centerPara"]
+                [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+                [Physics Department](https://clas.ucdenver.edu/physics/)
+                [br /]
+                Feedback Form *Insert Link*
+              [/div]
+
             [/div]
           [/Case]
           [Case test:"Scale"]
@@ -370,31 +424,110 @@
 
               ### Multiplying a Vector by a Scalar
 
-              What is [Equation]16 \times \vec{c}[/Equation]?
+              [br /]
 
-              [div class: "questions"]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/MpN8BIci-Ys" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+              #### Question
+
+              [br /]
+
+              [div class:"questions"]
+
+                What is [Equation]16 \times \vec{c}[/Equation]?
+
+                [br /]
+
                 [Equation]\vec{c} = \lt 4, 10, 7 \gt [/Equation]
+
               [/div]
 
               [br /]
+
+              #### Solve
 
               Using the Trinket below, set up the problem.
 
               [ul]
                 [li] Import NumPy by adding an import line: `import numpy as np`.
                 This will allow you to use np.array to represent the vector in the code.[/li]
-                [li] Assign the np.arrays to the c variable. Example: `c = np.array([x,y,z])`.[/li]
+                [li] Assign the np.array to the c variable. Example: `c = np.array([x,y,z])`.[/li]
                 [li] Assign a variable that equals the scalar.[/li]
                 [li] Create another variable that equals the scalar and the vector. Example: `ans = c * s`.[/li]
                 [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
                 in python 2, but both `print(ans)` and `print ans` should output without errors.[/li]
                 [li] Click `>_Console` to run the code.[/li]
-                [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer!
+                *Note*: it will output `array([x, y, z], '<class 'int'>')` where
+                the three components of the array are equal to the answer.[/li]
               [/ul]
 
               [iframe src:"https://trinket.io/embed/python/8434fe5a43" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
               [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation] \lt 64, 160, 112 \gt [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  *Why is this the answer?*
+
+                  [br /]
+                  [br /]
+
+                  To multiply a vector by a scalar, multiply each component of the vector by the scalar (s):
+
+                  [div class:"equations"]
+                    [Equation]\vec{c} \times s = \lt (x_{c} \times s), (y_{c} \times s), (z_{c} \times s) \gt[/Equation]
+                  [/div]
+
+                  [br /]
+                  [br /]
+
+                  Insert a visual thingy.
+
+                  [br /]
+                  [br /]
+
+                  [hr /]
+
+                [/Conditional]
+
+              [/div]
+
+              What happens when the scalar is negative? Think about addition and
+              subtraction vector equations when a negative is added. What happens
+              to that component?
+
+              [br /]
+
+              *Need to upgrade Trinket - Insert instructions on how to do trinket
+              matplotlib to show what multiplying vectors by scalars does. Input
+              questions that explore negative and positive scalars.*
+
+              [hr /]
+
+              [div class:"centerPara"]
+                [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+                [Physics Department](https://clas.ucdenver.edu/physics/)
+                [br /]
+                Feedback Form *Insert Link*
+              [/div]
 
             [/div]
           [/Case]
@@ -403,23 +536,40 @@
 
               ### The Dot Product
 
-              What is [Equation]\vec{a} \bullet \vec{b}[/Equation]?
+              [br /]
 
-                [div class: "questions"]
-                  [Equation]\vec{a} = \lt 7, 2, 5 \gt [/Equation]
-                  [br /]
-                  [Equation]\vec{b} = \lt 3, 8, 2 \gt [/Equation]
-                  [br /]
-                [/div]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/0iNrGpwZwog" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+
+              #### Question
+
+              [br /]
+
+              [div class:"questions"]
+
+                What is [Equation]\vec{a} \bullet \vec{b}[/Equation]?
+
+                [br /]
+
+                [Equation]\vec{a} = \lt 7, 2, 5 \gt [/Equation]
+                [br /]
+                [Equation]\vec{b} = \lt 3, 8, 2 \gt [/Equation]
+                [br /]
+
+              [/div]
+
+              [br /]
+
+              #### Solve
 
               Using the Trinket below, set up the problem.
 
               [ul]
-                [li] On the first line, add `#!/bin/python3`. [/li]
                 [li] Import NumPy by adding an import line: `import numpy as np`.
                 This will allow you to use np.array to represent the vectors in the code.[/li]
                 [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
-                [li] Create another variable that will equal a *dot* b. Example: `ans = a.dot(b)`[/li]
+                [li] Create another variable that will equal a *dot* b. Example: `ans = a.dot(b)`.
+                Try using `a.dot(b)` and `np.dot(a,b)`. What's the result?[/li]
                 [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
                 in python 2.[/li]
                 [li] Click `>_Console` to run the code.[/li]
@@ -470,22 +620,73 @@
 
                   [br /]
                   [br /]
+                  [hr /]
 
                 [/Conditional]
 
               [/div]
 
-              Insert second thing to do.
+              #### Another Definition
 
-              [div class: "questions"]
-                Insert Vectors
-                [br /]
+              The dot product can also be calculated using the following equation.
+
+              [br /]
+
+              [div class:"equationStyle"]
+                [Equation]
+                  \vec{a} \bullet \vec{b} = |a||b|cos\theta
+                [/Equation]
               [/div]
 
             [br /]
 
-            Change the Trinket above and rerun the code. Click *Reveal Answer* to
-            check your answer.
+            [div class:"questions"]
+
+              What is [Equation]\vec{a} \bullet \vec{b}[/Equation]?
+
+              [br /]
+
+              [Equation]\vec{a} = \lt 37, 16, 54 \gt [/Equation]
+              [br /]
+              [Equation]\vec{b} = \lt 22, 66, 88 \gt [/Equation]
+              [br /]
+              [Equation]\theta = 0.516 [/Equation]
+              [br /]
+
+            [/div]
+
+            [br /]
+
+            #### Solve
+
+            Using the Trinket below, set up the problem.
+
+            [ul]
+              [li] Import NumPy by adding an import line: `import numpy as np`.
+              This will allow you to use np.array to represent the vectors in the code.[/li]
+              [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
+              [li] Create another variable that will equal a *dot* b. Example: `ans = a.dot(b)`.[/li]
+              [li] Add the following print command: `"This is the answer with the .dot function:", ans`.[/li]
+              [li] Add two variables (`mag_a` and `mag_b`) that equal `np.sqrt(a[0]**2 + a[1]**2 + a[2]**2)`.
+               **Note**: Change a to b for the second variable. This takes each
+               component and squares it to find the magnitude of the vector. Also
+               note that the brackets (`[0], [1], [2]`) call the components from
+               the vector arrays individually, where 0 = the x component, 1 =
+               the y component, and 2 = the z component.[/li]
+              [li] Create a cos variable that equals `ans/(mag_a * mag_b)`. How
+              do you get this number? Try rearranging the definition equation above.[/li]
+              [li] Create another variable that equals `(mag_a * mag_b)*cos`.[/li]
+              [li] Print the following statement: `"This is cos theta:", cos`[/li]
+              [li] Print another statement: `"This is the dot product with the
+              new definition:", dot`.[/li]
+              [li] Click `>_Console` to run the code.[/li]
+              [li] Click the **Reveal Answer** button below the Trinket to check your answer!
+              Does the `.dot` answer equal the new definition answer?[/li]
+            [/ul]
+
+            [br /]
+
+            [iframe src:"https://trinket.io/embed/python/75defa26bd" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
             [br /]
 
@@ -502,7 +703,7 @@
                   *Answer:*
 
                   [div class:"equations"]
-                    The second answer
+                    6622
                   [/div]
 
                   [br /]
@@ -510,13 +711,34 @@
                   *Why is this the answer?*
 
                   [br /]
+                  [br /]
 
-                  We shall see.
+                  We can find the magnitude of each vector (see the Magnitude tab
+                  for more information) and then what's left? The [Equation]cos\theta[/Equation].
+                  Suppose we needed to find [Equation]\theta[/Equation]. We could use
+                  [Equation]\vec{a} \bullet \vec{b} = |a||b|cos\theta[/Equation],
+                  rearrange it to [Equation]cos\theta = \frac{\vec{a} \bullet \vec{b}}{|\vec{a}||\vec{b}|}[/Equation],
+                  and then take the arccos of that answer. A nice check of the
+                  .dot() function is the second portion of the code above.
+
+                  [div class:"equationStyle"]
+                    [Equation] cos\theta = \frac{\vec{a} \bullet \vec{b}}{|\vec{a}||\vec{b}|} = \frac{(x_{a} \times x_{b})+(y_{a} \times y_{b})+(z_{a} \times z_{b})}{\sqrt{x_{a}^{2}+y_{a}^{2}+z_{a}^{2}} \times \sqrt{x_{b}^{2}+y_{b}^{2}+z_{b}^{2}}} [/Equation]
+                  [/div]
 
                   [br /]
 
+
                 [/Conditional]
               [/div]
+              [hr /]
+
+              [div class:"centerPara"]
+                [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+                [Physics Department](https://clas.ucdenver.edu/physics/)
+                [br /]
+                Feedback Form *Insert Link*
+              [/div]
+
             [/div]
           [/Case]
           [Case test:"Cross"]
@@ -524,23 +746,38 @@
 
               ### The Cross Product
 
-              What is [Equation]\vec{a} \times \vec{b}[/Equation]?
+              [br /]
 
-                [div class: "questions"]
-                  [Equation]\vec{a} = \lt 15, 12, 0 \gt [/Equation]
-                  [br /]
-                  [Equation]\vec{b} = \lt 6, 4, 11 \gt [/Equation]
-                  [br /]
-                [/div]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/gPnWm-IXoAY" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+              #### Question
+
+              [br /]
+
+              [div class:"questions"]
+
+                What is [Equation]\vec{a} \times \vec{b}[/Equation]?
+
+                [br /]
+
+                [Equation]\vec{a} = \lt 15, 12, 0 \gt [/Equation]
+                [br /]
+                [Equation]\vec{b} = \lt 6, 4, 11 \gt [/Equation]
+                [br /]
+
+              [/div]
+
+              [br /]
+
+              #### Solve
 
               Using the Trinket below, set up the problem.
 
               [ul]
-                [li] On the first line, add `#!/bin/python3`. [/li]
                 [li] Import NumPy by adding an import line: `import numpy as np`.
                 This will allow you to use np.array to represent the vectors in the code.[/li]
                 [li] Assign the np.arrays to the a and b variables. Example: `a = np.array([x,y,z])`.[/li]
-                [li] blahblahblah[/li]
+                [li] blahblahblah *Need upgraded Trinket to do this effectively*[/li]
                 [li] Print the answer! Add `print(ans)`. Note that the print command is slightly different
                 in python 2.[/li]
                 [li] Click `>_Console` to run the code.[/li]
@@ -548,7 +785,7 @@
               [/ul]
 
 
-              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python/31b2056efb" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
               [br /]
               [br /]
@@ -567,9 +804,7 @@
                   *Answer:*
 
                   [div class:"equations"]
-                    [Equation]
-                      \lt 132, -165, -12 \gt
-                    [/Equation]
+                    An answer!
                   [/div]
 
                   [br /]
@@ -585,15 +820,13 @@
                     Insert cross explanation
                   [/div]
 
+                  [hr /]
+
                 [/Conditional]
 
               [/div]
 
-              Insert another problem:
-
-              [div class: "questions"]
-                Two new vectors
-              [/div]
+              Insert another problem.
 
             [br /]
 
@@ -615,7 +848,7 @@
                   *Answer:*
 
                   [div class:"equations"]
-                    A new answer
+                    A new answer!
                   [/div]
 
                   [br /]
@@ -623,9 +856,18 @@
                   *Why is this the answer?*
 
                   [br /]
+                  We shall see.
                   [br /]
 
                 [/Conditional]
+              [/div]
+              [hr /]
+
+              [div class:"centerPara"]
+                [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+                [Physics Department](https://clas.ucdenver.edu/physics/)
+                [br /]
+                Feedback Form *Insert Link*
               [/div]
             [/div]
           [/Case]
@@ -634,63 +876,58 @@
       [/div]
     [/Case]
     [Case test:"Magnitude"]
-      [div class:"subCenterHead"]
+      [div class:"subCenterHead iframe"]
 
         ## Magnitude
 
         [hr /]
+        [br /]
 
-        **What is a vector?**
+        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/MoHMw0ZO7bU" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
-        The vector quantity
+        #### Question
 
-        ##### Question:
-        The vector [Equation]\vec{a} = \lt 5\times 10^{7}, 3.2 \times 10^{8}, 6.4 \times 10^{7} \gt m/s^{2} [/Equation]. What is [Equation]|\vec{a}|[/Equation]?
+        [br /]
 
-        ##### Approach:
-        Use [link text:"NumPy" url: "https://numpy.org/doc/stable/reference/routines.math.html" /], or numpy, to find the magnitude of the vector.
+        [div class:"questions"]
 
-        ##### Uses:
-        Power operator, np.sqrt()
+          What is [Equation]|\vec{a}|[/Equation]?
 
-        The code below is split into 4 sections to solve the answer. Click the arrows to learn more about the sections of code used to calculate the magnitude.
+          [Equation]\vec{a} = \lt 5\times 10^{7}, 3.2 \times 10^{8}, 6.4 \times 10^{7} \gt m/s^{2} [/Equation].
 
-            #### Import Statements
+        [/div]
 
-              This is the main area to import python packages, modules, files, etc. that will be used to run the script and get the correct answer.
+        [br /]
 
-              NumPy is a popular package for science computation in python.
+        #### Solve
 
-              **import** numpy **as** np:
+        Using the Trinket below, set up the problem.
 
-                allows you to use the modules, functions, and objects within the package. In this problem, we need to take the square root, so np.sqrt() can be used.
+        [ul]
+          [li] Import NumPy by adding an import line: `import numpy as np`.
+          This will allow you to use np.array to represent the vector in the code.[/li]
+          [li] Assign the np.arrays to the a variable. Example: `a = np.array([x,y,z])`.[/li]
+          [li] Create x, y, and z variables and set them equal to the components of
+          [Equation]\vec{a}[/Equation].[/li]
+          [li] Add a variable `mag_a` and set it equal to `np.sqrt(x**2 + y**2 + z**2)`.[/li]
+          [li] Add a variable `mag_a2` and set it equal to `np.sqrt((a[0]**2 + a[1]**2 + a[2]**2))`.[/li]
+          [li] Print the answer! Add `print "The magnitude =", mag_a `. [/li]
+          [li] Print another answer! Add `print "The second magnitude =", mag_a2`. [/li]
+          [li] Click `>_Console` to run the code. Are both answers the same?[/li]
+          [li] Click the **Reveal Answer** button below the Trinket to check your answer! [/li]
+        [/ul]
 
-            #### Given variables
-
-              In this section, organize the variables that are given in a problem.
-
-              The format is generally: variable = numbers
-
-              Note that no units are shown here.
-
-            #### calculate
-
-              Use the variables listed to solve the problem. Set the problem equal to a unique new variable that you can call later.
-
-              * `new_variable = math`
-
-            #### Print the answer
-
-            In this section, take the new variable(s) in the calculation section and output the answer by *printing*.
-
-
-              `print(new_variable)`
-
-            * This will print *only* what the new_variable is equal to, typically a number or set of numbers.
-
-            * Words
 
         [iframe src:"https://trinket.io/embed/python/6b7499f4e0" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
+
+        [hr /]
+
+        [div class:"centerPara"]
+          [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+          [Physics Department](https://clas.ucdenver.edu/physics/)
+          [br /]
+          Feedback Form *Insert Link*
+        [/div]
 
       [/div]
     [/Case]
