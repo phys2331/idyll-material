@@ -97,7 +97,7 @@
 
 [hr /]
 
-[div class:"centerHead"]
+[div className:"centerHead"]
 
   [br /]
 
@@ -127,6 +127,19 @@
 
       Need to brush up on math topics? Navigate to the [Video Resources](./../post-1)
       page for quick videos on the math knowledge needed for Physics II.
+    [/p]
+
+[/div]
+
+[div className:"centerHead"]
+
+  [hr /]
+
+  ## Other Visualization Tools
+
+    [p]
+      This [3D Coordinate Visualizer](https://www.glowscript.org/#/user/scomin/folder/VectorCalcDemos/program/Point) is great if you are struggling with three-dimensional coordinates.
+      Use it to check your graphs, or play around with it to get an intuition for three-dimensional coordinate systems!
     [/p]
 
 [/div]
