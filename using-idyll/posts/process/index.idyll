@@ -107,5 +107,35 @@ think about what information should be presented to the user and what subset of 
 * **Is this easy to look at?** Choose fonts, color schemes, and line widths that are easy on the eye. Reading your material shouldn't be an unpleasant experience.
 
 When trying to choose a particular component, it may be helpful to look for examples. 
-There is an official Idyll [gallery](https://idyll-lang.org/gallery) - browsing this might give you ideas.
+There is an official Idyll [gallery](https://idyll-lang.org/gallery) - browsing this might give you ideas. 
 [Parametric Press](https://parametric.press/issue-01/) also presents a variety of articles written in the Idyll language.
+
+### Specific Components
+
+Below are some components that I've used and my experiences with them. 
+The purpose of this is to document how to decide whether you want to use the component,
+not to document how to use the components once you have included them.
+
+#### Apparatus (Visualization)
+
+[Apparatus](aprt.us) is amazing for making small, simple, visual interactives. 
+You can link geometries to variables and make these variables functions of one another. 
+
+Where Apparatus really shines is in allowing you to control variables by interacting with geometry on the page - 
+for example, moving one object might control the time variable which could in turn control other objects. 
+
+If you need to use numeric methods like tracking past values, you will likely need to write your own code, 
+but if you want a visual representation of something that could be solved analytically, Apparatus is an excellent choice.
+
+#### Easer Toggle (Time Advancement)
+
+While I could not find its installation name in the package manager, 
+Parametric Press used a package named [Easer Toggle](https://github.com/ParametricPress/01-on-particle-physics/tree/master/components) in [one of their articles](https://parametric.press/issue-01/on-particle-physics/).
+You can use this by downloading the linked file directly to the `components` directory of an idyll post.
+
+Easer Toggle is a simple component which incrememnts a variable forward in time when a button is pressed.
+Said button becomes the stop button when the variable is still increasing.
+(Using the version that I found, you need to create a reset button on your own.)
+
+Easer Toggle can be used together with other components, so if you need to change a variable in real time, 
+use Easer Toggle.
