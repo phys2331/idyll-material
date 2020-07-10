@@ -424,7 +424,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     ## Simulation
     This simulation will allow you to change the accelerating voltage and see where your carbon atom ends up.
     [br /][br /]
-    *This simulation is still under construction. It will always put you on the right path, because I haven't added the acceleration in the center region yet!*
+    *This simulation has bugs :(*
     
     [var name:textval value:"1" /]
     [var name:t value:0 /]
@@ -457,6 +457,8 @@ Then we started to determine the specifics, relating magnetic and central forces
 \boldsymbol{F}_{central} = \boldsymbol{F}_{magnetic} = q\boldsymbol{v}\times\boldsymbol{B} = -m\frac{v^2}{r}\hat{r}
 [/Equation]
 
+We were able to determine the voltage across the two horizontal plates from a provided graph as well as by calculating it on our own.
+(Calculating it on your own wasn't required, but could be good practice!)
 By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.
 Determining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:
 
