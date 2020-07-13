@@ -70,15 +70,15 @@ Inline styles
 this is green.
 [/div]
 
-[div style:`{background-color: 'green'}`]
+[div style:`{backgroundColor: 'green'}`]
 this is supposed to be on a green background.
 [/div]
 
-[div style:`{font-style: 'italic'}`]
+[div style:`{fontStyle: 'italic'}`]
 this is supposed to be italic. but that's not a big deal because of the markup syntax.
 [/div]
 
-[div style:`{font-weight: 'bold'}`]
+[div style:`{fontWeight: 'bold'}`]
 this is supposed to be bold. but that's not a big deal because of the markup syntax.
 [/div]
 
@@ -86,7 +86,7 @@ this is supposed to be bold. but that's not a big deal because of the markup syn
 this is red, because now I'm questioning whether I just broke everything.
 [/div]
 
-[div style:`{font-size: '3px'}`]
+[div style:`{fontSize: '3px'}`]
 this is supposed to be tiny.
 [/div]
 
