@@ -168,12 +168,10 @@
 
                 [br /]
 
-                  //[div class: "questionsMore"]
                     [Equation]\vec{a} = \lt 0, 5, 0 \gt [/Equation]
                     [br /]
                     [Equation]\vec{b} = \lt 5, 5, 0 \gt [/Equation]
                     [br /]
-                  //[/div]
 
               [/div]
 
@@ -240,8 +238,6 @@
                   [br /]
                   [br /]
                   [iframe src:"https://giphy.com/embed/XfOPWFNbnoFC5Io03n" width:"480" height:"376" frameBorder:"0" class:"giphy-embed"][/iframe]
-                  [br /]
-                  [iframe src:"https://giphy.com/embed/VcBo8oemUA1NG13IYH" width:"480" height:"329" frameBorder:"0" class:"giphy-embed"][/iframe]
 
                 [/Conditional]
               [/div]
@@ -252,6 +248,177 @@
               addition problems.
 
               [iframe src:"https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
+
+              [hr /]
+
+              #### Activity
+
+              [br /]
+
+              Using the same vectors listed above, let's use python to plot them and test our
+              answers.
+
+              [div class:"questions"]
+
+                Graph [Equation]\vec{a} + \vec{b}[/Equation].
+
+                [br /]
+
+                    [Equation]\vec{a} = \lt 0, 5, 0 \gt [/Equation]
+                    [br /]
+                    [Equation]\vec{b} = \lt 5, 5, 0 \gt [/Equation]
+                    [br /]
+
+              [/div]
+
+              [br /]
+
+              #### Solve
+
+              [br /]
+
+              Using the Trinket below, set up the problem.
+
+              [div class:"trinketInst"]
+                Import Statements
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `import numpy as np` [/li]
+                [ul]
+                  [li] This imports NumPy for use in:[/li]
+                  [ul]
+                    [li] [np.array](https://numpy.org/doc/stable/reference/generated/numpy.array.html)
+                    for vectors [/li]
+                    [li] [np.arange](https://numpy.org/doc/stable/reference/generated/numpy.arange.html)
+                    for specifying the plot tick intervals *Note*: there is 1 r (aRange, not arrange)[/li]
+                  [/ul]
+                [/ul]
+                [li] `import matplotlib.pyplot as plt` [/li]
+                [ul]
+                  [li] This imports matplotlib to format and plot the vectors.[/li]
+                [/ul]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Set up the vectors
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] Assign np.arrays to variables. [/li]
+                [ul]
+                  [li] `vec_a = np.array([x,y])`[/li]
+                  [li] `vec_b = np.array([x,y])`[/li]
+                [/ul]
+                [li] Note that this is a 2D plot. The third component can be
+                added, but this plot type will ignore it. [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Set up the graph
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `plt.axis([-1,15,-1,15])` [/li]
+                [li] `plt.xticks(np.arange(0,16,1))` [/li]
+                [li] `plt.yticks(np.arange(0,16,1))` [/li]
+                [li] `origin = [0],[0]` [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Add the third vector
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `vec_c = vec_a + vec_b` [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Print the graph
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `print(vec_a, "+", vec_b, "=", vec_c)` [/li]
+                [li] `plt.quiver(*origin, vec_a[0], vec_a[1], color='purple', scale_units='xy', angles='xy', scale = 1, label = vec_a)` [/li]
+                [li] `plt.quiver(*origin, vec_b[0], vec_b[1], color = 'blue', scale_units='xy', angles='xy', scale=1, label = vec_b)` [/li]
+                [li] `plt.quiver(*origin, vec_c[0], vec_c[1], scale_units='xy', angles='xy', scale = 1, label = vec_c)` [/li]
+                [li] `plt.legend()` [/li]
+                [li] `plt.show()` [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Run the code!
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer!
+                *Note*: it will output `array([x, y, z], '<class 'int'>')` where
+                the three components of the array are equal to the answer. [/li]
+              [/ul]
+
+              [br /]
+
+              [iframe src:"https://trinket.io/embed/python3/4bb3797027" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation] [0 \; 5] + [5 \; 5] = [5 \; 10] [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  [img src:"./static/images/addition_graph_ans.png" title:"Addition Plot" /]
+
+                  [br /]
+                  [br /]
+
+                  *Does the output match the answers from the questions above?*
+
+                  [br /]
+                  [br /]
+
+                [/Conditional]
+              [/div]
+
+              [br /]
+              [br /]
 
               [hr /]
 
@@ -353,14 +520,183 @@
                   [br /]
                   Insert gifs of subtracting vectors.
 
+                  [hr /]
+
                 [/Conditional]
 
               [/div]
 
+              *Insert questions that predict different vector results.*
+
+              [br /]
+
+              #### Activity
+
+              [br /]
+
+              Using the same vectors listed above, let's use python to plot them and test our
+              answers.
+
+              [div class:"questions"]
+
+                Graph [Equation]\vec{a} - \vec{b}[/Equation].
+
+                [br /]
+
+                    [Equation]\vec{a} = \lt 3, 9, 0 \gt [/Equation]
+                    [br /]
+                    [Equation]\vec{b} = \lt 4, 3, 0 \gt [/Equation]
+                    [br /]
+
+              [/div]
+
+              [br /]
+
+              #### Solve
+
+              [br /]
+
+              Using the Trinket below, set up the problem.
+
+              [div class:"trinketInst"]
+                Import Statements
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `import numpy as np` [/li]
+                [ul]
+                  [li] This imports NumPy for use in:[/li]
+                  [ul]
+                    [li] [np.array](https://numpy.org/doc/stable/reference/generated/numpy.array.html)
+                    for vectors [/li]
+                    [li] [np.arange](https://numpy.org/doc/stable/reference/generated/numpy.arange.html)
+                    for specifying the plot tick intervals *Note*: there is 1 r (aRange, not arrange)[/li]
+                  [/ul]
+                [/ul]
+                [li] `import matplotlib.pyplot as plt` [/li]
+                [ul]
+                  [li] This imports matplotlib to format and plot the vectors.[/li]
+                [/ul]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Set up the vectors
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] Assign np.arrays to variables. [/li]
+                [ul]
+                  [li] `vec_a = np.array([x,y])`[/li]
+                  [li] `vec_b = np.array([x,y])`[/li]
+                  [li] `vec_c = vec_a - vec_b`[/li]
+                [/ul]
+                [li] Note that this is a 2D plot. The third component can be
+                added, but this plot type will ignore it. [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Set up the graph
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `plt.axis([-1,10,-1,10])` [/li]
+                [li] `plt.xticks(np.arange(-5,11,1))` [/li]
+                [li] `plt.yticks(np.arange(-5,11,1))` [/li]
+                [li] `origin = [0],[0]` [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Print the graph
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] `print(vec_a, "-", vec_b, "=", vec_c)` [/li]
+                [li] `plt.quiver(*origin, vec_a[0], vec_a[1], color='orange', scale_units='xy', angles='xy', scale = 1, label = vec_a)` [/li]
+                [li] `plt.quiver(*origin, vec_b[0], vec_b[1], color = 'blue', scale_units='xy', angles='xy', scale=1, label = vec_b)` [/li]
+                [li] `plt.quiver(*origin, vec_c[0], vec_c[1], scale_units='xy', angles='xy', scale = 1, label = vec_c)` [/li]
+                [li] `plt.legend()` [/li]
+                [li] `plt.show()` [/li]
+              [/ul]
+
+              [br /]
+
+              [div class:"trinketInst"]
+                Run the code!
+              [/div]
+
+              [br /]
+
+              [ul]
+                [li] Click `>_Console` to run the code.[/li]
+                [li] Click the **Reveal Answer** button below the Trinket to check your answer![/li]
+              [/ul]
+
+              [br /]
+
+              [iframe src:"https://trinket.io/embed/python3/bdcd51bd8d" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+              [br /]
+
+              [div class:"revealButtons"]
+
+                [var name:"clickReveal" value:false /]
+
+                [button onClick:`clickReveal = !clickReveal`]
+                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [/Button]
+
+                [br /]
+
+                [Conditional if: `clickReveal`]
+                  *Answer:*
+
+                  [div class:"equations"]
+                    [Equation] [3 \;\; 9] - [4 \;\; 3] = [-1 \;\; 6] [/Equation]
+                  [/div]
+
+                  [br /]
+
+                  [img src:"./static/images/subtract_graph_ans.png" title:"Subtraction Plot" /]
+
+                  [br /]
+                  [br /]
+
+                  *Does the output match the answers from the questions above?*
+
+                  [br /]
+                  [hr /]
+                  [br /]
+
+                [/Conditional]
+              [/div]
+
               Now let's think about three dimensions. Using the same x and y components,
-              add a z to each of the vectors:
+              add a z to each of the vectors.
+
+              #### Activity
+
+              [br /]
 
               [div class: "questions"]
+
+                Graph and Solve [Equation]\vec{a} - \vec{b}[/Equation]
+
+                [br /]
+
                 [Equation]\vec{a} = \lt 3, 9, 5 \gt [/Equation]
                 [br /]
                 [Equation]\vec{b} = \lt 4, 3, 6 \gt [/Equation]
@@ -369,8 +705,108 @@
 
             [br /]
 
-            Change the Trinket above and rerun the code. Click *Reveal Answer* to
-            check your answer.
+            [br /]
+
+            #### Solve
+
+            [br /]
+
+            Using the Trinket below, set up the problem.
+
+            [div class:"trinketInst"]
+              Import Statements
+            [/div]
+
+            [br /]
+
+            [ul]
+              [li] `import numpy as np` [/li]
+              [ul]
+                [li] This imports NumPy for use in:[/li]
+                [ul]
+                  [li] [np.array](https://numpy.org/doc/stable/reference/generated/numpy.array.html)
+                  for vectors [/li]
+                [/ul]
+              [/ul]
+              [li] `import matplotlib.pyplot as plt` [/li]
+              [ul]
+                [li] This imports matplotlib to format and plot the vectors.[/li]
+              [/ul]
+              [li] `from mpl_toolkits import mplot3d`[/li]
+              [ul]
+                [li] This imports mplot3d to create the 3d components of the graph.[/li]
+              [/ul]
+            [/ul]
+
+            [br /]
+
+            [div class:"trinketInst"]
+              Set up the vectors
+            [/div]
+
+            [br /]
+
+            [ul]
+              [li] Assign np.arrays to variables. [/li]
+              [ul]
+                [li] `vec_a = np.array([x,y,z])`[/li]
+                [li] `vec_b = np.array([x,y,z])`[/li]
+              [/ul]
+              [li] `vec_c = vec_a - vec_b`[/li]
+            [/ul]
+
+            [br /]
+
+            [div class:"trinketInst"]
+              Set up the graph
+            [/div]
+
+            [br /]
+
+            [ul]
+              [li] `fig = plt.figure()` [/li]
+              [li] `ax = fig.gca(projection='3d')` [/li]
+              [li] `ax.set_xlim([-5, 10])` [/li]
+              [li] `ax.set_ylim([-5, 10])` [/li]
+              [li] `ax.set_zlim([-5, 10])`[/li]
+              [li] `ax.set_xlabel('X', color = 'green')`[/li]
+              [li] `ax.set_ylabel('Y', color = 'green')`[/li]
+              [li] `ax.set_zlabel('Z', color = 'green')`[/li]
+            [/ul]
+
+            [br /]
+
+            [div class:"trinketInst"]
+              Print the graph
+            [/div]
+
+            [br /]
+
+            [ul]
+              [li] `print(vec_a, "-", vec_b, "=", vec_c)` [/li]
+              [li] `ax.quiver(0, 0, 0, vec_a[0], vec_a[1], vec_a[2], color='orange', label = vec_a, arrow_length_ratio = 0.15)` [/li]
+              [li] `ax.quiver(0, 0, 0,  vec_b[0], vec_b[1], vec_b[2], color = 'blue', label = vec_b, arrow_length_ratio = 0.15)` [/li]
+              [li] `ax.quiver(0, 0, 0, vec_c[0], vec_c[1], vec_b[2], color = 'black', label = vec_c, arrow_length_ratio = 0.15)` [/li]
+              [li] `plt.legend(loc = 2)` [/li]
+              [li] `plt.show()` [/li]
+            [/ul]
+
+            [br /]
+
+            [div class:"trinketInst"]
+              Run the code!
+            [/div]
+
+            [br /]
+
+            [ul]
+              [li] Click `>_Console` to run the code.[/li]
+              [li] Click the **Reveal Answer** button below the Trinket to check your answer![/li]
+            [/ul]
+
+            [br /]
+
+            [iframe src:"https://trinket.io/embed/python3/ff399f1416" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
             [br /]
 
@@ -387,22 +823,20 @@
                   *Answer:*
 
                   [div class:"equations"]
-                    [Equation] \lt -1, 6, -1 \gt [/Equation]
+                    [Equation] [3 \;\; 9 \;\; 5] - [4 \;\; 3 \;\; 6] = [-1 \;\; 6 \;\; -1] [/Equation]
                   [/div]
 
                   [br /]
 
-                  *Why is this the answer?*
+                  [img src:"./static/images/3d_subtraction_ans.png" title:"Subtraction Plot" /]
 
                   [br /]
                   [br /]
 
-                  Remember that each component of the second vector is subtracted
-                  from each component of the first vector. See *Why is this the
-                  answer?* above. Need more practice? Complete the WileyPlus
-                  vectors homework questions.
+                  *How does this differ from the graph above?*
 
                   [br /]
+                  [hr /]
                   [br /]
 
                 [/Conditional]
