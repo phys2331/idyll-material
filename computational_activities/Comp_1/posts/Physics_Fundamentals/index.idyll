@@ -950,6 +950,7 @@
 
               [br /]
 
+<<<<<<< HEAD
 
 
 
@@ -973,6 +974,231 @@
 
 
 
+=======
+               #### Activity
+
+               [br /]
+
+               Understand the scaling of vectors.
+
+               [div class:"questions"]
+
+                 Graph [Equation]\vec{a} \times scalar[/Equation].
+
+                 [Equation]\vec{a} = \lt 2, 2, 4.5 \gt [/Equation]
+                 [br /]
+                 Scalars: s = 2, m = 4, h = 6
+                 [br /]
+
+               [/div]
+
+               [br /]
+
+               #### Solve
+
+               [br /]
+
+               Using the Trinket below, set up the problem.
+
+               [div class:"trinketInst"]
+                 Import Statements
+               [/div]
+
+               [br /]
+
+               [ul]
+                 [li] `import numpy as np` [/li]
+                 [ul]
+                   [li] This imports NumPy for use in:[/li]
+                   [ul]
+                     [li] [np.array](https://numpy.org/doc/stable/reference/generated/numpy.array.html)
+                     for vectors [/li]
+                   [/ul]
+                 [/ul]
+                 [li] `import matplotlib.pyplot as plt` [/li]
+                 [ul]
+                   [li] This imports matplotlib to format and plot the vectors.[/li]
+                 [/ul]
+                 [li] `from mpl_toolkits import mplot3d`[/li]
+               [/ul]
+
+               [br /]
+
+               [div class:"trinketInst"]
+                 Set up the vectors
+               [/div]
+
+               [br /]
+
+               [ul]
+                 [li] Assign np.arrays to variables. [/li]
+                 [ul]
+                   [li] `vec_a = np.array([x,y,z])`[/li]
+                 [/ul]
+                 [li] Add the scalars. [/li]
+                 [ul]
+                   [li] `s = #`[/li]
+                   [li] `m = #`[/li]
+                   [li] `h = #`[/li]
+                 [/ul]
+                 [li] Add vectors that will equal the different scalars times `vec_a`[/li]
+                 [ul]
+                   [li] `vec_b = s * vec_a`[/li]
+                   [li] `vec_c = m * vec_a`[/li]
+                   [li] `vec_d = -s * vec_a`[/li]
+                   [li] `vec_e = -h * vec_a`[/li]
+                 [/ul]
+               [/ul]
+
+               [br /]
+
+               [div class:"trinketInst"]
+                 Set up the graph
+               [/div]
+
+               [br /]
+
+               [ul]
+                 [li] `fig = plt.figure()` [/li]
+                 [li] `ax = fig.gca(projection='3d')` [/li]
+                 [li] `ax.set_xlim([-30, 30])` [/li]
+                 [li] `ax.set_ylim([-30, 30])` [/li]
+                 [li] `ax.set_zlim([-30, 30])` [/li]
+                 [li] `ax.set_xlabel('X', color = 'green')` [/li]
+                 [li] `ax.set_ylabel('Y', color = 'green')` [/li]
+                 [li] `ax.set_zlabel('Z', color = 'green')` [/li]
+               [/ul]
+
+               [br /]
+
+               [div class:"trinketInst"]
+                 Print the graph
+               [/div]
+
+               [br /]
+
+               [ul]
+                 [li] `print(vec_a, "x", 2, "=", vec_b)` [/li]
+                 [li] `print(vec_a, "x", 4, "=", vec_c)` [/li]
+                 [li] `print(vec_a, "x", -2, "=", vec_d)` [/li]
+                 [li] `print(vec_a, "x", -6, "=", vec_e)` [/li]
+                 [li] `ax.quiver(0, 0, 0, vec_a[0], vec_a[1], vec_a[2], color='red', label = vec_a, arrow_length_ratio = .5)` [/li]
+                 [li] `plt.legend(loc = 2)` [/li]
+                 [li] `plt.show()` [/li]
+               [/ul]
+
+               [br /]
+
+               [div class:"trinketInst"]
+                 Run the code!
+               [/div]
+
+               [br /]
+
+               [ul]
+                 [li] Click `>_Console` to run the code.[/li]
+                 [li] Click the **Reveal Answer** button below the Trinket to check your answer![/li]
+               [/ul]
+
+               [br /]
+
+               [iframe src:"https://trinket.io/embed/python3/cb15926301" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+               [br /]
+
+               [div class:"revealButtons"]
+                 [var name:"clickReveal2" value:false /]
+
+                 [button onClick:`clickReveal2 = !clickReveal2`]
+                   [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                 [/Button]
+
+                 [br /]
+
+                 [Conditional if: `clickReveal2`]
+                   *Answer:*
+
+                   [br /]
+                   [br /]
+
+                   [div class:"trinketInst"]
+                     Part 1: Graph [Equation]\vec{a}[/Equation]
+                   [/div]
+
+                   [br /]
+
+                   [img src:"./static/images/vec_a_scalingVecs.png" title:"Subtraction Plot" /]
+
+                   [br /]
+                   [br /]
+
+                   [div class:"trinketInst"]
+                     Part 2: Graph [Equation]\vec{a}[/Equation] and [Equation]2\vec{a}[/Equation]
+                   [/div]
+
+                   [div class:"equations"]
+                     [Equation] [2. \;\; 2. \;\; 4.5] \times 2 = [4. \;\; 4. \;\; 9.] [/Equation]
+                   [/div]
+
+                   [br /]
+
+                   [img src:"./static/images/vec_2a_scalingVecs.png" title:"Subtraction Plot" /]
+
+                   [br /]
+
+                   [div class:"trinketInst"]
+                     Part 3: Graph [Equation]\vec{a}[/Equation], [Equation]2\vec{a}[/Equation], and [Equation]4\vec{a}[/Equation].
+                   [/div]
+
+                   [div class:"equations"]
+                     [Equation] [2. \;\; 2. \;\; 4.5] \times 2 = [4. \;\; 4. \;\; 9.] [/Equation]
+                     [br /]
+                     [Equation] [2. \;\; 2. \;\; 4.5] \times 4 = [8. \;\; 8. \;\; 18.] [/Equation]
+                   [/div]
+
+                   [br /]
+
+                   [img src:"./static/images/vec_2a4a_scalingVecs.png" title:"Subtraction Plot" /]
+
+                   [br /]
+
+                   [div class:"trinketInst"]
+                     Part 4: Graph [Equation]\vec{a}[/Equation] and [Equation]-2\vec{a}[/Equation].
+                   [/div]
+
+                   [div class:"equations"]
+                     [Equation] [2. \;\; 2. \;\; 4.5] \times -2 = [-4. \;\; -4. \;\; -9.] [/Equation]
+                   [/div]
+
+                   [br /]
+
+                   [img src:"./static/images/vec_neg2a_scalingVecs.png" title:"Subtraction Plot" /]
+
+                   [br /]
+
+                   [div class:"trinketInst"]
+                     Part 5: Graph [Equation]\vec{a}[/Equation], [Equation]-2\vec{a}[/Equation], and [Equation]-6\vec{a}[/Equation].
+                   [/div]
+
+                   [div class:"equations"]
+                     [Equation] [2. \;\; 2. \;\; 4.5] \times -2 = [-4. \;\; -4. \;\; -9.] [/Equation]
+                     [br /]
+                     [Equation] [2. \;\; 2. \;\; 4.5] \times -6 = [-12. \;\; -12. \;\; -27.] [/Equation]
+                   [/div]
+
+                   [br /]
+
+                   [img src:"./static/images/vec_neg2a6a_scalingVecs.png" title:"Subtraction Plot" /]
+
+                   [br /]
+
+                   [br /]
+                   [hr /]
+                   [br /]
+
+                 [/Conditional]
+               [/div]
+>>>>>>> ec075ee417c9a25345433053c1fd489f3a93d490
 
               [hr /]
 
