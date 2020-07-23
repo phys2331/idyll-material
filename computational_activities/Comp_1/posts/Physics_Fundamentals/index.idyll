@@ -9,9 +9,9 @@
   color:"#ffffff"
    /]
 
-[var name:"currentValue" value:"" /]
+[var name:"currentValue" value:0 /]
 
-[div class:"tabLook" fullWidth:true]
+[div className:"tabLook" fullWidth:true]
   [button onClick:`currentValue = ""`]Overview[/Button]
   [button onClick:`currentValue = "Vectors"`]Vectors ([Equation]+, -, \bullet, \times [/Equation])[/Button]
   [button onClick:`currentValue = "Magnitude"`]Magnitude[/Button]
@@ -21,10 +21,10 @@
 [br /]
 [hr fullWidth:true /]
 
-[div class:"problemBody" fullWidth:true padding-left:`100%`]
+[div className:"problemBody" fullWidth:true padding-left:`100%`]
   [Switch value:currentValue]
     [Default]
-      [div class:"centerHead iframe"]
+      [div className:"centerHead iframe"]
 
         ### Overview
 
@@ -61,7 +61,7 @@
         What physics concept can this be related to? Play with the code and see
         what you can make Tina do. Want to learn more? Visit one of the links above.
 
-        [iframe src:"https://trinket.io/embed/python/e313939670?start=result" width:"100%" height:"356" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+        [iframe src:"https://trinket.io/embed/python/e313939670?start=result" width:"100%" height:"356" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
         [br /]
 
@@ -84,7 +84,7 @@
         View the following video for a quick summary of vectors and why they are useful
         in various fields. Need an extra refresher? Visit the [Vectors Guide](./Vectors_Guide)! *Fix Link*
 
-        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ml4NSzCQobk" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ml4NSzCQobk" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
         [br /]
 
@@ -108,14 +108,14 @@
 
       [br /]
 
-      [div class:"centerPara"]
+      [div className:"centerPara"]
         **Ready for more?** Visit the [Electric Fields & Python](../../electric-fields/) page!
       [/div]
 
       [br /]
       [hr /]
 
-      [div class:"centerPara"]
+      [div className:"centerPara"]
         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
         [Physics Department](https://clas.ucdenver.edu/physics/)
         [br /]
@@ -124,7 +124,7 @@
 
     [/Default]
     [Case test:"Vectors"]
-      [div class:"subCenterHead iframe"]
+      [div className:"subCenterHead iframe"]
 
         ## Vectors
 
@@ -132,7 +132,7 @@
 
         [var name:"vecTabValue" value:"" /]
 
-        [div class:"subtabLook" fullWidth:true]
+        [div className:"subtabLook" fullWidth:true]
           [button onClick:`vecTabValue = ""`]Adding[/Button]
           [button onClick:`vecTabValue = "Subtracting"`]Subtracting[/Button]
           [button onClick:`vecTabValue = "Scale"`]*Scaling* with Scalars[/Button]
@@ -148,13 +148,13 @@
 
         [Switch value:vecTabValue]
           [Default]
-            [div class:"subProblemBody"]
+            [div className:"subProblemBody"]
 
               ### Vector Addition
 
               [br /]
 
-              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ci29I7a0HI8" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ci29I7a0HI8" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
               [br /]
 
@@ -162,7 +162,7 @@
 
               [br /]
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 What is [Equation]\vec{a} + \vec{b}[/Equation]?
 
@@ -192,29 +192,29 @@
                 in python 2.[/li]
                 [li] Click `>_Console` to run the code.[/li]
                 [li] Click the **Reveal Answer** button below the Trinket to check your answer!
-                *Note*: it will output `array([x, y, z], '<class 'int'>')` where
+                *Note*: it will output `array([x, y, z], '<className 'int'>')` where
                 the three components of the array are equal to the answer. [/li]
               [/ul]
 
-              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealAdd1" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealAdd1 = !clickRevealAdd1`]
+                  [Display value:`clickRevealAdd1 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealAdd1`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation] \lt 5, 10, 0 \gt [/Equation]
                   [/div]
 
@@ -227,7 +227,7 @@
 
                   To add vectors together, add each component of each vector (x + x, y + y, z + z):
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation]\vec{A} + \vec{B} = \lt (A_{x} + B_{x}), (A_{y} + B_{y}), (A_{z} + B_{z}) \gt[/Equation]
                   [/div]
 
@@ -237,7 +237,7 @@
                   Graphically, vectors can be added with the tip-to-tail method and by plotting the vectors on a graph.
                   [br /]
                   [br /]
-                  [iframe src:"https://giphy.com/embed/XfOPWFNbnoFC5Io03n" width:"480" height:"376" frameBorder:"0" class:"giphy-embed"][/iframe]
+                  [iframe src:"https://giphy.com/embed/XfOPWFNbnoFC5Io03n" width:"480" height:"376" frameBorder:"0" className:"giphy-embed"][/iframe]
 
                 [/Conditional]
               [/div]
@@ -258,7 +258,7 @@
               Using the same vectors listed above, let's use python to plot them and test our
               answers.
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 Graph [Equation]\vec{a} + \vec{b}[/Equation].
 
@@ -279,7 +279,7 @@
 
               Using the Trinket below, set up the problem.
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Import Statements
               [/div]
 
@@ -304,7 +304,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Set up the vectors
               [/div]
 
@@ -322,7 +322,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Set up the graph
               [/div]
 
@@ -337,7 +337,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Add the third vector
               [/div]
 
@@ -349,7 +349,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Print the graph
               [/div]
 
@@ -366,7 +366,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Run the code!
               [/div]
 
@@ -375,30 +375,30 @@
               [ul]
                 [li] Click `>_Console` to run the code.[/li]
                 [li] Click the **Reveal Answer** button below the Trinket to check your answer!
-                *Note*: it will output `array([x, y, z], '<class 'int'>')` where
+                *Note*: it will output `array([x, y, z], '<className 'int'>')` where
                 the three components of the array are equal to the answer. [/li]
               [/ul]
 
               [br /]
 
-              [iframe src:"https://trinket.io/embed/python3/4bb3797027" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python3/4bb3797027" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealAdd2" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealAdd2 = !clickRevealAdd2`]
+                  [Display value:`clickRevealAdd2 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealAdd2`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation] [0 \; 5] + [5 \; 5] = [5 \; 10] [/Equation]
                   [/div]
 
@@ -422,7 +422,7 @@
 
               [hr /]
 
-              [div class:"centerPara"]
+              [div className:"centerPara"]
                 [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
                 [Physics Department](https://clas.ucdenver.edu/physics/)
                 [br /]
@@ -432,7 +432,7 @@
             [/div]
           [/Default]
           [Case test:"Subtracting"]
-            [div class:"subProblemBody iframe"]
+            [div className:"subProblemBody iframe"]
 
               ### Vector Subtraction
 
@@ -444,13 +444,13 @@
 
               [br /]
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 What is [Equation]\vec{a} - \vec{b}[/Equation]?
 
                 [br /]
 
-                  //[div class: "questionsMore"]
+                  //[div className: "questionsMore"]
                     [Equation]\vec{a} = \lt 3, 9, 0 \gt [/Equation]
                     [br /]
                     [Equation]\vec{b} = \lt 4, 3, 0 \gt [/Equation]
@@ -477,25 +477,25 @@
               [/ul]
 
 
-              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealSub1" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealSub1 = !clickRevealSub1`]
+                  [Display value:`clickRevealSub1 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealSub1`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation] \lt -1, 6, 0 \gt [/Equation]
                   [/div]
 
@@ -508,7 +508,7 @@
 
                   To subtract a vector from another vector, subtract each component of each vector (x - x, y - y, z - z):
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation]\vec{A} - \vec{B} = \lt (A_{x} - B_{x}), (A_{y} - B_{y}), (A_{z} - B_{z}) \gt[/Equation]
                   [/div]
 
@@ -537,7 +537,7 @@
               Using the same vectors listed above, let's use python to plot them and test our
               answers.
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 Graph [Equation]\vec{a} - \vec{b}[/Equation].
 
@@ -558,7 +558,7 @@
 
               Using the Trinket below, set up the problem.
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Import Statements
               [/div]
 
@@ -583,7 +583,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Set up the vectors
               [/div]
 
@@ -602,7 +602,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Set up the graph
               [/div]
 
@@ -617,7 +617,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Print the graph
               [/div]
 
@@ -634,7 +634,7 @@
 
               [br /]
 
-              [div class:"trinketInst"]
+              [div className:"trinketInst"]
                 Run the code!
               [/div]
 
@@ -647,24 +647,24 @@
 
               [br /]
 
-              [iframe src:"https://trinket.io/embed/python3/bdcd51bd8d" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python3/bdcd51bd8d" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealSub2" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealSub2 = !clickRevealSub2`]
+                  [Display value:`clickRevealSub2 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealSub2`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation] [3 \;\; 9] - [4 \;\; 3] = [-1 \;\; 6] [/Equation]
                   [/div]
 
@@ -691,7 +691,7 @@
 
               [br /]
 
-              [div class: "questions"]
+              [div className: "questions"]
 
                 Graph and Solve [Equation]\vec{a} - \vec{b}[/Equation]
 
@@ -713,7 +713,7 @@
 
             Using the Trinket below, set up the problem.
 
-            [div class:"trinketInst"]
+            [div className:"trinketInst"]
               Import Statements
             [/div]
 
@@ -740,7 +740,7 @@
 
             [br /]
 
-            [div class:"trinketInst"]
+            [div className:"trinketInst"]
               Set up the vectors
             [/div]
 
@@ -757,7 +757,7 @@
 
             [br /]
 
-            [div class:"trinketInst"]
+            [div className:"trinketInst"]
               Set up the graph
             [/div]
 
@@ -776,7 +776,7 @@
 
             [br /]
 
-            [div class:"trinketInst"]
+            [div className:"trinketInst"]
               Print the graph
             [/div]
 
@@ -793,7 +793,7 @@
 
             [br /]
 
-            [div class:"trinketInst"]
+            [div className:"trinketInst"]
               Run the code!
             [/div]
 
@@ -806,23 +806,23 @@
 
             [br /]
 
-            [iframe src:"https://trinket.io/embed/python3/ff399f1416" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"https://trinket.io/embed/python3/ff399f1416" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
             [br /]
 
-              [div class:"revealButtons"]
-                [var name:"clickReveal2" value:false /]
+              [div className:"revealButtons"]
+                [var name:"clickRevealSub3" value:false /]
 
-                [button onClick:`clickReveal2 = !clickReveal2`]
-                  [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealSub3 = !clickRevealSub3`]
+                  [Display value:`clickRevealSub3 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal2`]
+                [Conditional if: `clickRevealSub3`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation] [3 \;\; 9 \;\; 5] - [4 \;\; 3 \;\; 6] = [-1 \;\; 6 \;\; -1] [/Equation]
                   [/div]
 
@@ -844,7 +844,7 @@
 
               [hr /]
 
-              [div class:"centerPara"]
+              [div className:"centerPara"]
                 [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
                 [Physics Department](https://clas.ucdenver.edu/physics/)
                 [br /]
@@ -854,19 +854,19 @@
             [/div]
           [/Case]
           [Case test:"Scale"]
-            [div class:"iframe"]
+            [div className:"iframe"]
 
               ### Multiplying a Vector by a Scalar
 
               [br /]
 
-              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/MpN8BIci-Ys" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/MpN8BIci-Ys" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
               #### Question
 
               [br /]
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 What is [Equation]16 \times \vec{c}[/Equation]?
 
@@ -896,24 +896,24 @@
                 the three components of the array are equal to the answer.[/li]
               [/ul]
 
-              [iframe src:"https://trinket.io/embed/python/8434fe5a43" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python/8434fe5a43" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealScale1" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealScale1 = !clickRevealScale1`]
+                  [Display value:`clickRevealScale1 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealScale1`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation] \lt 64, 160, 112 \gt [/Equation]
                   [/div]
 
@@ -926,7 +926,7 @@
 
                   To multiply a vector by a scalar, multiply each component of the vector by the scalar (s):
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation]\vec{c} \times s = \lt (x_{c} \times s), (y_{c} \times s), (z_{c} \times s) \gt[/Equation]
                   [/div]
 
@@ -950,13 +950,33 @@
 
               [br /]
 
-              *Need to upgrade Trinket - Insert instructions on how to do trinket
-              matplotlib to show what multiplying vectors by scalars does. Input
-              questions that explore negative and positive scalars.*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
               [hr /]
 
-              [div class:"centerPara"]
+              [div className:"centerPara"]
                 [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
                 [Physics Department](https://clas.ucdenver.edu/physics/)
                 [br /]
@@ -966,20 +986,20 @@
             [/div]
           [/Case]
           [Case test:"Dot"]
-            [div class:"iframe"]
+            [div className:"iframe"]
 
               ### The Dot Product
 
               [br /]
 
-              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/0iNrGpwZwog" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/0iNrGpwZwog" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
 
               #### Question
 
               [br /]
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 What is [Equation]\vec{a} \bullet \vec{b}[/Equation]?
 
@@ -1011,25 +1031,25 @@
               [/ul]
 
 
-              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python/8917f592ec?runOption=console" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealDot1" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealDot1 = !clickRevealDot1`]
+                  [Display value:`clickRevealDot1 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealDot1`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     47
                   [/div]
 
@@ -1042,7 +1062,7 @@
 
                   To find the dot product of two vectors, multiply each component of each vector (x * x, y * y, z * z) and add them together:
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     [Equation]\vec{A} \bullet \vec{B} = (A_{x} \times B_{x}) + (A_{y} \times B_{y}) + (A_{z} \times B_{z})[/Equation]
                   [/div]
 
@@ -1066,7 +1086,7 @@
 
               [br /]
 
-              [div class:"equationStyle"]
+              [div className:"equationStyle"]
                 [Equation]
                   \vec{a} \bullet \vec{b} = |a||b|cos\theta
                 [/Equation]
@@ -1074,7 +1094,7 @@
 
             [br /]
 
-            [div class:"questions"]
+            [div className:"questions"]
 
               What is [Equation]\vec{a} \bullet \vec{b}[/Equation]?
 
@@ -1118,23 +1138,23 @@
 
             [br /]
 
-            [iframe src:"https://trinket.io/embed/python/75defa26bd" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"https://trinket.io/embed/python/75defa26bd" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
             [br /]
 
-              [div class:"revealButtons"]
-                [var name:"clickReveal2" value:false /]
+              [div className:"revealButtons"]
+                [var name:"clickRevealDot2" value:false /]
 
-                [button onClick:`clickReveal2 = !clickReveal2`]
-                  [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealDot2 = !clickRevealDot2`]
+                  [Display value:`clickRevealDot2 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal2`]
+                [Conditional if: `clickRevealDot2`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     6622
                   [/div]
 
@@ -1153,7 +1173,7 @@
                   and then take the arccos of that answer. A nice check of the
                   .dot() function is the second portion of the code above.
 
-                  [div class:"equationStyle"]
+                  [div className:"equationStyle"]
                     [Equation] cos\theta = \frac{\vec{a} \bullet \vec{b}}{|\vec{a}||\vec{b}|} = \frac{(x_{a} \times x_{b})+(y_{a} \times y_{b})+(z_{a} \times z_{b})}{\sqrt{x_{a}^{2}+y_{a}^{2}+z_{a}^{2}} \times \sqrt{x_{b}^{2}+y_{b}^{2}+z_{b}^{2}}} [/Equation]
                   [/div]
 
@@ -1164,7 +1184,7 @@
               [/div]
               [hr /]
 
-              [div class:"centerPara"]
+              [div className:"centerPara"]
                 [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
                 [Physics Department](https://clas.ucdenver.edu/physics/)
                 [br /]
@@ -1174,19 +1194,19 @@
             [/div]
           [/Case]
           [Case test:"Cross"]
-            [div class:"iframe"]
+            [div className:"iframe"]
 
               ### The Cross Product
 
               [br /]
 
-              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/gPnWm-IXoAY" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/gPnWm-IXoAY" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
               #### Question
 
               [br /]
 
-              [div class:"questions"]
+              [div className:"questions"]
 
                 What is [Equation]\vec{a} \times \vec{b}[/Equation]?
 
@@ -1217,25 +1237,25 @@
               [/ul]
 
 
-              [iframe src:"https://trinket.io/embed/python/31b2056efb" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+              [iframe src:"https://trinket.io/embed/python/31b2056efb" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
               [br /]
               [br /]
 
-              [div class:"revealButtons"]
+              [div className:"revealButtons"]
 
-                [var name:"clickReveal" value:false /]
+                [var name:"clickRevealCross1" value:false /]
 
-                [button onClick:`clickReveal = !clickReveal`]
-                  [Display value:`clickReveal ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealCross1 = !clickRevealCross1`]
+                  [Display value:`clickRevealCross1 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal`]
+                [Conditional if: `clickRevealCross1`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     An answer!
                   [/div]
 
@@ -1248,7 +1268,7 @@
 
                   To find the cross product of two vectors:
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     Insert cross explanation
                   [/div]
 
@@ -1267,19 +1287,19 @@
 
             [br /]
 
-              [div class:"revealButtons"]
-                [var name:"clickReveal2" value:false /]
+              [div className:"revealButtons"]
+                [var name:"clickRevealCross2" value:false /]
 
-                [button onClick:`clickReveal2 = !clickReveal2`]
-                  [Display value:`clickReveal2 ? 'Hide Explanation' : 'Reveal Answer'` /]
+                [button onClick:`clickRevealCross2 = !clickRevealCross2`]
+                  [Display value:`clickRevealCross2 ? 'Hide Explanation' : 'Reveal Answer'` /]
                 [/Button]
 
                 [br /]
 
-                [Conditional if: `clickReveal2`]
+                [Conditional if: `clickRevealCross2`]
                   *Answer:*
 
-                  [div class:"equations"]
+                  [div className:"equations"]
                     A new answer!
                   [/div]
 
@@ -1295,7 +1315,7 @@
               [/div]
               [hr /]
 
-              [div class:"centerPara"]
+              [div className:"centerPara"]
                 [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
                 [Physics Department](https://clas.ucdenver.edu/physics/)
                 [br /]
@@ -1308,20 +1328,20 @@
       [/div]
     [/Case]
     [Case test:"Magnitude"]
-      [div class:"subCenterHead iframe"]
+      [div className:"subCenterHead iframe"]
 
         ## Magnitude
 
         [hr /]
         [br /]
 
-        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/MoHMw0ZO7bU" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/MoHMw0ZO7bU" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
         #### Question
 
         [br /]
 
-        [div class:"questions"]
+        [div className:"questions"]
 
           What is [Equation]|\vec{a}|[/Equation]?
 
@@ -1350,11 +1370,11 @@
         [/ul]
 
 
-        [iframe src:"https://trinket.io/embed/python/6b7499f4e0" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"] [/iframe]
+        [iframe src:"https://trinket.io/embed/python/6b7499f4e0" width:"100%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"] [/iframe]
 
         [hr /]
 
-        [div class:"centerPara"]
+        [div className:"centerPara"]
           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
           [Physics Department](https://clas.ucdenver.edu/physics/)
           [br /]
