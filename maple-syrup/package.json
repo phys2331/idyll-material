@@ -15,6 +15,7 @@
     "idyll": "^4.12.1",
     "idyll-apparatus-component": "^1.0.7",
     "idyll-d3-component": "^2.1.0",
+    "liminoid-react": "0.0.24",
     "parametric-components": "^2.1.7",
     "parametric-styles": "^2.1.4",
     "raf": "^3.4.1",

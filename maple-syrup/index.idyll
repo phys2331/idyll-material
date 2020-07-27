@@ -76,7 +76,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     For example, the standard ratio between the isotopes 13C and 12C is:
 
     [p]
-    [Equation display:"true"]
+    [Equation display:true]
       (\frac{^{13}C}{^{12}C})_{standard} = 0,0112372011237
     [/Equation]
     [/p]
@@ -86,7 +86,7 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     For example, a given plant might have an isotopic ratio of:
 
     [p]
-    [Equation display:"true"]
+    [Equation display:true]
       \frac{^{13}C}{^{12}C} = 0,0115850109
     [/Equation]
     [/p]
@@ -95,11 +95,11 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     The isotopic signature of this substance is then calculated from its isotopic ratio and the standard ratio, using the following formula:
 
     [p]
-    [Equation display:"true"]
+    [Equation display:true]
       \delta^{13} = 
       \frac{(\frac{^{13}C}{^{12}C})_{standard} - \frac{^{13}C}{^{12}C}}{\frac{^{13}C}{^{12}C}} * 1000\delta^{13}C 
-    [/Equation][Equation display:"true"] = \frac{\frac{^{13}C}{^{12}C} - (\frac{^{13}C}{^{12}C})_{standard}}{(\frac{^{13}C}{^{12}C})_{standard}} * 1000 
-    [/Equation][Equation display:"true"]= 0,0115850109
+    [/Equation][Equation display:true] = \frac{\frac{^{13}C}{^{12}C} - (\frac{^{13}C}{^{12}C})_{standard}}{(\frac{^{13}C}{^{12}C})_{standard}} * 1000 
+    [/Equation][Equation display:true]= 0,0115850109
     [/Equation]
     [/p]
 
@@ -422,24 +422,14 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
 
   [Step]
     ## Simulation
-    This simulation will allow you to change the accelerating voltage and see where your carbon atom ends up.
+    This simulation will allow you to change the accelerating voltage and see where your carbon atom ends up. 
+    In the code window (`main.py`), find the variable you were asked to find above and adjust it based on your calculation. 
+    Click the `Run` button at the top of the window to run the simulation to check your work.
     [br /][br /]
-    *This simulation has bugs :(*
+    *This simulation is still needs testing!*
     
-    [var name:textval value:"1" /]
-    [var name:t value:0 /]
-    [Equation display:false]\Delta V_1[/Equation]: [TextInput value:textval /]
+    [iframe src:"https://trinket.io/embed/pygame/429db74106?toggleCode=true" width:"100%" height:"600" allowFullScreen:"true" /] // [/iframe]
 
-    [IdyllApparatusComponent
-        _url: "static/FullSim.json"
-        _regionOfInterest: `{ x: [2, 4], y: [-0.5, 7] }`
-        _width: '100%'
-        _height: 600
-        V1:`parseFloat(textval)`
-        t:t
-      /]
-      [Float position:"left"][EaserToggle value:t targetValue:0.0004 ]Accelerate![/EaserToggle][/float]
-      [Float position:"right"][Button onClick:`t=0`]Reset[/Button][/float]
   [/Step] 
 
 [/Scroller]
@@ -453,7 +443,7 @@ Some relationships you likely used are those between voltage and energy, energy 
 First we had to determine the basics, such as which plates were positive or negative, the distances travelled under certain forces, and where equilibrium had to occur.
 Then we started to determine the specifics, relating magnetic and central forces to determine what the velocity must be:
 
-[Equation display:"true"]
+[Equation display:true]
 \boldsymbol{F}_{central} = \boldsymbol{F}_{magnetic} = q\boldsymbol{v}\times\boldsymbol{B} = -m\frac{v^2}{r}\hat{r}
 [/Equation]
 
@@ -462,13 +452,13 @@ We were able to determine the voltage across the two horizontal plates from a pr
 By determining the velocity that would be allowed through the velocity selector, we were able to determine the magnetic force as well as the energy of the isotope.
 Determining the magnetic force allowed us to determine the electric force across the two horizontal plates, as we know there must be an equilibrium here:
 
-[Equation display:"true"]
+[Equation display:true]
 \boldsymbol{F}_{magnetic} = -\boldsymbol{F}_{electric} = -q\boldsymbol{E}
 [/Equation]
 
 While determining the energy allowed us to determine the voltage across the two vertical plates:
 
-[Equation display:"true"]
+[Equation display:true]
 KE_{final} = \Delta KE + KE_{initial} = \Delta KE = -\Delta U = -q\Delta V
 [/Equation]
 
