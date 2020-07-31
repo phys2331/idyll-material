@@ -426,15 +426,29 @@ Our goal as physicists is to learn how we can apply our knowledge of electric an
     In the code window (`main.py`), find the variable you were asked to find above and adjust it based on your calculation. 
     Click the `Run` button at the top of the window to run the simulation to check your work.
     [br /][br /]
-    *This simulation is still needs testing!*
+    *This simulation may still have some bugs. If you think you got the right answer, but it isn't working, let one of us know.*
     
     [iframe src:"https://trinket.io/embed/pygame/429db74106?toggleCode=true" width:"100%" height:"600" allowFullScreen:"true" /] // [/iframe]
-
+    
+    **Alternative to Simulation:**
+    [var name:textval value:"0" /]
+    [var name:t value:0 /]
+    Enter your result in decimal or integer form ONLY in the text box below. Your units should be Volts. [br /]
+    [Equation display:false]\Delta V_1[/Equation]: [TextInput value:textval /] *Tolerance: 10%*
+    [Conditional if:`(parseFloat(textval) > 168) && (parseFloat(textval) < 206)`] // My calculation gave me 186.7
+      Correct! Your atom reached the detector.
+    [/Conditional][Conditional if:`parseFloat(textval) >= 206`]
+      Your atom went too far to the left to reach the detector.
+    [/Conditional][Conditional if:`parseFloat(textval) <= 168`]
+      Your atom went too far to the right to reach the detector.
+    [/Conditional]
   [/Step] 
 
 [/Scroller]
 
 ## Summary
+
+*The summary below is only one of multiple possible methods of solving this problem. If you used a different method, don't worry!*
 
 Our goal was to learn how we can apply our knowledge of magnetic and electric fields to determining how much of a particular isotope of carbon is present in a substance.
 This required us to understand and apply various relationships, as well as determine where these relationships applied.
