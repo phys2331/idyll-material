@@ -92,7 +92,7 @@ A detailed description of the spectrometer will be given to you, along with a ba
         </div>  </div></div></div></div></div></div><div class="idyll-scroll" id="idyll-scroll-2" style="position:relative"><div class=" idyll-text-container"><div class="idyll-scroll-text"><div class="idyll-step "><h2 id="setup">Setup</h2><p>Now we are going to review the diagram and work on the basic aspects of setup --
     namely, we will determine in a general sense what the charge on each plate should be.</p><p>In the simplified diagram below, the magnetic field is still pointing out of the screen (and only present to the right of the left set of vertical plates).
     The two vertically-aligned plates on the left are the velocity selector, and the two horizontally-aligned plates on the right are the magnetic deflector.
-    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.</p><div class="electric-field-interactive"><div class="interactive-flex-row"><div style="flex:1" idyll="[object Object]">
+    You will be able to change various aspects of their charges, and the simulation will show you how the positively-charged particle will move.</p><p>(Note that the particle’s movement is approximate.)</p><div class="electric-field-interactive"><div class="interactive-flex-row"><div style="flex:1" idyll="[object Object]">
           Net charge of the <strong>atom</strong>:
           <div class="parametric-multi-button-container"><button class="parametric-multi-button ">-</button><button class="parametric-multi-button selected">=</button><button class="parametric-multi-button ">+</button></div>
           Charge of the <strong>top</strong> plate:
@@ -102,7 +102,20 @@ A detailed description of the spectrometer will be given to you, along with a ba
           Charge of the <strong>left</strong> plate:
           <div class="parametric-multi-button-container"><button class="parametric-multi-button ">-</button><button class="parametric-multi-button selected">=</button><button class="parametric-multi-button ">+</button></div>
           Charge of the <strong>right</strong> plate:
-          <div class="parametric-multi-button-container"><button class="parametric-multi-button ">-</button><button class="parametric-multi-button selected">=</button><button class="parametric-multi-button ">+</button></div></div><div style="flex:2" class="electric-field-interactive-apparatus-container" idyll="[object Object]"><div style="margin:30px auto;width:100%;height:300px"></div><div style="display:flex;flex-direction:row" idyll="[object Object]"><button>Go!</button><button>Reset</button></div></div></div></div></div><div class="idyll-step "><h2 id="settings">Settings</h2><p>When choosing your settings, assume that the positioning of everything in the mass spectrometer is static.
+          <div class="parametric-multi-button-container"><button class="parametric-multi-button ">-</button><button class="parametric-multi-button selected">=</button><button class="parametric-multi-button ">+</button></div></div><div style="flex:2" class="electric-field-interactive-apparatus-container" idyll="[object Object]"><div style="margin:30px auto;width:100%;height:300px"></div><div style="display:flex;flex-direction:row" idyll="[object Object]"><button>Go!</button><button>Reset Time</button></div></div></div></div><p><strong>Text-Based Simulation Result</strong>
+    <div>
+      The atom did not move.
+    </div><div style="display:none">
+      The atom moved to the left, away from the velocity selector instead of into it.
+    </div><div style="display:none">
+      The atom moved to the right, into the velocity selector. 
+      <div style="display:none">
+        When it got to the velocity selector, it moved down, hitting the bottom plate.
+        <div style="display:none">The downward motion was fast.</div><div style="display:none">The downward motion was extremely fast.</div><div style="display:none">The downward motion was slow.</div><div>The downward motion was moderate.</div></div><div style="display:none">
+        When it got to the velocity selector, it moved up, hitting the top plate.
+        <div style="display:none">The upward motion was fast.</div><div style="display:none">The upward motion was extremely fast.</div><div style="display:none">The upward motion was slow.</div><div>The upward motion was moderate.</div></div><div style="display:none">The atom moved straight through the velocity selector!<div style="display:none">
+          It seems like you understand the forces at play, but note that the atom in our problem is actually a positive ion, not a negative one.
+        </div></div><div style="display:none"> The horizontal motion was too slow, and the simulation ended before it had time to move all the way across.</div></div></p></div><div class="idyll-step "><h2 id="settings">Settings</h2><p>When choosing your settings, assume that the positioning of everything in the mass spectrometer is static.
     Also assume that the magnetic field supplied cannot easily be changed.
     Therefore, the only thing you should be changing are your voltages.</p><p>Here is the setup diagram again for convenience:
     <img src="static/images/Spectrometer_Diagram.png" alt="A diagram on graph paper with the legend in French. 10 squares make up one large square, which equates to 10 cm. Particles enter the spectrometer on the left and are accelerated by a horizontal potential difference over a distance just shy of 9 squares. They then enter a vertical potential difference ΔV_s that is 2 large squares across and one large square tall. Once they have entered this area, they are subject to a magnetic field pointing out of the page. When they leave the velocity detector, they curve downward, requiring them to go 2.5 large squares to the right and 2 large squares down to reach the final corridor. When they have made this, the magnetic field abruptly stops, and they must travel in a straight path to reach the detector."/>
