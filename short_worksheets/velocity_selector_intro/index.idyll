@@ -1,0 +1,66 @@
+[meta title:"Velocity Selector Introduction" /]
+
+[Header
+  fullWidth:true
+  title:"Balancing Electric and Magnetic Force"
+  subtitle:"Understand the basics for the velocity selector problem"
+  author:"Kitty Harris"
+  authorLink:"https://phys2331.github.com/idyll-material"
+  date:`(new Date()).toDateString()`
+  background:"#0B5F46"
+  color:"#FFFFFF"
+   /]
+
+
+[Aside]
+  [div className:"asideBox centerHead"]
+    ### Skills Involved
+    [hr /]
+      [ul]
+        [li]Vectors: Addition[/li]
+        [li]Magnetic field: Force[/li]
+        [li]Electric field: Force[/li]
+        [li]Forces: Balancing forces[/li]
+      [/ul]
+  [/div]
+  [div className:"asideBox centerHead"]
+    ### Important Information
+    [hr /]
+    #### Objective
+
+    Tune the electric field so that electrons with a user-specifiedvelocity feel no force.
+
+    #### Key Equations
+    [Equation display:true]\vec{F} = q\vec{E}[/Equation]
+
+    [Equation display:true]\vec{F} = q\vec{v} \times \vec{B}[/Equation]
+
+  [/div]
+[/Aside]
+
+![Two rows and four columns, where each entry is a particle in coordinate plane where the electric field points in the x-direction and the magnetic field points in the y-direction. The particle is a proton in the top row and an electron in the bottom row. Velocities are as follows. First column: at rest. Second column: x-direction. Third column: y-direction. Fourth column: z-direction.](static/Figures.png)
+
+[ol type:"a"]
+  [li]
+    Consider the electron in the figure above. 
+    Four orientations of the magnetic field [b]B[/b], electric field [b]E[/b], and electron velocity [b]v[/b] are shown.   
+    Draw or write down the magnetic force and electric force in each case.  
+    In which case could the electric and magnetic forces on the electron cancel?
+
+    You can use the simulation below to check your work.
+  [/li]
+
+  [li]
+    Imagine that you want electrons moving [Equation]3\times10^6[/Equation]m/s to feel no force.  
+    If the magnetic field magnitude is 1 T and the electric field magnitude is 10 kN/C, will the force on these electrons cancel?
+  [/li]
+
+  [li]
+    What electric field is necessary for an electron moving [Equation]3\times10^6[/Equation]m/s to feel no force, if the magnetic field magnitude is 1 T?
+  [/li]
+
+  [li]
+    Imagine you set your device to have the electric field you calculated above.  
+    Will an electron traveling [Equation]2\times10^4[/Equation]m/s feel a net force?
+  [/li]
+[/ol]

@@ -1,0 +1,107 @@
+.d3-component svg {
+  background: #ddd;
+  max-height: 300px;
+}
+
+@media all and (max-width: 1000px) {
+  .d3-component svg {
+    max-height: 200px;
+  }
+}
+
+.centerHead h2{
+  text-align: center;
+  color: #0B465F;
+}
+
+.centerHead h3, h4{
+  text-align: center;
+  color: #0B465F;
+}
+
+.centerHead h4{
+  font-style: italic;
+}
+
+.tabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tabLook button {
+  background-color: inherit;
+  float:left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  //padding: 14px 16px;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 20px;
+  width: 25%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #0B465F;
+}
+
+/* Change background color of buttons on hover */
+.tabLook button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tabLook button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.problemBody {
+  padding: 1px 20px 1px 20px;
+  //border: 1px solid #ccc;
+  //border-top: none;
+  float:right;
+  text-align: justify;
+}
+
+.pBwithAside {
+  padding: 1px 20px 1px 20px;
+  margin: 0 1.5%;
+  width: 70%;
+  float:right;
+  text-align: justify;
+}
+
+.extraInfo {
+  float:left;
+  font-size:12px;
+  //margin: 0 0 0 0;
+  //width: 30%;
+  padding-top: 80px;
+  text-align: justify;
+}
+
+.frameWidth {
+  //display:block;
+  //width: 100%;
+  //margin 0 1.5%;
+  //fullWidth: true;
+}
+
+.asideBox {
+  border: 2px solid #0EA7F2;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+hr {
+  border: 0;
+  background: #0EA7F2;
+  height: 2px;
+}
+
+.equations {
+  text-align: center;
+  font-size:18px;
+}
