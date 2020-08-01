@@ -11,11 +11,18 @@
   color:"#ffffff"
    /]
 
-## Preamble
+### Accessibility
 
-There is no one "correct" way of building an Idyll document; the purpose of this document is to outline my own process to help give you ideas.
+As you go, keep accessibility in mind. 
+This means providing descriptive but concise alternate text for any images,
+as well as creating keyboard-navigable and screen-readable interactives, or good alternatives for said interactives. 
+[ARIA](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) is a good resource for HTML tags that are not built to be accessible by themselves.
 
-## Step Zero - Choosing a Template
+### Note
+
+Aside from this, there is no one "correct" way of building an Idyll document; the purpose of this document is to outline my own process to help give you ideas.
+
+## Choosing a Template
 
 When you run `idyll create`, after choosing a name for your project you will be asked what template you want to use.
 If you don't know which one is best for your project, don't worry!
