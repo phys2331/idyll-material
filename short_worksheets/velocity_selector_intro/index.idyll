@@ -9,6 +9,7 @@
   date:`(new Date()).toDateString()`
   background:"#0B5F46"
   color:"#FFFFFF"
+  maxwidth:"90%"
    /]
 
 
@@ -18,6 +19,8 @@
     [hr /]
       [ul]
         [li]Vectors: Addition[/li]
+        [li]Vectors: Multiplying by a scalar[/li]
+        [li]Particles: Sign of charge of electron + proton[/li]
         [li]Magnetic field: Force[/li]
         [li]Electric field: Force[/li]
         [li]Forces: Balancing forces[/li]
@@ -40,6 +43,8 @@
 
 ![Two rows and four columns, where each entry is a particle in coordinate plane where the electric field points in the x-direction and the magnetic field points in the y-direction. The particle is a proton in the top row and an electron in the bottom row. Velocities are as follows. First column: at rest. Second column: x-direction. Third column: y-direction. Fourth column: z-direction.](static/Figures.png)
 
+**For all questions below, assume that the fields' directions cannot be changed.**
+
 [ol type:"a"]
   [li]
     Consider the electron in the figure above. 
@@ -47,20 +52,98 @@
     Draw or write down the magnetic force and electric force in each case.  
     In which case could the electric and magnetic forces on the electron cancel?
 
-    You can use the simulation below to check your work.
+    *You may experiment with the forces by changing the velocity in the 2D simulations below.*
+    [hr /]
+
+    [div]
+    [Float position:"left"]
+    #### X-Y Plane
+    [/Float]
+    [Float position:"right"]
+    #### Y-Z Plane
+    [/Float]
+    [/div]
+
+    [hr /]
+    
+    *Text alternative to simulation below.*
+    [var name:showanswera value:false /]
+    [Button onClick:`showanswera=!showanswera`]
+    [Conditional if:`!showanswera`]
+    Reveal Results
+    [/Conditional][Conditional if:`showanswera`]
+    Hide Results[/Conditional]
+    [/Button]
+    [Conditional if:`showanswera==true`]
+
+      [hr /]
+
+      **Proton at rest:** Magnetic force: 0. Electric force: +x. Net force: +x.
+
+      **Proton moving in positive x:** Magnetic force: +z. Electric force: +x. Net force: components in both +x and +z.
+
+      **Proton moving in positive y:** Magnetic force: 0. Electric force: +x. Net force: +x.
+
+      **Proton moving in positive z:** Magnetic force: -x. Electric force: +x. Net force: potentially 0.
+
+      **Electron at rest:** Magnetic force: 0. Electric force: -x. Net force: -x.
+
+      **Electron moving in positive x:** Magnetic force: -z. Electric force: -x. Net force: components in both -x and -z.
+
+      **Electron moving in positive y:** Magnetic force: 0. Electric force: -x. Net force: -x.
+
+      **Electron moving in positive z:** Magnetic force: +x. Electric force: -x. Net force: potentially 0.
+
+      [hr /]
+
+    [/Conditional]
+
   [/li]
 
   [li]
     Imagine that you want electrons moving [Equation]3\times10^6[/Equation]m/s to feel no force.  
     If the magnetic field magnitude is 1 T and the electric field magnitude is 10 kN/C, will the force on these electrons cancel?
+
+    [var name:showanswerb value:false /]
+    [Button onClick:`showanswerb=!showanswerb`]
+    [Conditional if:`!showanswerb`]
+    Reveal Answer
+    [/Conditional][Conditional if:`showanswerb`]
+    Hide Answer[/Conditional]
+    [/Button]
+    [Conditional if:`showanswerb==true`]
+    No. The magnetic force is greater than the electric force, so the net force will be in the positive x-direction.
+    [/Conditional]
   [/li]
 
   [li]
     What electric field is necessary for an electron moving [Equation]3\times10^6[/Equation]m/s to feel no force, if the magnetic field magnitude is 1 T?
+
+    [var name:textvalc value:"" /]
+    *Enter your result in integer form ONLY in the text box below. Your units should be kilo-Newtons per Coulomb \[kN/C\].* [br /]
+    [Equation display:false]\vec{E}[/Equation]: [TextInput value:textvalc /]
+    [Conditional if:`parseFloat(textvalc) == 3000`] // My calculation gave me 186.7
+      **Correct!** The electric and magnetic forces are balanced.
+    [/Conditional][Conditional if:`parseFloat(textvalc) > 3000`]
+      **Incorrect.** The electric force is stronger than the magnetic force.
+    [/Conditional][Conditional if:`parseFloat(textvalc) < 3000`]
+      **Incorrect.** The magnetic force is stronger than the electric force.
+    [/Conditional]
   [/li]
 
   [li]
     Imagine you set your device to have the electric field you calculated above.  
     Will an electron traveling [Equation]2\times10^4[/Equation]m/s feel a net force?
+
+    [var name:showanswerd value:false /]
+    [Button onClick:`showanswerd=!showanswerd`]
+    [Conditional if:`!showanswerd`]
+    Reveal Answer
+    [/Conditional][Conditional if:`showanswerd`]
+    Hide Answer[/Conditional]
+    [/Button]
+    [Conditional if:`showanswerd==true`]
+    No. The magnetic force is less than the electric force, so the net force will be in the negative x-direction.
+    [/Conditional]
   [/li]
 [/ol]
