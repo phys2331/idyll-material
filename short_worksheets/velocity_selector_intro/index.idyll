@@ -56,11 +56,24 @@
     [hr /]
 
     [div]
+    *Click and drag the velocity arrow to change the direction of the velocity. The simulations represent the same system from different perspectives.*
     [Float position:"left"]
     #### X-Y Plane
+    [IdyllApparatusComponent
+      _url: "static/xy.json"
+      _regionOfInterest: `{ x: [-0.2, 11], y: [-0.1, 11] }`
+      _width: '100%'
+      _height: 300
+    /]
     [/Float]
     [Float position:"right"]
-    #### Y-Z Plane
+    #### X-Z Plane
+    [IdyllApparatusComponent
+      _url: "static/xy.json"
+      _regionOfInterest: `{ x: [-0.2, 11], y: [-0.1, 11] }`
+      _width: '100%'
+      _height: 300
+    /]
     [/Float]
     [/div]
 
