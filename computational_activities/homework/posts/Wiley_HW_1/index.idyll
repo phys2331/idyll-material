@@ -4,8 +4,6 @@
   fullWidth:true
   title:"Wiley Homework 1"
   subtitle:"Solving problems with Python"
-  author:"Mary Span"
-  authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
   background:"#0B465F"
   color:"#FFFFFF"
@@ -80,6 +78,15 @@
           and any outside resource that may help in solving them. Visit the resources
           page for videos and simulations about the specific physics problem.
 
+        [hr /]
+
+        [div className:"centerPara"]
+          [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+          [Physics Department](https://clas.ucdenver.edu/physics/)
+          [br /]
+          Feedback Form *Insert Link*
+        [/div]
+
       [/div]
     [/Default]
     [Case test:"13.21"]
@@ -95,9 +102,60 @@
           [br /]
           1. What is the sign of the source charge?
           [br /]
+
+          // Set up question answers
+          [var name:"showResult" value:false /]
+          [var name:"showAnswer" value:false /]
+          [var name:"radioVal" value:"null" /]
+
+          [Radio value:radioVal onClick:`showResult=false,showAnswer=false` options:`[{value:"a",label:"a) Positive"}]`/]
+          [Radio value:radioVal onClick:`showResult=false,showAnswer=false` options:`[{value:"b",label:"b) Negative"}]`/]
+
+          [Button onClick:`showResult=true`]
+            Check Answer
+          [/Button]
+
+          [Conditional if:`showResult`]
+            [Conditional if:`radioVal === "a"`]
+              Yes
+            [/Conditional]
+            [Conditional if:`radioVal === "b"`]
+              No
+            [/Conditional]
+          [/Conditional]
+
           [br /]
+
+          // Follow-up Question
+          2. If the the electric field pointed radially inward toward the magenta circle, what would be the sign of the source charge?
+
+          // Set up question 2 answers
+          [var name:"showResult2" value:false /]
+          [var name:"showAnswer2" value:false /]
+          [var name:"radioVal2" value:"null" /]
+
+          [Radio value:radioVal2 onClick:`showResult2=false,showAnswer2=false` options:`[{value:"a",label:"a) Positive"}]`/]
+          [Radio value:radioVal2 onClick:`showResult2=false,showAnswer2=false` options:`[{value:"b",label:"b) Negative"}]`/]
+
+          [Button onClick:`showResult2=true`]
+            Check Answer
+          [/Button]
+
+          [Conditional if:`showResult2`]
+            [Conditional if:`radioVal2 === "a"`]
+              No
+            [/Conditional]
+            [Conditional if:`radioVal2 === "b"`]
+              Yes
+            [/Conditional]
+          [/Conditional]
+
+          [br /]
+
           [img src:"./static/images/P13.21b.png" title:"Problem 13.21 - Matter and Interactions" /]
+
           [br /]
+
           2. The electric field at location D has the value `< -4000, 4000, 0 > N/C`. What is
           the unit vector in the direction [equation]\vec{E}[/equation] at this location?
           [br /]
@@ -111,9 +169,14 @@
         ideas on how to solve this problem with python. Reveal the answer by
         clicking the button below to see if you got the right answer!
 
+        [ul]
+          [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+          [li]Click the Run button to output the answers![/li]
+        [/ul]
+
         [br /]
 
-        [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginHeight:"0"][/iframe]
+        [iframe src:"https://trinket.io/embed/python3/17c14dabbd?showInstructions:True" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -178,8 +241,39 @@
                 [/ul]
 
             [/div]
+            [div className:"hintButtons"]
+
+              //Hint 1
+              [var name:"clickHint1" value:false /]
+
+              [Button onClick:`clickHint1 = !clickHint1`]
+                [Display value:`clickHint1 ? 'Hide Hint 1' : 'Hint 1'` /]
+              [/Button]
+
+              [br /]
+
+              [Conditional if: `clickHint1`]
+                Hint!
+              [/Conditional]
+
+              //Hint 2
+              [var name:"clickHint2" value:false /]
+
+              [Button onClick:`clickHint2 = !clickHint2`]
+                [Display value:`clickHint2 ? 'Hide Hint 2' : 'Hint 2'` /]
+              [/Button]
+
+              [br /]
+
+              [Conditional if: `clickHint2`]
+                Hint!
+              [/Conditional]
+
+            [/div]
 
           [/Aside]
+
+
 
         [/div]
     [/Case]
@@ -197,6 +291,69 @@
           the proton. What is the magnitude of the electric field due to the
           proton at this distance from the proton?
 
+          [br /]
+
+          //Extra Question 1
+
+          Which equations can be used to solve this problem?
+
+          // Set up question answers
+          [var name:"showResult1_30" value:false /]
+          [var name:"showAnswer1_30" value:false /]
+          [var name:"force" value:false /]
+          [var name:"absEfield" value:false /]
+          [var name:"EfieldandMag" value:false /]
+          [var name:"EfieldNoAbs" value:false /]
+
+          [Boolean value:force /] [Equation]\vec{F} = q\vec{E}[/Equation] [br /]
+          [Boolean value:absEfield /] [Equation]|\vec{E}| = |\frac{1}{4\pi\epsilon_{0}}\frac{q}{|\vec{r}|^{2}}|[/Equation] [br /]
+          [Boolean value:EfieldandMag /] [Equation]\vec{E} = \frac{1}{4\pi\epsilon_{0}}\frac{q}{|\vec{r}|^{2}} \hat{r}[/Equation] and [Equation] \sqrt{E_{x}^{2} + E_{y}^{2} + E_{z}^{2}}[/Equation] [br /]
+          [Boolean value:EfieldNoAbs /] [Equation]\vec{E} = \frac{1}{4\pi\epsilon_{0}}\frac{q}{|\vec{r}|^{2}} \hat{r}[/Equation] [br /]
+
+          [var name:"force_ans" value:false /]
+          [var name:"absEfield_ans" value:false /]
+          [var name:"EfieldandMag_ans" value:false /]
+          [var name:"EfieldNoAbs_ans" value:false /]
+
+          [Button onClick:`showResult1_30=true,force_ans=force,absEfield_ans=absEfield,EfieldandMag_ans=EfieldandMag,EfieldNoAbs_ans=EfieldNoAbs`]
+            Check Answer
+          [/Button]
+
+          [Conditional if:`showResult1_30`]
+            [Conditional if:`!force && absEfield && EfieldandMag && !EfieldNoAbs`]
+              Correct!
+            [/Conditional]
+          [/Conditional]
+
+          [br /]
+
+          //Extra Question 2
+
+          In the equation, which particle charge is used for q?
+
+          // Set up question answers
+          [var name:"showResult2_30" value:false /]
+          [var name:"showAnswer2_30" value:false /]
+          [var name:"radioVal2_30" value:"null" /]
+
+          [Radio value:radioVal2_30 onClick:`showResult2_30=false,showAnswer2_30=false` options:`[{value:"a",label:"a) Electron"}]`/]
+          [Radio value:radioVal2_30 onClick:`showResult2_30=false,showAnswer2_30=false` options:`[{value:"b",label:"b) Proton"}]`/]
+          [Radio value:radioVal2_30 onClick:`showResult2_30=false,showAnswer2_30=false` options:`[{value:"c",label:"c) Neutron"}]`/]
+
+          [Button onClick:`showResult2_30=true`]
+            Check Answer
+          [/Button]
+
+          [Conditional if:`showResult2_30`]
+            [Conditional if:`radioVal2_30 === "b"`]
+              Yes
+            [/Conditional]
+            [Conditional if:`radioVal2_30 === "a" || radioVal2_30 === "c"`]
+              No
+            [/Conditional]
+          [/Conditional]
+
+
         ### Computation
 
           Use the Trinket below to solve the problem using the values listed
@@ -206,7 +363,7 @@
 
           [br /]
 
-          [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginHeight:"0"][/iframe]
+          [iframe src:"https://trinket.io/embed/python3/06474e75ce?showInstructions:True" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"100"][/iframe]
 
       [/div]
       [div className:"extraInfo centerHead"]
@@ -234,47 +391,72 @@
 
             #### Objective
 
-              Find the sign of the source charge, the direction of the electric
-              force on the charge, the electric field, the electric force, and the direction
-              of the electric force.
+              Find the magnitude of the electric field due to the proton at the
+              location of the electron.
 
             #### Given Information
 
               [ul]
-                [li] Diagram of point charge and electric field.[/li]
-                [li] Charge of particle placed at a given location.[/li]
-                [li] Electric field at location D. [/li]
+                [li] A hydrogen atom is in its ground state.[/li]
+                [li] Average distance between the electron and proton.[/li]
               [/ul]
 
             #### Key equations
               [div className:"equations"]
+
                 [Equation text-align:center]
-                \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
                 [/equation]
 
-                [br /]
-                [br /]
-
-                [Equation]
-                \vec{F} = q\vec{E}
-                [/Equation]
               [/div]
 
             #### References
 
               [ul]
-                [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
+                [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
+                [li] Charged Particles (Matter and Interactions, p. 514)[/li]
               [/ul]
+
+          [/div]
+          [div className:"hintButtons"]
+
+            //Hint 1
+            [var name:"clickHint1_30" value:false /]
+
+            [Button onClick:`clickHint1_30 = !clickHint1_30`]
+              [Display value:`clickHint1_30 ? 'Hide Hint 1' : 'Hint 1'` /]
+            [/Button]
+
+            [br /]
+
+            [Conditional if: `clickHint1_30`]
+              The ground state of an atom is its normal, non-excited state where
+              the electron is comfortably in its energy level.
+
+              What does this mean? We can assume that there's 1 electron and
+              1 proton at the distance listed in the question.
+            [/Conditional]
+
+            //Hint 2
+            [var name:"clickHint2_30" value:false /]
+
+            [Button onClick:`clickHint2_30 = !clickHint2_30`]
+              [Display value:`clickHint2_30 ? 'Hide Hint 2' : 'Hint 2'` /]
+            [/Button]
+
+            [br /]
+
+            [Conditional if: `clickHint2_30`]
+              In order to solve this, you need to look up the charge of a proton.
+            [/Conditional]
 
           [/div]
 
         [/Aside]
 
       [/div]
+
     [/Case]
     [Case test:"13.25"]
       Case 2

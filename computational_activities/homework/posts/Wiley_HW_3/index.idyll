@@ -1,0 +1,29 @@
+[meta title:"Wiley_HW_3" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"Wiley Homework 3"
+  subtitle:"Solving Problems with Python"
+  date:`(new Date()).toDateString()`
+  background:"#223262"
+  color:"#ffffff"
+   /]
+
+[var name:"currentValue" value:"null" /]
+
+[div className:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+  [button onClick:`currentValue = "13.21"`]13.21[/Button]
+  [button onClick:`currentValue = "13.30"`]13.30[/Button]
+  [button onClick:`currentValue = "13.25"`]13.25[/Button]
+[/div]
+
+[br /]
+[br /]
+[hr fullWidth:true /]
+[br /]
+
+[div class:"problemBody" fullWidth:true padding-left:`100%`]
+  [Switch value:currentValue]
+  [/Switch]
+[/div]

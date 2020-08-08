@@ -29,7 +29,6 @@
   background-color: #f1f1f1;
 }
 
-/* Style the buttons that are used to open the tab content */
 .tabLook button {
   background-color: inherit;
   float:left;
@@ -46,17 +45,14 @@
   color: #0B465F;
 }
 
-/* Change background color of buttons on hover */
 .tabLook button:hover {
   background-color: #ddd;
 }
 
-/* Create an active/current tablink class */
 .tabLook button.active {
   background-color: #ccc;
 }
 
-/* Style the tab content */
 .problemBody {
   padding: 1px 20px 1px 20px;
   //border: 1px solid #ccc;
@@ -104,4 +100,23 @@ hr {
 .equations {
   text-align: center;
   font-size:18px;
+}
+
+.hintButtons button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 15px;
+  //width: 30%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #009999;
+  overflow: hidden;
+}
+
+.centerPara {
+  text-align: center;
 }

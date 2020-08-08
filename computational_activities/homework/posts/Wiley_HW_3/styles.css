@@ -1,0 +1,43 @@
+.tabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+.tabLook button {
+  background-color: inherit;
+  float:left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  //padding: 14px 16px;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 20px;
+  width: 25%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #0B465F;
+}
+
+.tabLook button:hover {
+  background-color: #ddd;
+}
+
+.tabLook button.active {
+  background-color: #ccc;
+}
+
+hr {
+  border: 0;
+  background: #0EA7F2;
+  height: 2px;
+}
+
+.problemBody {
+  padding: 1px 20px 1px 20px;
+  //border: 1px solid #ccc;
+  //border-top: none;
+  float:right;
+  text-align: justify;
+}
