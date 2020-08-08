@@ -120,3 +120,8 @@ hr {
 .centerPara {
   text-align: center;
 }
+
+.hwQuestions {
+  background-color: #ccc;
+  padding: 20px;
+}
