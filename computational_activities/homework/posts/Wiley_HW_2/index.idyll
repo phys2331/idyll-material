@@ -13,7 +13,7 @@
 
 [var name:"currentValue" value:"" /]
 
-[div class:"tabLook"]
+[div className:"tabLook"]
   [button onClick:`currentValue = ""`]Main Problem Page[/Button]
   [button onClick:`currentValue = "13.47"`]13.47[/Button]
   [button onClick:`currentValue = "13.49"`]13.49[/Button]
@@ -26,10 +26,10 @@
 [hr /]
 [br /]
 
-[div class:"problemBody"]
+[div className:"problemBody"]
   [Switch value:currentValue]
     [Default]
-      [div class:"centerHead"]
+      [div className:"centerHead"]
         ## Problem Pages
 
           Click the tabs to go to the homework problem page for a specific problem.
@@ -54,7 +54,7 @@
       [/div]
     [/Default]
     [Case test:"13.47"]
-      [div class:"centerHead"]
+      [div className:"centerHead"]
 
         ## 13.47
 
