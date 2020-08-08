@@ -1,0 +1,209 @@
+[meta title:"The Shark's Sense of Electroreception" description:"Electric Field of a Trout" /]
+
+[Header
+  fullWidth:true
+  title:"The Shark's Sense of Electroreception"
+  subtitle:"Electric Field of a Trout"
+  author:"Oliver Tardiff-Paradis and Mathieu Riopel "
+  date:`(new Date()).toDateString()`
+  background:"#3011fc"
+  color:"#ffffff"
+   /]
+
+*This worksheet has been adapted by Kitty Harris for General Physics II at the University of Colorado Denver.* 
+
+*Original date of creation unknown; date listed is last update of this adaptation.*
+
+[hr /]
+
+This worksheet has a lot of information; you will not need it all for each individual question. 
+It's okay if you need to go back and re-read to answer some of these questions.
+
+![Great white shark near a school of fish](static/images/great_white.png)
+[p style:`{textAlign:"center"}`]*Credit: Terry Gross*[/p]
+
+# Electroreception: An Evolutionary Advantage
+
+## Background
+
+[Float position:"right"] 
+![Figure 1](static/images/shark_snout.png)
+[p className:"figure-caption"]*Figure 1:* Pores on the snout of a shark. These pores lead to transparent tubes called the ampullae of Lorenzini. *Credit: Alber Kok*[/p]
+[/Float]
+
+Stefano Lorenzini, born in Florence in 1652, was a physician and ichthyologist. In 1678, he described the presence of pores leading to transparent tubes located around the mouths of sharks but for which he was unable to determine the purpose. This Italian scientist would never have imagined that these tubes, now called the ampullae of Lorenzini, allow sharks to perceive a world of electrical images that are imperceptible to human senses.
+
+It was not until three hundred years later, in 1960, that this organ was finally identified as a specialized sense that perceives electric fields. It was then understood that these tubes offer a clear evolutionary advantage for the sea predators that have them. All living creatures produce an electric field when they contract their muscles. A shark can detect the weak electric stimuli from a prey and deduce its presence. How does this sixth sense function? What exactly is it capable of detecting?
+
+The golden trout is a potential prey for sharks in the Pacific Ocean around the coasts of California in the USA. Although most trout live only in fresh water, some species, such as the golden trout (subspecies of rainbow trout) spend their adult life in the ocean and swim back up certain rivers in California to spawn, like salmon do. The golden trout can reach up to 71 cm long and weigh 5 kg in adulthood, so they make a very interesting meal for many sharks.
+
+[Float position:"right" padding:"10px" margin:"20px"]
+![Figure 2](static/images/golden_trout.png)
+[p className:"figure-caption"]*Figure 2:* Adult golden trout. *Credit: Citron / CC-BY-SA-3.0*[/p]
+[/Float]
+
+In this problem, you will have to describe the electric field produced by the beating of a trout’s heart and understand its role in relation to the shark’s electroreception sense. To help you understand the phenomenon, a trout, an aquarium, an electrocardiograph and lots of questions will be presented.
+
+[var name:"state" value:0 /]
+
+[Scroller currentStep:state]
+
+  [Graphic className:"d3-component-container"]
+    [CustomD3Component className:"d3-component" state:`state+1` /]
+  [/Graphic]
+
+  [Step]
+    ### Three-Step Cycle 
+
+    **The main idea:** Evaluating the potential difference across and around an electric field source.
+
+    [p]
+      As you read the information below, list all the *relevant* information you gathered when you read the problem. 
+      Based on this information, state what you need to know to solve the problem. 
+      As you discover new information, you should summarize and update the relevant information you have gathered and ask new questions.
+    [/p]
+      
+    ### List the Following:
+
+    [ul]
+      [li]What We Know[/li]
+      [li]To Determine[/li]
+      [li]Summary[/li]
+    [/ul]
+
+  [/Step]
+
+  [Step]
+    ## Preparing for the Experiment
+    ### Point Charge
+
+    1) The vectors in the figure below represent the electric field of a point charge. 
+    Between which of the points represented here by the letters A, B, C, D, E and F is the modulus of the potential difference [Equation display:false]\mathrm{\Delta V}[/Equation] the highest? The lowest?
+
+    ![Figure 3. The point charge is positive, with arrows pointing away from it and getting smaller the further away they are. Assigning a rough coordinate system with the point charge at (0,0), A is at (-1,-2), B is at (0.5,-0.5), C is at (4,-4), D is at (-1.5, 3), E is at (-6,5), and F is at (-4,-4).](static/images/field_point_charge.png)
+    [p className:"figure-caption" style:`{textAlign:"center"}`]*Figure 3:* Electric field of a point charge.[/p]
+
+    *You can use the PhET simulation below to recreate the diagram and help you check your work.*
+    [iframe src:"https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_en.html" width:"800" height:"600" scrolling:"no" allowFullScreen:true /]
+  
+    [var name:"maxval1" value:"" /]
+    [var name:"maxval2" value:"" /]
+    [var name:"minval1" value:"" /]
+    [var name:"minval2" value:"" /]
+    [var name:"showresult1" value:false /]
+
+    *With the text entry boxes below, please keep in mind that your answers are sensitive to capitalization and extra spaces. This question cares only about the magnitude of the voltage, and the order of your responses therefore does not matter.*
+
+    [Equation display:false]\mathrm{\Delta V}_\mathrm{max}[/Equation] (highest): Between points [TextInput value:maxval1 /] and [TextInput value:maxval2 /] [br /]
+    
+    [Equation display:false]\mathrm{\Delta V}_\mathrm{min}[/Equation] (lowest): Between points [TextInput value:minval1 /] and [TextInput value:minval2 /]
+
+    [Button onClick:`showresult1 = !showresult1`][Conditional if:`showresult1 == false`]Show Answer[/Conditional][Conditional if:`showresult1 == true`]Hide Answer[/Conditional][/Button]
+
+    *This section will not be fully programmed until a consensus on the answer has been reached.*
+
+    [Conditional if:`showresult1 == true`]
+      //Maximum
+      [Conditional if:`((maxval1 == "E") && (maxval2 == "B")) || ((maxval1 == "E") && (maxval2 == "B"))`]
+        Your maximum value is correct!
+      [/Conditional]
+
+      //Minimum could be E to C or A to B. Talk to Amy about which answers to accept.
+    [/Conditional]
+
+  [/Step]
+
+  [Step]
+    ### Dipole
+
+    2) Figure 4 shows the field lines representing the electric field of a dipole made up of point charges. 
+    Using these field lines, draw or describe the location of the equipotential lines.
+
+    ![Figure 4. The electric field curves so that it is always pointing toward the negative side (on the right) and away from the positive side (on the left). The "X" marker is below and slightly to the right of the negative side.](static/images/field_dipole.png)
+    [p className:"figure-caption" style:`{textAlign:"center"}`]*Figure 4:* Electric field lines of an electric dipole[/p]
+
+    *You may find this PhET simulation useful again.*
+    [iframe src:"https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_en.html" width:"800" height:"600" scrolling:"no" allowfullscreen:true /]
+
+    3) In Figure 4, at point X:
+
+    [ol className:"subquestions"]
+      [li]Show or describe a vector that corresponds to the electric field produced by the positive charge[/li]
+      [li]Show or describe a vector that corresponds to the electric field produced by the negative charge[/li]
+      [li]Show or describe a vector that corresponds to the sum of these two electric fields (resultant electric field).[/li]
+    [/ol]
+
+    *Hint: The charges do not produce fields of the same size at point X.*
+    
+  [/Step]
+
+  [Step]
+
+    ##The Trout and the Shark
+    
+    [Float position:"right"]
+      ![Figure 5. A fish in metal rod on a wire being dangled in the water](static/images/setup_photo.png)
+      [p className:"figure-caption"]*Figure 5:* Assembly to measure the beating of a 16-cm brook trout's heart[/p]
+    [/Float]
+
+    Some sharks are more sensitive to electric fields than any other animal, because they have a sensitivity threshold of up to 0.5 μV/m. 
+
+    Using an electrocardiograph, it is possible to measure the size of the electric field generated by a trout. 
+    For this experiment, a trout is placed in an aquarium. 
+    Then two sensors connected to an electrocardiograph are submerged in the aquarium near the trout as shown in Figure 5. 
+    The electrocardiograph records the signal in millivolts (mV) and it measures the electrical potential difference between the two sensors, as shown in Figure 6.
+
+    To simplify the model, we use an electric dipole to represent the muscular contraction of the trout’s heart. When the potential difference generated by the trout is the highest, the distance between the point charges of the dipole representing the system is 1 cm, the size of the trout’s heart, as shown in Figure 7
+
+    ![Figure 6. The pulse is fairly regular, with most peaks being between 1.1 and 1.3 mV. There is one pulse which spikes up to 1.5 mV.](static/images/cardiograph.png)
+    [p className:"figure-caption"]*Figure 6:* Electrical potential difference measured at Points A and B by the sensors shown in Figure 7. This is the beating of a brook trout’s heart recorded when the trout is in the position shown in Figure 7.[/p]
+  
+    ![Figure 7. Scale and grid are provided. Assigning a coordinate system based on these, A is at (0,15cm), B is at (-7cm,4cm), the positive "point charge" representing part of the fish's heart is at (-5cm,12cm), and the negative "point charge" representing the other part is at (-5cm,13cm).](static/images/fish_diagram.png)
+    [p className:"figure-caption"]*Figure 7:* Scale drawing of trout seen from above in the aquarium when the measurement is taken by the electrocardiograph. The positions of sensors A and B and the electric dipole representing the heart are all shown.[/p]
+
+  [/Step]
+    
+  [Step]
+  
+    ## Did You Know?
+    An electric field does not behave exactly the same way in vacuum as in water. The dielectric permittivity of a substance, [Equation display:false]\kappa[/Equation], is the factor by which the electric field is decreased or increased relative to vacuum. At low frequencies, at room temperature and at a certain level of salinity, the dielectric permittivity of water has a value of 80.
+
+    Electric field of a dielectric: 
+
+    [Equation display:true] E_D = \frac{E_0}{\kappa} [/Equation] 
+
+    where [Equation display:false]E_D[/Equation] is the modulus of the electric field in the dielectric and [Equation display:false]E_0[/Equation] is the modulus of the electric field in vacuum.
+
+    Therefore we can assume that Coulomb’s constant in vacuum, [Equation display:false]k_0[/Equation], will differ based on the value of the dielectric permittivity.
+    
+    [Equation display:true] k_D = \frac{k_0}{\kappa} [/Equation]
+  [/Step]
+
+[/Scroller]
+
+[Scroller]
+
+  [Step]
+
+    ## Questions
+
+    [var name:q1 value:"" /]
+    [var name:q1display value:false /]
+    1) What is the value of the maximum electric charge accumulated in the dipole representing the trout’s heart? [TextInput value:q1 /] Coulombs
+
+    [var name:q2 value:"" /]
+    [var name:q2display value:false /]
+    2) What is the maximum distance at which a shark can detect the electric signal emitted by the trout’s heart if the predator is at a point on an axis passing through the centre of the heart? 
+    Assume the axis is parallel to the x-axis in Figure 7. [TextInput value:q2 /] cm
+    
+    [var name:q3 value:"" /]
+    [var name:q3display value:false /]
+    3) During the experiment to measure the beating of the trout’s heart, would it be useful to put the aquarium in a wire mesh cage? Explain your answer. [TextInput value:q3 /] [br /]
+    *The input will take a yes or no value but not an explanation. Please do not include punctuation in your answer.
+
+    // [Conditional if:`(q3.toUpperCase() == "YES") || (q3.toUpperCase() == "Y") || (q3.toUpperCase() == "TRUE") || (q3 == "1") `/]
+    // [Conditional if:`(q3.toUpperCase() == "NO") || (q3.toUpperCase() == "N") || (q3.toUpperCase() == "FALSE") || (q3 == "0") `/]
+
+  [/Step]
+
+[/Scroller]
