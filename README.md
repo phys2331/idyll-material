@@ -18,7 +18,7 @@ This list will be updated each time a new page is generated.
 [Velocity Selector Introduction](https://phys2331.github.io/idyll-material/short_worksheets/velocity_selector_intro/build/index.html)
 
 ### Context-Rich Problems
-[Maple Syrup](https://phys2331.github.io/idyll-material/maple-syrup/build/index.html)
+[Maple Syrup](https://phys2331.github.io/idyll-material/context-rich/maple-syrup/build/index.html)
 
 ## Resources
 
