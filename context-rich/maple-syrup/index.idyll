@@ -4,7 +4,7 @@
   fullWidth:true
   title:"Maple Syrup"
   subtitle:"Mass Spectrometry Analysis"
-  author:"Olivier Tardif-Paradis, Mathieu Riopel, & Cégep Garneau."
+  author:"Olivier Tardif-Paradis & Mathieu Riopel"
   date: `(new Date()).toDateString()`
   background:"#222222"
   color:"#ffffff"
