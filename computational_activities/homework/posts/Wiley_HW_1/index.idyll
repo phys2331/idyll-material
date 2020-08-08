@@ -13,7 +13,7 @@
 
 [var name:"currentValue" value:"" /]
 
-[div class:"tabLook" fullWidth:true]
+[div className:"tabLook" fullWidth:true]
  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
  [button onClick:`currentValue = "13.21"`]13.21[/Button]
  [button onClick:`currentValue = "13.30"`]13.30[/Button]
@@ -25,10 +25,10 @@
 [hr fullWidth:true /]
 [br /]
 
-[div class:"problemBody" fullWidth:true padding-left:`100%`]
+[div className:"problemBody" fullWidth:true padding-left:"100%"]
   [Switch value:currentValue]
     [Default]
-      [div class:"centerHead"]
+      [div className:"centerHead"]
 
         ## Problem Pages
 
@@ -83,7 +83,7 @@
       [/div]
     [/Default]
     [Case test:"13.21"]
-      [div class:"centerHead pBwithAside"]
+      [div className:"centerHead pBwithAside"]
 
         ## 13.21
 
@@ -113,14 +113,14 @@
 
         [br /]
 
-        [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+        [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginHeight:"0"][/iframe]
 
         [/div]
-        [div class:"extraInfo centerHead"]
+        [div className:"extraInfo centerHead"]
 
           [Aside]
 
-            [div class:"asideBox"]
+            [div className:"asideBox"]
 
               ### Skills Involved
 
@@ -134,7 +134,7 @@
 
             [/div]
             [br /]
-            [div class: "asideBox"]
+            [div className: "asideBox"]
               ### Important information
 
               [hr /]
@@ -154,7 +154,7 @@
                 [/ul]
 
               #### Key equations
-                [div class:"equations"]
+                [div className:"equations"]
                   [Equation text-align:center]
                   \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
                   [/equation]
@@ -184,7 +184,7 @@
         [/div]
     [/Case]
     [Case test:"13.30"]
-      [div class:"centerHead pBwithAside"]
+      [div className:"centerHead pBwithAside"]
 
         ## 13.30
 
@@ -206,14 +206,14 @@
 
           [br /]
 
-          [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+          [iframe src:"https://trinket.io/embed/python/7e77a4b408?runOption=console" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginHeight:"0"][/iframe]
 
       [/div]
-      [div class:"extraInfo centerHead"]
+      [div className:"extraInfo centerHead"]
 
         [Aside]
 
-          [div class:"asideBox"]
+          [div className:"asideBox"]
 
             ### Skills Involved
 
@@ -227,7 +227,7 @@
 
           [/div]
           [br /]
-          [div class: "asideBox"]
+          [div className: "asideBox"]
             ### Important information
 
             [hr /]
@@ -247,7 +247,7 @@
               [/ul]
 
             #### Key equations
-              [div class:"equations"]
+              [div className:"equations"]
                 [Equation text-align:center]
                 \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
                 [/equation]
