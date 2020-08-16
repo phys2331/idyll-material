@@ -92,7 +92,7 @@ In this problem, you will have to describe the electric field produced by the be
     [var name:"minval2" value:"" /]
     [var name:"showresult1" value:false /]
 
-    *With the text entry boxes below, please keep in mind that your answers are sensitive to capitalization and extra spaces. This question cares only about the magnitude of the voltage, and the order of your responses therefore does not matter.*
+    *With the text entry boxes below, please keep in mind that your answers are sensitive to capitalization and extra spaces. This question cares only about the magnitude of the voltage, so the order of your responses does not matter.*
 
     [Equation display:false]\mathrm{\Delta V}_\mathrm{max}[/Equation] (highest): Between points [TextInput value:maxval1 /] and [TextInput value:maxval2 /] [br /]
     
@@ -100,15 +100,34 @@ In this problem, you will have to describe the electric field produced by the be
 
     [Button onClick:`showresult1 = !showresult1`][Conditional if:`showresult1 == false`]Show Answer[/Conditional][Conditional if:`showresult1 == true`]Hide Answer[/Conditional][/Button]
 
-    *This section will not be fully programmed until a consensus on the answer has been reached.*
+    *The answers for this section should be checked.*
 
+    // Use conditionals within the "incorrect" conditional to provide hints for common wrong answers.
     [Conditional if:`showresult1 == true`]
-      //Maximum
-      [Conditional if:`((maxval1 == "E") && (maxval2 == "B")) || ((maxval1 == "E") && (maxval2 == "B"))`]
-        Your maximum value is correct!
+      //Check with Amy that she agrees with these answers.
+      [Conditional if:`(maxval1 == "") || (maxval2 == "") || (minval1 == "") || (minval2 == "")`]
+        Please fill in all four blanks in order to check your answer.
+      [/Conditional]
+      [Conditional if:`((maxval1 == maxval2) || (minval1 == minval2)) && (maxval1 != "") && (minval1 != "")`]
+        In the majority of cases, it is not meaningful to take the voltage over no distance. Please pick distinct points for each pair.
+      [/Conditional]
+      [Conditional if:`(maxval1 != "") && (maxval2 != "") && (minval1 != "") && (minval2 != "") && (maxval1 != maxval2) && (minval1 != minval2)`]
+        [Conditional if:`((maxval1 == minval1) && (maxval2 == minval2)) || ((maxval1 == minval2) && (maxval2 == minval1))`]
+          You gave the same answer for both questions, which is not possible with this setup. 
+          (Not all of pairs of points will give the same voltage, so the maximum and minimum voltages must be different.)
+        [/Conditional]
+        [Conditional if:`((maxval1 == "E") && (maxval2 == "B")) || ((maxval1 == "E") && (maxval2 == "B"))`]
+          Your maximum value is correct!
+        [/Conditional][Conditional if:`((maxval1 != "E") && (maxval1 != "B")) || ((maxval2 != "E") && (maxval2 != "B"))`]
+          Your maximum value is incorrect.
+        [/Conditional]
+        [Conditional if:`((minval1 == "E") && (minval2 == "C")) || ((minval1 == "C") && (minval2 == "E"))`]
+          Your minimum value is correct!
+        [/Conditional][Conditional if:`((minval1 != "E") && (maxval1 != "C")) || ((minval2 != "E") && (maxval2 != "C"))`]
+          Your minimum value is incorrect.
+        [/Conditional]
       [/Conditional]
 
-      //Minimum could be E to C or A to B. Talk to Amy about which answers to accept.
     [/Conditional]
 
   [/Step]
@@ -196,14 +215,22 @@ In this problem, you will have to describe the electric field produced by the be
     2) What is the maximum distance at which a shark can detect the electric signal emitted by the trout’s heart if the predator is at a point on an axis passing through the centre of the heart? 
     Assume the axis is parallel to the x-axis in Figure 7. [TextInput value:q2 /] cm
     
+
     [var name:q3 value:"" /]
     [var name:q3display value:false /]
-    3) During the experiment to measure the beating of the trout’s heart, would it be useful to put the aquarium in a wire mesh cage? Explain your answer. [TextInput value:q3 /] [br /]
-    *The input will take a yes or no value but not an explanation. Please do not include punctuation in your answer.
 
-    // [Conditional if:`(q3.toUpperCase() == "YES") || (q3.toUpperCase() == "Y") || (q3.toUpperCase() == "TRUE") || (q3 == "1") `/]
-    // [Conditional if:`(q3.toUpperCase() == "NO") || (q3.toUpperCase() == "N") || (q3.toUpperCase() == "FALSE") || (q3 == "0") `/]
+    3) During the experiment to measure the beating of the trout’s heart, would it be useful to put the aquarium in a wire mesh cage? Explain your answer. [TextInput value:q3 /] [br /]
+    *The input will take a yes or no value but not an explanation. Please do not include punctuation in your answer.*
+
+    // [Conditional if:`(q3.toUpperCase() == "YES") || (q3.toUpperCase() == "Y") || (q3.toUpperCase() == "TRUE") || (q3 == "1") `]
+    // [Conditional if:`(q3.toUpperCase() == "NO") || (q3.toUpperCase() == "N") || (q3.toUpperCase() == "FALSE") || (q3 == "0") `]
 
   [/Step]
 
 [/Scroller]
+
+// This doesn't have a strong ending.
+
+# Summary
+
+*Summary goes here*
