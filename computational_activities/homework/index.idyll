@@ -4,8 +4,6 @@
   fullWidth:true
   title:"Homework"
   subtitle:""
-  author:"murr"
-  authorLink:"https://idyll-lang.org"
   date:`(new Date()).toDateString()`
   background:"#0B465F"
   color:"#ffffff"
@@ -16,5 +14,5 @@ Click the links below to navigate to the homework.
 
 ## Homework
 
-* [WileyPlus Homework 1](./post-1/)
+* [WileyPlus Homework 1](./wiley_hw_1_rev2/)
 * [WileyPlus Homework 2](./wiley-homework-2/)
