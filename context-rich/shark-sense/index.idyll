@@ -80,7 +80,8 @@ In this problem, you will have to describe the electric field produced by the be
     1) The vectors in the figure below represent the electric field of a point charge. 
     Between which of the points represented here by the letters A, B, C, D, E and F is the modulus of the potential difference [Equation display:false]\mathrm{\Delta V}[/Equation] the highest? The lowest?
 
-    ![Figure 3. The point charge is positive, with arrows pointing away from it and getting smaller the further away they are. Assigning a rough coordinate system with the point charge at (0,0), A is at (-1,-2), B is at (0.5,-0.5), C is at (4,-4), D is at (-1.5, 3), E is at (-6,5), and F is at (-4,-4).](static/images/field_point_charge.png)
+    ![Figure 3. The point charge is positive, with arrows pointing away from it and getting smaller the further away they are. Assigning a rough coordinate system with the point charge at (0,0), A is at (-1,-2.5), B is at (1,-1), C is at (6.5,-5), D is at (-1.5, 3.5), E is at (-9,6.5), and F is at (-6,-6).](static/images/field_point_charge.png)
+    // While it is still a rough coordinate system, I made these coordinates by hand-drawing a grid in GIMP to get something that should be close enough to accurate.
     [p className:"figure-caption" style:`{textAlign:"center"}`]*Figure 3:* Electric field of a point charge.[/p]
 
     *You can use the PhET simulation below to recreate the diagram and help you check your work.*
@@ -92,15 +93,15 @@ In this problem, you will have to describe the electric field produced by the be
     [var name:"minval2" value:"" /]
     [var name:"showresult1" value:false /]
 
-    *With the text entry boxes below, please keep in mind that your answers are sensitive to capitalization and extra spaces. This question cares only about the magnitude of the voltage, so the order of your responses does not matter.*
+    *With the text entry boxes below, please keep in mind that your answers are sensitive to any extra characters, including spaces. This question cares only about the magnitude of the voltage, so the order of your responses does not matter.*
 
     [Equation display:false]\mathrm{\Delta V}_\mathrm{max}[/Equation] (highest): Between points [TextInput value:maxval1 /] and [TextInput value:maxval2 /] [br /]
-    
+
     [Equation display:false]\mathrm{\Delta V}_\mathrm{min}[/Equation] (lowest): Between points [TextInput value:minval1 /] and [TextInput value:minval2 /]
 
-    [Button onClick:`showresult1 = !showresult1`][Conditional if:`showresult1 == false`]Show Answer[/Conditional][Conditional if:`showresult1 == true`]Hide Answer[/Conditional][/Button]
+    [Button onClick:`showresult1 = !showresult1`][Conditional if:`showresult1 == false`]Show Result[/Conditional][Conditional if:`showresult1 == true`]Hide Result[/Conditional][/Button]
 
-    *The answers for this section should be checked.*
+    *The accepted answers for this section should be checked for accuracy.*
 
     // Use conditionals within the "incorrect" conditional to provide hints for common wrong answers.
     [Conditional if:`showresult1 == true`]
@@ -108,22 +109,22 @@ In this problem, you will have to describe the electric field produced by the be
       [Conditional if:`(maxval1 == "") || (maxval2 == "") || (minval1 == "") || (minval2 == "")`]
         Please fill in all four blanks in order to check your answer.
       [/Conditional]
-      [Conditional if:`((maxval1 == maxval2) || (minval1 == minval2)) && (maxval1 != "") && (minval1 != "")`]
+      [Conditional if:`((maxval1.toUpperCase() == maxval2.toUpperCase()) || (minval1.toUpperCase() == minval2.toUpperCase())) && (maxval1.toUpperCase() != "") && (minval1.toUpperCase() != "")`]
         In the majority of cases, it is not meaningful to take the voltage over no distance. Please pick distinct points for each pair.
       [/Conditional]
-      [Conditional if:`(maxval1 != "") && (maxval2 != "") && (minval1 != "") && (minval2 != "") && (maxval1 != maxval2) && (minval1 != minval2)`]
-        [Conditional if:`((maxval1 == minval1) && (maxval2 == minval2)) || ((maxval1 == minval2) && (maxval2 == minval1))`]
+      [Conditional if:`(maxval1.toUpperCase() != "") && (maxval2.toUpperCase() != "") && (minval1.toUpperCase() != "") && (minval2.toUpperCase() != "") && (maxval1.toUpperCase() != maxval2.toUpperCase()) && (minval1.toUpperCase() != minval2.toUpperCase())`]
+        [Conditional if:`((maxval1.toUpperCase() == minval1.toUpperCase()) && (maxval2.toUpperCase() == minval2.toUpperCase())) || ((maxval1.toUpperCase() == minval2.toUpperCase()) && (maxval2.toUpperCase() == minval1.toUpperCase()))`]
           You gave the same answer for both questions, which is not possible with this setup. 
           (Not all of pairs of points will give the same voltage, so the maximum and minimum voltages must be different.)
         [/Conditional]
-        [Conditional if:`((maxval1 == "E") && (maxval2 == "B")) || ((maxval1 == "E") && (maxval2 == "B"))`]
+        [Conditional if:`((maxval1.toUpperCase() == "E") && (maxval2.toUpperCase() == "B")) || ((maxval1.toUpperCase() == "E") && (maxval2.toUpperCase() == "B"))`]
           Your maximum value is correct!
-        [/Conditional][Conditional if:`((maxval1 != "E") && (maxval1 != "B")) || ((maxval2 != "E") && (maxval2 != "B"))`]
+        [/Conditional][Conditional if:`((maxval1.toUpperCase() != "E") && (maxval1.toUpperCase() != "B")) || ((maxval2.toUpperCase() != "E") && (maxval2.toUpperCase() != "B"))`]
           Your maximum value is incorrect.
         [/Conditional]
-        [Conditional if:`((minval1 == "E") && (minval2 == "C")) || ((minval1 == "C") && (minval2 == "E"))`]
+        [Conditional if:`((minval1.toUpperCase() == "E") && (minval2.toUpperCase() == "C")) || ((minval1.toUpperCase() == "C") && (minval2.toUpperCase() == "E"))`]
           Your minimum value is correct!
-        [/Conditional][Conditional if:`((minval1 != "E") && (maxval1 != "C")) || ((minval2 != "E") && (maxval2 != "C"))`]
+        [/Conditional][Conditional if:`((minval1.toUpperCase() != "E") && (minval1.toUpperCase() != "C")) || ((minval2.toUpperCase() != "E") && (minval2.toUpperCase() != "C"))`]
           Your minimum value is incorrect.
         [/Conditional]
       [/Conditional]
@@ -172,7 +173,7 @@ In this problem, you will have to describe the electric field produced by the be
     Then two sensors connected to an electrocardiograph are submerged in the aquarium near the trout as shown in Figure 5. 
     The electrocardiograph records the signal in millivolts (mV) and it measures the electrical potential difference between the two sensors, as shown in Figure 6.
 
-    To simplify the model, we use an electric dipole to represent the muscular contraction of the trout’s heart. When the potential difference generated by the trout is the highest, the distance between the point charges of the dipole representing the system is 1 cm, the size of the trout’s heart, as shown in Figure 7
+    To simplify the model, we use an electric dipole to represent the muscular contraction of the trout’s heart. When the potential difference generated by the trout is the highest, the distance between the point charges of the dipole representing the system is 1 cm, the size of the trout’s heart, as shown in Figure 7.
 
     ![Figure 6. The pulse is fairly regular, with most peaks being between 1.1 and 1.3 mV. There is one pulse which spikes up to 1.5 mV.](static/images/cardiograph.png)
     [p className:"figure-caption"]*Figure 6:* Electrical potential difference measured at Points A and B by the sensors shown in Figure 7. This is the beating of a brook trout’s heart recorded when the trout is in the position shown in Figure 7.[/p]
@@ -208,29 +209,62 @@ In this problem, you will have to describe the electric field produced by the be
 
     [var name:q1 value:"" /]
     [var name:q1display value:false /]
-    1) What is the value of the maximum electric charge accumulated in the dipole representing the trout’s heart? [TextInput value:q1 /] Coulombs
-
     [var name:q2 value:"" /]
     [var name:q2display value:false /]
-    2) What is the maximum distance at which a shark can detect the electric signal emitted by the trout’s heart if the predator is at a point on an axis passing through the centre of the heart? 
-    Assume the axis is parallel to the x-axis in Figure 7. [TextInput value:q2 /] cm
-    
-
     [var name:q3 value:"" /]
     [var name:q3display value:false /]
 
-    3) During the experiment to measure the beating of the trout’s heart, would it be useful to put the aquarium in a wire mesh cage? Explain your answer. [TextInput value:q3 /] [br /]
-    *The input will take a yes or no value but not an explanation. Please do not include punctuation in your answer.*
+    [ol]
+      [li]What is the value of the maximum electric charge accumulated in the dipole representing the trout’s heart? (Give the magnitude of charge of just one side of the dipole.)
+        [br /][TextInput value:q1 /] **Coulombs**[/li]
+      [li]What is the maximum distance at which a shark can detect the electric signal emitted by the trout’s heart if the predator is at a point on an axis passing through the centre of the heart? 
+        Assume the axis is parallel to the x-axis in Figure 7. [br /][TextInput value:q2 /] **centimeters**[/li]
+      [li]During the experiment to measure the beating of the trout’s heart, would it be useful to put the aquarium in a wire mesh cage? [br /][TextInput value:q3 /] *yes/no*[br /] 
+        Explain your answer.[/li]
+    [/ol]
+ 
 
     // [Conditional if:`(q3.toUpperCase() == "YES") || (q3.toUpperCase() == "Y") || (q3.toUpperCase() == "TRUE") || (q3 == "1") `]
     // [Conditional if:`(q3.toUpperCase() == "NO") || (q3.toUpperCase() == "N") || (q3.toUpperCase() == "FALSE") || (q3 == "0") `]
+
+
+    Here is figure 7 again for convenience:
+    ![Figure 7. Scale and grid are provided. Assigning a coordinate system based on these, A is at (0,15cm), B is at (-7cm,4cm), the positive "point charge" representing part of the fish's heart is at (-5cm,12cm), and the negative "point charge" representing the other part is at (-5cm,13cm).](static/images/fish_diagram.png)
+    [p className:"figure-caption"]*Figure 7:* Scale drawing of trout seen from above in the aquarium when the measurement is taken by the electrocardiograph. The positions of sensors A and B and the electric dipole representing the heart are all shown.[/p]
 
   [/Step]
 
 [/Scroller]
 
-// This doesn't have a strong ending.
+// This doesn't have a strong ending. I think choosing one "best" question and putting it separately at the end could help quite a bit, but I don't know which one we could deem to be the most important.
 
 # Summary
 
-*Summary goes here*
+*Summary goes here.* // Below is only what I've written to help me work out the problems.
+
+To calculate the maximum electric charge in the dipole, we started by determining the maximum voltage, which based on figure 6 was 1.5 \[mV\].
+(Because the distance across the dipole is constant, the only way that the voltage can change is if the charge is changing.)
+We also know from figure 7 that the distance across the dipole was 1 \[cm\].
+If we approximate the field within the dipole as constant, then the equation: // No clue whether this is actually an acceptible approximation - I think it is because the distance is small but that's all I've got.
+// Mostly I think the approximation is acceptable because I don't think this problem intended to be overly complicated.
+
+[Equation display:true]\Delta V = -\int \vec{E} \cdot \vec{dl}[/Equation]
+
+can be simplified because the angle between the field and the path is constant, giving:
+
+[Equation display:true]
+\begin{array}{rcl}
+  |\Delta V| & = & \int |\vec{E}||\vec{dl}||cos\theta| \\
+  & = & E|cos\theta| |\int dl| \\
+  & = & E|cos\theta| |\Delta l| \\
+\end{array}
+[/Equation]
+
+Choosing a path that points in the same direction as the electric field, [Equation display:false]\theta[/Equation] becomes 0, making [Equation display:false]cos\theta[/Equation] 1, giving us:
+
+[Equation display:true]
+\begin{array}{rcl}
+  1.5 \mathrm{mV} & = & E \mathrm{cm} \\
+  0.15 \mathrm{V/m} & = & E
+\end{array}  
+[/Equation]
