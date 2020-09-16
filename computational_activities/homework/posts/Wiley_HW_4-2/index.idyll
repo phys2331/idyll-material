@@ -1,0 +1,808 @@
+[meta title:"Wiley_HW_4-2" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"WileyPlus Homework 4-2"
+  subtitle:"Solving problems with Python"
+  date:`(new Date()).toDateString()`
+  background:"#0B465F"
+  color:"#FFFFFF"
+   /]
+
+ [var name:"currentValue" value:"" /]
+
+ [div className:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+  [button onClick:`currentValue = "18.26"`]18.26[/Button]
+  [button onClick:`currentValue = "18.25"`]18.25[/Button]
+  [button onClick:`currentValue = "18.32"`]18.32[/Button]
+  [button onClick:`currentValue = "18.29"`]18.29[/Button]
+  [button onClick:`currentValue = "18.37"`]18.37[/Button]
+  [button onClick:`currentValue = "18.42"`]18.42[/Button]
+ [/div]
+
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
+ [br /]
+
+ [div className:"problemBody" fullWidth:true padding-left:"100%"]
+   [Switch value:currentValue]
+     [Default]
+       [div className:"centerHead"]
+
+       [div className:"mainNote"]
+        Please complete the [a href:"https://forms.gle/NpZUmrLdCj3SbkRs9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 4-2.
+       [/div]
+
+         ## Problem Pages
+
+           Click the tabs to go to a specific homework problem page.
+           The problems are included in Homework 4-2 through WileyPlus. Work
+           through the problems by hand first using the given information, key equations,
+           and references listed. Then, try to use Python to solve the same problem.
+
+           Each problem page has the following sections:
+
+           #### Skills involved
+
+           The skills involved in the particular homework problem will be tagged
+           with other problems in the course that deal with the same content
+           (*TO DO*). Click these to find more problems in these areas. It may
+           help to look at the Resources page for videos and simulations that
+           target specific skills these homework problems involve.
+
+           #### Problem
+
+           The problems will be listed as they are seen in WileyPlus. Note that
+           the values will change for *each* problem.
+
+           This section also includes a computation section.
+
+           #### Important information
+
+           To solve the homework problems, there are several areas that need to
+           be understood. To help, the following sections are available:
+
+           [ul]
+             [li] **Objective**: summarizes what the question is asking. [/li]
+             [li] **Key Equations**: lists the equations that may help in solving
+             and understanding the problem. [/li]
+             [li] **References**: lists the pages of the book where
+             explanations of the concepts in the homework can be found. It may
+             also include outside references that may be useful. [/li]
+             [li] **Things to Think About**: covers tricky aspects of the
+             question that may lead to incorrect answers. Thinking about these
+             may help in solving the question faster. [/li]
+           [/ul]
+
+         ## Resources
+
+           Need help doing physics problems in Python? Visit the Computational Activities pages.
+
+           Need help doing the physics problems? Check out the resources section
+           on each problem page for specific text entries in Matter and Interactions
+           and any outside resource that may help in solving them. Visit the resources
+           page for videos and simulations about the specific physics problem.
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+
+       [/div]
+     [/Default]
+     [Case test:"18.26"]
+       [div className:"centerHead"]
+
+         ## 18.26
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P18.26.png" title:"Problem 18.26 - Matter and Interactions" /]
+
+           [br /]
+
+         [hr /]
+
+         ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+         [ul]
+           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+           [li]Click the Run button to output the answers![/li]
+           [li]If using numbers from this page, make sure to switch them with the numbers
+           given in WileyPLUS before submitting the answers.[/li]
+         [/ul]
+
+         [br /]
+
+         Input trinket for graphing answers.
+
+         [/div]
+         [div className:"extraInfo centerHead"]
+
+         ### About this Problem
+
+         [hr /]
+
+           [var name:"extraInfo1826" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo1826 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1826 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1826 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1826 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1826 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo1826]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Vectors: Direction[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+               Identify the graphs for electric field and drift speed.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+                 [ul]
+                   [li] Circuit with a resistor.[/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+                   [Equation text-align:center]
+                   \vec{E} = \frac{V}{m}
+                   [/equation]
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+                 [ul]
+                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+          [/Switch]
+         [/div]
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+     [/Case]
+     [Case test:"18.25"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 18.25
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P18.25.png" title:"Problem 18.25 - Matter and Interactions" /]
+
+           [br /]
+
+           #### Questions
+
+           [div className:"questionBody"]
+
+           [p]a) What is the absolute value of the outward-going conventional current [Equation]I_{2}[/Equation]?[/p]
+           [p]b) In this case, did we make the right guess about the direction of the conventional current [Equation]I_{2}[/Equation]? (We assumed the current was positive.)[/p]
+           [p]c) Suppose [Equation]I_{3}[/Equation] is 21 A; what is the absolute value of the outward-going conventional current [Equation]I_{2}[/Equation].[/p]
+           [p]d) In this case, did we make the right guess about the direction of the conventional current [Equation]I_{2}[/Equation]? (We assumed the current was positive.)[/p]
+
+           [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/d5c449e9c7?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1825" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1825 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1825 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1825 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1825 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1825 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1825]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Vectors: Direction[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Calculate outward-going conventional current.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Max electric field without a spark.[/li]
+                  [li] Capacitor gap distance.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+                 [Equation text-align:center]
+                  \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                 [/equation]
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
+                  [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+
+     [/Case]
+     [Case test:"18.32"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 18.32
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/P18.32.png" title:"Problem 18.32 - Matter and Interactions" /]
+
+          [br /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/9dd0572ae8?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1832" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1832 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1832 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1832 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1832 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1832 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1832]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Calculate how many hours the flashlight will be lit.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Flashlight battery has 1/2 moles of donor molecules. [/li]
+                  [li] Two batteries supply the current.[/li]
+                  [li] Current. [/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+     [/Case]
+     [Case test:"18.29"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 18.29
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/P18.29.png" title:"Problem 18.29 - Matter and Interactions" /]
+
+          [br /]
+
+          #### Possible Answers
+
+          [div className:"questionBody"]
+
+            [p]a) At location 3 inside the wire the electric field points to the right.[/p]
+            [p]b) Mobile electrons inside the wire push each other through the wire.[/p]
+            [p]c) The nonzero electric field inside the wire is created by the moving electrons in the wire.[/p]
+            [p]d) At location 3 the electric field points to the left.[/p]
+            [p]e) The nonzero electric field inside the wire is created by excess charges on the surface of the wire and in and on the mechanical battery.[/p]
+            [p]f) The magnitude of the electric field inside the wire is the same at all locations inside the wire.[/p]
+            [p]g) The electric field inside the wire varies in magnitude, depending on location.[/p]
+            [p]h) At every location inside the wire the direction of the electric field is parallel to the wire.[/p]
+            [p]i) The electric field is zero at all locations inside the metal wire.[/p]
+
+          [/div]
+
+         [hr /]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1829" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1829 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1829 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1829 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1829 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1829 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1829]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Select the correct circuit statements.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of capacitor disks. [/li]
+                  [li] Distance between disks.[/li]
+                  [li] Magnitude of the charge on each disk.[/li]
+                  [li] Vertical and horizontal distances between points.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"18.37"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 18.37
+
+         [hr /]
+
+         ### Problem
+
+          [div className:"questionBody"]
+            A Nichrome wire 42 cm long and 0.23 mm in diameter is connected to a 3.4 V flashlight battery.
+          [/div]
+          [br /]
+
+          #### Questions
+
+          [div className:"questionBody"]
+
+            [p]a) What is the electric field inside the wire? (Enter the magnitude.)[/p]
+            [p]b) Why don't you have to know how the wire is bent?[/p]
+            [p]c) How would your answer change is the wire diameter were 0.38 mm? (Note that the electric field in the wire is quite small compared to the electric field near a charged tape.)[/p]
+
+          [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/93f965d92f?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1837" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1837 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1837 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1837 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1837 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1837 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1837]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the electric field inside the wire and understand how it would
+           change if the diameter changed.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of capacitor disks. [/li]
+                  [li] Distance between disks.[/li]
+                  [li] Magnitude of the charge on each disk.[/li]
+                  [li] Vertical and horizontal distances between points.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"18.42"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 18.42
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/P18.42.png" title:"Problem 18.42 - Matter and Interactions" /]
+
+          [br /]
+
+          #### Possible Answers
+
+          [div className:"questionBody"]
+
+            [p]a) Do you have enough information to determine the current I in the circuit?[/p]
+
+          [/div]
+
+         [hr /]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1829" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1829 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1829 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1829 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1829 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1829 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1829]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Select the correct circuit statements.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of capacitor disks. [/li]
+                  [li] Distance between disks.[/li]
+                  [li] Magnitude of the charge on each disk.[/li]
+                  [li] Vertical and horizontal distances between points.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+   [/Switch]
+ [/div]

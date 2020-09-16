@@ -1,0 +1,700 @@
+[meta title:"Wiley_HW_4-1" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"WileyPlus Homework 4-1"
+  subtitle:"Solving problems with Python"
+  date:`(new Date()).toDateString()`
+  background:"#0B465F"
+  color:"#FFFFFF"
+   /]
+
+ [var name:"currentValue" value:"" /]
+
+ [div className:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+  [button onClick:`currentValue = "16.33"`]16.33[/Button]
+  [button onClick:`currentValue = "16.35"`]16.35[/Button]
+  [button onClick:`currentValue = "16.40"`]16.40[/Button]
+  [button onClick:`currentValue = "16.66"`]16.66[/Button]
+  [button onClick:`currentValue = "16.66alt"`]16.66 Alt01[/Button]
+ [/div]
+
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
+ [br /]
+
+ [div className:"problemBody" fullWidth:true padding-left:"100%"]
+   [Switch value:currentValue]
+     [Default]
+       [div className:"centerHead"]
+
+       [div className:"mainNote"]
+        Please complete the [a href:"https://forms.gle/KwCeozr3kGBLxGzt8" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 4-1.
+       [/div]
+
+         ## Problem Pages
+
+           Click the tabs to go to a specific homework problem page.
+           The problems are included in Homework 4-1 through WileyPlus. Work
+           through the problems by hand first using the given information, key equations,
+           and references listed. Then, try to use Python to solve the same problem.
+
+           Each problem page has the following sections:
+
+           #### Skills involved
+
+           The skills involved in the particular homework problem will be tagged
+           with other problems in the course that deal with the same content
+           (*TO DO*). Click these to find more problems in these areas. It may
+           help to look at the Resources page for videos and simulations that
+           target specific skills these homework problems involve.
+
+           #### Problem
+
+           The problems will be listed as they are seen in WileyPlus. Note that
+           the values will change for *each* problem.
+
+           This section also includes a computation section.
+
+           #### Important information
+
+           To solve the homework problems, there are several areas that need to
+           be understood. To help, the following sections are available:
+
+           [ul]
+             [li] **Objective**: summarizes what the question is asking. [/li]
+             [li] **Key Equations**: lists the equations that may help in solving
+             and understanding the problem. [/li]
+             [li] **References**: lists the pages of the book where
+             explanations of the concepts in the homework can be found. It may
+             also include outside references that may be useful. [/li]
+             [li] **Things to Think About**: covers tricky aspects of the
+             question that may lead to incorrect answers. Thinking about these
+             may help in solving the question faster. [/li]
+           [/ul]
+
+         ## Resources
+
+           Need help doing physics problems in Python? Visit the Computational Activities pages.
+
+           Need help doing the physics problems? Check out the resources section
+           on each problem page for specific text entries in Matter and Interactions
+           and any outside resource that may help in solving them. Visit the resources
+           page for videos and simulations about the specific physics problem.
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+
+       [/div]
+     [/Default]
+     [Case test:"16.33"]
+       [div className:"centerHead"]
+
+         ## 16.33
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P16.33.png" title:"Problem 16.33 - Matter and Interactions" /]
+
+           [br /]
+
+         [hr /]
+
+         ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+         [ul]
+           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+           [li]Click the Run button to output the answers![/li]
+           [li]If using numbers from this page, make sure to switch them with the numbers
+           given in WileyPLUS before submitting the answers.[/li]
+         [/ul]
+
+         [br /]
+
+         [iframe src:"https://trinket.io/embed/python3/761e6980d9?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+         [/div]
+         [div className:"extraInfo centerHead"]
+
+         ### About this Problem
+
+         [hr /]
+
+           [var name:"extraInfo1633" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo1633 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1633 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1633 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1633 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1633 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo1633]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Vectors: Direction[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+               Find the magnitude of the electric field in the region between A and B.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+                 [ul]
+                   [li] The electric field is uniform.[/li]
+                   [li] Change in potential.[/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+                   [Equation text-align:center]
+                   \vec{E} = \frac{V}{m}
+                   [/equation]
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+                 [ul]
+                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+          [/Switch]
+         [/div]
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+     [/Case]
+     [Case test:"16.35"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.35
+
+         [hr /]
+
+         ### Problem
+
+          [div className:"questionBody"]
+             If the electric field exceeds about [Equation]3 \times 10^{6}[/Equation] N/C in air,
+             a spark occurs. Approximately, what is the maximum possible potential difference between
+             the plates of a capacitor whose gap is 4 mm, without causing a spark in the air between them?
+          [/div]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/341e7bf6e4?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1635" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1635 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1635 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1635 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1635 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1635 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1635]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Vectors: Direction[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the maximum potential difference between the plates of a capacitor
+           without causing a spark in the air.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Max electric field without a spark.[/li]
+                  [li] Capacitor gap distance.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+                 [Equation text-align:center]
+                  \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                 [/equation]
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
+                  [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+
+     [/Case]
+     [Case test:"16.40"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.40
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/P16.40.png" title:"Problem 16.40 - Matter and Interactions" /]
+
+          [br /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/c62b6c5a50?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1640" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1640 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1640 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1640 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1640 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1640 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1640]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the velocity of the electrons accelerating through the plates.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Electrons are accelerating toward a positive plate. [/li]
+                  [li] Potential difference between two plates.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+     [/Case]
+     [Case test:"16.66"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.66
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/P16.66.png" title:"Problem 16.66 - Matter and Interactions" /]
+
+          [br /]
+
+          #### Questions
+
+          [div className:"questionBody"]
+
+            [p]a) What is the electric field inside the capacitor?[/p]
+            [p]b) What is [Equation]\Delta \vec{l}[/Equation] along the [Equation]V_{B}-V_{A}[/Equation] path?[/p]
+            [p]c) What is [Equation]V_{B}-V_{A}[/Equation]?[/p]
+            [p]d) What is [Equation]\Delta \vec{l}[/Equation] along the [Equation]V_{C}-V_{B}[/Equation] path?[/p]
+            [p]e) What is [Equation]V_{C}-V_{B}[/Equation]?[/p]
+            [p]f) What is [Equation]\Delta \vec{l}[/Equation] along the [Equation]V_{A}-V_{C}[/Equation] path?[/p]
+            [p]g) What is [Equation]V_{A}-V_{C}[/Equation]?[/p]
+
+          [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/a2ab41fe4d?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1666" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1666 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1666 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1666 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1666 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1666 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1666]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the electric field in the capacitor and calculate potential
+           differences along different paths.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of capacitor disks. [/li]
+                  [li] Distance between disks.[/li]
+                  [li] Magnitude of the charge on each disk.[/li]
+                  [li] Vertical and horizontal distances between points.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"16.66alt"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.66 Alternate
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/P16.66alt1.png" title:"Problem 16.66alt1 - Matter and Interactions" /]
+
+          [br /]
+
+          #### Questions
+
+          [div className:"questionBody"]
+
+            [p]a) What is the magnitude of the electric field inside the capacitor?[/p]
+            [p]b) What is [Equation]V_{B}-V_{A}[/Equation], [Equation]V_{C}-V_{B}[/Equation], and [Equation]V_{C}-V_{A}[/Equation]?[/p]
+            [p]c) What is [Equation]\Delta L cos(\theta)[/Equation] and [Equation]V_{C}-V_{A}[/Equation]?[/p]
+
+          [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/31ab1085b6?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1666a" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1666a = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1666a = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1666a = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1666a = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1666a = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1666a]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the electric field in the capacitor and calculate potential
+           differences along different paths.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of capacitor disks. [/li]
+                  [li] Distance between disks.[/li]
+                  [li] Magnitude of the charge on each disk.[/li]
+                  [li] Vertical and horizontal distances between points.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+   [/Switch]
+ [/div]

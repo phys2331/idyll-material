@@ -1,0 +1,1187 @@
+[meta title:"Wiley_HW_5" description:"Short description of your project" /]
+
+[Header
+  fullWidth:true
+  title:"WileyPlus Homework 5"
+  subtitle:"Solving problems with Python"
+  date:`(new Date()).toDateString()`
+  background:"#0B465F"
+  color:"#FFFFFF"
+   /]
+
+ [var name:"currentValue" value:"" /]
+
+ [div className:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+  [button onClick:`currentValue = "19.34"`]19.34[/Button]
+  [button onClick:`currentValue = "19.36"`]19.36[/Button]
+  [button onClick:`currentValue = "19.38"`]19.38[/Button]
+  [button onClick:`currentValue = "19.40"`]19.40[/Button]
+  [button onClick:`currentValue = "19.44"`]19.44[/Button]
+  [button onClick:`currentValue = "19.56"`]19.56[/Button]
+  [button onClick:`currentValue = "16.50"`]16.50[/Button]
+  [button onClick:`currentValue = "16.64"`]16.64[/Button]
+  [button onClick:`currentValue = "19.76"`]19.76[/Button]
+ [/div]
+
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
+ [br /]
+
+ [div className:"problemBody" fullWidth:true padding-left:"100%"]
+   [Switch value:currentValue]
+     [Default]
+       [div className:"centerHead"]
+
+       [div className:"mainNote"]
+        Please complete the [a href:"https://forms.gle/z4ooNHbMG6RLRKRe6" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 5.
+       [/div]
+
+         ## Problem Pages
+
+           Click the tabs to go to a specific homework problem page.
+           The problems are included in Homework 5 through WileyPlus. Work
+           through the problems by hand first using the given information, key equations,
+           and references listed. Then, try to use Python to solve the same problem.
+
+           Each problem page has the following sections:
+
+           #### Skills involved
+
+           The skills involved in the particular homework problem will be tagged
+           with other problems in the course that deal with the same content
+           (*TO DO*). Click these to find more problems in these areas. It may
+           help to look at the Resources page for videos and simulations that
+           target specific skills these homework problems involve.
+
+           #### Problem
+
+           The problems will be listed as they are seen in WileyPlus. Note that
+           the values will change for *each* problem.
+
+           This section also includes a computation section.
+
+           #### Important information
+
+           To solve the homework problems, there are several areas that need to
+           be understood. To help, the following sections are available:
+
+           [ul]
+             [li] **Objective**: summarizes what the question is asking. [/li]
+             [li] **Key Equations**: lists the equations that may help in solving
+             and understanding the problem. [/li]
+             [li] **References**: lists the pages of the book where
+             explanations of the concepts in the homework can be found. It may
+             also include outside references that may be useful. [/li]
+             [li] **Things to Think About**: covers tricky aspects of the
+             question that may lead to incorrect answers. Thinking about these
+             may help in solving the question faster. [/li]
+           [/ul]
+
+         ## Resources
+
+           Need help doing physics problems in Python? Visit the Computational Activities pages.
+
+           Need help doing the physics problems? Check out the resources section
+           on each problem page for specific text entries in Matter and Interactions
+           and any outside resource that may help in solving them. Visit the resources
+           page for videos and simulations about the specific physics problem.
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+
+       [/div]
+     [/Default]
+     [Case test:"19.34"]
+       [div className:"centerHead"]
+
+         ## 19.34
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p19.34a.png" title:"Problem 19.34 - Matter and Interactions" /]
+           [img src:"./static/images/p19.34b.png" title:"Problem 19.34 - Matter and Interactions" /]
+
+           [br /]
+
+           #### Questions
+
+           [div className:"questionBody"]
+
+             [p]a) Which of the diagrams best indicates the electron current at three locations in this circuit?[/p]
+             [p]b) Which of the diagrams best indicates the electric field inside the wire at three locations in this circuit?[/p]
+
+           [/div]
+
+         [hr /]
+
+         ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+         [ul]
+           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+           [li]Click the Run button to output the answers![/li]
+           [li]If using numbers from this page, make sure to switch them with the numbers
+           given in WileyPLUS before submitting the answers.[/li]
+         [/ul]
+
+         [br /]
+
+         Input trinket for graphing answers.
+
+         [/div]
+         [div className:"extraInfo centerHead"]
+
+         ### About this Problem
+
+         [hr /]
+
+           [var name:"extraInfo1934" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo1934 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1934 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1934 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1934 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1934 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo1934]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Vectors: Direction[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+               Identify the graphs for electric field and drift speed.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+                 [ul]
+                   [li] Circuit with a resistor.[/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+                   [Equation text-align:center]
+                   \vec{E} = \frac{V}{m}
+                   [/equation]
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+                 [ul]
+                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+          [/Switch]
+         [/div]
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+     [/Case]
+     [Case test:"19.36"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 19.36
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p19.36.png" title:"Problem 19.36 - Matter and Interactions" /]
+
+           [br /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           [br /]
+
+           Insert something.
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1936" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1936 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1936 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1936 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1936 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1936 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1936]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Vectors: Direction[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Calculate outward-going conventional current.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Max electric field without a spark.[/li]
+                  [li] Capacitor gap distance.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+                 [Equation text-align:center]
+                  \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                 [/equation]
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
+                  [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+
+     [/Case]
+     [Case test:"19.38"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 19.38
+
+         [hr /]
+
+         ### Problem
+
+          [div className:"questionBody"]
+            A certain capacitor has rectangular plates 43 cm by 23 cm, and the gap width is 0.31 mm.
+            What is its capacitance? We see that typical capacitances are very small when measured
+            in farads. A one-farad capacitor is quite extraordinary! Apparently it has a very large
+            area A (all wrapped up in a small package), and a very small gap s.
+          [/div]
+
+          [br /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/19267e71e5?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1938" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1938 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1938 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1938 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1938 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1938 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1938]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Calculate how many hours the flashlight will be lit.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Length and width of capacitor plates. [/li]
+                  [li] Gap width.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+     [/Case]
+     [Case test:"19.40"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 19.40
+
+         [hr /]
+
+         ### Problem
+
+          [div className:"questionBody"]
+            Suppose you charge a 1.0 F capacitor with two 1.5 volt batteries.
+          [/div]
+
+          [br /]
+
+          #### Questions
+
+          [div className:"questionBody"]
+
+            [p]a) How much charge is on each plate?[/p]
+            [p]b) How many excess electrons were on the negative plate?[/p]
+
+          [/div]
+
+         [hr /]
+
+       ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+         Note that the SciPy constants are more exact than the constants listed in the book.
+         Try calculating the answer with the SciPy constants and the constants listed in
+         Matter and Interactions to see the differences in the answer.
+
+         [br /]
+
+         [iframe src:"https://trinket.io/embed/python3/2bab40dadc?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+      [/div]
+      [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1940" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1940 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1940 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1940 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1940 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1940 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1940]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Select the correct circuit statements.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Capacitance. [/li]
+                  [li] Voltage of batteries.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"19.44"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 19.44
+
+         [hr /]
+
+         ### Problem
+
+         ### Problem
+
+           [img src:"./static/images/p19.44.png" title:"Problem 19.44 - Matter and Interactions" /]
+
+           [br /]
+
+         [hr /]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1944" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1944 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1944 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1944 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1944 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1944 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1944]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Construct an equation to find the capacitance of a spherical capacitor.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of capacitor disks. [/li]
+                  [li] Distance between disks.[/li]
+                  [li] Magnitude of the charge on each disk.[/li]
+                  [li] Vertical and horizontal distances between points.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"19.56"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 19.56
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/p19.56.png" title:"Problem 19.56 - Matter and Interactions" /]
+
+          [br /]
+
+          #### Questions
+
+          [div className:"questionBody"]
+
+            [p]a) What is the equivalent resistance of [Equation]R_{1}[/Equation] and [Equation]R_{2}[/Equation]?[/p]
+            [p]b) What is the equivalent resistance of all three resistors?[/p]
+            [p]c) What is the conventional current through [Equation]R_{3}[/Equation]?[/p]
+
+          [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/869ffd0c79?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1956" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1956 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1956 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1956 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1956 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1956 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1956]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the resistance of the circuit and current through [Equation]R_{3}[/Equation].
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] EMF of the battery. [/li]
+                  [li] Resistance of each resistor. [/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"16.50"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.50
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/p16.50.png" title:"Problem 16.50 - Matter and Interactions" /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/7d11d0df30?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1650" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1650 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1650 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1650 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1650 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1650 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1650]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the potential difference [Equation]V_{2}-V_{1}[/Equation].
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Radius of each disk.[/li]
+                  [li] Gap between the disks.[/li]
+                  [li] Charge of the disks.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+          [/Case]
+       [/Switch]
+      [/div]
+
+      [hr /]
+
+      [div className:"centerPara"]
+        [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+        [Physics Department](https://clas.ucdenver.edu/physics/)
+        [br /]
+        [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+      [/div]
+     [/Case]
+     [Case test:"16.64"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.64
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/p16.64.png" title:"Problem 16.64 - Matter and Interactions" /]
+
+          [br /]
+
+          #### Questions
+
+          [div className:"questionBody"]
+
+            [p]a) The electric field in the space between the wire and the outer
+            tube is due only to the wire (the contribution due to the charges on the outer
+            tube adds up to zero). When the electric field at any location in air reaches
+            3e6 volts/meter, the air ionizes and becomes a conductor. For the tube shown,
+            the length L = 87 cm, the inner radius r = 0.6 mm, and the outer radius R = 3.0 cm.
+            How much charge would there need to be on the inner wire in order to ionize the
+            air near the wire (where the field is largest)?[/p]
+            [p]b) When there is enough charge on the wire to ionize the air, you see a glow
+            in the air very near the inner wire. When this happens, what is the absolute value of the
+            potential difference along a path from the inner wire to the outer tube? (Note that the
+            electric field in this region is not uniform.)[/p]
+            [p]The Geiger tube was one of the first electronic particle detectors. The voltage
+            is set just below the threshold for making the air glow near the wire (part b). A
+            charged particle that passes near the center wire can trigger ionization of the air,
+            leading to a large current that can be easily measured.[/p]
+
+          [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/9a75e4c92a?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1664" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1664 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1664 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1664 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1664 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1664 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1664]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the charge needed on the inner wire and the potential difference along
+           a path from the inner wire to the outer tube.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Electric field when the air ionizes.[/li]
+                  [li] Length of tube.[/li]
+                  [li] Inner radius.[/li]
+                  [li] Outer radius.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+          [/Case]
+       [/Switch]
+      [/div]
+
+      [hr /]
+
+      [div className:"centerPara"]
+        [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+        [Physics Department](https://clas.ucdenver.edu/physics/)
+        [br /]
+        [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+      [/div]
+     [/Case]
+     [Case test:"19.76"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 19.76
+
+         [hr /]
+
+         ### Problem
+
+          [div className:"questionBody"]
+            The deflection plates in an oscilloscope are 10 cm by 2 cm with a gap distance
+            of 1 mm. A 100 volt potential difference is suddenly applied to the initially
+            uncharged plates through a 1000 ohm resistor in series with the deflection
+            plates. How long does it take for the potential difference between the deflection
+            plates to reach 75 volts?
+          [/div]
+
+         [hr /]
+
+       ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+         Note that the SciPy constants are more exact than the constants listed in the book.
+         Try calculating the answer with the SciPy constants and the constants listed in
+         Matter and Interactions to see the differences in the answer.
+
+         [br /]
+
+         [iframe src:"https://trinket.io/embed/python3/96ae0837bc?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+      [/div]
+      [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1976" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1976 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1976 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1976 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1976 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1976 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1976]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Force[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the time in seconds it takes for the potential difference between the
+           deflection plates to reach a smaller voltage.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Length and width of the deflection plates. [/li]
+                  [li] Gap distance between the deflection plates.[/li]
+                  [li] Initial potential difference.[/li]
+                  [li] Final potential difference.[/li]
+                  [li] Resistance.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+   [/Switch]
+ [/div]

@@ -1,0 +1,204 @@
+body {
+  background-color: white;
+}
+
+.centerHead h2{
+  text-align: center;
+  color: #0B465F;
+}
+
+.centerHead h3, h4{
+  text-align: center;
+  color: #0B465F;
+}
+
+.centerHead h4{
+  font-style: italic;
+}
+
+.tabLook button{
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+.tabLook button {
+  background-color: inherit;
+  float:left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  //padding: 14px 16px;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 20px;
+  width: 14%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #0B465F;
+}
+
+.tabLook button:hover {
+  background-color: #ddd;
+}
+
+.tabLook button.active {
+  background-color: #ccc;
+}
+
+.problemBody {
+  padding: 1px 20px 1px 20px;
+  //border: 1px solid #ccc;
+  //border-top: none;
+  //float:right;
+  text-align: justify;
+}
+
+.pBwithAside {
+  padding: 1px 20px 1px 20px;
+  margin: 0 1.5%;
+  //width: 70%;
+  //float:right;
+  text-align: justify;
+}
+
+.extraInfo {
+  //float:left;
+  //font-size:12px;
+  //margin: 0 0 0 0;
+  //width: 30%;
+  padding: 80px;
+  //text-align: justify;
+}
+
+.extraInfoBullets {
+  text-align: center;
+}
+
+.extraInfoBullets ul {
+  display: inline-block;
+  text-align: left;
+}
+
+.frameWidth {
+  //display:block;
+  //width: 100%;
+  //margin 0 1.5%;
+  //fullWidth: true;
+}
+
+.asideBox {
+  border: 2px solid #0EA7F2;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+hr {
+  border: 0;
+  background: #0EA7F2;
+  height: 2px;
+}
+
+.equations {
+  text-align: center;
+  font-size:18px;
+}
+
+.hintButtons button {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 15px;
+  //width: 30%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #009999;
+  overflow: hidden;
+}
+
+.centerPara {
+  text-align: center;
+}
+
+.hwQuestions {
+  background-color: inherit;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border: 2px solid gray;;
+}
+
+.hwQuestions hr {
+  background: #0EA7F2;
+}
+
+.tabLookProbs button{
+  overflow: hidden;
+  //border: 10px solid #ccc;
+  //background-color: #f1f1f1;
+}
+
+.tabLookProbs button {
+  background-color: inherit;
+  float:left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  //padding: 14px 16px;
+  transition: 0.3s;
+  margin:auto;
+  font-size: 15px;
+  width: 20%;
+  font-family: Arial;
+  font-weight: bold;
+  color: #0B465F;
+}
+
+.tabLookProbs button:hover {
+  background-color: #ddd;
+}
+
+.tabLookProbs button.active {
+  background-color: red;
+}
+
+iframe {
+  display: block;
+  margin: auto;
+}
+
+img {
+  display: block;
+  margin: auto;
+}
+
+.centerBullets {
+  text-align: center;
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.centerBullets ul {
+  display: inline-block;
+  text-align: left;
+}
+
+.centerBullets hr {
+  background: gray;
+}
+
+.mainNote {
+  font-size: 20px;
+  color: red;
+  font-style:italic;
+  text-align: center;
+}
+
+.questionBody {
+  margin-left: 30%;
+  margin-right: 30%;
+}

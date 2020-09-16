@@ -1,69 +1,644 @@
-[meta title:"Wiley Homework 2" description:"Short description of your project" /]
+[meta title:"Wiley_HW_2" description:"Short description of your project" /]
 
 [Header
   fullWidth:true
-  title:"Wiley Homework 2"
-  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
-  author:"Your Name Here"
-  authorLink:"https://idyll-lang.org"
+  title:"WileyPlus Homework 2"
+  subtitle:"Solving problems with Python"
   date:`(new Date()).toDateString()`
-  background:"#F1948A"
-  color:"#ffffff"
+  background:"#0B465F"
+  color:"#FFFFFF"
    /]
 
-[var name:"currentValue" value:"" /]
+ [var name:"currentValue" value:"" /]
 
-[div className:"tabLook"]
+ [div className:"tabLook" fullWidth:true]
   [button onClick:`currentValue = ""`]Main Problem Page[/Button]
   [button onClick:`currentValue = "13.47"`]13.47[/Button]
   [button onClick:`currentValue = "13.49"`]13.49[/Button]
   [button onClick:`currentValue = "15.22"`]15.22[/Button]
   [button onClick:`currentValue = "15.28"`]15.28[/Button]
-  [button onClick:`currentValue = "15.26"`]15.26[/Button]
-[/div]
+ [/div]
 
-[br /]
-[hr /]
-[br /]
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
+ [br /]
 
-[div className:"problemBody"]
-  [Switch value:currentValue]
-    [Default]
-      [div className:"centerHead"]
-        ## Problem Pages
+ [div className:"problemBody" fullWidth:true padding-left:"100%"]
+   [Switch value:currentValue]
+     [Default]
+       [div className:"centerHead"]
 
-          Click the tabs to go to the homework problem page for a specific problem.
+       [div className:"mainNote"]
+        Please complete the [a href:"https://forms.gle/uB317viBQuhwLmSY7" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 2.
+       [/div]
 
-          Each problem page has the following sections:
+         ## Problem Pages
 
-          [ul]
-            [li]**Skills Involved**: click these skills to find other problems related
-            to this problem[/li]
-            [li]**Problem**: description of the problem from WileyPlus[/li]
-          [/ul]
+           Click the tabs to go to a specific homework problem page.
+           The problems are included in Homework 2 through WileyPlus. Work
+           through the problems by hand first using the given information, key equations,
+           and references listed. Then, try to use Python to solve the same problem.
 
-        ## Resources
+           Each problem page has the following sections:
 
-          Need help doing physics problems in Python? Visit the blahblahblah page.
+           #### Skills involved
 
-          Need help doing the physics problems? Check out the resources section
-          on each problem page for specific text entries in Matter and Interactions
-          and any outside resource that may help in solving them. Visit the resources
-          page for videos and simulations about the specific physics problem.
+           The skills involved in the particular homework problem will be tagged
+           with other problems in the course that deal with the same content
+           (*TO DO*). Click these to find more problems in these areas. It may
+           help to look at the Resources page for videos and simulations that
+           target specific skills these homework problems involve.
 
-      [/div]
-    [/Default]
-    [Case test:"13.47"]
-      [div className:"centerHead"]
+           #### Problem
 
-        ## 13.47
+           The problems will be listed as they are seen in WileyPlus. Note that
+           the values will change for *each* problem.
+
+           This section also includes a computation section.
+
+           #### Important information
+
+           To solve the homework problems, there are several areas that need to
+           be understood. To help, the following sections are available:
+
+           [ul]
+             [li] **Objective**: summarizes what the question is asking. [/li]
+             [li] **Key Equations**: lists the equations that may help in solving
+             and understanding the problem. [/li]
+             [li] **References**: lists the pages of the book where
+             explanations of the concepts in the homework can be found. It may
+             also include outside references that may be useful. [/li]
+             [li] **Things to Think About**: covers tricky aspects of the
+             question that may lead to incorrect answers. Thinking about these
+             may help in solving the question faster. [/li]
+           [/ul]
+
+         ## Resources
+
+           Need help doing physics problems in Python? Visit the Computational Activities pages.
+
+           Need help doing the physics problems? Check out the resources section
+           on each problem page for specific text entries in Matter and Interactions
+           and any outside resource that may help in solving them. Visit the resources
+           page for videos and simulations about the specific physics problem.
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+
+       [/div]
+     [/Default]
+     [Case test:"13.47"]
+       [div className:"centerHead"]
+
+         ## 13.47
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P13.47.png" title:"Problem 13.47 - Matter and Interactions" /]
+
+           [br /]
+
+           #### Questions
+
+           [div className:"questionBody"]
+
+           [p]a) Find the electric field at the location of [Equation]Q_{3}[/Equation], due to [Equation]Q_{1}[/Equation].[/p]
+           [p]b) Find the electric field at the location of [Equation]Q_{3}[/Equation], due to [Equation]Q_{2}[/Equation].[/p]
+           [p]c) Find the net electric field at the location of [Equation]Q_{3}[/Equation].[/p]
+           [p]d) Find the net force on [Equation]Q_{3}[/Equation].[/p]
+           [p]e) Find the electric field at location A due to [Equation]Q_{1}[/Equation].[/p]
+           [p]f) Find the electric field at location A due to [Equation]Q_{2}[/Equation].[/p]
+           [p]g) Find the electric field at location A due to [Equation]Q_{3}[/Equation].[/p]
+           [p]h) What is the net electric field at location A?[/p]
+           [p]i) If a particle with charge -8nC were placed at location A, what would be the force on this particle?[/p]
+
+           [/div]
+
+        [hr /]
+
+         ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+         [ul]
+           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+           [li]Click the Run button to output the answers![/li]
+           [li]If using numbers from this page, make sure to switch them with the numbers
+           given in WileyPLUS before submitting the answers.[/li]
+         [/ul]
+
+         [br /]
+
+         [iframe src:"https://trinket.io/embed/python3/5bf81ac584?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+         [/div]
+         [div className:"extraInfo centerHead"]
 
 
-      [/div]
-    [/Case]
-    [Case test:"13.49"]Case 2[/Case]
-    [Case test:"15.22"]Case 3[/Case]
-    [Case test:"15.28"]Case 4[/Case]
-    [Case test:"15.26"]Case 5[/Case]
-  [/Switch]
-[/div]
+
+         ### About this Problem
+
+         [hr /]
+
+           [var name:"extraInfo347" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo347 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo347 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo347 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo347 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo347 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo347]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Vectors: Direction[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+               Find the net electric field and force on [Equation]Q_{3}[/Equation]
+               and at location A.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+                 [ul]
+                   [li] Charges of Q1, Q2, and Q3.[/li]
+                   [li] Locations of the charges and point A.[/li]
+                   [li] Charge of particle at location A. [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+                   [Equation text-align:center]
+                   \vec{E}=\frac{1}{4\pi\epsilon_{0}} \frac{Q}{|\vec{r}|^{2}}\hat{r}
+                   [/equation]
+
+                   [br /]
+                   [br /]
+
+                   [Equation]
+                   \vec{F} = q\vec{E}
+                   [/Equation]
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+                 [ul]
+                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+          [/Switch]
+         [/div]
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+     [/Case]
+     [Case test:"13.49"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 13.49
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P13.49.png" title:"Problem 13.49 - Matter and Interactions" /]
+
+           [br /]
+
+           #### Questions
+
+           [div className:"questionBody"]
+
+             [p]a) Determine the magnitude and direction of the electric field [Equation]\vec{E}_{A}[/Equation] at location A, r = 120 nm to the left of the [Equation]Cl^{-}[/Equation] ion.[/p]
+             [p]b) Determine the magnitude and direction of the electric field [Equation]\vec{E}_{B}[/Equation] at location B, r = 120 nm to the right of the [Equation]Cl^{-}[/Equation] ion.[/p]
+             [p]c) If an electron is placed at location A, what are the magnitude and direction of the force on the electron?[/p]
+
+           [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/c1978b1122?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo349" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo349 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo349 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo349 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo349 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo349 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo349]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Vectors: Direction[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the magnitude and direction of the electric field due to two
+           charges. Find the force on an electron within an electric field.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Distance between [Equation]Fe^{3+}[/Equation] and [Equation]Cl^{-}[/Equation].[/li]
+                  [li] Locations of A and B.[/li]
+                  [li] Distance of A and B from [Equation]Cl^{-}[/Equation].[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+                 [Equation text-align:center]
+                  \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                 [/equation]
+
+                 [br /]
+                 [br /]
+
+                 [Equation]
+                 \vec{F} = q\vec{E}
+                 [/Equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
+                  [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+
+     [/Case]
+     [Case test:"15.22"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 15.22
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P15.22.png" title:"Problem 15.22 - Matter and Interactions" /]
+
+           [br /]
+
+           #### Questions
+
+           [div className:"questionBody"]
+
+             [p]a) What is the length of one of these pieces?[/p]
+             [p]b) What is the location of the center of piece number 2?[/p]
+             [p]c) How much charge is on piece number 2? (Remember that the charge is negative.)[/p]
+             [p]d) Approximating piece 2 as a point charge, what is the electric field at location A due only to piece 2?[/p]
+             [p]e) To get the net electric field at location A, we would need to calculate due each of the 8 pieces, and add up
+             these contributions. If we did that, which arrow would best represent the direction of the net electric field at
+             location A?[/p]
+
+           [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/353e009770?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1522" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1522 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1522 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1522 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1522 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1522 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1522]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Electric field of a plastic rod.[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the magnitude of the electric field due to the proton at the
+           location of the electron.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Plastic rod with an acquired charge. [/li]
+                  [li] Charge of the plastic rod.[/li]
+                  [li] Location of A some distance away from the rod.[/li]
+                  [li] Rod is divided into 8 pieces.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+                 [br /]
+                 [br /]
+
+                 [Equation text-align:center]
+                  \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+
+     [/Case]
+     [Case test:"15.28"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 15.28
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/P15.28.png" title:"Problem 15.28 - Matter and Interactions" /]
+
+           [br /]
+
+           #### Questions
+
+           [div className:"questionBody"]
+
+             [p]a) What is the approximate electric field at A due to piece 1?[/p]
+             [p]b) What is the approximate electric field at A due to piece 2?[/p]
+             [p]c) What is the approximate electric field at A due to piece 3?[/p]
+             [p]d) What is the approximate net electric field at A?[/p]
+             [p]e) What could you do to improve the accuracy of your calculation?[/p]
+
+           [/div]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           [iframe src:"https://trinket.io/embed/python3/199474c692?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+       ### About this Problem
+
+       [hr /]
+
+         [var name:"extraInfo1528" value:"" /]
+
+         [div className:"tabLookProbs" fullWidth:true]
+          [button onClick:`extraInfo1528 = ""`]Skills Involved[/Button]
+          [button onClick:`extraInfo1528 = "Objective"`]Objective[/Button]
+          [button onClick:`extraInfo1528 = "GivenInfo"`]Given Information[/Button]
+          [button onClick:`extraInfo1528 = "KeyEq"`]Key Equations[/Button]
+          [button onClick:`extraInfo1528 = "Ref"`]References[/Button]
+         [/div]
+
+         [br /]
+         [hr fullWidth:true /]
+         [br /]
+
+         [Switch value:extraInfo1528]
+           [Default]
+             [div className:"extraInfoBullets"]
+
+               [ul]
+                 [li]Electric field of a plastic rod.[/li]
+                 [li]Vectors: Fields[/li]
+                 [li]Electric field: Due to Point Charges[/li]
+               [/ul]
+
+             [/div]
+
+           [/Default]
+           [Case test:"Objective"]
+
+           Find the net electric field at A.
+
+           [/Case]
+           [Case test:"GivenInfo"]
+              [div className: "extraInfoBullets"]
+
+                [ul]
+                  [li] Length and width of the tape.[/li]
+                  [li] Charge of the tape.[/li]
+                  [li] Location of A.[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+           [Case test:"KeyEq"]
+
+               [div className:"equations"]
+
+                 [Equation text-align:center]
+                  \vec{F} = q\vec{E}
+                 [/equation]
+
+                 [br /]
+                 [br /]
+
+                 [Equation text-align:center]
+                  \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                 [/equation]
+
+               [/div]
+
+           [/Case]
+           [Case test:"Ref"]
+              [div className:"extraInfoBullets"]
+
+                [ul]
+                  [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                  [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                [/ul]
+
+              [/div]
+
+           [/Case]
+        [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+   [/Switch]
+ [/div]
