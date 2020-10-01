@@ -2,115 +2,1320 @@
 
 [Header
   fullWidth:true
-  title:"Wiley_HW_7"
-  subtitle:"Welcome to Idyll. Open index.idyll to start writing"
-  author:"Your Name Here"
-  authorLink:"https://idyll-lang.org"
+  title:"WileyPlus Homework 7"
+  subtitle:"Solving problems with Python"
   date:`(new Date()).toDateString()`
-  background:"#222222"
-  color:"#ffffff"
+  background:"#0B465F"
+  color:"#FFFFFF"
    /]
 
-## Introduction
+ [var name:"currentValue" value:"" /]
 
-This is an Idyll post. It is generated via
-the file `index.idyll`. To compile this post using
-idyll, run the command `idyll` inside of this directory.
+ [div className:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
+  [button onClick:`currentValue = "17.02"`]17.02[/Button]
+  [button onClick:`currentValue = "17.12"`]17.12[/Button]
+  [button onClick:`currentValue = "17.14"`]17.14[/Button]
+  [button onClick:`currentValue = "17.15"`]17.15[/Button]
+  [button onClick:`currentValue = "17.16"`]17.16[/Button]
+  [button onClick:`currentValue = "17.17"`]17.17[/Button]
+  [button onClick:`currentValue = "17.33"`]17.33[/Button]
+  [button onClick:`currentValue = "17.36"`]17.36[/Button]
+  [button onClick:`currentValue = "17.37"`]17.37[/Button]
+  [button onClick:`currentValue = "17.40"`]17.40[/Button]
+ [/div]
 
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
+ [br /]
 
-Idyll posts are designed to support interaction and
-data-driven graphics.
+ [div className:"problemBody" fullWidth:true padding-left:"100%"]
+   [Switch value:currentValue]
+     [Default]
+       [div className:"centerHead"]
 
-[var name:"state" value:0 /]
-[CustomD3Component className:"d3-component" state:state /]
-[button onClick:`state++`]
-  Click Me.
-[/button]
+       [div className:"mainNote"]
+        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 6.
+       [/div]
 
-Configuration can be done via the `idyll` field in `package.json`.
+         ## Problem Pages
 
-## Markup
+           Click the tabs to go to a specific homework problem page.
+           The problems are included in Homework 1 through WileyPlus. Work
+           through the problems by hand first using the given information, key equations,
+           and references listed. Then, try to use Python to solve the same problem.
 
-Idyll is based on Markdown.
+           Each problem page has the following sections:
 
-You can use familiar syntax
-to create **bold** (`**bold**` ) and *italic* (``*italic*` ) styles,
+           #### Skills involved
 
-* lists
-* of
-* items,
+           The skills involved in the particular homework problem will be tagged
+           with other problems in the course that deal with the same content
+           (*TO DO*). Click these to find more problems in these areas. It may
+           help to look at the Resources page for videos and simulations that
+           target specific skills these homework problems involve.
 
-```
-* lists
-* of
-* items,
-```
+           #### Problem
 
-1. and numbered
-2. lists
-3. of items,
+           The problems will be listed as they are seen in WileyPlus. Note that
+           the values will change for *each* problem.
 
+           This section also includes a computation section.
 
-```
-1. and numbered
-2. lists
-3. of items,
-```
+           #### Important information
 
-in addition to [hyperlinks](https://idyll-lang.org) and images:
+           To solve the homework problems, there are several areas that need to
+           be understood. To help, the following sections are available:
 
-![quill](static/images/quill.svg)
+           [ul]
+             [li] **Objective**: summarizes what the question is asking. [/li]
+             [li] **Key Equations**: lists the equations that may help in solving
+             and understanding the problem. [/li]
+             [li] **References**: lists the pages of the book where
+             explanations of the concepts in the homework can be found. It may
+             also include outside references that may be useful. [/li]
+             [li] **Things to Think About**: covers tricky aspects of the
+             question that may lead to incorrect answers. Thinking about these
+             may help in solving the question faster. [/li]
+           [/ul]
 
-```
-![quill](static/images/quill.svg)
-```
+         ## Resources
 
-## Components
+           Need help doing physics problems in Python? Visit the Computational Activities pages.
 
-Components can be embedded using a bracket syntax:
+           Need help doing the physics problems? Check out the resources section
+           on each problem page for specific text entries in Matter and Interactions
+           and any outside resource that may help in solving them. Visit the resources
+           page for videos and simulations about the specific physics problem.
 
-```
-[Range /]
-```
+         [hr /]
 
-and can contain nested content:
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
 
-```
-[Equation]e = mc^{2}[/Equation]
-```
+       [/div]
+     [/Default]
+     [Case test:"17.02"]
+       [div className:"centerHead pBwithAside"]
 
-Components accept properties:
+         ## 17.02
 
-```
-[Range value:x min:0 max:1 /]
-```
+         [hr /]
 
-that can be bound to variables to achieve interactivity (more in next section).
+         ### Problem
 
+            The vectors [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
+            both lie in the zx plane. The vector [Equation]\vec{c}[/Equation] is equal
+            to [Equation]\vec{a} \times \vec{b}[/Equation]. Which of these statements about
+            [Equation]\vec{c}[/Equation] must be true?
 
-A variety of components are included by default. See [all the available components](https://idyll-lang.org/docs/components/). You can also use any html tag, for example: `[div] A div! [/div]`.
+        [hr /]
 
-To create your own, add it to the `components/` folder. There are examples of how to use Idyll with React and D3 based components already included.
+         ### Computation
 
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
 
+         [ul]
+           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+           [li]Click the Run button to output the answers![/li]
+           [li]If using numbers from this page, make sure to switch them with the numbers
+           given in WileyPLUS before submitting the answers.[/li]
+         [/ul]
 
-## Interactivity
+         [br /]
 
-Here is how you can instantiate a variable and bind it to a component:
+         *Insert Trinket*
 
-[var name:"exampleVar" value:5 /]
+         [/div]
+         [div className:"extraInfo centerHead"]
 
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
+         ### About this Problem
 
-```
-[var name:"exampleVar" value:5 /]
+         [hr /]
 
-[Range min:0 max:10 value:exampleVar /]
-[Display value:exampleVar /]
-```
+           [var name:"extraInfo321" value:"" /]
 
-## Learn More
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+           [/div]
 
-To learn more see the documentation at [https://idyll-lang.org/docs/](https://idyll-lang.org/docs/),
-join our [chatroom](https://gitter.im/idyll-lang/Lobby), or see the project on [GitHub](https://github.com/idyll-lang/idyll).
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo321]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Vectors: Direction[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+               Find the sign of the source charge, the direction of the electric
+               force on the charge, the electric field, the electric force, and the direction
+               of the electric force.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+                 [ul]
+                   [li] Diagram of point charge and electric field.[/li]
+                   [li] Charge of particle placed at a given location.[/li]
+                   [li] Electric field at location D. [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+                   [Equation text-align:center]
+                   \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                   [/equation]
+
+                   [br /]
+                   [br /]
+
+                   [Equation]
+                   \vec{F} = q\vec{E}
+                   [/Equation]
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+                 [ul]
+                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                 [/ul]
+                [/div]
+
+             [/Case]
+          [/Switch]
+         [/div]
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+     [/Case]
+     [Case test:"17.12"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.12
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.12.png" title:"Problem 17.12 - Matter and Interactions" /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           [br /]
+
+           *Insert Trinket*
+
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+         ### About this Problem
+
+         [hr /]
+
+           [var name:"extraInfo330" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo330]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Vectors: Direction[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+             Find the magnitude of the electric field due to the proton at the
+             location of the electron.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+
+                  [ul]
+                    [li] A hydrogen atom is in its ground state.[/li]
+                    [li] Average distance between the electron and proton.[/li]
+                  [/ul]
+
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+                   [Equation text-align:center]
+                    \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                   [/equation]
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
+                    [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
+                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                  [/ul]
+
+                [/div]
+
+             [/Case]
+          [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"17.14"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.14
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.14.png" title:"Problem 17.14 - Matter and Interactions" /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           *Insert Trinket*
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+           [var name:"extraInfo330" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo330]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Force[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+             Find the magnitude of the electric field due to the proton at the
+             location of the electron.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+
+                  [ul]
+                    [li] Proton instantaneous acceleration. [/li]
+                  [/ul]
+
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+
+                   [Equation text-align:center]
+                    \vec{F} = q\vec{E}
+                   [/equation]
+
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                    [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                  [/ul]
+
+                [/div]
+
+             [/Case]
+          [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"17.15"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.15
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.15.png" title:"Problem 17.15 - Matter and Interactions" /]
+
+           #### Questions
+
+            1. What is the magnitude and direction of the cross product [Equation]\vec{C} \times \vec{D}[/Equation]?
+            [br /]
+            2. What is the cross product [Equation]\vec{D} \times \vec{C}[/Equation]?
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+           ideas on how to solve this problem with python. Reveal the answer by
+           clicking the button below to see if you got the right answer!
+
+           Note that the SciPy constants are more exact than the constants listed in the book.
+           Try calculating the answer with the SciPy constants and the constants listed in
+           Matter and Interactions to see the differences in the answer.
+
+           [br /]
+
+           *Insert Trinket*
+       [/div]
+       [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+           [var name:"extraInfo330" value:"" /]
+
+           [div className:"tabLookProbs" fullWidth:true]
+            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+           [/div]
+
+           [br /]
+           [hr fullWidth:true /]
+           [br /]
+
+           [Switch value:extraInfo330]
+             [Default]
+               [div className:"extraInfoBullets"]
+
+                 [ul]
+                   [li]Force[/li]
+                   [li]Vectors: Fields[/li]
+                   [li]Electric field: Due to Point Charges[/li]
+                 [/ul]
+
+               [/div]
+
+             [/Default]
+             [Case test:"Objective"]
+
+             Find the magnitude of the electric field due to the proton at the
+             location of the electron.
+
+             [/Case]
+             [Case test:"GivenInfo"]
+                [div className: "extraInfoBullets"]
+
+                  [ul]
+                    [li] Proton instantaneous acceleration. [/li]
+                  [/ul]
+
+                [/div]
+
+             [/Case]
+             [Case test:"KeyEq"]
+
+                 [div className:"equations"]
+
+                   [Equation text-align:center]
+                    \vec{F} = q\vec{E}
+                   [/equation]
+
+                 [/div]
+
+             [/Case]
+             [Case test:"Ref"]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                    [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                  [/ul]
+
+                [/div]
+
+             [/Case]
+          [/Switch]
+       [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"17.16"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.16
+
+         [hr /]
+
+         ### Problem
+
+          If [Equation]\vec{r} = \langle 369, -432, 363 \rangle[/Equation] m/s and
+          [Equation]\hat{r} = \langle 0.577, 0.577, -0.577 \rangle[/Equation] m, what
+          is [Equation]\vec{r} \times \hat{r}[/Equation]?
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"17.17"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.17
+
+         [hr /]
+
+         ### Problem
+
+          What is [Equation]\langle 4, 0, -2 \rangle \times \langle -6, 3, 3 \rangle[/Equation]?
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"17.33"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.33
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.33.png" title:"Problem 17.33 - Matter and Interactions" /]
+
+           #### Questions
+
+            1. What is the direction of conventional current in this wire?
+            [br /]
+            2. How long is segment 1?
+            [br /]
+            3. What is the magnitude of the vector [Equation]\Delta \vec{l}[/Equation] for segment 1?
+            [br /]
+            4. What is the vector [Equation]\Delta \vec{l}[/Equation] for segment 1?
+            [br /]
+            5. What is the location of the center of segment 1?
+            [br /]
+            6. What is the vector [Equation]\vec{r}[/Equation] from source to observation location, for segment 1?
+            [br /]
+            7. What is the unit vector [Equation]\hat{r}[/Equation]?
+            [br /]
+            8. What is [Equation]\Delta \vec{l} \times \hat{r}[/Equation]?
+            [br /]
+            9. Calculate the magnetic field [Equation]\Delta \vec{B}[/Equation] at the observation location due only to the current in segment 1 of the wire.
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"17.36"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.36
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.36.png" title:"Problem 17.36 - Matter and Interactions" /]
+
+           #### Questions
+
+            1. While current is running through the coil, what direction does the compass needle point?
+            [br /]
+            2. Which of the statements about how to model the coil are reasonable?
+            [br /]
+            3. A current of 0.68 amperes runs through the wires. If L = 8.1 cm, and d = 2.33 cm,
+            what is the magnitude of the magnetic field at the location of the compass, due to the coil?
+            [br /]
+            4. What is the approximate magnitude of the compass deflection, in degrees?
+
+         [hr /]
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"17.37"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.37
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.37.png" title:"Problem 17.37 - Matter and Interactions" /]
+
+           #### Questions
+
+             1. What are the magnitude and direction of the magnetic field due to the wire at Q
+             (location [Equation]\langle -w, 0, 0 \rangle[/Equation])?
+             [br /]
+             2. What is the direction of the magnetic field at location P?
+             [br /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"17.40"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 17.40
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p17.40.png" title:"Problem 17.40 - Matter and Interactions" /]
+
+           #### questions
+
+             1. Calculate the maximum magnitude of the alternating magnetic field, d = 30 cm away from the
+             center of a long straight power cord that carries a current of 15 amperes. Both wires are at the
+             same height as the observation location.
+             [br /]
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+   [/Switch]
+ [/div]
