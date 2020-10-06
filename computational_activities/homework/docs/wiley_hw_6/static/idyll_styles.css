@@ -1286,3 +1286,8 @@ img {
   font-style:italic;
   text-align: center;
 }
+
+.compStepper p {
+  vertical-align: top;
+  background-color: white;
+}

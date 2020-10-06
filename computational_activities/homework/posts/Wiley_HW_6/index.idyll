@@ -485,22 +485,177 @@
 
           [img src:"./static/images/p20.31.png" title:"Problem 20.31 - Matter and Interactions" /]
 
-          #### questions
+          #### Questions
+
+          [div className: "hwQuestions"]
 
             1. Which accelerating plate is positive?
             [br /]
+            // Set up question answers
+            [var name:"showResult2031" value:false /]
+            [var name:"showAnswer2031" value:false /]
+            [var name:"radioVal2031" value:"null" /]
+
+            [Radio value:radioVal2031 onClick:`showResult2031=false,showAnswer2031=false` options:`[{value:"a",label:"a) Left"}]`/]
+            [Radio value:radioVal2031 onClick:`showResult2031=false,showAnswer2031=false` options:`[{value:"b",label:"b) Right"}]`/]
+            [Radio value:radioVal2031 onClick:`showResult2031=false,showAnswer2031=false` options:`[{value:"c",label:"c) Top"}]`/]
+            [Radio value:radioVal2031 onClick:`showResult2031=false,showAnswer2031=false` options:`[{value:"d",label:"d) Bottom"}]`/]
+
+
+            [Button onClick:`showResult2031=true`]
+              Check Answer
+            [/Button]
+
+            [Conditional if:`showResult2031`]
+              [Conditional if:`radioVal2031 === "a"`]
+                [hr /]
+                Correct!
+              [/Conditional]
+              [Conditional if: `radioVal2031 !="a"`]
+                  [hr /]
+                  Incorrect. Refer to the following image from Matter and Interactions. What would happen if you put
+                  a proton between the plates? What about an electron?
+
+                  [br /]
+
+                  [img src:"./static/images/figure15.29.png" title:"Figure 15.29 - Matter and Interactions" /]
+
+                  Still need help? Click the hint below question 2.
+              [/Conditional]
+            [/Conditional]
+
+          [/div]
+          [br /]
+          [div className: "hwQuestions"]
+
             2. Which deflection plate is positive?
             [br /]
-            3. What is the direction of the magnetic field inside the spectrometer?
+            // Set up question answers
+            [var name:"showResult2031_2" value:false /]
+            [var name:"showAnswer2031_2" value:false /]
+            [var name:"radioVal2031_2" value:"null" /]
+
+            [Radio value:radioVal2031_2 onClick:`showResult2031_2=false,showAnswer2031_2=false` options:`[{value:"a",label:"a) Left"}]`/]
+            [Radio value:radioVal2031_2 onClick:`showResult2031_2=false,showAnswer2031_2=false` options:`[{value:"b",label:"b) Right"}]`/]
+            [Radio value:radioVal2031_2 onClick:`showResult2031_2=false,showAnswer2031_2=false` options:`[{value:"c",label:"c) Top"}]`/]
+            [Radio value:radioVal2031_2 onClick:`showResult2031_2=false,showAnswer2031_2=false` options:`[{value:"d",label:"d) Bottom"}]`/]
+
+
+            [Button onClick:`showResult2031_2=true`]
+              Check Answer
+            [/Button]
+
+            [Conditional if:`showResult2031_2`]
+              [Conditional if:`radioVal2031_2 === "c"`]
+                [hr /]
+                Correct!
+              [/Conditional]
+              [Conditional if: `radioVal2031_2 !="c"`]
+                  [hr /]
+                  Incorrect. Refer to the following image from Matter and Interactions. What would happen if you put
+                  a proton between the plates? What about an electron?
+
+                  [br /]
+
+                  [img src:"./static/images/figure15.29.png" title:"Figure 15.29 - Matter and Interactions" /]
+
+                  Still need help? Click the hint below question 2.
+              [/Conditional]
+            [/Conditional]
+
+          [/div]
+          [br /]
+          [div className:"hintButtons"]
+
+            //Hint 1
+            [var name:"clickHint_2031" value:false /]
+
+            [Button onClick:`clickHint_2031 = !clickHint_2031`]
+              [Display value:`clickHint_2031 ? 'Hide Hint' : 'Hint'` /]
+            [/Button]
+
             [br /]
+
+            [Conditional if: `clickHint_2031`]
+              [hr /]
+              To understand these questions, check out the following videos explaining
+              the electric field between parallel plates (i.e. capacitors) and how a charge
+              may move between them:
+              [br /]
+              [br /]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/1WiGEXP1lKQ" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+              [br /]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/XSXKk_A3xUM" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+              [br /]
+              [hr /]
+            [/Conditional]
+
+          [/div]
+          [div className: "hwQuestions"]
+
+            3. What is the direction of the magnetic field inside the spectrometer?
+
+            To understand this question, complete the simulation below by moving the sliders
+            to the following values:
+
+            [ul]
+              [li]Mass = 2.5 kg[/li]
+              [li]Charge = 1.5 C[/li]
+              [li]Speed = 2.0 m/s[/li]
+              [li]Magnetic field, B = 0 T[/li]
+              [li]Electric field, E = 0 N/C[/li]
+              [li]Magnetic field, B2 = 2 T[/li]
+            [/ul]
+            [br /]
+            Press the arrow on the upper right to play the simulation.
+            [br /]
+            [iframe width:"1500" height:"800" src:"https://iwant2study.org/lookangejss/00workshop/2017FelixPaco/day4/ejss_model_massspectrometerv10/massspectrometerv10_Simulation.xhtml" frameborder:"0"][/iframe]
+            [br /]
+            Which direction did the ion travel? Based on this information, what direction is the magnetic field in the current problem?
+            [br /]
+            // Set up question answers
+            [var name:"showResult2031_3" value:false /]
+            [var name:"showAnswer2031_3" value:false /]
+            [var name:"radioVal2031_3" value:"null" /]
+
+            [Radio value:radioVal2031_3 onClick:`showResult2031_3=false,showAnswer2031_3=false` options:`[{value:"a",label:"a) To the left"}]`/]
+            [Radio value:radioVal2031_3 onClick:`showResult2031_3=false,showAnswer2031_3=false` options:`[{value:"b",label:"b) To the right"}]`/]
+            [Radio value:radioVal2031_3 onClick:`showResult2031_3=false,showAnswer2031_3=false` options:`[{value:"c",label:"c) Out of the page"}]`/]
+            [Radio value:radioVal2031_3 onClick:`showResult2031_3=false,showAnswer2031_3=false` options:`[{value:"d",label:"d) Into the page"}]`/]
+
+
+            [Button onClick:`showResult2031_3=true`]
+              Check Answer
+            [/Button]
+
+            [Conditional if:`showResult2031_3`]
+              [Conditional if:`radioVal2031_3 === "d"`]
+                [hr /]
+                Correct!
+              [/Conditional]
+              [Conditional if: `radioVal2031_3 !="d"`]
+                  [hr /]
+                  Incorrect. Try changing the values in the simulation. Note that the X values mean into the page
+                  and the bullseye values mean out of the page.
+                  [br /]
+              [/Conditional]
+            [/Conditional]
+            [br /]
+          [/div]
+          [br /]
+          [div className: "hwQuestions"]
             4. Determine the appropriate numerical values of [Equation]\Delta V_{1}[/Equation] and
             [Equation]\Delta V_{2}[/Equation] for [Equation]^{12}C[/Equation]. Carry out your
             intermediate calculations algebraically, so that you can use the algebraic results in
             the next part.
             [br /]
+          [/div]
+          [br /]
+          [div className: "hwQuestions"]
             5. Determine the appropriate numerical values of [Equation]\Delta V_{1}[/Equation] and
             [Equation]\Delta V_{2}[/Equation] for [Equation]^{14}C[/Equation].
-
+            [br /]
+          [/div]
         [hr /]
 
         ### Computation
@@ -511,7 +666,7 @@
          clicking the button below to see if you got the right answer!
 
          [ul]
-           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+           [li]View the slideshow and figure out the code as described, replacing values as necessary.[/li]
            [li]Click the Run button to output the answers![/li]
            [li]If using numbers from this page, make sure to switch them with the numbers
            given in WileyPLUS before submitting the answers.[/li]
@@ -519,7 +674,72 @@
 
          [br /]
 
-         *Insert Trinket*
+         [div className: "compStepper"]
+           [var name:"stepperIndex" value:0 /]
+           [Stepper currentStep:stepperIndex]
+            [Step]
+              [p]
+                ## Import Libraries
+              [/p]
+              [p]
+                The SciPy library contains common constants used in physics. A
+                list of scipy.constants is located [here](https://docs.scipy.org/doc/scipy/reference/constants.html)
+              [/p]
+              [p]
+                To import the specific constants module from SciPy, type:
+
+                `from scipy import constants`
+              [/p]
+            [/Step]
+            [Step]
+              [p]
+                ## Variables
+              [/p]
+              [p]
+                A variable can be defined in python by the following format:
+                [p]
+                  `variable = number`
+                [/p]
+              [/p]
+              [p]
+                Define each of the given variables in the problem.
+
+                Hint: These include the magnetic field, distance between the deflection
+                plates and the ion detector (w), and the distance between the deflection plates.
+              [/p]
+              [p]
+                The charge and mass of the particle can be defined through the
+                SciPy constants library. To use it, set a variable to `constants.[constant]`.
+              [/p]
+              [p]
+                The SciPy library has a few different names for some constants. For the elementary
+                charge (e), or [Equation]1.6 \times 10^{-19} C[/Equation], `e` or `elementary_charge`
+                can be used:
+
+                `q = constants.e` or `q = constants.elementary_charge`
+              [/p]
+              [p]
+                When a value isn't as common in the SciPy library, `constants.value()` can be used with
+                certain attributes. To define the mass of a particle, use the following line:
+
+                `m = constants.value(u'atomic mass constant')`
+              [/p]
+            [/Step]
+            [Step]
+              [p]
+                ## Calculations
+              [/p]
+            [/Step]
+            [Step]
+              [p]
+                ## Print
+              [/p]
+            [/Step]
+            [StepperControl /]
+           [/Stepper]
+         [/div]
+
+         [iframe src:"https://trinket.io/embed/python3/2981a2be59" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
        [/div]
        [div className:"extraInfo centerHead"]
