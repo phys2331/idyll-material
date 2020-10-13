@@ -110,29 +110,94 @@
          ### Problem
 
             The vectors [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
-            both lie in the zx plane. The vector [Equation]\vec{c}[/Equation] is equal
+            both lie in the yz plane. The vector [Equation]\vec{c}[/Equation] is equal
             to [Equation]\vec{a} \times \vec{b}[/Equation]. Which of these statements about
             [Equation]\vec{c}[/Equation] must be true?
 
-        [hr /]
+            [br /]
 
-         ### Computation
+            [hr /]
 
-         Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
+            Watch the following video and answer the questions below:
 
-         [ul]
-           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-           [li]Click the Run button to output the answers![/li]
-           [li]If using numbers from this page, make sure to switch them with the numbers
-           given in WileyPLUS before submitting the answers.[/li]
-         [/ul]
+            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/jpKcpsNGgFo" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
 
-         [br /]
+            [br /]
 
-         *Insert Trinket*
+            [div className: "hwQuestions"]
+              In this problem, [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
+              lie in the yz plane and, when crossed, equal [Equation]\vec{c}[/Equation]. Which
+              of these statements are correct?
+
+              [br /]
+
+              // Set up question answers
+              [var name:"showResult1702" value:false /]
+              [var name:"showAnswer1702" value:false /]
+              [var name:"radioVal1702" value:"null" /]
+
+              [Radio value:radioVal1702 onClick:`showResult1702=false,showAnswer1702=false` options:`[{value:"a",label:"a) The x and y components of vector c are zero."}]`/]
+              [Radio value:radioVal1702 onClick:`showResult1702=false,showAnswer1702=false` options:`[{value:"b",label:"b) The y and z components of vector c are zero."}]`/]
+              [Radio value:radioVal1702 onClick:`showResult1702=false,showAnswer1702=false` options:`[{value:"c",label:"c) The z and x components of vector c are zero."}]`/]
+
+              [Button onClick:`showResult1702=true`]
+                Check Answer
+              [/Button]
+
+              [Conditional if:`showResult1702`]
+                [Conditional if:`radioVal1702 === "b"`]
+                  [hr /]
+                  Correct!
+                [/Conditional]
+                [Conditional if: `radioVal1702 !="b"`]
+                    [hr /]
+                    Incorrect. Rewatch the video above and pay attention to the portion explaining where the vectors lie based on the planes.
+                    Check out the following image from xaktly.com:
+
+                    [br /]
+
+                    [img src:"./static/images/crossproduct.png" title:"Cross Product  - xaktly.com" /]
+                [/Conditional]
+              [/Conditional]
+
+            [/div]
+            [br /]
+            [div className: "hwQuestions"]
+              What if [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
+              lie in the xy plane?
+
+              [br /]
+
+              // Set up question answers
+              [var name:"showResult1702_2" value:false /]
+              [var name:"showAnswer1702_2" value:false /]
+              [var name:"radioVal1702_2" value:"null" /]
+
+              [Radio value:radioVal1702_2 onClick:`showResult1702_2=false,showAnswer1702_2=false` options:`[{value:"a",label:"a) The z and x components of vector c are zero."}]`/]
+              [Radio value:radioVal1702_2 onClick:`showResult1702_2=false,showAnswer1702_2=false` options:`[{value:"b",label:"b) The y and z components of vector c are zero."}]`/]
+              [Radio value:radioVal1702_2 onClick:`showResult1702_2=false,showAnswer1702_2=false` options:`[{value:"c",label:"c) The x and y components of vector c are zero."}]`/]
+
+              [Button onClick:`showResult1702_2=true`]
+                Check Answer
+              [/Button]
+
+              [Conditional if:`showResult1702_2`]
+                [Conditional if:`radioVal1702_2 === "c"`]
+                  [hr /]
+                  Correct!
+                [/Conditional]
+                [Conditional if: `radioVal1702_2 !="c"`]
+                    [hr /]
+                    Incorrect. Rewatch the video above and pay attention to the portion explaining where the vectors lie based on the planes.
+                    Check out the following image from xaktly.com:
+
+                    [br /]
+
+                    [img src:"./static/images/crossproduct.png" title:"Cross Product  - xaktly.com" /]
+                [/Conditional]
+              [/Conditional]
+
+            [/div]
 
          [/div]
          [div className:"extraInfo centerHead"]
@@ -141,27 +206,27 @@
 
          [hr /]
 
-           [var name:"extraInfo321" value:"" /]
+           [var name:"extraInfo1702" value:"" /]
 
            [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [button onClick:`extraInfo1702 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1702 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1702 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1702 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1702 = "Ref"`]References[/Button]
            [/div]
 
            [br /]
            [hr fullWidth:true /]
            [br /]
 
-           [Switch value:extraInfo321]
+           [Switch value:extraInfo1702]
              [Default]
                [div className:"extraInfoBullets"]
 
                  [ul]
                    [li]Vectors: Direction[/li]
-                   [li]Vectors: Fields[/li]
+                   [li]Vectors: Cross Products[/li]
                    [li]Electric field: Due to Point Charges[/li]
                  [/ul]
                [/div]
@@ -169,17 +234,14 @@
              [/Default]
              [Case test:"Objective"]
 
-               Find the sign of the source charge, the direction of the electric
-               force on the charge, the electric field, the electric force, and the direction
-               of the electric force.
+               Find correct statement about [Equation]\vec{c}[/Equation]
 
              [/Case]
              [Case test:"GivenInfo"]
                 [div className: "extraInfoBullets"]
                  [ul]
-                   [li] Diagram of point charge and electric field.[/li]
-                   [li] Charge of particle placed at a given location.[/li]
-                   [li] Electric field at location D. [/li]
+                   [li] Vectors [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation] lie in the same plane.[/li]
+                   [li] [Equation]\vec{c}[/Equation] is equal to [Equation]\vec{a} \times \vec{b}[/Equation].[/li]
                  [/ul]
                 [/div]
 
@@ -188,25 +250,15 @@
 
                  [div className:"equations"]
                    [Equation text-align:center]
-                   \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                   \vec{a} \times \vec{b} = \vec{c}
                    [/equation]
-
-                   [br /]
-                   [br /]
-
-                   [Equation]
-                   \vec{F} = q\vec{E}
-                   [/Equation]
                  [/div]
 
              [/Case]
              [Case test:"Ref"]
                 [div className:"extraInfoBullets"]
                  [ul]
-                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                   [li] The Vector Cross Product (Matter and Interactions, p. 419)[/li]
                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
                  [/ul]
                 [/div]
@@ -237,16 +289,14 @@
 
          [hr /]
 
-         ### Computation
+         #### Reference Pictures
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+         [img src:"./static/images/figure17.29.png" title:"Figure 17.29 - Matter and Interactions" /]
 
-           [br /]
+         [br /]
 
-           *Insert Trinket*
+         [img src:"./static/images/magfieldloop.png" title:"Magnetic Field of a Current Loop - RICE openstax CNX" /]
+
 
        [/div]
        [div className:"extraInfo centerHead"]
@@ -255,28 +305,27 @@
 
          [hr /]
 
-           [var name:"extraInfo330" value:"" /]
+           [var name:"extraInfo1712" value:"" /]
 
            [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+            [button onClick:`extraInfo1712 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1712 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1712 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1712 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1712 = "Ref"`]References[/Button]
            [/div]
 
            [br /]
            [hr fullWidth:true /]
            [br /]
 
-           [Switch value:extraInfo330]
+           [Switch value:extraInfo1712]
              [Default]
                [div className:"extraInfoBullets"]
 
                  [ul]
                    [li]Vectors: Direction[/li]
-                   [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Magnetic Fields and Current[/li]
                  [/ul]
 
                [/div]
@@ -284,16 +333,14 @@
              [/Default]
              [Case test:"Objective"]
 
-             Find the magnitude of the electric field due to the proton at the
-             location of the electron.
+             Find the direction of the magnetic field at each of the given points.
 
              [/Case]
              [Case test:"GivenInfo"]
                 [div className: "extraInfoBullets"]
 
                   [ul]
-                    [li] A hydrogen atom is in its ground state.[/li]
-                    [li] Average distance between the electron and proton.[/li]
+                    [li] Conventional current is flowing in a ring (direction indicated).[/li]
                   [/ul]
 
                 [/div]
@@ -303,7 +350,7 @@
 
                  [div className:"equations"]
                    [Equation text-align:center]
-                    \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                    B_{loop} = \frac{\mu_{0}}{4\pi} \frac{2 \pi R^{2}I}{(z^{2} + R^{2})^{3/2}}
                    [/equation]
                  [/div]
 
@@ -312,9 +359,7 @@
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
-                    [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
-                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                    [li] 17.8 A Circular Loop of Wire (Matter and Interactions, p. 686)[/li]
                   [/ul]
 
                 [/div]
@@ -345,20 +390,6 @@
 
          [hr /]
 
-         ### Computation
-
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
-
-           Note that the SciPy constants are more exact than the constants listed in the book.
-           Try calculating the answer with the SciPy constants and the constants listed in
-           Matter and Interactions to see the differences in the answer.
-
-           [br /]
-
-           *Insert Trinket*
        [/div]
        [div className:"extraInfo centerHead"]
 
@@ -459,7 +490,16 @@
 
             1. What is the magnitude and direction of the cross product [Equation]\vec{C} \times \vec{D}[/Equation]?
             [br /]
+            [br /]
+            **Hint** - Remember the cross product equation: [Equation]\vec{a} \times \vec{b} = |\vec{a}||\vec{b}| sin(\theta)[/Equation]
+            [br /]
+            [br /]
             2. What is the cross product [Equation]\vec{D} \times \vec{C}[/Equation]?
+            [br /]
+            [br /]
+            **Hint** - Recall your answer for B and note that this answer is in vector form.
+            Also remember that the product of the cross does not lie in the same plane.
+            [br /]
          [hr /]
 
          ### Computation
@@ -475,7 +515,8 @@
 
            [br /]
 
-           *Insert Trinket*
+           [iframe src:"https://trinket.io/embed/python3/11aa8f4475" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
        [/div]
        [div className:"extraInfo centerHead"]
 
@@ -570,7 +611,7 @@
 
          ### Problem
 
-          If [Equation]\vec{r} = \langle 369, -432, 363 \rangle[/Equation] m/s and
+          If [Equation]\vec{v} = \langle 369, -432, 363 \rangle[/Equation] m/s and
           [Equation]\hat{r} = \langle 0.577, 0.577, -0.577 \rangle[/Equation] m, what
           is [Equation]\vec{r} \times \hat{r}[/Equation]?
 
@@ -584,15 +625,33 @@
           clicking the button below to see if you got the right answer!
 
           [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `import numpy as np`[/li]
+                [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
+              [/ul]
+            [li]Vectors[/li]
+              [ul]
+                [li]Assign arrays to `v_vec` and `r_hat` variables.[/li]
+                [li]Example: `v_vec = np.array([x, y, z])`[/li]
+                [li]Note: replace x, y, and z with the components given in the problem.[/li]
+              [/ul]
+            [li]Cross `v_vec` and `r_hat`[/li]
+              [ul]
+                [li]Set a variable (vr) equal to the cross. This can be done with `np.cross(vec1, vec2)`.[/li]
+                [li]Example: `vr = np.cross(vec1, vec2)`[/li]
+              [/ul]
+            [li]Print[/li]
+              [ul]
+                [li]Print the answer using `print()`[/li]
+                [li]Example: print(vr)[/li]
+              [/ul]
+            [li]Run the code.[/li]
           [/ul]
 
           [br /]
 
-          *Insert Trinket*
+          [iframe src:"https://trinket.io/embed/python3/f26d19f119" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -601,37 +660,34 @@
 
           [hr /]
 
-            [var name:"extraInfo321" value:"" /]
+            [var name:"extraInfo1716" value:"" /]
 
             [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+             [button onClick:`extraInfo1716 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo1716 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo1716 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo1716 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo1716 = "Ref"`]References[/Button]
             [/div]
 
             [br /]
             [hr fullWidth:true /]
             [br /]
 
-            [Switch value:extraInfo321]
+            [Switch value:extraInfo1716]
               [Default]
                 [div className:"extraInfoBullets"]
 
                   [ul]
                     [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
+                    [li]Vectors: Cross Product[/li]
                   [/ul]
                 [/div]
 
               [/Default]
               [Case test:"Objective"]
 
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
+                Find the cross product of the given vectors.
 
               [/Case]
               [Case test:"GivenInfo"]
@@ -647,26 +703,13 @@
               [Case test:"KeyEq"]
 
                   [div className:"equations"]
-                    [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-                    [/equation]
 
-                    [br /]
-                    [br /]
-
-                    [Equation]
-                    \vec{F} = q\vec{E}
-                    [/Equation]
                   [/div]
 
               [/Case]
               [Case test:"Ref"]
                  [div className:"extraInfoBullets"]
                   [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
                     [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
                   [/ul]
                  [/div]
@@ -705,15 +748,33 @@
           clicking the button below to see if you got the right answer!
 
           [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `import numpy as np`[/li]
+                [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
+              [/ul]
+            [li]Vectors[/li]
+              [ul]
+                [li]Assign arrays to `vec1` and `vec2` variables.[/li]
+                [li]Example: `vec1 = np.array([x, y, z])`[/li]
+                [li]Note: replace x, y, and z with the components given in the problem.[/li]
+              [/ul]
+            [li]Cross `vec1` and `vec2`[/li]
+              [ul]
+                [li]Set a variable equal to the cross. This can be done with `np.cross(vec1, vec2)`.[/li]
+                [li]Example: `vec3 = np.cross(vec1, vec2)`[/li]
+              [/ul]
+            [li]Print[/li]
+              [ul]
+                [li]Print the answer using `print()`[/li]
+                [li]Example: print(vec3)[/li]
+              [/ul]
+            [li]Run the code.[/li]
           [/ul]
 
           [br /]
 
-          *Insert Trinket*
+          [iframe src:"https://trinket.io/embed/python3/d04adbf302" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -742,25 +803,20 @@
 
                   [ul]
                     [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
+                    [li]Vectors: Cross Product[/li]
                   [/ul]
                 [/div]
 
               [/Default]
               [Case test:"Objective"]
 
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
+                Find the cross product of the given vectors.
 
               [/Case]
               [Case test:"GivenInfo"]
                  [div className: "extraInfoBullets"]
                   [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
+                    [li] Vectors 1 and 2.[/li]
                   [/ul]
                  [/div]
 
@@ -768,26 +824,13 @@
               [Case test:"KeyEq"]
 
                   [div className:"equations"]
-                    [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-                    [/equation]
 
-                    [br /]
-                    [br /]
-
-                    [Equation]
-                    \vec{F} = q\vec{E}
-                    [/Equation]
                   [/div]
 
               [/Case]
               [Case test:"Ref"]
                  [div className:"extraInfoBullets"]
                   [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
                     [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
                   [/ul]
                  [/div]
@@ -846,15 +889,63 @@
           clicking the button below to see if you got the right answer!
 
           [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `import numpy as np`[/li]
+                  [ul]
+                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
+                  [/ul]
+                [li]Add: `from scipy import constants`[/li]
+                [ul]
+                  [li]Why? This phrase means that we are just accessing the constants library. This will give us the
+                  magnetic constant for the magnetic field equation.[/li]
+                [/ul]
+              [/ul]
+            [li]Given Information[/li]
+              [ul]
+                [li]Assign values to the following variables:[/li]
+                  [ul]
+                    [li]Length of the wire (`L`)[/li]
+                    [li]Number of segments (`seg`)[/li]
+                    [li]Current (`I`)[/li]
+                  [/ul]
+                [li]Assign the observation location (A) to an array.[/li]
+                  [ul]
+                    [li]Example: `A = np.array([x, y, z])`[/li]
+                    [li]Note: replace x, y, and z with the components given in the problem.[/li]
+                  [/ul]
+              [/ul]
+            [li]Length of segment[/li]
+              [ul]
+                [li]Use the length and number of segment variables to find the length of 1 segment.[/li]
+                [li]Example: `seg_length = L/seg`[/li]
+              [/ul]
+            [li]Vec of a segment[/li]
+              [ul]
+                [li]Set `seg_vec` equal to a NumPy array.[/li]
+                  [ul]
+                    [li]Example: `seg_vec = np.array([x, y, z])`[/li]
+                    [li]Note: Replace x, y, and z with values derived from Part 2.[/li]
+                    [li]Hint: Will the y and z components be positive, negative, or 0? What should x be?[/li]
+                  [/ul]
+                [li]Find the magnitude of a segment[/li]
+                  [ul]
+                    [li]Use `np.linalg.norm(seg_vec)` to find the magnitude of a vector.[/li]
+                    [li]Example: `seg_vec_mag = np.linalg.norm(seg_vec)`[/li]
+                  [/ul]
+              [/ul]
+            [li]Location of the center of the segment[/li]
+            [li]r vector from source to observation[/li]
+            [li]Calculate `r_hat`[/li]
+            [li]Calculate dl cross `r_hat`[/li]
+            [li]Calculate the magnetic field at observation location[/li]
+            [li]Print[/li]
+            [li]Run the code.[/li]
           [/ul]
 
           [br /]
 
-          *Insert Trinket*
+          [iframe src:"https://trinket.io/embed/python3/b0755f1034" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
         [/div]
         [div className:"extraInfo centerHead"]
