@@ -23,6 +23,8 @@
   [button onClick:`currentValue = "17.36"`]17.36[/Button]
   [button onClick:`currentValue = "17.37"`]17.37[/Button]
   [button onClick:`currentValue = "17.40"`]17.40[/Button]
+  [button onClick:`currentValue = "20.56"`]20.56[/Button]
+
  [/div]
 
  [br /]
@@ -36,7 +38,7 @@
        [div className:"centerHead"]
 
        [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 6.
+        Please complete the [a href:"https://forms.gle/5eqW71596eGXN5LF8" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 7.
        [/div]
 
          ## Problem Pages
@@ -391,34 +393,36 @@
          [hr /]
 
        [/div]
+
+       Hint: check out this article from Khan Academy about the right-hand rules: [article](https://www.khanacademy.org/test-prep/mcat/physical-processes/magnetism-mcat/a/using-the-right-hand-rule)
+
        [div className:"extraInfo centerHead"]
 
           ### About this Problem
 
           [hr /]
 
-           [var name:"extraInfo330" value:"" /]
+           [var name:"extraInfo1714" value:"" /]
 
            [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+            [button onClick:`extraInfo1714 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1714 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1714 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1714 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1714 = "Ref"`]References[/Button]
            [/div]
 
            [br /]
            [hr fullWidth:true /]
            [br /]
 
-           [Switch value:extraInfo330]
+           [Switch value:extraInfo1714]
              [Default]
                [div className:"extraInfoBullets"]
 
                  [ul]
-                   [li]Force[/li]
-                   [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Magnetic field direction[/li]
+                   [li]Right-hand rule[/li]
                  [/ul]
 
                [/div]
@@ -426,15 +430,15 @@
              [/Default]
              [Case test:"Objective"]
 
-             Find the magnitude of the electric field due to the proton at the
-             location of the electron.
+             Find the direction of the magnetic field at two places.
 
              [/Case]
              [Case test:"GivenInfo"]
                 [div className: "extraInfoBullets"]
 
                   [ul]
-                    [li] Proton instantaneous acceleration. [/li]
+                    [li] Rectangular coil of wire with a current. [/li]
+                    [li] Two observation points inside and outside of the coil.[/li]
                   [/ul]
 
                 [/div]
@@ -444,9 +448,6 @@
 
                  [div className:"equations"]
 
-                   [Equation text-align:center]
-                    \vec{F} = q\vec{E}
-                   [/equation]
 
                  [/div]
 
@@ -455,9 +456,7 @@
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
-                    [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] Magnetic Field (Matter and Interactions, p. 673)[/li]
                   [/ul]
 
                 [/div]
@@ -509,9 +508,44 @@
            ideas on how to solve this problem with python. Reveal the answer by
            clicking the button below to see if you got the right answer!
 
-           Note that the SciPy constants are more exact than the constants listed in the book.
-           Try calculating the answer with the SciPy constants and the constants listed in
-           Matter and Interactions to see the differences in the answer.
+          [ul]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `import numpy as np`[/li]
+                  [ul]
+                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
+                  [/ul]
+                [li]Add: `import math`[/li]
+                  [ul]
+                    [li]Why? We need to use `math.sin` and `math.radians`.[/li]
+                  [/ul]
+              [/ul]
+            [li]Variables[/li]
+              [ul]
+                [li]Assign values to the following variables.[/li]
+                  [ul]
+                    [li]Vector C (`C_mag`)[/li]
+                    [li]Vector D (`D_mag`)[/li]
+                    [li]Angle of D from axis (`theta`)[/li]
+                    [li]Example: `C_mag = 5`[/li]
+                  [/ul]
+              [/ul]
+            [li]Cross C x D[/li]
+              [ul]
+                [li]Remember that the cross product can be found with [Equation]|\vec{A}||\vec{B}|sin\theta[/Equation].[/li]
+                [li]Set the equation above equal to a variable. Replace A, B, and [Equation]\theta[/Equation] with the C, D, and angle variables defined in the Variables section.[/li]
+                  [ul]
+                    [li]`math.sin` and `math.radians` will be used in this equation.[/li]
+                    [li]Example: `CD = C_mag * D_mag * math.sin(math.radians(theta))`[/li]
+                  [/ul]
+              [/ul]
+            [li]Print the answer.[/li]
+              [ul]
+                [li]Print the answer using `print()`[/li]
+                [li]Example: `print(CD)`[/li]
+              [/ul]
+            [li]Run the code.[/li]
+          [/ul]
 
            [br /]
 
@@ -524,28 +558,27 @@
 
           [hr /]
 
-           [var name:"extraInfo330" value:"" /]
+           [var name:"extraInfo1715" value:"" /]
 
            [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+            [button onClick:`extraInfo1715 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo1715 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo1715 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo1715 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo1715 = "Ref"`]References[/Button]
            [/div]
 
            [br /]
            [hr fullWidth:true /]
            [br /]
 
-           [Switch value:extraInfo330]
+           [Switch value:extraInfo1715]
              [Default]
                [div className:"extraInfoBullets"]
 
                  [ul]
-                   [li]Force[/li]
-                   [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Cross Product[/li]
+                   [li]Vectors[/li]
                  [/ul]
 
                [/div]
@@ -553,15 +586,15 @@
              [/Default]
              [Case test:"Objective"]
 
-             Find the magnitude of the electric field due to the proton at the
-             location of the electron.
+             Find the magnitude and direction of the cross product.
 
              [/Case]
              [Case test:"GivenInfo"]
                 [div className: "extraInfoBullets"]
 
                   [ul]
-                    [li] Proton instantaneous acceleration. [/li]
+                    [li] Magnitudes of [Equation]\vec{C}[/Equation] and [Equation]\vec{D}[/Equation]. [/li]
+                    [li] Angle between [Equation]\vec{D}[/Equation] and the x-axis.[/li]
                   [/ul]
 
                 [/div]
@@ -572,7 +605,7 @@
                  [div className:"equations"]
 
                    [Equation text-align:center]
-                    \vec{F} = q\vec{E}
+                    \vec{A} \times \vec{B} = |\vec{A}||\vec{B}|sin(\theta)
                    [/equation]
 
                  [/div]
@@ -582,9 +615,7 @@
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
-                    [li] 13.3 The Concept of "Electric Field" (Matter and Interactions, p. 515)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] The Vector Cross Product (Matter and Interactions, p. 419)[/li]
                   [/ul]
 
                 [/div]
@@ -613,7 +644,7 @@
 
           If [Equation]\vec{v} = \langle 369, -432, 363 \rangle[/Equation] m/s and
           [Equation]\hat{r} = \langle 0.577, 0.577, -0.577 \rangle[/Equation] m, what
-          is [Equation]\vec{r} \times \hat{r}[/Equation]?
+          is [Equation]\vec{v} \times \hat{r}[/Equation]?
 
          [hr /]
 
@@ -783,21 +814,21 @@
 
           [hr /]
 
-            [var name:"extraInfo321" value:"" /]
+            [var name:"extraInfo1717" value:"" /]
 
             [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+             [button onClick:`extraInfo1717 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo1717 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo1717 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo1717 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo1717 = "Ref"`]References[/Button]
             [/div]
 
             [br /]
             [hr fullWidth:true /]
             [br /]
 
-            [Switch value:extraInfo321]
+            [Switch value:extraInfo1717]
               [Default]
                 [div className:"extraInfoBullets"]
 
@@ -935,11 +966,48 @@
                   [/ul]
               [/ul]
             [li]Location of the center of the segment[/li]
+              [ul]
+                [li]Set the origin to an array[/li]
+                  [ul]
+                    [li]Example: `origin = np.array([0,0,0])`[/li]
+                  [/ul]
+                [li]Find the center using the origin and the segment vector variable (`seg_vec`)[/li]
+                  [ul]
+                    [li]Example: `cent_seg = (origin - seg_vec)/2`[/li]
+                  [/ul]
+              [/ul]
             [li]r vector from source to observation[/li]
+              [ul]
+                [li]Remember that r vector is observation minus the source.[/li]
+                [li]Set the equation equal to an `r_vec` variable using the `A` and `cent_seg` variables.[/li]
+              [/ul]
             [li]Calculate `r_hat`[/li]
+              [ul]
+                [li]Using `r_vec` and `np.linalg.norm(r_vec)`, set an `r_hat` variable equal to the equation.[/li]
+              [/ul]
             [li]Calculate dl cross `r_hat`[/li]
+              [ul]
+                [li]Use `np.cross(vec1, vec2)` to find the answer.[/li]
+                [li]Example: `np.cross(seg_vec, r_hat)`[/li]
+              [/ul]
             [li]Calculate the magnetic field at observation location[/li]
-            [li]Print[/li]
+              [ul]
+                [li]Like previous homework questions, use `(constants.mu_0/(4*np.pi))` for the magnetic field constant.[/li]
+                [li]Multiply the constant by the current and dl cross `r_hat` variables defined previously.[/li]
+                [li]Divide this by the magnitude of the r vector squared. Magnitude in Python can be found by `np.linalg.norm()`[/li]
+                [li]Example: `dB = (constants.mu_0)/(4*np.pi)) * ((I * dlr)/np.linalg.norm(r_vec)**2)`[/li]
+              [/ul]
+            [li]Print the answers[/li]
+              [ul]
+                [li]Example: `print("Part 2: Segment 4 is", seg_length, "m")`[/li]
+                [li]Example: `print("Part 3: The magnitude of dl for a segment is", seg_vec_mag, "m")`[/li]
+                [li]Example: `print("Part 4: dl for a segment is", seg_vec, "m")`[/li]
+                [li]Example: `print("Part 5: The center of the segment is", cent_seg, "m")`[/li]
+                [li]Example: `print("Part 6: The r vector is", r_vec, "m")`[/li]
+                [li]Example: `print("Part 7: The unit vector is", r_hat)`[/li]
+                [li]Example: `print("Part 8: dl cross r_hat is", dlr, "m")`[/li]
+                [li]Example: `print("Part 9: The magnetic field is", dB, "T")`[/li]
+              [/ul]
             [li]Run the code.[/li]
           [/ul]
 
@@ -954,45 +1022,59 @@
 
           [hr /]
 
-            [var name:"extraInfo321" value:"" /]
+            [var name:"extraInfo1733" value:"" /]
 
             [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+             [button onClick:`extraInfo1733 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo1733 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo1733 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo1733 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo1733 = "Ref"`]References[/Button]
             [/div]
 
             [br /]
             [hr fullWidth:true /]
             [br /]
 
-            [Switch value:extraInfo321]
+            [Switch value:extraInfo1733]
               [Default]
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
+                    [li]Current[/li]
+                    [li]Vectors[/li]
+                    [li]Unit Vectors[/li]
+                    [li]Cross Product[/li]
+                    [li]Magnetic Field[/li]
                   [/ul]
                 [/div]
 
               [/Default]
               [Case test:"Objective"]
 
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
+                Find the following information:
+
+                [ul]
+                  [li]Direction of the conventional current.[/li]
+                  [li]Length of a segment.[/li]
+                  [li]Vector magnitude of a segment.[/li]
+                  [li]Vector of a segment.[/li]
+                  [li]Location of the center of the segment.[/li]
+                  [li][Equation]\vec{r}[/Equation] from source to observation location.[/li]
+                  [li][Equation]\hat{r}[/Equation].[/li]
+                  [li][Equation]\Delta \vec{l} \times \hat{r}[/Equation].[/li]
+                  [li]Magnetic field at the observation location.[/li]
+                [/ul]
 
               [/Case]
               [Case test:"GivenInfo"]
                  [div className: "extraInfoBullets"]
                   [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
+                    [li] Direction of electron current along a wire.[/li]
+                    [li] Length of the wire.[/li]
+                    [li] Location of A. [/li]
+                    [li] Current.[/li]
+                    [li] Number of wire segments.[/li]
                   [/ul]
                  [/div]
 
@@ -1001,14 +1083,28 @@
 
                   [div className:"equations"]
                     [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                      \vec{r} = observation - source
                     [/equation]
 
                     [br /]
                     [br /]
 
                     [Equation]
-                    \vec{F} = q\vec{E}
+                      \hat{r} = \frac{\vec{r}}{|\vec{r}|}
+                    [/Equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                      \Delta \vec{l} \times \hat{r}
+                    [/Equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                      \Delta \vec{B} = \frac{\mu_{0}}{4\pi} \frac{I \Delta \vec{l} \times \hat{r}}{|\vec{r}|^{2}}
                     [/Equation]
                   [/div]
 
@@ -1016,11 +1112,8 @@
               [Case test:"Ref"]
                  [div className:"extraInfoBullets"]
                   [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                    [li] 17.6 The Biot-Savart Law for Currents (Matter and Interactions, p. 682)[/li]
+                    [li] Figure 17.26 (Matter and Interactions, p. 686)[/li]
                   [/ul]
                  [/div]
 
@@ -1061,6 +1154,84 @@
 
          [hr /]
 
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `import numpy as np`[/li]
+                  [ul]
+                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
+                  [/ul]
+                [li]Add: `from scipy import constants`[/li]
+                  [ul]
+                    [li]Why? This phrase means that we are just accessing the constants library. This will give us the
+                    magnetic constant for the magnetic field equation.[/li]
+                  [/ul]
+                [li]Add: `import math`[/li]
+                  [ul]
+                    [li]Why? In the magnetic field and compass deflection equations, we will want to use square root and arctan functions.
+                    While there are many ways to accomplish this, using `math.*func*` is quite simple.[/li]
+                  [/ul]
+              [/ul]
+            [li]Variables[/li]
+              [ul]
+                [li]Assign values to the following variables:[/li]
+                  [ul]
+                    [li]Length of each side (`L`)[/li]
+                    [li]Distance from the center (`d`)[/li]
+                    [li]Current (`I`)[/li]
+                    [li]Number of turns (`turns`)[/li]
+                    [li]Magnetic field of the Earth (`B_Earth`)[/li]
+                    [li]Example: `L = 0.086`[/li]
+                    [li]Note: Remember to convert to meters![/li]
+                  [/ul]
+              [/ul]
+            [li]Magnetic field magnitude[/li]
+              [ul]
+                [li]First - the equation needs to be understood! Hint: Look at section 17.7 for the Magnetic Field of a Straight Wire equation.[/li]
+                [li]Set this equation equal to a variable.[/li]
+                [li]To add the [Equation]\frac{\mu_{0}}{4\pi}[/Equation] constant, use SciPy and NumPy![/li]
+                  [ul]
+                    [li]Use: `(constants.mu_0/(4*np.pi))`[/li]
+                  [/ul]
+                [li]Multiply the constant (using `*`) by the rest of the equation.[/li]
+                  [ul]
+                    [li]This will include a square root. Use: `math.sqrt()`, inserting the appropriate math between the paraentheses.[/li]
+                  [/ul]
+                [li]Example: `B = (constants.mu_0)/4*np.pi))* (L*I)/(d * math.sqrt(d**2 + ((L/2)**2)))`[/li]
+                [li]We also want to include the turns of the triangle. We know that there are 3 turns of the coil, but we are calculating the length as one side.
+                What does this mean for the turns?[/li]
+                  [ul]
+                    [li]Multiply B by the number of turns (Hint: the number of given turns should be multiplied by another number to get the full contribution of the coil).[/li]
+                  [/ul]
+              [/ul]
+            [li]Compass deflection[/li]
+              [ul]
+                [li]Set a variable that will equal the deflection equation.[/li]
+                [li]Here, we will want to obtain the arctangent of the magnetic field of the coil over the magnetic field of the Earth.[/li]
+                  [ul]
+                    [li]To do this, use `math.degrees` and `math.atan`. Using `math.atan` alone will report the answer in radians.[/li]
+                    [li]Example: `theta = math.degrees(math.atan(B/B_Earth))`[/li]
+                  [/ul]
+              [/ul]
+            [li]Print[/li]
+              [ul]
+                [li]Use `print()` to print the answers for both (2 lines)[/li]
+                [li]Example: `print("The magnetic field is", B, "T")`[/li]
+              [/ul]
+            [li]Run the code.[/li]
+          [/ul]
+
+          [br /]
+
+          [iframe src:"https://trinket.io/embed/python3/92b0d73220" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
         [/div]
         [div className:"extraInfo centerHead"]
 
@@ -1068,45 +1239,46 @@
 
           [hr /]
 
-            [var name:"extraInfo321" value:"" /]
+            [var name:"extraInfo1736" value:"" /]
 
             [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+             [button onClick:`extraInfo1736 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo1736 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo1736 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo1736 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo1736 = "Ref"`]References[/Button]
             [/div]
 
             [br /]
             [hr fullWidth:true /]
             [br /]
 
-            [Switch value:extraInfo321]
+            [Switch value:extraInfo1736]
               [Default]
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
+                    [li]Current through a coil.[/li]
+                    [li]Magnetic Field[/li]
+                    [li]Compass deflection[/li]
                   [/ul]
                 [/div]
 
               [/Default]
               [Case test:"Objective"]
 
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
+                Select the reasonable statements about the coil model, find the
+                magnitude of the magnetic field, and find the magnitude of compass deflection.
 
               [/Case]
               [Case test:"GivenInfo"]
                  [div className: "extraInfoBullets"]
                   [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
+                    [li] Triangular coil with a current.[/li]
+                    [li] Length of each side of the coil.[/li]
+                    [li] Distance from the coil sides to the center.[/li]
+                    [li] Current.[/li]
+                    [li] Number of coil turns.[/li]
                   [/ul]
                  [/div]
 
@@ -1115,14 +1287,14 @@
 
                   [div className:"equations"]
                     [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                      |\vec{B}| = \frac{\mu_{0}}{4\pi} \frac{LI}{d\sqrt{d^{2} + (\frac{L}{2})^{2}}}
                     [/equation]
 
                     [br /]
                     [br /]
 
                     [Equation]
-                    \vec{F} = q\vec{E}
+                      \theta = tan^{-1} (\frac{B_{coil}}{B_{Earth}})
                     [/Equation]
                   [/div]
 
@@ -1130,11 +1302,8 @@
               [Case test:"Ref"]
                  [div className:"extraInfoBullets"]
                   [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                    [li] Magnetic Field of a Straight Wire (Matter and Interactions, p. 685)[/li]
+                    [li] Compass Deflection Example (Matter and Interactions, p. 675)[/li]
                   [/ul]
                  [/div]
 
@@ -1172,70 +1341,55 @@
 
          [hr /]
 
-         ### Computation
-
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
-
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
-
-          [br /]
-
-          *Insert Trinket*
-
         [/div]
+
+        Watch the following video for a hint at this problem:
+
+        [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mxwevNEa2vs" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+
+        [br /]
+
         [div className:"extraInfo centerHead"]
 
           ### About this Problem
 
           [hr /]
 
-            [var name:"extraInfo321" value:"" /]
+            [var name:"extraInfo1737" value:"" /]
 
             [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+             [button onClick:`extraInfo1737 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo1737 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo1737 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo1737 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo1737 = "Ref"`]References[/Button]
             [/div]
 
             [br /]
             [hr fullWidth:true /]
             [br /]
 
-            [Switch value:extraInfo321]
+            [Switch value:extraInfo1737]
               [Default]
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
+                    [li]Magnetic Field Magnitude[/li]
+                    [li]Magnetic Field Direction[/li]
                   [/ul]
                 [/div]
 
               [/Default]
               [Case test:"Objective"]
 
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
+                Find the magnitude and direction of the magnetic field at point Q and P.
 
               [/Case]
               [Case test:"GivenInfo"]
                  [div className: "extraInfoBullets"]
                   [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
+                    [li] Diagram of a thin wire.[/li]
+                    [li] Positions of P and Q relative to the wire.[/li]
                   [/ul]
                  [/div]
 
@@ -1243,27 +1397,15 @@
               [Case test:"KeyEq"]
 
                   [div className:"equations"]
-                    [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-                    [/equation]
 
-                    [br /]
-                    [br /]
-
-                    [Equation]
-                    \vec{F} = q\vec{E}
-                    [/Equation]
                   [/div]
 
               [/Case]
               [Case test:"Ref"]
                  [div className:"extraInfoBullets"]
                   [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                    [li] Figure 17.25 (Matter and Interactions, p. 685)[/li]
+                    [li] Magnetic Field of a Straight Wire (Matter and Interactions, p. 685)[/li]
                   [/ul]
                  [/div]
 
@@ -1308,15 +1450,49 @@
           clicking the button below to see if you got the right answer!
 
           [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `import numpy as np`[/li]
+                  [ul]
+                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
+                  [/ul]
+                [li]Add: `from scipy import constants`[/li]
+                [ul]
+                  [li]Why? This phrase means that we are just accessing the constants library. This will give us the
+                  magnetic constant for the magnetic field equation.[/li]
+                [/ul]
+              [/ul]
+            [li]Variables[/li]
+              [ul]
+                [li]Assign values to the following variables:[/li]
+                  [ul]
+                    [li]Current (`I`)[/li]
+                    [li]Distance between the wires (`s`)[/li]
+                    [li]Observation distance from wires (`d`)[/li]
+                  [/ul]
+              [/ul]
+            [li]Magnetic field magnitude[/li]
+              [ul]
+                [li]First - the equation needs to be understood! Hint: Look at section 17.7 for the Magnetic Field of a Straight Wire equation when L >> r.[/li]
+                [li]Set this equation/these equations equal to a variable.[/li]
+                [li]To add the [Equation]\frac{\mu_{0}}{4\pi}[/Equation] constant, use SciPy and NumPy![/li]
+                  [ul]
+                    [li]Use: `(constants.mu_0/(4*np.pi))`[/li]
+                  [/ul]
+                [li]Multiply the constant (using `*`) by the rest of the equation.[/li]
+                [li]Example: `B = (constants.mu_0)/4*np.pi))* 2 * I / (d-(s/2))`[/li]
+                [li]Note: The example above shows one portion of the equation. This can be combined with a similar equation. Remember - there are two wires to deal with![/li]
+              [/ul]
+            [li]Print the answer.[/li]
+              [ul]
+                [li]Example: `print("The max magnetic field is", B, "T")`[/li]
+              [/ul]
+            [li]Run the code.[/li]
           [/ul]
 
-          [br /]
+        [br /]
 
-          *Insert Trinket*
+        [iframe src:"https://trinket.io/embed/python3/466bba2e2b" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -1325,45 +1501,42 @@
 
           [hr /]
 
-            [var name:"extraInfo321" value:"" /]
+            [var name:"extraInfo1740" value:"" /]
 
             [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+             [button onClick:`extraInfo1740 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo1740 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo1740 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo1740 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo1740 = "Ref"`]References[/Button]
             [/div]
 
             [br /]
             [hr fullWidth:true /]
             [br /]
 
-            [Switch value:extraInfo321]
+            [Switch value:extraInfo1740]
               [Default]
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
+                    [li]Magnetic Field: Very long wire with current[/li]
                   [/ul]
                 [/div]
 
               [/Default]
               [Case test:"Objective"]
 
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
+                Find the maximum magnitude of the alternating magnetic field.
 
               [/Case]
               [Case test:"GivenInfo"]
                  [div className: "extraInfoBullets"]
                   [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
+                    [li] Two wires next to each other carry current in opposite directions.[/li]
+                    [li] Current.[/li]
+                    [li] Distance between the two wires. [/li]
+                    [li] Distance from wires to observation location. [/li]
                   [/ul]
                  [/div]
 
@@ -1372,14 +1545,226 @@
 
                   [div className:"equations"]
                     [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                      B_{wire} = \frac{\mu_{0}}{4\pi} \frac {2I}{r} if L >> r
+                    [/equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Magnetic Field of a Straight Wire (Matter and Interactions, p. 685)[/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"20.56"]
+       [div className:"centerHead pBwithAside"]
+
+       ### Problem
+
+        #### Set-Up
+
+         [img src:"./static/images/p20.56.png" title:"Problem 20.56 - Matter and Interactions" /]
+
+         #### questions
+
+           1. What is the sign of the mobile charges, and which way do they move?
+           [br /]
+           2. What is the drift speed v of the mobile charges?
+           [br /]
+           3. What is the mobility u of the mobile charges?
+           [br /]
+           4. The current running through the bar was measured to be 0.6 ampere. If each
+           mobile charge is singly charged (|q| = e), how many mobile charges are there in
+           [Equation]1 m^{3}[/Equation] of this material?
+           [br /]
+           5. What is the resistance in ohms of this length of bar?
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]Import Libraries[/li]
+              [ul]
+                [li]Add: `from scipy import constants`[/li]
+                [ul]
+                  [li]Why? This phrase means that we are just accessing the constants library. This will give us the
+                  charge of the protons.[/li]
+                [/ul]
+              [/ul]
+            [li]Given Information[/li]
+              [ul]
+                [li]Assign values to the following variables:[/li]
+                  [ul]
+                    [li]Length of the bar (`L`)[/li]
+                    [li]Height of the bar (`H`)[/li]
+                    [li]Width of the bar (`W`)[/li]
+                    [li]Voltage 1 (`V1`)[/li]
+                    [li]Voltage 2 (`V2`)[/li]
+                    [li]Magnetic Field (`B`)[/li]
+                    [li]Current (`I`)[/li]
+                  [/ul]
+              [/ul]
+            [li]Calculate drift speed[/li]
+              [ul]
+                [li]Remember that drift speed is the mobility of the charge times the magnitude of the net electric field at the location (Matter and Interactions - 14.5, pg 559).[/li]
+                [li]Also note that the current is steady and the magnetic and electric forces need to balance out.[/li]
+                  [ul]
+                    [li]What does this mean? Balance [Equation]\vec{F_{E}} = q\vec{E}[/Equation] and [Equation]\vec{F_{B}} = q\bar{v}B[/Equation], with [Equation]\bar{v}[/Equation] as the drift speed. Solve for [Equation]\bar{v}[/Equation].[/li]
+                    [li]For the electric field (E), use the voltage over distance definition.[/li]
+                    [li]Need help with the equation or selecting the right variables? See Matter and Interactions section 20.5, pg 819.[/li]
+                  [/ul]
+                [li]Example: `ds = V/(H*B)`[/li]
+              [/ul]
+            [li]Calculate mobility of the mobile charges[/li]
+              [ul]
+                [li]Remember the drift speed equation (pg 559). Rearrange to solve for the mobility (u).[/li]
+                  [ul]
+                    [li]For E, we will want the magnitude of the voltage over distance definition.[/li]
+                      [ul]
+                        [li]In Python, this will use `abs()`.[/li]
+                        [li]Set a variable equal to the electric field equation.[/li]
+                        [li]Example: `E = abs(V/L)`[/li]
+                      [/ul]
+                    [li]Set the charge mobility equation equal to a variable. [/li]
+                      [ul]
+                        [li]For this, the drift speed and electric field variables will be called.[/li]
+                        [li]Example: `u = ds/E_length`[/li]
+                      [/ul]
+                  [/ul]
+              [/ul]
+            [li]Amount of charges[/li]
+              [li]Read the section "Determining the Density of Mobile Charges" in Matter and Interactions - 20.4, pg 816[/li]
+              [li]Using the appropriate equation from the section, set it equal to a variable[/li]
+                [ul]
+                  [li]Note that an area needs to be included. Which section of the bar should be calculated for the area? Hint: where are the particles moving?[/li]
+                  [li]Example: `n = I/(constants.e * A * ds)`[/li]
+                  [li]Note: constants.e is used for the particle charge. This is pulling a number from the SciPy constants library. [/li]
+                [/ul]
+            [li]Resistance of the bar[/li]
+              [ul]
+                [li]Which equation can be used to find resistance? Hint: has to do with Georg Ohm (Matter and Interactions - 19.2, pg 773).[/li]
+                [li]Set a variable for resistance equal to the equation. Use `abs()` in Python to get the right answer.[/li]
+                [li]Example: `R = abs(V/I)`[/li]
+              [/ul]
+            [li]Print the answers.[/li]
+              [ul]
+                [li]This code will provide answers to Part 2 through Part 5. Make a print command for each answer.[/li]
+                [li]Example: `print("The drift speed is", ds, "m/s")`[/li]
+              [/ul]
+            [li]Run the code.[/li]
+          [/ul]
+
+        [br /]
+
+        [iframe src:"https://trinket.io/embed/python3/28defbf468" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo2056" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo2056 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo2056 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo2056 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo2056 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo2056 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo2056]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Hall Effect[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the following:
+
+                [ul]
+                  [li]Sign and direction of the mobile charges.[/li]
+                  [li]Drift Speed.[/li]
+                  [li]Mobility of the mobile charges.[/li]
+                  [li]Number of mobile charges.[/li]
+                  [li]Resistance.[/li]
+                [/ul]
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Length, width, and height of the bar.[/li]
+                    [li] Voltage along length and height.[/li]
+                    [li] Current. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                      \vec{F_{E}} = q\vec{E}
                     [/equation]
 
                     [br /]
                     [br /]
 
                     [Equation]
-                    \vec{F} = q\vec{E}
+                      \vec{F} = q\vec{v} \times \vec{B}
+                    [/Equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                      \bar{v} = uE
+                    [/Equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                      I = qnA\bar{v}
+                    [/Equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                      V=IR
                     [/Equation]
                   [/div]
 
@@ -1387,11 +1772,7 @@
               [Case test:"Ref"]
                  [div className:"extraInfoBullets"]
                   [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                    [li] 20.4 The Hall Effect (Matter and Interactions, p. 814)[/li]
                   [/ul]
                  [/div]
 
