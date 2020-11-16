@@ -32,7 +32,7 @@
        [div className:"centerHead"]
 
        [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 6.
+        Please complete the [a href:"https://forms.gle/vByfNRAFGDkD51437" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 9.
        [/div]
 
          ## Problem Pages
@@ -118,14 +118,41 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+         ideas on how to solve this problem with python. Reveal the answer by
+         clicking the button below to see if you got the right answer!
+
+        [ul]
+          [li]Variables[/li]
+            [ul]
+              [li]Assign values to the following variables.[/li]
+                [ul]
+                  [li]Number of turns (`N`)[/li]
+                  [li]FLux increment (`flux`)[/li]
+                  [li]Time (`t`)[/li]
+                  [li]Example: `N = 40`[/li]
+                [/ul]
+            [/ul]
+          [li]Calculations[/li]
+            [ul]
+              [li]Set a variable equal to the equation for emf.[/li]
+              [ul]
+                [li]Read 22.2 Faraday's Law and locate an equation that involves change in time and change in flux.[/li]
+                [li]Example: `emf_avg = flux/t * N`[/li]
+              [/ul]
+            [/ul]
+          [li]Print the answer.[/li]
+            [ul]
+              [li]Print the answer using `print()`[/li]
+              [li]Example: `print("The average emf is", emf_avg, "V")`[/li]
+            [/ul]
+          [li]Run the code.[/li]
+        [/ul]
 
            [br /]
 
-           *Insert Trinket*
+           [iframe src:"https://trinket.io/embed/python3/321d09ee44" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
        [/div]
        [div className:"extraInfo centerHead"]
@@ -134,28 +161,26 @@
 
          [hr /]
 
-           [var name:"extraInfo330" value:"" /]
+           [var name:"extraInfo2213" value:"" /]
 
            [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo330 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo330 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo330 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo330 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo330 = "Ref"`]References[/Button]
+            [button onClick:`extraInfo2213 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo2213 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo2213 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo2213 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo2213 = "Ref"`]References[/Button]
            [/div]
 
            [br /]
            [hr fullWidth:true /]
            [br /]
 
-           [Switch value:extraInfo330]
+           [Switch value:extraInfo2213]
              [Default]
                [div className:"extraInfoBullets"]
 
                  [ul]
-                   [li]Vectors: Direction[/li]
-                   [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Faraday's Law[/li]
                  [/ul]
 
                [/div]
@@ -163,16 +188,16 @@
              [/Default]
              [Case test:"Objective"]
 
-             Find the magnitude of the electric field due to the proton at the
-             location of the electron.
+             Find the average emf in the coil during a certain time interval.
 
              [/Case]
              [Case test:"GivenInfo"]
                 [div className: "extraInfoBullets"]
 
                   [ul]
-                    [li] A hydrogen atom is in its ground state.[/li]
-                    [li] Average distance between the electron and proton.[/li]
+                    [li] Direction of the bar magnet.[/li]
+                    [li] Number of turns in the coil.[/li]
+                    [li] Increment the flux decreases over a given time.[/li]
                   [/ul]
 
                 [/div]
@@ -182,7 +207,7 @@
 
                  [div className:"equations"]
                    [Equation text-align:center]
-                    \vec{E} = \frac{1}{4\pi\epsilon_{0}} \frac{q}{|\vec{r}|^{2}} \hat{r}
+                    emf = -\frac{d \phi_{mag}}{dt}
                    [/equation]
                  [/div]
 
@@ -191,9 +216,7 @@
                 [div className:"extraInfoBullets"]
 
                   [ul]
-                    [li] Electric Field of a Point Charge (Matter and Interactions, p. 519)[/li]
-                    [li] Magnitude of Electric Field (Matter and Interactions, p. 520)[/li]
-                    [li] Charged Particles (Matter and Interactions, p. 514)[/li]
+                    [li] 22.2 Faraday's Law (Matter and Interactions, p. 905)[/li]
                   [/ul]
 
                 [/div]

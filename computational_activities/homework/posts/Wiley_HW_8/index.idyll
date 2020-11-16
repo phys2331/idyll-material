@@ -33,7 +33,7 @@
        [div className:"centerHead"]
 
        [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 6.
+        Please complete the [a href:"https://forms.gle/R2RxUPdVkrVSTzCWA" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 8.
        [/div]
 
          ## Problem Pages
@@ -117,16 +117,56 @@
          ideas on how to solve this problem with python. Reveal the answer by
          clicking the button below to see if you got the right answer!
 
-         [ul]
-           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-           [li]Click the Run button to output the answers![/li]
-           [li]If using numbers from this page, make sure to switch them with the numbers
-           given in WileyPLUS before submitting the answers.[/li]
-         [/ul]
+        [ul]
+          [li]Import Libraries[/li]
+            [ul]
+              [li]Add: `import math`[/li]
+                [ul]
+                  [li]Why? We need to use `math.cos`.[/li]
+                [/ul]
+              [li]Add: `import numpy as np`[/li]
+                [ul]
+                  [li]Why? We will use it to access pi.[/li]
+                [/ul]
+            [/ul]
+          [li]Variables[/li]
+            [ul]
+              [li]Assign values to the following variables.[/li]
+                [ul]
+                  [li]Radius of the region (`r`)[/li]
+                  [li]Electric field (`E`)[/li]
+                  [li]Given angle (`theta`)[/li]
+                  [li]Angle between n_vec and E (`theta_nE`)[/li]
+                    [ul]
+                      [li]How can you find this angle? Remember the normal vector?[/li]
+                    [/ul]
+                  [li]Example: `r = 0.02`[/li]
+                [/ul]
+            [/ul]
+          [li]Calculations[/li]
+            [ul]
+              [li]Set a variable equal to the area of the disk-shaped region.[/li]
+              [ul]
+                [li]Remember to use `np.pi` to call pi from the numpy library.[/li]
+                [li]Example: `A = np.pi * (r**2)`[/li]
+              [/ul]
+              [li]Set a variable equal to the electric flux equation.[/li]
+                [ul]
+                  [li]Read 21.2 Definition of Electric Flux for more information on this equation.[/li]
+                  [li]Example: `E_flux = E * A * math.cos(math.radians(theta_nE))`[/li]
+                [/ul]
+            [/ul]
+          [li]Print the answer.[/li]
+            [ul]
+              [li]Print the answer using `print()`[/li]
+              [li]Example: `print("The electric flux is", E_flux, "Vm")`[/li]
+            [/ul]
+          [li]Run the code.[/li]
+        [/ul]
 
          [br /]
 
-         *Insert Trinket*
+         [iframe src:"https://trinket.io/embed/python3/8070e9588c" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
 
          [/div]
          [div className:"extraInfo centerHead"]
@@ -135,45 +175,41 @@
 
          [hr /]
 
-           [var name:"extraInfo321" value:"" /]
+           [var name:"extraInfo2106" value:"" /]
 
            [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [button onClick:`extraInfo2106 = ""`]Skills Involved[/Button]
+            [button onClick:`extraInfo2106 = "Objective"`]Objective[/Button]
+            [button onClick:`extraInfo2106 = "GivenInfo"`]Given Information[/Button]
+            [button onClick:`extraInfo2106 = "KeyEq"`]Key Equations[/Button]
+            [button onClick:`extraInfo2106 = "Ref"`]References[/Button]
            [/div]
 
            [br /]
            [hr fullWidth:true /]
            [br /]
 
-           [Switch value:extraInfo321]
+           [Switch value:extraInfo2106]
              [Default]
                [div className:"extraInfoBullets"]
 
                  [ul]
-                   [li]Vectors: Direction[/li]
-                   [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Electric Flux[/li]
                  [/ul]
                [/div]
 
              [/Default]
              [Case test:"Objective"]
 
-               Find the sign of the source charge, the direction of the electric
-               force on the charge, the electric field, the electric force, and the direction
-               of the electric force.
+               Find the electric flux on the disk.
 
              [/Case]
              [Case test:"GivenInfo"]
                 [div className: "extraInfoBullets"]
                  [ul]
-                   [li] Diagram of point charge and electric field.[/li]
-                   [li] Charge of particle placed at a given location.[/li]
-                   [li] Electric field at location D. [/li]
+                   [li] Radius of disk-shaped region.[/li]
+                   [li] Angle from the plane of the disk to the electric field.[/li]
+                   [li] Magnitude of uniform electric field. [/li]
                  [/ul]
                 [/div]
 
@@ -182,26 +218,15 @@
 
                  [div className:"equations"]
                    [Equation text-align:center]
-                   \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                   \phi_{el} = \Sigma \vec{E} \bullet \hat{n} \Delta A
                    [/equation]
-
-                   [br /]
-                   [br /]
-
-                   [Equation]
-                   \vec{F} = q\vec{E}
-                   [/Equation]
                  [/div]
 
              [/Case]
              [Case test:"Ref"]
                 [div className:"extraInfoBullets"]
                  [ul]
-                   [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                   [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                   [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                   [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                   [li] Definition of "Electric Flux" (Matter and Interactions, p. 869)[/li]
                  [/ul]
                 [/div]
 
@@ -840,7 +865,7 @@
             11. What is the change in potential energy of the system?
             [br /]
             12. What is the change in kinetic energy of the electron?
-            
+
 
          [hr /]
 
