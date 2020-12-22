@@ -2,24 +2,552 @@
 
 [Header
   fullWidth:true
-  title:"Homework"
-  subtitle:""
+  title:"PHYS 2331 Computational Homework"
+  subtitle:"Solving problems with Python"
   date:`(new Date()).toDateString()`
   background:"#0B465F"
-  color:"#ffffff"
+  color:"#FFFFFF"
    /]
 
+ [var name:"currentValue" value:"" /]
 
-Click the links below to navigate to the homework.
+ [div className:"tabLook" fullWidth:true]
+  [button onClick:`currentValue = ""`]Overview[/Button]
+  [button onClick:`currentValue = "Info"`]Background Info[/Button]
+  [button onClick:`currentValue = "HW1"`]HW 1[/Button]
+  [button onClick:`currentValue = "HW2"`]HW 2[/Button]
+  [button onClick:`currentValue = "HW3"`]HW 3[/Button]
+  [button onClick:`currentValue = "HW4"`]HW 4[/Button]
+  [button onClick:`currentValue = "HW5"`]HW 5[/Button]
+  [button onClick:`currentValue = "HW6"`]HW 6[/Button]
+  [button onClick:`currentValue = "HW7"`]HW 7[/Button]
+  [button onClick:`currentValue = "HW8"`]HW 8[/Button]
+  [button onClick:`currentValue = "HW9"`]HW 9[/Button]
+ [/div]
 
-## Homework
+ [br /]
+ [br /]
+ [hr fullWidth:true /]
+ [br /]
 
-* [WileyPlus Homework 1](./wiley_hw_1_rev2/)
-* [WileyPlus Homework 2](./wiley-homework-2/)
-* [WileyPlus Homework 4-1](./wiley_hw_4-1/)
-* [WileyPlus Homework 4-2](./wiley_hw_4-2/)
-* [WileyPlus Homework 5](./wiley_hw_5/)
-* [WileyPlus Homework 6](./wiley_hw_6/)
-* [WileyPlus Homework 7](./wiley_hw_7/)
-* [WileyPlus Homework 8](./wiley_hw_8/)
-* [WileyPlus Homework 9](./wiley_hw_9/)
+ [div className:"problemBody" fullWidth:true padding-left:"100%"]
+   [Switch value:currentValue]
+     [Default]
+       [div className:"centerHead"]
+
+         ## Overview
+
+           Click the tabs to go to a specific homework page. Each of the homework
+
+           The problems are included in Homework 1 through WileyPlus. Work
+           through the problems by hand first using the given information, key equations,
+           and references listed. Then, try to use Python to solve the same problem.
+
+           Each problem page has the following sections:
+
+           #### Content
+
+          Chapter PowerPoints, Videos, Links
+
+           #### Homework
+
+           Link to Essential Skills in Python.
+
+           Link to WileyPlus Homework in Python.
+
+
+           #### Challenge Problem
+
+           Link to challenge problem on Trinket.
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+
+       [/div]
+     [/Default]
+     [Case test:"Info"]
+       [div className:"centerHead pBwithAside"]
+
+         ## Background Information
+
+         [hr /]
+
+         ### Content
+
+         ### Homework
+
+         ### Challenge Problem
+
+        [/div]
+
+         [hr /]
+
+         [div className:"centerPara"]
+           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+           [br /]
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [/div]
+     [/Case]
+     [Case test:"HW1"]
+     [div className:"centerHead pBwithAside"]
+
+       ## Homework 1
+
+       [hr /]
+
+       ### Content
+
+       ### Homework
+
+       ### Challenge Problem
+
+      [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"HW2"]
+     [div className:"centerHead pBwithAside"]
+
+       ## Homework 2
+
+       [hr /]
+
+       ### Content
+
+       ### Homework
+
+       ### Challenge Problem
+
+      [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"HW3"]
+     [div className:"centerHead pBwithAside"]
+
+       ## Homework 3
+
+       [hr /]
+
+       ### Content
+
+       ### Homework
+
+       ### Challenge Problem
+
+      [/div]
+
+       [hr /]
+
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Case]
+     [Case test:"HW4"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.26
+
+         [hr /]
+
+         ### Problem
+
+          You move from location i at [Equation]\langle 1, 4, 4 \rangle[/Equation] m
+          to location f at [Equation]\langle 6, 6, 9 \rangle[/Equation] m. All along this
+          path there is a nearly uniform electric field [Equation]\vec{E} = \langle 1000, 180, -470 \rangle[/Equation]
+          N/C. Calculate [Equation]\Delta V = V_{f} - V_{i}[/Equation], including sign and units.
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"HW5"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.27
+
+         [hr /]
+
+         ### Problem
+
+          A capacitor with a gap of 1 mm has a potential difference from one plate to the other of 26 volts.
+          What is the magnitude of the electric field between the plates?
+
+         [hr /]
+
+         ### Computation
+
+           Use the Trinket below to solve the problem using the values listed
+          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
+          ideas on how to solve this problem with python. Reveal the answer by
+          clicking the button below to see if you got the right answer!
+
+          [ul]
+            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
+            [li]Click the Run button to output the answers![/li]
+            [li]If using numbers from this page, make sure to switch them with the numbers
+            given in WileyPLUS before submitting the answers.[/li]
+          [/ul]
+
+          [br /]
+
+          *Insert Trinket*
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"HW6"]
+       [div className:"centerHead pBwithAside"]
+
+         ## 16.52
+
+         [hr /]
+
+         ### Problem
+
+           [img src:"./static/images/p16.52.png" title:"Problem 16.52 - Matter and Interactions" /]
+
+           #### Questions
+
+            1. What is the magnitude of the electric field in the region between disks 1 and 2?
+            [br /]
+            2. What is the direction of the electric field between disks 1 and 2?
+            [br /]
+            3. Which of the given statements are true?
+            [br /]
+            4. To calculate [Equation]V_{C}-V_{B}[/Equation], which path should you choose?
+            [br /]
+            5. What should the sign of [Equation]V_{C}-V_{B}[/Equation] be?
+            [br /]
+            6. What is the potential difference [Equation]V_{C}-V_{B}[/Equation]?
+            [br /]
+            7. What is the potential difference [Equation]V_{D}-V_{C}[/Equation]?
+            [br /]
+            8. What is the potential difference [Equation]V_{F}-V_{D}[/Equation]?
+            [br /]
+            9. What is the potential difference [Equation]V_{G}-V_{F}[/Equation]?
+            [br /]
+            10. What is the potential difference [Equation]V_{G}-V_{A}[/Equation]?
+            [br /]
+            11. What is the change in potential energy of the system?
+            [br /]
+            12. What is the change in kinetic energy of the electron?
+
+
+         [hr /]
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"HW7"]
+     [/Case]
+     [Case test:"HW8"]
+     [/Case]
+     [Case test:"HW9"]
+     [/Case]
+   [/Switch]
+ [/div]
