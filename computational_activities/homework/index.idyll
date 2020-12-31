@@ -13,7 +13,6 @@
 
  [div className:"tabLook" fullWidth:true]
   [button onClick:`currentValue = ""`]Overview[/Button]
-  [button onClick:`currentValue = "Info"`]Background Info[/Button]
   [button onClick:`currentValue = "HW1"`]HW 1[/Button]
   [button onClick:`currentValue = "HW2"`]HW 2[/Button]
   [button onClick:`currentValue = "HW3"`]HW 3[/Button]
@@ -28,7 +27,6 @@
  [br /]
  [br /]
  [hr fullWidth:true /]
- [br /]
 
  [div className:"problemBody" fullWidth:true padding-left:"100%"]
    [Switch value:currentValue]
@@ -36,77 +34,168 @@
        [div className:"centerHead"]
 
          ## Overview
+          [div className:"paddedParas"]
+             Click the tabs to go to a specific homework page. Each of the homework
+             tabs has Content, Homework, and Challenge Problem sections.
+             Try to work these in order to get a full understanding of the subject matter.
+             The homework will introduce Python as the semester progresses that will
+             be tested in the Challenge Problem on the Trinket website.
 
-           Click the tabs to go to a specific homework page. Each of the homework
-
-           The problems are included in Homework 1 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
-
-           Each problem page has the following sections:
-
-           #### Content
-
-          Chapter PowerPoints, Videos, Links
-
-           #### Homework
-
-           Link to Essential Skills in Python.
-
-           Link to WileyPlus Homework in Python.
-
-
-           #### Challenge Problem
-
-           Link to challenge problem on Trinket.
-
-         [hr /]
-
-         [div className:"centerPara"]
-           [img src:"./images/ucdenverlogo2.png" title:"UC Denver" /]
-           [Physics Department](https://clas.ucdenver.edu/physics/)
-           [br /]
-           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+             It is suggested to work through the homework problems by hand first
+             using the given information, key equations, and references listed.
+             Then, try to use Python to solve the same problem. While the associated
+             math is important to understand, try to focus on the 'why' for each
+             problem.
          [/div]
 
-       [/div]
-     [/Default]
-     [Case test:"Info"]
-       [div className:"centerHead pBwithAside"]
+        [hr /]
 
-         ## Background Information
+        ## Background Information
 
-         [hr /]
+        [br /]
 
-         ### Content
+        [div className:"splitLeft"]
+            ## Python skills
 
-         ### Homework
+              The box to the right is an interactive Python 3 coding area by Trinket.
+              These will be used to solve homework problems and focus on specific
+              computational skills and Physics 2.
 
-         ### Challenge Problem
+              #### Try it out!
+
+            [ol]
+              [li]
+                Type ```x = 2``` under the ```## Variables``` heading and press the triangle button to run the code.
+                There should be no output displayed. To edit the code, click the pencil button.
+
+                ```x = 2``` means that we are storing the value (2) as a variable
+                that can be called later. Under ```x = 2```, type ```y = 16.2```. This is
+                another variable with a different value.
+
+                For more information, click this link: [Python Variables](https://www.guru99.com/variables-in-python.html#:~:text=A%20Python%20variable%20is%20a,to%20the%20computer%20for%20processing)
+              [/li]
+              [li]
+                Now type the following under the ```## Calculations``` heading:
+                [ul]
+                  [li]```add = x + y```[/li]
+                  [li]```subt = y - x```[/li]
+                  [li]```mult = y * 32.45 * x```[/li]
+                  [li]```div = x/15```[/li]
+                  [li]```power = x * 10**-19```[/li]
+                [/ul]
+              [/li]
+              [li]
+                Under the ```## Print``` heading, type the following print commands
+                so that output displays when you click the run button:
+                [ul]
+                  [li]```print("addition:", add)```[/li]
+                  [li]```print("subtraction:", subt)```[/li]
+                  [li]```print(print("multiplication and division:", mult, div))```[/li]
+                  [li]```print("power:", power, ",", power*10**19)```[/li]
+                  [li]```print("a list:", list)```[/li]
+                  [li]```print("a value from the list:", list[2])```[/li]
+                [/ul]
+                For more information, click this link: [print() function](https://www.w3schools.com/python/ref_func_print.asp)
+              [/li]
+              [li]Finally, click the run button again to see the output. What do you notice?[/li]
+            [/ol]
 
         [/div]
 
-         [hr /]
+        [div className:"splitRight"]
+          ## Trinket
 
-         [div className:"centerPara"]
-           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-           [Physics Department](https://clas.ucdenver.edu/physics/)
-           [br /]
-           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-         [/div]
-     [/Case]
+            [iframe src:"https://trinket.io/embed/python3/c4bc808444?toggleCode=true" width:"50%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+        [/div]
+
+        [br /]
+        [br /]
+
+       [/div]
+       [div className:"footer"]
+         [hr /]
+         ![title](./images/ucdenverlogo2.png)
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+       [/div]
+     [/Default]
      [Case test:"HW1"]
      [div className:"centerHead pBwithAside"]
 
-       ## Homework 1
+      [div className:"centerPara"]
+       # Homework 1
+      [/div]
 
        [hr /]
 
-       ### Content
+       ## 1. Content
 
-       ### Homework
+       The following PowerPoint highlights the key ideas from Chapter 13: Electric Fields
+       in Matter and Interactions. For more details or examples, navigate to the eBook through
+       your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-       ### Challenge Problem
+       Click through the slides below using the left and right arrow buttons or by clicking
+       on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+       the videos and articles below before moving on to the homework.
+
+       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218425&authkey=AJobFCMKPvEPdbI&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameborder:"0"][/iframe]
+
+         [br /]
+         [br /]
+           [div class:"frameWidth"]
+             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mdulzEfQXDE" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+           [/div]
+        [br /]
+        [br /]
+           [div class:"frameWidth"]
+             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/pFM-a7_qjFM" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+           [/div]
+        [br /]
+        [br /]
+          [div class:"frameWidth"]
+            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/PvMSFtS97Zc" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+          [/div]
+        [br /]
+        [br /]
+          [div class:"frameWidth"]
+            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/yUPdtFqilXo" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+          [/div]
+
+
+       ## 2. Homework
+
+       Click the link below to go to the computational homework 1 page. This exercise
+       will take you through the required WileyPLUS homework problems with Python. Once
+       you complete each problem, enter the answers into the Wiley homework interface
+       to check your work!
+
+       [div className:"centerPara"]
+          [WileyPLUS Homework 1](./Wiley_HW_1_rev2)
+       [/div]
+
+       ### Python Skills
+
+       The following Python skills are introduced in Homework 1:
+
+       [ul]
+        [li] blahblahblah [/li]
+        [li] blahblahblah [/li]
+        [li] blahblahblah [/li]
+        [li] blahblahblah [/li]
+        [li] blahblahblah [/li]
+       [/ul]
+
+       ## 3. Challenge Problem
+
+       Click the link below to go to the Trinket course page for PHYS 2331. Click
+       the Challenge Problem for Homework 1 to test your Python on a brand new problem.
+       Try to use the techniques and calculations introduced in this homework section.
+
+
+       Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+       For problems with this guide, contact Mary Span or Dr. Roberts.
 
       [/div]
 

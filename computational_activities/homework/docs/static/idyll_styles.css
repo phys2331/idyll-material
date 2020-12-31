@@ -1121,7 +1121,7 @@ body {
   transition: 0.3s;
   margin:auto;
   font-size: 20px;
-  width: 9%;
+  width: 10%;
   font-family: Arial;
   font-weight: bold;
   color: #0B465F;
@@ -1285,4 +1285,42 @@ img {
   color: red;
   font-style:italic;
   text-align: center;
+}
+
+
+.splitLeft {
+  //position: s;
+  width: 50%;
+  padding-right: 20px;
+  float: left;
+  background-color: inherit;
+  //z-index: 1010101010
+
+}
+
+.splitRight {
+  //position: relative;
+  //width: 50%;
+  //float: left;
+  background-color: inherit;
+  //z-index: 1010101010
+}
+
+li {
+  margin-bottom: 15px;
+}
+
+.paddedParas {
+  padding-left: 200px;
+  padding-right: 200px;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: white;
+  text-align: center;
+  padding-bottom: 10px;
 }

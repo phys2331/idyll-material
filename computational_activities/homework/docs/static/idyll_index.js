@@ -167,6 +167,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     colon: new TokenType(":", beforeExpr),
     dot: new TokenType("."),
     question: new TokenType("?", beforeExpr),
+    questionDot: new TokenType("?."),
     arrow: new TokenType("=>", beforeExpr),
     template: new TokenType("template"),
     invalidTemplate: new TokenType("invalidTemplate"),
@@ -594,7 +595,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   // ## Parser utilities
 
-  var literal = /^(?:'((?:\\.|[^'])*?)'|"((?:\\.|[^"])*?)")/;
+  var literal = /^(?:'((?:\\.|[^'\\])*?)'|"((?:\\.|[^"\\])*?)")/;
   pp.strictDirective = function(start) {
     for (;;) {
       // Try to find string literal.
@@ -1706,6 +1707,10 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
         this.toAssignable(node.expression, isBinding, refDestructuringErrors);
         break
 
+      case "ChainExpression":
+        this.raiseRecoverable(node.start, "Optional chaining cannot appear in left-hand side");
+        break
+
       case "MemberExpression":
         if (!isBinding) { break }
 
@@ -1834,6 +1839,10 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
         checkClashes[expr.name] = true;
       }
       if (bindingType !== BIND_NONE && bindingType !== BIND_OUTSIDE) { this.declareName(expr.name, bindingType, expr.start); }
+      break
+
+    case "ChainExpression":
+      this.raiseRecoverable(expr.start, "Optional chaining cannot appear in left-hand side");
       break
 
     case "MemberExpression":
@@ -2133,21 +2142,40 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     var maybeAsyncArrow = this.options.ecmaVersion >= 8 && base.type === "Identifier" && base.name === "async" &&
         this.lastTokEnd === base.end && !this.canInsertSemicolon() && base.end - base.start === 5 &&
         this.potentialArrowAt === base.start;
+    var optionalChained = false;
+
     while (true) {
-      var element = this.parseSubscript(base, startPos, startLoc, noCalls, maybeAsyncArrow);
-      if (element === base || element.type === "ArrowFunctionExpression") { return element }
+      var element = this.parseSubscript(base, startPos, startLoc, noCalls, maybeAsyncArrow, optionalChained);
+
+      if (element.optional) { optionalChained = true; }
+      if (element === base || element.type === "ArrowFunctionExpression") {
+        if (optionalChained) {
+          var chainNode = this.startNodeAt(startPos, startLoc);
+          chainNode.expression = element;
+          element = this.finishNode(chainNode, "ChainExpression");
+        }
+        return element
+      }
+
       base = element;
     }
   };
 
-  pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArrow) {
+  pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArrow, optionalChained) {
+    var optionalSupported = this.options.ecmaVersion >= 11;
+    var optional = optionalSupported && this.eat(types.questionDot);
+    if (noCalls && optional) { this.raise(this.lastTokStart, "Optional chaining cannot appear in the callee of new expressions"); }
+
     var computed = this.eat(types.bracketL);
-    if (computed || this.eat(types.dot)) {
+    if (computed || (optional && this.type !== types.parenL && this.type !== types.backQuote) || this.eat(types.dot)) {
       var node = this.startNodeAt(startPos, startLoc);
       node.object = base;
       node.property = computed ? this.parseExpression() : this.parseIdent(this.options.allowReserved !== "never");
       node.computed = !!computed;
       if (computed) { this.expect(types.bracketR); }
+      if (optionalSupported) {
+        node.optional = optional;
+      }
       base = this.finishNode(node, "MemberExpression");
     } else if (!noCalls && this.eat(types.parenL)) {
       var refDestructuringErrors = new DestructuringErrors, oldYieldPos = this.yieldPos, oldAwaitPos = this.awaitPos, oldAwaitIdentPos = this.awaitIdentPos;
@@ -2155,7 +2183,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
       this.awaitPos = 0;
       this.awaitIdentPos = 0;
       var exprList = this.parseExprList(types.parenR, this.options.ecmaVersion >= 8, false, refDestructuringErrors);
-      if (maybeAsyncArrow && !this.canInsertSemicolon() && this.eat(types.arrow)) {
+      if (maybeAsyncArrow && !optional && !this.canInsertSemicolon() && this.eat(types.arrow)) {
         this.checkPatternErrors(refDestructuringErrors, false);
         this.checkYieldAwaitInDefaultParams();
         if (this.awaitIdentPos > 0)
@@ -2172,8 +2200,14 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
       var node$1 = this.startNodeAt(startPos, startLoc);
       node$1.callee = base;
       node$1.arguments = exprList;
+      if (optionalSupported) {
+        node$1.optional = optional;
+      }
       base = this.finishNode(node$1, "CallExpression");
     } else if (this.type === types.backQuote) {
+      if (optional || optionalChained) {
+        this.raise(this.start, "Optional chaining cannot appear in the tag of tagged template expressions");
+      }
       var node$2 = this.startNodeAt(startPos, startLoc);
       node$2.tag = base;
       node$2.quasi = this.parseTemplate({isTagged: true});
@@ -2352,7 +2386,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     var node = this.startNode();
     node.value = value;
     node.raw = this.input.slice(this.start, this.end);
-    if (node.raw.charCodeAt(node.raw.length - 1) === 110) { node.bigint = node.raw.slice(0, -1); }
+    if (node.raw.charCodeAt(node.raw.length - 1) === 110) { node.bigint = node.raw.slice(0, -1).replace(/_/g, ""); }
     this.next();
     return this.finishNode(node, "Literal")
   };
@@ -2604,7 +2638,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     } else if (!isPattern && !containsEsc &&
                this.options.ecmaVersion >= 5 && !prop.computed && prop.key.type === "Identifier" &&
                (prop.key.name === "get" || prop.key.name === "set") &&
-               (this.type !== types.comma && this.type !== types.braceR)) {
+               (this.type !== types.comma && this.type !== types.braceR && this.type !== types.eq)) {
       if (isGenerator || isAsync) { this.unexpected(); }
       prop.kind = prop.key.name;
       this.parsePropertyName(prop);
@@ -4518,7 +4552,13 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   pp$9.readToken_pipe_amp = function(code) { // '|&'
     var next = this.input.charCodeAt(this.pos + 1);
-    if (next === code) { return this.finishOp(code === 124 ? types.logicalOR : types.logicalAND, 2) }
+    if (next === code) {
+      if (this.options.ecmaVersion >= 12) {
+        var next2 = this.input.charCodeAt(this.pos + 2);
+        if (next2 === 61) { return this.finishOp(types.assign, 3) }
+      }
+      return this.finishOp(code === 124 ? types.logicalOR : types.logicalAND, 2)
+    }
     if (next === 61) { return this.finishOp(types.assign, 2) }
     return this.finishOp(code === 124 ? types.bitwiseOR : types.bitwiseAND, 1)
   };
@@ -4575,9 +4615,20 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
   };
 
   pp$9.readToken_question = function() { // '?'
-    if (this.options.ecmaVersion >= 11) {
+    var ecmaVersion = this.options.ecmaVersion;
+    if (ecmaVersion >= 11) {
       var next = this.input.charCodeAt(this.pos + 1);
-      if (next === 63) { return this.finishOp(types.coalesce, 2) }
+      if (next === 46) {
+        var next2 = this.input.charCodeAt(this.pos + 2);
+        if (next2 < 48 || next2 > 57) { return this.finishOp(types.questionDot, 2) }
+      }
+      if (next === 63) {
+        if (ecmaVersion >= 12) {
+          var next2$1 = this.input.charCodeAt(this.pos + 2);
+          if (next2$1 === 61) { return this.finishOp(types.assign, 3) }
+        }
+        return this.finishOp(types.coalesce, 2)
+      }
     }
     return this.finishOp(types.question, 1)
   };
@@ -4706,22 +4757,59 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
   // were read, the integer value otherwise. When `len` is given, this
   // will return `null` unless the integer has exactly `len` digits.
 
-  pp$9.readInt = function(radix, len) {
-    var start = this.pos, total = 0;
-    for (var i = 0, e = len == null ? Infinity : len; i < e; ++i) {
+  pp$9.readInt = function(radix, len, maybeLegacyOctalNumericLiteral) {
+    // `len` is used for character escape sequences. In that case, disallow separators.
+    var allowSeparators = this.options.ecmaVersion >= 12 && len === undefined;
+
+    // `maybeLegacyOctalNumericLiteral` is true if it doesn't have prefix (0x,0o,0b)
+    // and isn't fraction part nor exponent part. In that case, if the first digit
+    // is zero then disallow separators.
+    var isLegacyOctalNumericLiteral = maybeLegacyOctalNumericLiteral && this.input.charCodeAt(this.pos) === 48;
+
+    var start = this.pos, total = 0, lastCode = 0;
+    for (var i = 0, e = len == null ? Infinity : len; i < e; ++i, ++this.pos) {
       var code = this.input.charCodeAt(this.pos), val = (void 0);
+
+      if (allowSeparators && code === 95) {
+        if (isLegacyOctalNumericLiteral) { this.raiseRecoverable(this.pos, "Numeric separator is not allowed in legacy octal numeric literals"); }
+        if (lastCode === 95) { this.raiseRecoverable(this.pos, "Numeric separator must be exactly one underscore"); }
+        if (i === 0) { this.raiseRecoverable(this.pos, "Numeric separator is not allowed at the first of digits"); }
+        lastCode = code;
+        continue
+      }
+
       if (code >= 97) { val = code - 97 + 10; } // a
       else if (code >= 65) { val = code - 65 + 10; } // A
       else if (code >= 48 && code <= 57) { val = code - 48; } // 0-9
       else { val = Infinity; }
       if (val >= radix) { break }
-      ++this.pos;
+      lastCode = code;
       total = total * radix + val;
     }
+
+    if (allowSeparators && lastCode === 95) { this.raiseRecoverable(this.pos - 1, "Numeric separator is not allowed at the last of digits"); }
     if (this.pos === start || len != null && this.pos - start !== len) { return null }
 
     return total
   };
+
+  function stringToNumber(str, isLegacyOctalNumericLiteral) {
+    if (isLegacyOctalNumericLiteral) {
+      return parseInt(str, 8)
+    }
+
+    // `parseFloat(value)` stops parsing at the first numeric separator then returns a wrong value.
+    return parseFloat(str.replace(/_/g, ""))
+  }
+
+  function stringToBigInt(str) {
+    if (typeof BigInt !== "function") {
+      return null
+    }
+
+    // `BigInt(value)` throws syntax error if the string contains numeric separators.
+    return BigInt(str.replace(/_/g, ""))
+  }
 
   pp$9.readRadixNumber = function(radix) {
     var start = this.pos;
@@ -4729,7 +4817,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     var val = this.readInt(radix);
     if (val == null) { this.raise(this.start + 2, "Expected number in radix " + radix); }
     if (this.options.ecmaVersion >= 11 && this.input.charCodeAt(this.pos) === 110) {
-      val = typeof BigInt !== "undefined" ? BigInt(this.input.slice(start, this.pos)) : null;
+      val = stringToBigInt(this.input.slice(start, this.pos));
       ++this.pos;
     } else if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
     return this.finishToken(types.num, val)
@@ -4739,13 +4827,12 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   pp$9.readNumber = function(startsWithDot) {
     var start = this.pos;
-    if (!startsWithDot && this.readInt(10) === null) { this.raise(start, "Invalid number"); }
+    if (!startsWithDot && this.readInt(10, undefined, true) === null) { this.raise(start, "Invalid number"); }
     var octal = this.pos - start >= 2 && this.input.charCodeAt(start) === 48;
     if (octal && this.strict) { this.raise(start, "Invalid number"); }
     var next = this.input.charCodeAt(this.pos);
     if (!octal && !startsWithDot && this.options.ecmaVersion >= 11 && next === 110) {
-      var str$1 = this.input.slice(start, this.pos);
-      var val$1 = typeof BigInt !== "undefined" ? BigInt(str$1) : null;
+      var val$1 = stringToBigInt(this.input.slice(start, this.pos));
       ++this.pos;
       if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
       return this.finishToken(types.num, val$1)
@@ -4763,8 +4850,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     }
     if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
 
-    var str = this.input.slice(start, this.pos);
-    var val = octal ? parseInt(str, 8) : parseFloat(str);
+    var val = stringToNumber(this.input.slice(start, this.pos), octal);
     return this.finishToken(types.num, val)
   };
 
@@ -5023,7 +5109,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 
-  var version = "7.1.0";
+  var version = "7.4.1";
 
   Parser.acorn = {
     Parser: Parser,
@@ -5780,8 +5866,8 @@ var URITEMPLATE = /^(?:(?:[^\x00-\x20"'<>%\\^`{|}]|%[0-9a-f]{2})|\{[+#./;?&=,!@|
 // For the source: https://gist.github.com/dperini/729294
 // For test cases: https://mathiasbynens.be/demo/url-regex
 // @todo Delete current URL in favour of the commented out URL rule when this issue is fixed https://github.com/eslint/eslint/issues/7983.
-// var URL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)(?:\.(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)*(?:\.(?:[a-z\u{00a1}-\u{ffff}]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/iu;
-var URL = /^(?:(?:http[s\u017F]?|ftp):\/\/)(?:(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+(?::(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?@)?(?:(?!10(?:\.[0-9]{1,3}){3})(?!127(?:\.[0-9]{1,3}){3})(?!169\.254(?:\.[0-9]{1,3}){2})(?!192\.168(?:\.[0-9]{1,3}){2})(?!172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2})(?:[1-9][0-9]?|1[0-9][0-9]|2[01][0-9]|22[0-3])(?:\.(?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){2}(?:\.(?:[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-4]))|(?:(?:(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-?)*(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)(?:\.(?:(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-?)*(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)*(?:\.(?:(?:[KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){2,})))(?::[0-9]{2,5})?(?:\/(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?$/i;
+// var URL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u{00a1}-\u{ffff}0-9]+-)*[a-z\u{00a1}-\u{ffff}0-9]+)(?:\.(?:[a-z\u{00a1}-\u{ffff}0-9]+-)*[a-z\u{00a1}-\u{ffff}0-9]+)*(?:\.(?:[a-z\u{00a1}-\u{ffff}]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/iu;
+var URL = /^(?:(?:http[s\u017F]?|ftp):\/\/)(?:(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+(?::(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?@)?(?:(?!10(?:\.[0-9]{1,3}){3})(?!127(?:\.[0-9]{1,3}){3})(?!169\.254(?:\.[0-9]{1,3}){2})(?!192\.168(?:\.[0-9]{1,3}){2})(?!172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2})(?:[1-9][0-9]?|1[0-9][0-9]|2[01][0-9]|22[0-3])(?:\.(?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){2}(?:\.(?:[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-4]))|(?:(?:(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-)*(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)(?:\.(?:(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-)*(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)*(?:\.(?:(?:[a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){2,})))(?::[0-9]{2,5})?(?:\/(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?$/i;
 var UUID = /^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 var JSON_POINTER = /^(?:\/(?:[^~/]|~0|~1)*)*$/;
 var JSON_POINTER_URI_FRAGMENT = /^#(?:\/(?:[a-z0-9_\-.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)*)*$/i;
@@ -5803,8 +5889,8 @@ formats.fast = {
   time: /^(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)?$/i,
   'date-time': /^\d\d\d\d-[0-1]\d-[0-3]\d[t\s](?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i,
   // uri: https://github.com/mafintosh/is-my-json-valid/blob/master/formats.js
-  uri: /^(?:[a-z][a-z0-9+-.]*:)(?:\/?\/)?[^\s]*$/i,
-  'uri-reference': /^(?:(?:[a-z][a-z0-9+-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s]*)?$/i,
+  uri: /^(?:[a-z][a-z0-9+\-.]*:)(?:\/?\/)?[^\s]*$/i,
+  'uri-reference': /^(?:(?:[a-z][a-z0-9+\-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s]*)?$/i,
   'uri-template': URITEMPLATE,
   url: URL,
   // email (sources from jsen validator):
@@ -6024,7 +6110,7 @@ function compile(schema, root, localRefs, baseId) {
                    + vars(defaults, defaultCode) + vars(customRules, customRuleCode)
                    + sourceCode;
 
-    if (opts.processCode) sourceCode = opts.processCode(sourceCode);
+    if (opts.processCode) sourceCode = opts.processCode(sourceCode, _schema);
     // console.log('\n\n\n *** \n', JSON.stringify(sourceCode));
     var validate;
     try {
@@ -6686,8 +6772,6 @@ module.exports = {
   ucs2length: require('./ucs2length'),
   varOccurences: varOccurences,
   varReplace: varReplace,
-  cleanUpCode: cleanUpCode,
-  finalCleanUpCode: finalCleanUpCode,
   schemaHasRules: schemaHasRules,
   schemaHasRulesExcept: schemaHasRulesExcept,
   schemaUnknownRules: schemaUnknownRules,
@@ -6709,7 +6793,7 @@ function copy(o, to) {
 }
 
 
-function checkDataType(dataType, data, negate) {
+function checkDataType(dataType, data, strictNumbers, negate) {
   var EQUAL = negate ? ' !== ' : ' === '
     , AND = negate ? ' || ' : ' && '
     , OK = negate ? '!' : ''
@@ -6722,15 +6806,18 @@ function checkDataType(dataType, data, negate) {
                           NOT + 'Array.isArray(' + data + '))';
     case 'integer': return '(typeof ' + data + EQUAL + '"number"' + AND +
                            NOT + '(' + data + ' % 1)' +
-                           AND + data + EQUAL + data + ')';
+                           AND + data + EQUAL + data +
+                           (strictNumbers ? (AND + OK + 'isFinite(' + data + ')') : '') + ')';
+    case 'number': return '(typeof ' + data + EQUAL + '"' + dataType + '"' +
+                          (strictNumbers ? (AND + OK + 'isFinite(' + data + ')') : '') + ')';
     default: return 'typeof ' + data + EQUAL + '"' + dataType + '"';
   }
 }
 
 
-function checkDataTypes(dataTypes, data) {
+function checkDataTypes(dataTypes, data, strictNumbers) {
   switch (dataTypes.length) {
-    case 1: return checkDataType(dataTypes[0], data, true);
+    case 1: return checkDataType(dataTypes[0], data, strictNumbers, true);
     default:
       var code = '';
       var types = toHash(dataTypes);
@@ -6743,7 +6830,7 @@ function checkDataTypes(dataTypes, data) {
       }
       if (types.number) delete types.integer;
       for (var t in types)
-        code += (code ? ' && ' : '' ) + checkDataType(t, data, true);
+        code += (code ? ' && ' : '' ) + checkDataType(t, data, strictNumbers, true);
 
       return code;
   }
@@ -6806,42 +6893,6 @@ function varReplace(str, dataVar, expr) {
   dataVar += '([^0-9])';
   expr = expr.replace(/\$/g, '$$$$');
   return str.replace(new RegExp(dataVar, 'g'), expr + '$1');
-}
-
-
-var EMPTY_ELSE = /else\s*{\s*}/g
-  , EMPTY_IF_NO_ELSE = /if\s*\([^)]+\)\s*\{\s*\}(?!\s*else)/g
-  , EMPTY_IF_WITH_ELSE = /if\s*\(([^)]+)\)\s*\{\s*\}\s*else(?!\s*if)/g;
-function cleanUpCode(out) {
-  return out.replace(EMPTY_ELSE, '')
-            .replace(EMPTY_IF_NO_ELSE, '')
-            .replace(EMPTY_IF_WITH_ELSE, 'if (!($1))');
-}
-
-
-var ERRORS_REGEXP = /[^v.]errors/g
-  , REMOVE_ERRORS = /var errors = 0;|var vErrors = null;|validate.errors = vErrors;/g
-  , REMOVE_ERRORS_ASYNC = /var errors = 0;|var vErrors = null;/g
-  , RETURN_VALID = 'return errors === 0;'
-  , RETURN_TRUE = 'validate.errors = null; return true;'
-  , RETURN_ASYNC = /if \(errors === 0\) return data;\s*else throw new ValidationError\(vErrors\);/
-  , RETURN_DATA_ASYNC = 'return data;'
-  , ROOTDATA_REGEXP = /[^A-Za-z_$]rootData[^A-Za-z0-9_$]/g
-  , REMOVE_ROOTDATA = /if \(rootData === undefined\) rootData = data;/;
-
-function finalCleanUpCode(out, async) {
-  var matches = out.match(ERRORS_REGEXP);
-  if (matches && matches.length == 2) {
-    out = async
-          ? out.replace(REMOVE_ERRORS_ASYNC, '')
-               .replace(RETURN_ASYNC, RETURN_DATA_ASYNC)
-          : out.replace(REMOVE_ERRORS, '')
-               .replace(RETURN_VALID, RETURN_TRUE);
-  }
-
-  matches = out.match(ROOTDATA_REGEXP);
-  if (!matches || matches.length !== 3) return out;
-  return out.replace(REMOVE_ROOTDATA, '');
 }
 
 
@@ -6923,7 +6974,7 @@ function getData($data, lvl, paths) {
 
 function joinPaths (a, b) {
   if (a == '""') return b;
-  return (a + ' + ' + b).replace(/' \+ '/g, '');
+  return (a + ' + ' + b).replace(/([^\\])' \+ '/g, '$1');
 }
 
 
@@ -6987,7 +7038,7 @@ module.exports = function (metaSchema, keywordsJsonPointers) {
         keywords[key] = {
           anyOf: [
             schema,
-            { $ref: 'https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#' }
+            { $ref: 'https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#' }
           ]
         };
       }
@@ -7003,7 +7054,7 @@ module.exports = function (metaSchema, keywordsJsonPointers) {
 var metaSchema = require('./refs/json-schema-draft-07.json');
 
 module.exports = {
-  $id: 'https://github.com/epoberezkin/ajv/blob/master/lib/definition_schema.js',
+  $id: 'https://github.com/ajv-validator/ajv/blob/master/lib/definition_schema.js',
   definitions: {
     simpleTypes: metaSchema.definitions.simpleTypes
   },
@@ -7063,6 +7114,12 @@ module.exports = function generate__limit(it, $keyword, $ruleType) {
     $op = $isMax ? '<' : '>',
     $notOp = $isMax ? '>' : '<',
     $errorKeyword = undefined;
+  if (!($isData || typeof $schema == 'number' || $schema === undefined)) {
+    throw new Error($keyword + ' must be number');
+  }
+  if (!($isDataExcl || $schemaExcl === undefined || typeof $schemaExcl == 'number' || typeof $schemaExcl == 'boolean')) {
+    throw new Error($exclusiveKeyword + ' must be number or boolean');
+  }
   if ($isDataExcl) {
     var $schemaValueExcl = it.util.getData($schemaExcl.$data, $dataLvl, it.dataPathArr),
       $exclusive = 'exclusive' + $lvl,
@@ -7215,6 +7272,9 @@ module.exports = function generate__limitItems(it, $keyword, $ruleType) {
   } else {
     $schemaValue = $schema;
   }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
+  }
   var $op = $keyword == 'maxItems' ? '>' : '<';
   out += 'if ( ';
   if ($isData) {
@@ -7293,6 +7353,9 @@ module.exports = function generate__limitLength(it, $keyword, $ruleType) {
     $schemaValue = 'schema' + $lvl;
   } else {
     $schemaValue = $schema;
+  }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
   }
   var $op = $keyword == 'maxLength' ? '>' : '<';
   out += 'if ( ';
@@ -7378,6 +7441,9 @@ module.exports = function generate__limitProperties(it, $keyword, $ruleType) {
   } else {
     $schemaValue = $schema;
   }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
+  }
   var $op = $keyword == 'maxProperties' ? '>' : '<';
   out += 'if ( ';
   if ($isData) {
@@ -7457,7 +7523,7 @@ module.exports = function generate_allOf(it, $keyword, $ruleType) {
       l1 = arr1.length - 1;
     while ($i < l1) {
       $sch = arr1[$i += 1];
-      if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
+      if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
         $allSchemasEmpty = false;
         $it.schema = $sch;
         $it.schemaPath = $schemaPath + '[' + $i + ']';
@@ -7478,7 +7544,6 @@ module.exports = function generate_allOf(it, $keyword, $ruleType) {
       out += ' ' + ($closingBraces.slice(0, -1)) + ' ';
     }
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -7500,7 +7565,7 @@ module.exports = function generate_anyOf(it, $keyword, $ruleType) {
   $it.level++;
   var $nextValid = 'valid' + $it.level;
   var $noEmptySchema = $schema.every(function($sch) {
-    return (it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all));
+    return (it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all));
   });
   if ($noEmptySchema) {
     var $currentBaseId = $it.baseId;
@@ -7549,7 +7614,6 @@ module.exports = function generate_anyOf(it, $keyword, $ruleType) {
     if (it.opts.allErrors) {
       out += ' } ';
     }
-    out = it.util.cleanUpCode(out);
   } else {
     if ($breakOnError) {
       out += ' if (true) { ';
@@ -7653,7 +7717,7 @@ module.exports = function generate_contains(it, $keyword, $ruleType) {
     $dataNxt = $it.dataLevel = it.dataLevel + 1,
     $nextData = 'data' + $dataNxt,
     $currentBaseId = it.baseId,
-    $nonEmptySchema = (it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all));
+    $nonEmptySchema = (it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all));
   out += 'var ' + ($errs) + ' = errors;var ' + ($valid) + ';';
   if ($nonEmptySchema) {
     var $wasComposite = it.compositeRule;
@@ -7712,7 +7776,6 @@ module.exports = function generate_contains(it, $keyword, $ruleType) {
   if (it.opts.allErrors) {
     out += ' } ';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -7966,6 +8029,7 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
     $propertyDeps = {},
     $ownProperties = it.opts.ownProperties;
   for ($property in $schema) {
+    if ($property == '__proto__') continue;
     var $sch = $schema[$property];
     var $deps = Array.isArray($sch) ? $propertyDeps : $schemaDeps;
     $deps[$property] = $sch;
@@ -8091,7 +8155,7 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
   var $currentBaseId = $it.baseId;
   for (var $property in $schemaDeps) {
     var $sch = $schemaDeps[$property];
-    if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
+    if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
       out += ' ' + ($nextValid) + ' = true; if ( ' + ($data) + (it.util.getProperty($property)) + ' !== undefined ';
       if ($ownProperties) {
         out += ' && Object.prototype.hasOwnProperty.call(' + ($data) + ', \'' + (it.util.escapeQuotes($property)) + '\') ';
@@ -8112,7 +8176,6 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += '   ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -8354,8 +8417,8 @@ module.exports = function generate_if(it, $keyword, $ruleType) {
   var $nextValid = 'valid' + $it.level;
   var $thenSch = it.schema['then'],
     $elseSch = it.schema['else'],
-    $thenPresent = $thenSch !== undefined && (it.opts.strictKeywords ? typeof $thenSch == 'object' && Object.keys($thenSch).length > 0 : it.util.schemaHasRules($thenSch, it.RULES.all)),
-    $elsePresent = $elseSch !== undefined && (it.opts.strictKeywords ? typeof $elseSch == 'object' && Object.keys($elseSch).length > 0 : it.util.schemaHasRules($elseSch, it.RULES.all)),
+    $thenPresent = $thenSch !== undefined && (it.opts.strictKeywords ? (typeof $thenSch == 'object' && Object.keys($thenSch).length > 0) || $thenSch === false : it.util.schemaHasRules($thenSch, it.RULES.all)),
+    $elsePresent = $elseSch !== undefined && (it.opts.strictKeywords ? (typeof $elseSch == 'object' && Object.keys($elseSch).length > 0) || $elseSch === false : it.util.schemaHasRules($elseSch, it.RULES.all)),
     $currentBaseId = $it.baseId;
   if ($thenPresent || $elsePresent) {
     var $ifClause;
@@ -8433,7 +8496,6 @@ module.exports = function generate_if(it, $keyword, $ruleType) {
     if ($breakOnError) {
       out += ' else { ';
     }
-    out = it.util.cleanUpCode(out);
   } else {
     if ($breakOnError) {
       out += ' if (true) { ';
@@ -8546,7 +8608,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
         l1 = arr1.length - 1;
       while ($i < l1) {
         $sch = arr1[$i += 1];
-        if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
+        if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
           out += ' ' + ($nextValid) + ' = true; if (' + ($data) + '.length > ' + ($i) + ') { ';
           var $passData = $data + '[' + $i + ']';
           $it.schema = $sch;
@@ -8569,7 +8631,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
         }
       }
     }
-    if (typeof $additionalItems == 'object' && (it.opts.strictKeywords ? typeof $additionalItems == 'object' && Object.keys($additionalItems).length > 0 : it.util.schemaHasRules($additionalItems, it.RULES.all))) {
+    if (typeof $additionalItems == 'object' && (it.opts.strictKeywords ? (typeof $additionalItems == 'object' && Object.keys($additionalItems).length > 0) || $additionalItems === false : it.util.schemaHasRules($additionalItems, it.RULES.all))) {
       $it.schema = $additionalItems;
       $it.schemaPath = it.schemaPath + '.additionalItems';
       $it.errSchemaPath = it.errSchemaPath + '/additionalItems';
@@ -8593,7 +8655,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
         $closingBraces += '}';
       }
     }
-  } else if ((it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all))) {
+  } else if ((it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all))) {
     $it.schema = $schema;
     $it.schemaPath = $schemaPath;
     $it.errSchemaPath = $errSchemaPath;
@@ -8616,7 +8678,6 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += ' ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -8638,6 +8699,9 @@ module.exports = function generate_multipleOf(it, $keyword, $ruleType) {
     $schemaValue = 'schema' + $lvl;
   } else {
     $schemaValue = $schema;
+  }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
   }
   out += 'var division' + ($lvl) + ';if (';
   if ($isData) {
@@ -8714,7 +8778,7 @@ module.exports = function generate_not(it, $keyword, $ruleType) {
   var $it = it.util.copy(it);
   $it.level++;
   var $nextValid = 'valid' + $it.level;
-  if ((it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all))) {
+  if ((it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all))) {
     $it.schema = $schema;
     $it.schemaPath = $schemaPath;
     $it.errSchemaPath = $errSchemaPath;
@@ -8814,7 +8878,7 @@ module.exports = function generate_oneOf(it, $keyword, $ruleType) {
       l1 = arr1.length - 1;
     while ($i < l1) {
       $sch = arr1[$i += 1];
-      if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
+      if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
         $it.schema = $sch;
         $it.schemaPath = $schemaPath + '[' + $i + ']';
         $it.errSchemaPath = $errSchemaPath + '/' + $i;
@@ -8958,9 +9022,9 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
     $dataNxt = $it.dataLevel = it.dataLevel + 1,
     $nextData = 'data' + $dataNxt,
     $dataProperties = 'dataProperties' + $lvl;
-  var $schemaKeys = Object.keys($schema || {}),
+  var $schemaKeys = Object.keys($schema || {}).filter(notProto),
     $pProperties = it.schema.patternProperties || {},
-    $pPropertyKeys = Object.keys($pProperties),
+    $pPropertyKeys = Object.keys($pProperties).filter(notProto),
     $aProperties = it.schema.additionalProperties,
     $someProperties = $schemaKeys.length || $pPropertyKeys.length,
     $noAdditional = $aProperties === false,
@@ -8970,7 +9034,13 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
     $ownProperties = it.opts.ownProperties,
     $currentBaseId = it.baseId;
   var $required = it.schema.required;
-  if ($required && !(it.opts.$data && $required.$data) && $required.length < it.opts.loopRequired) var $requiredHash = it.util.toHash($required);
+  if ($required && !(it.opts.$data && $required.$data) && $required.length < it.opts.loopRequired) {
+    var $requiredHash = it.util.toHash($required);
+  }
+
+  function notProto(p) {
+    return p !== '__proto__';
+  }
   out += 'var ' + ($errs) + ' = errors;var ' + ($nextValid) + ' = true;';
   if ($ownProperties) {
     out += ' var ' + ($dataProperties) + ' = undefined;';
@@ -9123,7 +9193,7 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
       while (i3 < l3) {
         $propertyKey = arr3[i3 += 1];
         var $sch = $schema[$propertyKey];
-        if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
+        if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
           var $prop = it.util.getProperty($propertyKey),
             $passData = $data + $prop,
             $hasDefault = $useDefaults && $sch.default !== undefined;
@@ -9226,7 +9296,7 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
       while (i4 < l4) {
         $pProperty = arr4[i4 += 1];
         var $sch = $pProperties[$pProperty];
-        if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
+        if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
           $it.schema = $sch;
           $it.schemaPath = it.schemaPath + '.patternProperties' + it.util.getProperty($pProperty);
           $it.errSchemaPath = it.errSchemaPath + '/patternProperties/' + it.util.escapeFragment($pProperty);
@@ -9265,7 +9335,6 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += ' ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -9286,7 +9355,7 @@ module.exports = function generate_propertyNames(it, $keyword, $ruleType) {
   $it.level++;
   var $nextValid = 'valid' + $it.level;
   out += 'var ' + ($errs) + ' = errors;';
-  if ((it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all))) {
+  if ((it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all))) {
     $it.schema = $schema;
     $it.schemaPath = $schemaPath;
     $it.errSchemaPath = $errSchemaPath;
@@ -9349,7 +9418,6 @@ module.exports = function generate_propertyNames(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += ' ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -9510,7 +9578,7 @@ module.exports = function generate_required(it, $keyword, $ruleType) {
         while (i1 < l1) {
           $property = arr1[i1 += 1];
           var $propertySch = it.schema.properties[$property];
-          if (!($propertySch && (it.opts.strictKeywords ? typeof $propertySch == 'object' && Object.keys($propertySch).length > 0 : it.util.schemaHasRules($propertySch, it.RULES.all)))) {
+          if (!($propertySch && (it.opts.strictKeywords ? (typeof $propertySch == 'object' && Object.keys($propertySch).length > 0) || $propertySch === false : it.util.schemaHasRules($propertySch, it.RULES.all)))) {
             $required[$required.length] = $property;
           }
         }
@@ -9783,7 +9851,7 @@ module.exports = function generate_uniqueItems(it, $keyword, $ruleType) {
     } else {
       out += ' var itemIndices = {}, item; for (;i--;) { var item = ' + ($data) + '[i]; ';
       var $method = 'checkDataType' + ($typeIsArray ? 's' : '');
-      out += ' if (' + (it.util[$method]($itemType, 'item', true)) + ') continue; ';
+      out += ' if (' + (it.util[$method]($itemType, 'item', it.opts.strictNumbers, true)) + ') continue; ';
       if ($typeIsArray) {
         out += ' if (typeof item == \'string\') item = \'"\' + item; ';
       }
@@ -9933,7 +10001,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
     it.rootId = it.resolve.fullPath(it.self._getId(it.root.schema));
     it.baseId = it.baseId || it.rootId;
     delete it.isTop;
-    it.dataPathArr = [undefined];
+    it.dataPathArr = [""];
     if (it.schema.default !== undefined && it.opts.useDefaults && it.opts.strictDefaults) {
       var $defaultMsg = 'default is ignored in the schema root';
       if (it.opts.strictDefaults === 'log') it.logger.warn($defaultMsg);
@@ -9991,47 +10059,39 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
       var $schemaPath = it.schemaPath + '.type',
         $errSchemaPath = it.errSchemaPath + '/type',
         $method = $typeIsArray ? 'checkDataTypes' : 'checkDataType';
-      out += ' if (' + (it.util[$method]($typeSchema, $data, true)) + ') { ';
+      out += ' if (' + (it.util[$method]($typeSchema, $data, it.opts.strictNumbers, true)) + ') { ';
       if ($coerceToTypes) {
         var $dataType = 'dataType' + $lvl,
           $coerced = 'coerced' + $lvl;
-        out += ' var ' + ($dataType) + ' = typeof ' + ($data) + '; ';
+        out += ' var ' + ($dataType) + ' = typeof ' + ($data) + '; var ' + ($coerced) + ' = undefined; ';
         if (it.opts.coerceTypes == 'array') {
-          out += ' if (' + ($dataType) + ' == \'object\' && Array.isArray(' + ($data) + ')) ' + ($dataType) + ' = \'array\'; ';
+          out += ' if (' + ($dataType) + ' == \'object\' && Array.isArray(' + ($data) + ') && ' + ($data) + '.length == 1) { ' + ($data) + ' = ' + ($data) + '[0]; ' + ($dataType) + ' = typeof ' + ($data) + '; if (' + (it.util.checkDataType(it.schema.type, $data, it.opts.strictNumbers)) + ') ' + ($coerced) + ' = ' + ($data) + '; } ';
         }
-        out += ' var ' + ($coerced) + ' = undefined; ';
-        var $bracesCoercion = '';
+        out += ' if (' + ($coerced) + ' !== undefined) ; ';
         var arr1 = $coerceToTypes;
         if (arr1) {
           var $type, $i = -1,
             l1 = arr1.length - 1;
           while ($i < l1) {
             $type = arr1[$i += 1];
-            if ($i) {
-              out += ' if (' + ($coerced) + ' === undefined) { ';
-              $bracesCoercion += '}';
-            }
-            if (it.opts.coerceTypes == 'array' && $type != 'array') {
-              out += ' if (' + ($dataType) + ' == \'array\' && ' + ($data) + '.length == 1) { ' + ($coerced) + ' = ' + ($data) + ' = ' + ($data) + '[0]; ' + ($dataType) + ' = typeof ' + ($data) + ';  } ';
-            }
             if ($type == 'string') {
-              out += ' if (' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\') ' + ($coerced) + ' = \'\' + ' + ($data) + '; else if (' + ($data) + ' === null) ' + ($coerced) + ' = \'\'; ';
+              out += ' else if (' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\') ' + ($coerced) + ' = \'\' + ' + ($data) + '; else if (' + ($data) + ' === null) ' + ($coerced) + ' = \'\'; ';
             } else if ($type == 'number' || $type == 'integer') {
-              out += ' if (' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' === null || (' + ($dataType) + ' == \'string\' && ' + ($data) + ' && ' + ($data) + ' == +' + ($data) + ' ';
+              out += ' else if (' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' === null || (' + ($dataType) + ' == \'string\' && ' + ($data) + ' && ' + ($data) + ' == +' + ($data) + ' ';
               if ($type == 'integer') {
                 out += ' && !(' + ($data) + ' % 1)';
               }
               out += ')) ' + ($coerced) + ' = +' + ($data) + '; ';
             } else if ($type == 'boolean') {
-              out += ' if (' + ($data) + ' === \'false\' || ' + ($data) + ' === 0 || ' + ($data) + ' === null) ' + ($coerced) + ' = false; else if (' + ($data) + ' === \'true\' || ' + ($data) + ' === 1) ' + ($coerced) + ' = true; ';
+              out += ' else if (' + ($data) + ' === \'false\' || ' + ($data) + ' === 0 || ' + ($data) + ' === null) ' + ($coerced) + ' = false; else if (' + ($data) + ' === \'true\' || ' + ($data) + ' === 1) ' + ($coerced) + ' = true; ';
             } else if ($type == 'null') {
-              out += ' if (' + ($data) + ' === \'\' || ' + ($data) + ' === 0 || ' + ($data) + ' === false) ' + ($coerced) + ' = null; ';
+              out += ' else if (' + ($data) + ' === \'\' || ' + ($data) + ' === 0 || ' + ($data) + ' === false) ' + ($coerced) + ' = null; ';
             } else if (it.opts.coerceTypes == 'array' && $type == 'array') {
-              out += ' if (' + ($dataType) + ' == \'string\' || ' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' == null) ' + ($coerced) + ' = [' + ($data) + ']; ';
+              out += ' else if (' + ($dataType) + ' == \'string\' || ' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' == null) ' + ($coerced) + ' = [' + ($data) + ']; ';
             }
           }
         }
-        out += ' ' + ($bracesCoercion) + ' if (' + ($coerced) + ' === undefined) {   ';
+        out += ' else {   ';
         var $$outStack = $$outStack || [];
         $$outStack.push(out);
         out = ''; /* istanbul ignore else */
@@ -10071,7 +10131,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
         } else {
           out += ' var err = ' + (__err) + ';  if (vErrors === null) vErrors = [err]; else vErrors.push(err); errors++; ';
         }
-        out += ' } else {  ';
+        out += ' } if (' + ($coerced) + ' !== undefined) {  ';
         var $parentData = $dataLvl ? 'data' + (($dataLvl - 1) || '') : 'parentData',
           $parentDataProperty = $dataLvl ? it.dataPathArr[$dataLvl] : 'parentDataProperty';
         out += ' ' + ($data) + ' = ' + ($coerced) + '; ';
@@ -10144,7 +10204,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
         $rulesGroup = arr2[i2 += 1];
         if ($shouldUseGroup($rulesGroup)) {
           if ($rulesGroup.type) {
-            out += ' if (' + (it.util.checkDataType($rulesGroup.type, $data)) + ') { ';
+            out += ' if (' + (it.util.checkDataType($rulesGroup.type, $data, it.opts.strictNumbers)) + ') { ';
           }
           if (it.opts.useDefaults) {
             if ($rulesGroup.type == 'object' && it.schema.properties) {
@@ -10312,10 +10372,6 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
   } else {
     out += ' var ' + ($valid) + ' = errors === errs_' + ($lvl) + ';';
   }
-  out = it.util.cleanUpCode(out);
-  if ($top) {
-    out = it.util.finalCleanUpCode(out, $async);
-  }
 
   function $shouldUseGroup($rulesGroup) {
     var rules = $rulesGroup.rules;
@@ -10384,7 +10440,7 @@ function addKeyword(keyword, definition) {
         metaSchema = {
           anyOf: [
             metaSchema,
-            { '$ref': 'https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#' }
+            { '$ref': 'https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#' }
           ]
         };
       }
@@ -10486,7 +10542,7 @@ function validateKeyword(definition, throwError) {
 },{"./definition_schema":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/definition_schema.js","./dotjs/custom":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/dotjs/custom.js"}],"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/refs/data.json":[function(require,module,exports){
 module.exports={
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#",
+    "$id": "https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#",
     "description": "Meta-schema for $data reference (JSON Schema extension proposal)",
     "type": "object",
     "required": [ "$data" ],
@@ -10956,9 +11012,7 @@ function fromByteArray (uint8) {
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(
-      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
-    ))
+    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
@@ -10985,7 +11039,7 @@ function fromByteArray (uint8) {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js":[function(require,module,exports){
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js":[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -12764,8 +12818,60 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-}).call(this,require("buffer").Buffer)
-},{"base64-js":"/usr/local/lib/node_modules/idyll/node_modules/base64-js/index.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","ieee754":"/usr/local/lib/node_modules/idyll/node_modules/ieee754/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/camel-case/camel-case.js":[function(require,module,exports){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"base64-js":"/usr/local/lib/node_modules/idyll/node_modules/base64-js/index.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","ieee754":"/usr/local/lib/node_modules/idyll/node_modules/ieee754/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js":[function(require,module,exports){
+'use strict';
+
+var GetIntrinsic = require('get-intrinsic');
+
+var callBind = require('./');
+
+var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
+
+module.exports = function callBoundIntrinsic(name, allowMissing) {
+	var intrinsic = GetIntrinsic(name, !!allowMissing);
+	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.') > -1) {
+		return callBind(intrinsic);
+	}
+	return intrinsic;
+};
+
+},{"./":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js","get-intrinsic":"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js":[function(require,module,exports){
+'use strict';
+
+var bind = require('function-bind');
+var GetIntrinsic = require('get-intrinsic');
+
+var $apply = GetIntrinsic('%Function.prototype.apply%');
+var $call = GetIntrinsic('%Function.prototype.call%');
+var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
+
+var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
+
+if ($defineProperty) {
+	try {
+		$defineProperty({}, 'a', { value: 1 });
+	} catch (e) {
+		// IE 8 has a broken defineProperty
+		$defineProperty = null;
+	}
+}
+
+module.exports = function callBind() {
+	return $reflectApply(bind, $call, arguments);
+};
+
+var applyBind = function applyBind() {
+	return $reflectApply(bind, $apply, arguments);
+};
+
+if ($defineProperty) {
+	$defineProperty(module.exports, 'apply', { value: applyBind });
+} else {
+	module.exports.apply = applyBind;
+}
+
+},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","get-intrinsic":"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/camel-case/camel-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 var noCase = require('no-case')
 
@@ -12828,7 +12934,7 @@ module.exports = function (value, locale) {
 }
 
 },{"snake-case":"/usr/local/lib/node_modules/idyll/node_modules/snake-case/snake-case.js","upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -12937,9 +13043,9 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":"/usr/local/lib/node_modules/idyll/node_modules/is-buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
-(function (Buffer){
+}).call(this)}).call(this,{"isBuffer":require("../../insert-module-globals/node_modules/is-buffer/index.js")})
+},{"../../insert-module-globals/node_modules/is-buffer/index.js":"/usr/local/lib/node_modules/idyll/node_modules/insert-module-globals/node_modules/is-buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
+(function (Buffer){(function (){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12962,15 +13068,35 @@ var ResizeableBuffer = /*#__PURE__*/function () {
   _createClass(ResizeableBuffer, [{
     key: "prepend",
     value: function prepend(val) {
-      var length = this.length++;
+      if (Buffer.isBuffer(val)) {
+        var length = this.length + val.length;
 
-      if (length === this.size) {
-        this.resize();
+        if (length >= this.size) {
+          this.resize();
+
+          if (length >= this.size) {
+            throw Error('INVALID_BUFFER_STATE');
+          }
+        }
+
+        var buf = this.buf;
+        this.buf = Buffer.alloc(this.size);
+        val.copy(this.buf, 0);
+        buf.copy(this.buf, val.length);
+        this.length += val.length;
+      } else {
+        var _length = this.length++;
+
+        if (_length === this.size) {
+          this.resize();
+        }
+
+        var _buf = this.clone();
+
+        this.buf[0] = val;
+
+        _buf.copy(this.buf, 1, 0, _length);
       }
-
-      var buf = this.clone();
-      this.buf[0] = val;
-      buf.copy(this.buf, 1, 0, length);
     }
   }, {
     key: "append",
@@ -12999,13 +13125,17 @@ var ResizeableBuffer = /*#__PURE__*/function () {
     }
   }, {
     key: "toString",
-    value: function toString() {
-      return this.buf.slice(0, this.length).toString();
+    value: function toString(encoding) {
+      if (encoding) {
+        return this.buf.slice(0, this.length).toString(encoding);
+      } else {
+        return Uint8Array.prototype.slice.call(this.buf.slice(0, this.length));
+      }
     }
   }, {
     key: "toJSON",
     value: function toJSON() {
-      return this.toString();
+      return this.toString('utf8');
     }
   }, {
     key: "reset",
@@ -13018,36 +13148,38 @@ var ResizeableBuffer = /*#__PURE__*/function () {
 }();
 
 module.exports = ResizeableBuffer;
-}).call(this,require("buffer").Buffer)
+}).call(this)}).call(this,require("buffer").Buffer)
 },{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/index.js":[function(require,module,exports){
-(function (Buffer,setImmediate){
+(function (Buffer,setImmediate){(function (){
 "use strict";
 
 function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
 
-function isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _construct(Parent, args, Class) { if (isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
 
 function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -13061,15 +13193,19 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 /*
 CSV Parse
@@ -13087,10 +13223,22 @@ var nl = 10;
 var np = 12;
 var cr = 13;
 var space = 32;
-var bom_utf8 = Buffer.from([239, 187, 191]);
+var boms = {
+  // Note, the following are equals:
+  // Buffer.from("\ufeff")
+  // Buffer.from([239, 187, 191])
+  // Buffer.from('EFBBBF', 'hex')
+  'utf8': Buffer.from([239, 187, 191]),
+  // Note, the following are equals:
+  // Buffer.from "\ufeff", 'utf16le
+  // Buffer.from([255, 254])
+  'utf16le': Buffer.from([255, 254])
+};
 
 var Parser = /*#__PURE__*/function (_Transform) {
   _inherits(Parser, _Transform);
+
+  var _super = _createSuper(Parser);
 
   function Parser() {
     var _this;
@@ -13099,397 +13247,425 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
     _classCallCheck(this, Parser);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Parser).call(this, _objectSpread({}, {
+    _this = _super.call(this, _objectSpread(_objectSpread(_objectSpread({}, {
       readableObjectMode: true
-    }, {}, opts)));
-    var options = {}; // Merge with user options
+    }), opts), {}, {
+      encoding: null
+    }));
+    _this.__originalOptions = opts;
 
-    for (var opt in opts) {
-      options[underscore(opt)] = opts[opt];
-    } // Normalize option `bom`
+    _this.__normalizeOptions(opts);
 
-
-    if (options.bom === undefined || options.bom === null || options.bom === false) {
-      options.bom = false;
-    } else if (options.bom !== true) {
-      throw new CsvError('CSV_INVALID_OPTION_BOM', ['Invalid option bom:', 'bom must be true,', "got ".concat(JSON.stringify(options.bom))]);
-    } // Normalize option `cast`
-
-
-    var fnCastField = null;
-
-    if (options.cast === undefined || options.cast === null || options.cast === false || options.cast === '') {
-      options.cast = undefined;
-    } else if (typeof options.cast === 'function') {
-      fnCastField = options.cast;
-      options.cast = true;
-    } else if (options.cast !== true) {
-      throw new CsvError('CSV_INVALID_OPTION_CAST', ['Invalid option cast:', 'cast must be true or a function,', "got ".concat(JSON.stringify(options.cast))]);
-    } // Normalize option `cast_date`
-
-
-    if (options.cast_date === undefined || options.cast_date === null || options.cast_date === false || options.cast_date === '') {
-      options.cast_date = false;
-    } else if (options.cast_date === true) {
-      options.cast_date = function (value) {
-        var date = Date.parse(value);
-        return !isNaN(date) ? new Date(date) : value;
-      };
-    } else if (typeof options.cast_date !== 'function') {
-      throw new CsvError('CSV_INVALID_OPTION_CAST_DATE', ['Invalid option cast_date:', 'cast_date must be true or a function,', "got ".concat(JSON.stringify(options.cast_date))]);
-    } // Normalize option `columns`
-
-
-    var fnFirstLineToHeaders = null;
-
-    if (options.columns === true) {
-      // Fields in the first line are converted as-is to columns
-      fnFirstLineToHeaders = undefined;
-    } else if (typeof options.columns === 'function') {
-      fnFirstLineToHeaders = options.columns;
-      options.columns = true;
-    } else if (Array.isArray(options.columns)) {
-      options.columns = normalizeColumnsArray(options.columns);
-    } else if (options.columns === undefined || options.columns === null || options.columns === false) {
-      options.columns = false;
-    } else {
-      throw new CsvError('CSV_INVALID_OPTION_COLUMNS', ['Invalid option columns:', 'expect an object, a function or true,', "got ".concat(JSON.stringify(options.columns))]);
-    } // Normalize option `columns_duplicates_to_array`
-
-
-    if (options.columns_duplicates_to_array === undefined || options.columns_duplicates_to_array === null || options.columns_duplicates_to_array === false) {
-      options.columns_duplicates_to_array = false;
-    } else if (options.columns_duplicates_to_array !== true) {
-      throw new CsvError('CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY', ['Invalid option columns_duplicates_to_array:', 'expect an boolean,', "got ".concat(JSON.stringify(options.columns_duplicates_to_array))]);
-    } // Normalize option `comment`
-
-
-    if (options.comment === undefined || options.comment === null || options.comment === false || options.comment === '') {
-      options.comment = null;
-    } else {
-      if (typeof options.comment === 'string') {
-        options.comment = Buffer.from(options.comment);
-      }
-
-      if (!Buffer.isBuffer(options.comment)) {
-        throw new CsvError('CSV_INVALID_OPTION_COMMENT', ['Invalid option comment:', 'comment must be a buffer or a string,', "got ".concat(JSON.stringify(options.comment))]);
-      }
-    } // Normalize option `delimiter`
-
-
-    var delimiter_json = JSON.stringify(options.delimiter);
-    if (!Array.isArray(options.delimiter)) options.delimiter = [options.delimiter];
-
-    if (options.delimiter.length === 0) {
-      throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)]);
-    }
-
-    options.delimiter = options.delimiter.map(function (delimiter) {
-      if (delimiter === undefined || delimiter === null || delimiter === false) {
-        return Buffer.from(',');
-      }
-
-      if (typeof delimiter === 'string') {
-        delimiter = Buffer.from(delimiter);
-      }
-
-      if (!Buffer.isBuffer(delimiter) || delimiter.length === 0) {
-        throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)]);
-      }
-
-      return delimiter;
-    }); // Normalize option `escape`
-
-    if (options.escape === undefined || options.escape === null) {
-      options.escape = Buffer.from('"');
-    } else if (typeof options.escape === 'string') {
-      options.escape = Buffer.from(options.escape);
-    }
-
-    if (!Buffer.isBuffer(options.escape)) {
-      throw new Error("Invalid Option: escape must be a buffer or a string, got ".concat(JSON.stringify(options.escape)));
-    } else if (options.escape.length !== 1) {
-      throw new Error("Invalid Option Length: escape must be one character, got ".concat(options.escape.length));
-    } else {
-      options.escape = options.escape[0];
-    } // Normalize option `from`
-
-
-    if (options.from === undefined || options.from === null) {
-      options.from = 1;
-    } else {
-      if (typeof options.from === 'string' && /\d+/.test(options.from)) {
-        options.from = parseInt(options.from);
-      }
-
-      if (Number.isInteger(options.from)) {
-        if (options.from < 0) {
-          throw new Error("Invalid Option: from must be a positive integer, got ".concat(JSON.stringify(opts.from)));
-        }
-      } else {
-        throw new Error("Invalid Option: from must be an integer, got ".concat(JSON.stringify(options.from)));
-      }
-    } // Normalize option `from_line`
-
-
-    if (options.from_line === undefined || options.from_line === null) {
-      options.from_line = 1;
-    } else {
-      if (typeof options.from_line === 'string' && /\d+/.test(options.from_line)) {
-        options.from_line = parseInt(options.from_line);
-      }
-
-      if (Number.isInteger(options.from_line)) {
-        if (options.from_line <= 0) {
-          throw new Error("Invalid Option: from_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.from_line)));
-        }
-      } else {
-        throw new Error("Invalid Option: from_line must be an integer, got ".concat(JSON.stringify(opts.from_line)));
-      }
-    } // Normalize option `info`
-
-
-    if (options.info === undefined || options.info === null || options.info === false) {
-      options.info = false;
-    } else if (options.info !== true) {
-      throw new Error("Invalid Option: info must be true, got ".concat(JSON.stringify(options.info)));
-    } // Normalize option `max_record_size`
-
-
-    if (options.max_record_size === undefined || options.max_record_size === null || options.max_record_size === false) {
-      options.max_record_size = 0;
-    } else if (Number.isInteger(options.max_record_size) && options.max_record_size >= 0) {// Great, nothing to do
-    } else if (typeof options.max_record_size === 'string' && /\d+/.test(options.max_record_size)) {
-      options.max_record_size = parseInt(options.max_record_size);
-    } else {
-      throw new Error("Invalid Option: max_record_size must be a positive integer, got ".concat(JSON.stringify(options.max_record_size)));
-    } // Normalize option `objname`
-
-
-    if (options.objname === undefined || options.objname === null || options.objname === false) {
-      options.objname = undefined;
-    } else if (Buffer.isBuffer(options.objname)) {
-      if (options.objname.length === 0) {
-        throw new Error("Invalid Option: objname must be a non empty buffer");
-      }
-
-      options.objname = options.objname.toString();
-    } else if (typeof options.objname === 'string') {
-      if (options.objname.length === 0) {
-        throw new Error("Invalid Option: objname must be a non empty string");
-      } // Great, nothing to do
-
-    } else {
-      throw new Error("Invalid Option: objname must be a string or a buffer, got ".concat(options.objname));
-    } // Normalize option `on_record`
-
-
-    if (options.on_record === undefined || options.on_record === null) {
-      options.on_record = undefined;
-    } else if (typeof options.on_record !== 'function') {
-      throw new CsvError('CSV_INVALID_OPTION_ON_RECORD', ['Invalid option `on_record`:', 'expect a function,', "got ".concat(JSON.stringify(options.on_record))]);
-    } // Normalize option `quote`
-
-
-    if (options.quote === null || options.quote === false || options.quote === '') {
-      options.quote = null;
-    } else {
-      if (options.quote === undefined || options.quote === true) {
-        options.quote = Buffer.from('"');
-      } else if (typeof options.quote === 'string') {
-        options.quote = Buffer.from(options.quote);
-      }
-
-      if (!Buffer.isBuffer(options.quote)) {
-        throw new Error("Invalid Option: quote must be a buffer or a string, got ".concat(JSON.stringify(options.quote)));
-      } else if (options.quote.length !== 1) {
-        throw new Error("Invalid Option Length: quote must be one character, got ".concat(options.quote.length));
-      } else {
-        options.quote = options.quote[0];
-      }
-    } // Normalize option `raw`
-
-
-    if (options.raw === undefined || options.raw === null || options.raw === false) {
-      options.raw = false;
-    } else if (options.raw !== true) {
-      throw new Error("Invalid Option: raw must be true, got ".concat(JSON.stringify(options.raw)));
-    } // Normalize option `record_delimiter`
-
-
-    if (!options.record_delimiter) {
-      options.record_delimiter = [];
-    } else if (!Array.isArray(options.record_delimiter)) {
-      options.record_delimiter = [options.record_delimiter];
-    }
-
-    options.record_delimiter = options.record_delimiter.map(function (rd) {
-      if (typeof rd === 'string') {
-        rd = Buffer.from(rd);
-      }
-
-      return rd;
-    }); // Normalize option `relax`
-
-    if (typeof options.relax === 'boolean') {// Great, nothing to do
-    } else if (options.relax === undefined || options.relax === null) {
-      options.relax = false;
-    } else {
-      throw new Error("Invalid Option: relax must be a boolean, got ".concat(JSON.stringify(options.relax)));
-    } // Normalize option `relax_column_count`
-
-
-    if (typeof options.relax_column_count === 'boolean') {// Great, nothing to do
-    } else if (options.relax_column_count === undefined || options.relax_column_count === null) {
-      options.relax_column_count = false;
-    } else {
-      throw new Error("Invalid Option: relax_column_count must be a boolean, got ".concat(JSON.stringify(options.relax_column_count)));
-    }
-
-    if (typeof options.relax_column_count_less === 'boolean') {// Great, nothing to do
-    } else if (options.relax_column_count_less === undefined || options.relax_column_count_less === null) {
-      options.relax_column_count_less = false;
-    } else {
-      throw new Error("Invalid Option: relax_column_count_less must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_less)));
-    }
-
-    if (typeof options.relax_column_count_more === 'boolean') {// Great, nothing to do
-    } else if (options.relax_column_count_more === undefined || options.relax_column_count_more === null) {
-      options.relax_column_count_more = false;
-    } else {
-      throw new Error("Invalid Option: relax_column_count_more must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_more)));
-    } // Normalize option `skip_empty_lines`
-
-
-    if (typeof options.skip_empty_lines === 'boolean') {// Great, nothing to do
-    } else if (options.skip_empty_lines === undefined || options.skip_empty_lines === null) {
-      options.skip_empty_lines = false;
-    } else {
-      throw new Error("Invalid Option: skip_empty_lines must be a boolean, got ".concat(JSON.stringify(options.skip_empty_lines)));
-    } // Normalize option `skip_lines_with_empty_values`
-
-
-    if (typeof options.skip_lines_with_empty_values === 'boolean') {// Great, nothing to do
-    } else if (options.skip_lines_with_empty_values === undefined || options.skip_lines_with_empty_values === null) {
-      options.skip_lines_with_empty_values = false;
-    } else {
-      throw new Error("Invalid Option: skip_lines_with_empty_values must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_empty_values)));
-    } // Normalize option `skip_lines_with_error`
-
-
-    if (typeof options.skip_lines_with_error === 'boolean') {// Great, nothing to do
-    } else if (options.skip_lines_with_error === undefined || options.skip_lines_with_error === null) {
-      options.skip_lines_with_error = false;
-    } else {
-      throw new Error("Invalid Option: skip_lines_with_error must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_error)));
-    } // Normalize option `rtrim`
-
-
-    if (options.rtrim === undefined || options.rtrim === null || options.rtrim === false) {
-      options.rtrim = false;
-    } else if (options.rtrim !== true) {
-      throw new Error("Invalid Option: rtrim must be a boolean, got ".concat(JSON.stringify(options.rtrim)));
-    } // Normalize option `ltrim`
-
-
-    if (options.ltrim === undefined || options.ltrim === null || options.ltrim === false) {
-      options.ltrim = false;
-    } else if (options.ltrim !== true) {
-      throw new Error("Invalid Option: ltrim must be a boolean, got ".concat(JSON.stringify(options.ltrim)));
-    } // Normalize option `trim`
-
-
-    if (options.trim === undefined || options.trim === null || options.trim === false) {
-      options.trim = false;
-    } else if (options.trim !== true) {
-      throw new Error("Invalid Option: trim must be a boolean, got ".concat(JSON.stringify(options.trim)));
-    } // Normalize options `trim`, `ltrim` and `rtrim`
-
-
-    if (options.trim === true && opts.ltrim !== false) {
-      options.ltrim = true;
-    } else if (options.ltrim !== true) {
-      options.ltrim = false;
-    }
-
-    if (options.trim === true && opts.rtrim !== false) {
-      options.rtrim = true;
-    } else if (options.rtrim !== true) {
-      options.rtrim = false;
-    } // Normalize option `to`
-
-
-    if (options.to === undefined || options.to === null) {
-      options.to = -1;
-    } else {
-      if (typeof options.to === 'string' && /\d+/.test(options.to)) {
-        options.to = parseInt(options.to);
-      }
-
-      if (Number.isInteger(options.to)) {
-        if (options.to <= 0) {
-          throw new Error("Invalid Option: to must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to)));
-        }
-      } else {
-        throw new Error("Invalid Option: to must be an integer, got ".concat(JSON.stringify(opts.to)));
-      }
-    } // Normalize option `to_line`
-
-
-    if (options.to_line === undefined || options.to_line === null) {
-      options.to_line = -1;
-    } else {
-      if (typeof options.to_line === 'string' && /\d+/.test(options.to_line)) {
-        options.to_line = parseInt(options.to_line);
-      }
-
-      if (Number.isInteger(options.to_line)) {
-        if (options.to_line <= 0) {
-          throw new Error("Invalid Option: to_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to_line)));
-        }
-      } else {
-        throw new Error("Invalid Option: to_line must be an integer, got ".concat(JSON.stringify(opts.to_line)));
-      }
-    }
-
-    _this.info = {
-      comment_lines: 0,
-      empty_lines: 0,
-      invalid_field_length: 0,
-      lines: 1,
-      records: 0
-    };
-    _this.options = options;
-    _this.state = {
-      bomSkipped: false,
-      castField: fnCastField,
-      commenting: false,
-      enabled: options.from_line === 1,
-      escaping: false,
-      escapeIsQuote: options.escape === options.quote,
-      expectedRecordLength: options.columns === null ? 0 : options.columns.length,
-      field: new ResizeableBuffer(20),
-      firstLineToHeaders: fnFirstLineToHeaders,
-      info: Object.assign({}, _this.info),
-      previousBuf: undefined,
-      quoting: false,
-      stop: false,
-      rawBuffer: new ResizeableBuffer(100),
-      record: [],
-      recordHasError: false,
-      record_length: 0,
-      recordDelimiterMaxLength: options.record_delimiter.length === 0 ? 2 : Math.max.apply(Math, _toConsumableArray(options.record_delimiter.map(function (v) {
-        return v.length;
-      }))),
-      trimChars: [Buffer.from(' ')[0], Buffer.from('\t')[0]],
-      wasQuoting: false,
-      wasRowDelimiter: false
-    };
     return _this;
-  } // Implementation of `Transform._transform`
-
+  }
 
   _createClass(Parser, [{
+    key: "__normalizeOptions",
+    value: function __normalizeOptions(opts) {
+      var options = {}; // Merge with user options
+
+      for (var opt in opts) {
+        options[underscore(opt)] = opts[opt];
+      } // Normalize option `encoding`
+      // Note: defined first because other options depends on it
+      // to convert chars/strings into buffers.
+
+
+      if (options.encoding === undefined || options.encoding === true) {
+        options.encoding = 'utf8';
+      } else if (options.encoding === null || options.encoding === false) {
+        options.encoding = null;
+      } else if (typeof options.encoding !== 'string' && options.encoding !== null) {
+        throw new CsvError('CSV_INVALID_OPTION_ENCODING', ['Invalid option encoding:', 'encoding must be a string or null to return a buffer,', "got ".concat(JSON.stringify(options.encoding))], options);
+      } // Normalize option `bom`
+
+
+      if (options.bom === undefined || options.bom === null || options.bom === false) {
+        options.bom = false;
+      } else if (options.bom !== true) {
+        throw new CsvError('CSV_INVALID_OPTION_BOM', ['Invalid option bom:', 'bom must be true,', "got ".concat(JSON.stringify(options.bom))], options);
+      } // Normalize option `cast`
+
+
+      var fnCastField = null;
+
+      if (options.cast === undefined || options.cast === null || options.cast === false || options.cast === '') {
+        options.cast = undefined;
+      } else if (typeof options.cast === 'function') {
+        fnCastField = options.cast;
+        options.cast = true;
+      } else if (options.cast !== true) {
+        throw new CsvError('CSV_INVALID_OPTION_CAST', ['Invalid option cast:', 'cast must be true or a function,', "got ".concat(JSON.stringify(options.cast))], options);
+      } // Normalize option `cast_date`
+
+
+      if (options.cast_date === undefined || options.cast_date === null || options.cast_date === false || options.cast_date === '') {
+        options.cast_date = false;
+      } else if (options.cast_date === true) {
+        options.cast_date = function (value) {
+          var date = Date.parse(value);
+          return !isNaN(date) ? new Date(date) : value;
+        };
+      } else if (typeof options.cast_date !== 'function') {
+        throw new CsvError('CSV_INVALID_OPTION_CAST_DATE', ['Invalid option cast_date:', 'cast_date must be true or a function,', "got ".concat(JSON.stringify(options.cast_date))], options);
+      } // Normalize option `columns`
+
+
+      var fnFirstLineToHeaders = null;
+
+      if (options.columns === true) {
+        // Fields in the first line are converted as-is to columns
+        fnFirstLineToHeaders = undefined;
+      } else if (typeof options.columns === 'function') {
+        fnFirstLineToHeaders = options.columns;
+        options.columns = true;
+      } else if (Array.isArray(options.columns)) {
+        options.columns = normalizeColumnsArray(options.columns);
+      } else if (options.columns === undefined || options.columns === null || options.columns === false) {
+        options.columns = false;
+      } else {
+        throw new CsvError('CSV_INVALID_OPTION_COLUMNS', ['Invalid option columns:', 'expect an object, a function or true,', "got ".concat(JSON.stringify(options.columns))], options);
+      } // Normalize option `columns_duplicates_to_array`
+
+
+      if (options.columns_duplicates_to_array === undefined || options.columns_duplicates_to_array === null || options.columns_duplicates_to_array === false) {
+        options.columns_duplicates_to_array = false;
+      } else if (options.columns_duplicates_to_array !== true) {
+        throw new CsvError('CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY', ['Invalid option columns_duplicates_to_array:', 'expect an boolean,', "got ".concat(JSON.stringify(options.columns_duplicates_to_array))], options);
+      } // Normalize option `comment`
+
+
+      if (options.comment === undefined || options.comment === null || options.comment === false || options.comment === '') {
+        options.comment = null;
+      } else {
+        if (typeof options.comment === 'string') {
+          options.comment = Buffer.from(options.comment, options.encoding);
+        }
+
+        if (!Buffer.isBuffer(options.comment)) {
+          throw new CsvError('CSV_INVALID_OPTION_COMMENT', ['Invalid option comment:', 'comment must be a buffer or a string,', "got ".concat(JSON.stringify(options.comment))], options);
+        }
+      } // Normalize option `delimiter`
+
+
+      var delimiter_json = JSON.stringify(options.delimiter);
+      if (!Array.isArray(options.delimiter)) options.delimiter = [options.delimiter];
+
+      if (options.delimiter.length === 0) {
+        throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)], options);
+      }
+
+      options.delimiter = options.delimiter.map(function (delimiter) {
+        if (delimiter === undefined || delimiter === null || delimiter === false) {
+          return Buffer.from(',', options.encoding);
+        }
+
+        if (typeof delimiter === 'string') {
+          delimiter = Buffer.from(delimiter, options.encoding);
+        }
+
+        if (!Buffer.isBuffer(delimiter) || delimiter.length === 0) {
+          throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)], options);
+        }
+
+        return delimiter;
+      }); // Normalize option `escape`
+
+      if (options.escape === undefined || options.escape === true) {
+        options.escape = Buffer.from('"', options.encoding);
+      } else if (typeof options.escape === 'string') {
+        options.escape = Buffer.from(options.escape, options.encoding);
+      } else if (options.escape === null || options.escape === false) {
+        options.escape = null;
+      }
+
+      if (options.escape !== null) {
+        if (!Buffer.isBuffer(options.escape)) {
+          throw new Error("Invalid Option: escape must be a buffer, a string or a boolean, got ".concat(JSON.stringify(options.escape)));
+        }
+      } // Normalize option `from`
+
+
+      if (options.from === undefined || options.from === null) {
+        options.from = 1;
+      } else {
+        if (typeof options.from === 'string' && /\d+/.test(options.from)) {
+          options.from = parseInt(options.from);
+        }
+
+        if (Number.isInteger(options.from)) {
+          if (options.from < 0) {
+            throw new Error("Invalid Option: from must be a positive integer, got ".concat(JSON.stringify(opts.from)));
+          }
+        } else {
+          throw new Error("Invalid Option: from must be an integer, got ".concat(JSON.stringify(options.from)));
+        }
+      } // Normalize option `from_line`
+
+
+      if (options.from_line === undefined || options.from_line === null) {
+        options.from_line = 1;
+      } else {
+        if (typeof options.from_line === 'string' && /\d+/.test(options.from_line)) {
+          options.from_line = parseInt(options.from_line);
+        }
+
+        if (Number.isInteger(options.from_line)) {
+          if (options.from_line <= 0) {
+            throw new Error("Invalid Option: from_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.from_line)));
+          }
+        } else {
+          throw new Error("Invalid Option: from_line must be an integer, got ".concat(JSON.stringify(opts.from_line)));
+        }
+      } // Normalize option `info`
+
+
+      if (options.info === undefined || options.info === null || options.info === false) {
+        options.info = false;
+      } else if (options.info !== true) {
+        throw new Error("Invalid Option: info must be true, got ".concat(JSON.stringify(options.info)));
+      } // Normalize option `max_record_size`
+
+
+      if (options.max_record_size === undefined || options.max_record_size === null || options.max_record_size === false) {
+        options.max_record_size = 0;
+      } else if (Number.isInteger(options.max_record_size) && options.max_record_size >= 0) {// Great, nothing to do
+      } else if (typeof options.max_record_size === 'string' && /\d+/.test(options.max_record_size)) {
+        options.max_record_size = parseInt(options.max_record_size);
+      } else {
+        throw new Error("Invalid Option: max_record_size must be a positive integer, got ".concat(JSON.stringify(options.max_record_size)));
+      } // Normalize option `objname`
+
+
+      if (options.objname === undefined || options.objname === null || options.objname === false) {
+        options.objname = undefined;
+      } else if (Buffer.isBuffer(options.objname)) {
+        if (options.objname.length === 0) {
+          throw new Error("Invalid Option: objname must be a non empty buffer");
+        }
+
+        if (options.encoding === null) {// Don't call `toString`, leave objname as a buffer
+        } else {
+          options.objname = options.objname.toString(options.encoding);
+        }
+      } else if (typeof options.objname === 'string') {
+        if (options.objname.length === 0) {
+          throw new Error("Invalid Option: objname must be a non empty string");
+        } // Great, nothing to do
+
+      } else {
+        throw new Error("Invalid Option: objname must be a string or a buffer, got ".concat(options.objname));
+      } // Normalize option `on_record`
+
+
+      if (options.on_record === undefined || options.on_record === null) {
+        options.on_record = undefined;
+      } else if (typeof options.on_record !== 'function') {
+        throw new CsvError('CSV_INVALID_OPTION_ON_RECORD', ['Invalid option `on_record`:', 'expect a function,', "got ".concat(JSON.stringify(options.on_record))], options);
+      } // Normalize option `quote`
+
+
+      if (options.quote === null || options.quote === false || options.quote === '') {
+        options.quote = null;
+      } else {
+        if (options.quote === undefined || options.quote === true) {
+          options.quote = Buffer.from('"', options.encoding);
+        } else if (typeof options.quote === 'string') {
+          options.quote = Buffer.from(options.quote, options.encoding);
+        }
+
+        if (!Buffer.isBuffer(options.quote)) {
+          throw new Error("Invalid Option: quote must be a buffer or a string, got ".concat(JSON.stringify(options.quote)));
+        }
+      } // Normalize option `raw`
+
+
+      if (options.raw === undefined || options.raw === null || options.raw === false) {
+        options.raw = false;
+      } else if (options.raw !== true) {
+        throw new Error("Invalid Option: raw must be true, got ".concat(JSON.stringify(options.raw)));
+      } // Normalize option `record_delimiter`
+
+
+      if (!options.record_delimiter) {
+        options.record_delimiter = [];
+      } else if (!Array.isArray(options.record_delimiter)) {
+        options.record_delimiter = [options.record_delimiter];
+      }
+
+      options.record_delimiter = options.record_delimiter.map(function (rd) {
+        if (typeof rd === 'string') {
+          rd = Buffer.from(rd, options.encoding);
+        }
+
+        return rd;
+      }); // Normalize option `relax`
+
+      if (typeof options.relax === 'boolean') {// Great, nothing to do
+      } else if (options.relax === undefined || options.relax === null) {
+        options.relax = false;
+      } else {
+        throw new Error("Invalid Option: relax must be a boolean, got ".concat(JSON.stringify(options.relax)));
+      } // Normalize option `relax_column_count`
+
+
+      if (typeof options.relax_column_count === 'boolean') {// Great, nothing to do
+      } else if (options.relax_column_count === undefined || options.relax_column_count === null) {
+        options.relax_column_count = false;
+      } else {
+        throw new Error("Invalid Option: relax_column_count must be a boolean, got ".concat(JSON.stringify(options.relax_column_count)));
+      }
+
+      if (typeof options.relax_column_count_less === 'boolean') {// Great, nothing to do
+      } else if (options.relax_column_count_less === undefined || options.relax_column_count_less === null) {
+        options.relax_column_count_less = false;
+      } else {
+        throw new Error("Invalid Option: relax_column_count_less must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_less)));
+      }
+
+      if (typeof options.relax_column_count_more === 'boolean') {// Great, nothing to do
+      } else if (options.relax_column_count_more === undefined || options.relax_column_count_more === null) {
+        options.relax_column_count_more = false;
+      } else {
+        throw new Error("Invalid Option: relax_column_count_more must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_more)));
+      } // Normalize option `skip_empty_lines`
+
+
+      if (typeof options.skip_empty_lines === 'boolean') {// Great, nothing to do
+      } else if (options.skip_empty_lines === undefined || options.skip_empty_lines === null) {
+        options.skip_empty_lines = false;
+      } else {
+        throw new Error("Invalid Option: skip_empty_lines must be a boolean, got ".concat(JSON.stringify(options.skip_empty_lines)));
+      } // Normalize option `skip_lines_with_empty_values`
+
+
+      if (typeof options.skip_lines_with_empty_values === 'boolean') {// Great, nothing to do
+      } else if (options.skip_lines_with_empty_values === undefined || options.skip_lines_with_empty_values === null) {
+        options.skip_lines_with_empty_values = false;
+      } else {
+        throw new Error("Invalid Option: skip_lines_with_empty_values must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_empty_values)));
+      } // Normalize option `skip_lines_with_error`
+
+
+      if (typeof options.skip_lines_with_error === 'boolean') {// Great, nothing to do
+      } else if (options.skip_lines_with_error === undefined || options.skip_lines_with_error === null) {
+        options.skip_lines_with_error = false;
+      } else {
+        throw new Error("Invalid Option: skip_lines_with_error must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_error)));
+      } // Normalize option `rtrim`
+
+
+      if (options.rtrim === undefined || options.rtrim === null || options.rtrim === false) {
+        options.rtrim = false;
+      } else if (options.rtrim !== true) {
+        throw new Error("Invalid Option: rtrim must be a boolean, got ".concat(JSON.stringify(options.rtrim)));
+      } // Normalize option `ltrim`
+
+
+      if (options.ltrim === undefined || options.ltrim === null || options.ltrim === false) {
+        options.ltrim = false;
+      } else if (options.ltrim !== true) {
+        throw new Error("Invalid Option: ltrim must be a boolean, got ".concat(JSON.stringify(options.ltrim)));
+      } // Normalize option `trim`
+
+
+      if (options.trim === undefined || options.trim === null || options.trim === false) {
+        options.trim = false;
+      } else if (options.trim !== true) {
+        throw new Error("Invalid Option: trim must be a boolean, got ".concat(JSON.stringify(options.trim)));
+      } // Normalize options `trim`, `ltrim` and `rtrim`
+
+
+      if (options.trim === true && opts.ltrim !== false) {
+        options.ltrim = true;
+      } else if (options.ltrim !== true) {
+        options.ltrim = false;
+      }
+
+      if (options.trim === true && opts.rtrim !== false) {
+        options.rtrim = true;
+      } else if (options.rtrim !== true) {
+        options.rtrim = false;
+      } // Normalize option `to`
+
+
+      if (options.to === undefined || options.to === null) {
+        options.to = -1;
+      } else {
+        if (typeof options.to === 'string' && /\d+/.test(options.to)) {
+          options.to = parseInt(options.to);
+        }
+
+        if (Number.isInteger(options.to)) {
+          if (options.to <= 0) {
+            throw new Error("Invalid Option: to must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to)));
+          }
+        } else {
+          throw new Error("Invalid Option: to must be an integer, got ".concat(JSON.stringify(opts.to)));
+        }
+      } // Normalize option `to_line`
+
+
+      if (options.to_line === undefined || options.to_line === null) {
+        options.to_line = -1;
+      } else {
+        if (typeof options.to_line === 'string' && /\d+/.test(options.to_line)) {
+          options.to_line = parseInt(options.to_line);
+        }
+
+        if (Number.isInteger(options.to_line)) {
+          if (options.to_line <= 0) {
+            throw new Error("Invalid Option: to_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to_line)));
+          }
+        } else {
+          throw new Error("Invalid Option: to_line must be an integer, got ".concat(JSON.stringify(opts.to_line)));
+        }
+      }
+
+      this.info = {
+        comment_lines: 0,
+        empty_lines: 0,
+        invalid_field_length: 0,
+        lines: 1,
+        records: 0
+      };
+      this.options = options;
+      this.state = {
+        bomSkipped: false,
+        castField: fnCastField,
+        commenting: false,
+        // Current error encountered by a record
+        error: undefined,
+        enabled: options.from_line === 1,
+        escaping: false,
+        // escapeIsQuote: options.escape === options.quote,
+        escapeIsQuote: Buffer.isBuffer(options.escape) && Buffer.isBuffer(options.quote) && Buffer.compare(options.escape, options.quote) === 0,
+        expectedRecordLength: options.columns === null ? 0 : options.columns.length,
+        field: new ResizeableBuffer(20),
+        firstLineToHeaders: fnFirstLineToHeaders,
+        info: Object.assign({}, this.info),
+        needMoreDataSize: Math.max.apply(Math, [// Skip if the remaining buffer smaller than comment
+        options.comment !== null ? options.comment.length : 0].concat(_toConsumableArray(options.delimiter.map(function (delimiter) {
+          return delimiter.length;
+        })), [// Skip if the remaining buffer can be escape sequence
+        options.quote !== null ? options.quote.length : 0])),
+        previousBuf: undefined,
+        quoting: false,
+        stop: false,
+        rawBuffer: new ResizeableBuffer(100),
+        record: [],
+        recordHasError: false,
+        record_length: 0,
+        recordDelimiterMaxLength: options.record_delimiter.length === 0 ? 2 : Math.max.apply(Math, _toConsumableArray(options.record_delimiter.map(function (v) {
+          return v.length;
+        }))),
+        trimChars: [Buffer.from(' ', options.encoding)[0], Buffer.from('\t', options.encoding)[0]],
+        wasQuoting: false,
+        wasRowDelimiter: false
+      };
+    } // Implementation of `Transform._transform`
+
+  }, {
     key: "_transform",
     value: function _transform(buf, encoding, callback) {
       if (this.state.stop === true) {
@@ -13567,12 +13743,19 @@ var Parser = /*#__PURE__*/function (_Transform) {
             // Wait for more data
             this.state.previousBuf = buf;
             return;
-          } // skip BOM detect because data length < 3
-
+          }
         } else {
-          if (bom_utf8.compare(buf, 0, 3) === 0) {
-            // Skip BOM
-            buf = buf.slice(3);
+          for (var encoding in boms) {
+            if (boms[encoding].compare(buf, 0, boms[encoding].length) === 0) {
+              // Skip BOM
+              buf = buf.slice(boms[encoding].length); // Renormalize original options with the new encoding
+
+              this.__normalizeOptions(_objectSpread(_objectSpread({}, this.__originalOptions), {}, {
+                encoding: encoding
+              }));
+
+              break;
+            }
           }
 
           this.state.bomSkipped = true;
@@ -13631,56 +13814,58 @@ var Parser = /*#__PURE__*/function (_Transform) {
         } else {
           // Escape is only active inside quoted fields
           // We are quoting, the char is an escape chr and there is a chr to escape
-          if (this.state.quoting === true && chr === escape && pos + 1 < bufLen) {
+          // if(escape !== null && this.state.quoting === true && chr === escape && pos + 1 < bufLen){
+          if (escape !== null && this.state.quoting === true && this.__isEscape(buf, pos, chr) && pos + escape.length < bufLen) {
             if (escapeIsQuote) {
-              if (buf[pos + 1] === quote) {
+              if (this.__isQuote(buf, pos + escape.length)) {
                 this.state.escaping = true;
+                pos += escape.length - 1;
                 continue;
               }
             } else {
               this.state.escaping = true;
+              pos += escape.length - 1;
               continue;
             }
           } // Not currently escaping and chr is a quote
           // TODO: need to compare bytes instead of single char
 
 
-          if (this.state.commenting === false && chr === quote) {
+          if (this.state.commenting === false && this.__isQuote(buf, pos)) {
             if (this.state.quoting === true) {
-              var nextChr = buf[pos + 1];
+              var nextChr = buf[pos + quote.length];
 
-              var isNextChrTrimable = rtrim && this.__isCharTrimable(nextChr); // const isNextChrComment = nextChr === comment
+              var isNextChrTrimable = rtrim && this.__isCharTrimable(nextChr);
 
+              var isNextChrComment = comment !== null && this.__compareBytes(comment, buf, pos + quote.length, nextChr);
 
-              var isNextChrComment = comment !== null && this.__compareBytes(comment, buf, pos + 1, nextChr);
+              var isNextChrDelimiter = this.__isDelimiter(buf, pos + quote.length, nextChr);
 
-              var isNextChrDelimiter = this.__isDelimiter(nextChr, buf, pos + 1);
-
-              var isNextChrRowDelimiter = record_delimiter.length === 0 ? this.__autoDiscoverRowDelimiter(buf, pos + 1) : this.__isRecordDelimiter(nextChr, buf, pos + 1); // Escape a quote
+              var isNextChrRowDelimiter = record_delimiter.length === 0 ? this.__autoDiscoverRowDelimiter(buf, pos + quote.length) : this.__isRecordDelimiter(nextChr, buf, pos + quote.length); // Escape a quote
               // Treat next char as a regular character
-              // TODO: need to compare bytes instead of single char
 
-              if (chr === escape && nextChr === quote) {
-                pos++;
+              if (escape !== null && this.__isEscape(buf, pos, chr) && this.__isQuote(buf, pos + escape.length)) {
+                pos += escape.length - 1;
               } else if (!nextChr || isNextChrDelimiter || isNextChrRowDelimiter || isNextChrComment || isNextChrTrimable) {
                 this.state.quoting = false;
                 this.state.wasQuoting = true;
+                pos += quote.length - 1;
                 continue;
               } else if (relax === false) {
-                var err = this.__error(new CsvError('CSV_INVALID_CLOSING_QUOTE', ['Invalid Closing Quote:', "got \"".concat(String.fromCharCode(nextChr), "\""), "at line ".concat(this.info.lines), 'instead of delimiter, row delimiter, trimable character', '(if activated) or comment'], this.__context()));
+                var err = this.__error(new CsvError('CSV_INVALID_CLOSING_QUOTE', ['Invalid Closing Quote:', "got \"".concat(String.fromCharCode(nextChr), "\""), "at line ".concat(this.info.lines), 'instead of delimiter, row delimiter, trimable character', '(if activated) or comment'], this.options, this.__context()));
 
                 if (err !== undefined) return err;
               } else {
                 this.state.quoting = false;
-                this.state.wasQuoting = true; // continue
-
+                this.state.wasQuoting = true;
                 this.state.field.prepend(quote);
+                pos += quote.length - 1;
               }
             } else {
               if (this.state.field.length !== 0) {
                 // In relax mode, treat opening quote preceded by chrs as regular
                 if (relax === false) {
-                  var _err = this.__error(new CsvError('INVALID_OPENING_QUOTE', ['Invalid Opening Quote:', "a quote is found inside a field at line ".concat(this.info.lines)], this.__context(), {
+                  var _err = this.__error(new CsvError('INVALID_OPENING_QUOTE', ['Invalid Opening Quote:', "a quote is found inside a field at line ".concat(this.info.lines)], this.options, this.__context(), {
                     field: this.state.field
                   }));
 
@@ -13688,6 +13873,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
                 }
               } else {
                 this.state.quoting = true;
+                pos += quote.length - 1;
                 continue;
               }
             }
@@ -13753,7 +13939,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
               continue;
             }
 
-            var delimiterLength = this.__isDelimiter(chr, buf, pos);
+            var delimiterLength = this.__isDelimiter(buf, pos, chr);
 
             if (delimiterLength !== 0) {
               var _errField = this.__onField();
@@ -13767,7 +13953,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
         if (this.state.commenting === false) {
           if (max_record_size !== 0 && this.state.record_length + this.state.field.length > max_record_size) {
-            var _err2 = this.__error(new CsvError('CSV_MAX_RECORD_SIZE', ['Max Record Size:', 'record exceed the maximum number of tolerated bytes', "of ".concat(max_record_size), "at line ".concat(this.info.lines)], this.__context()));
+            var _err2 = this.__error(new CsvError('CSV_MAX_RECORD_SIZE', ['Max Record Size:', 'record exceed the maximum number of tolerated bytes', "of ".concat(max_record_size), "at line ".concat(this.info.lines)], this.options, this.__context()));
 
             if (_err2 !== undefined) return _err2;
           }
@@ -13780,7 +13966,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         if (lappend === true && rappend === true) {
           this.state.field.append(chr);
         } else if (rtrim === true && !this.__isCharTrimable(chr)) {
-          var _err3 = this.__error(new CsvError('CSV_NON_TRIMABLE_CHAR_AFTER_CLOSING_QUOTE', ['Invalid Closing Quote:', 'found non trimable byte after quote', "at line ".concat(this.info.lines)], this.__context()));
+          var _err3 = this.__error(new CsvError('CSV_NON_TRIMABLE_CHAR_AFTER_CLOSING_QUOTE', ['Invalid Closing Quote:', 'found non trimable byte after quote', "at line ".concat(this.info.lines)], this.options, this.__context()));
 
           if (_err3 !== undefined) return _err3;
         }
@@ -13789,7 +13975,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
       if (end === true) {
         // Ensure we are not ending in a quoting state
         if (this.state.quoting === true) {
-          var _err4 = this.__error(new CsvError('CSV_QUOTE_NOT_CLOSED', ['Quote Not Closed:', "the parsing is finished with an opening quote at line ".concat(this.info.lines)], this.__context()));
+          var _err4 = this.__error(new CsvError('CSV_QUOTE_NOT_CLOSED', ['Quote Not Closed:', "the parsing is finished with an opening quote at line ".concat(this.info.lines)], this.options, this.__context()));
 
           if (_err4 !== undefined) return _err4;
         } else {
@@ -13829,6 +14015,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
       var _this$options2 = this.options,
           columns = _this$options2.columns,
           columns_duplicates_to_array = _this$options2.columns_duplicates_to_array,
+          encoding = _this$options2.encoding,
           info = _this$options2.info,
           from = _this$options2.from,
           relax_column_count = _this$options2.relax_column_count,
@@ -13862,24 +14049,24 @@ var Parser = /*#__PURE__*/function (_Transform) {
       }
 
       if (recordLength !== this.state.expectedRecordLength) {
+        var err = columns === false ? // Todo: rename CSV_INCONSISTENT_RECORD_LENGTH to
+        // CSV_RECORD_INCONSISTENT_FIELDS_LENGTH
+        new CsvError('CSV_INCONSISTENT_RECORD_LENGTH', ['Invalid Record Length:', "expect ".concat(this.state.expectedRecordLength, ","), "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.options, this.__context(), {
+          record: record
+        }) : // Todo: rename CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH to
+        // CSV_RECORD_INCONSISTENT_COLUMNS
+        new CsvError('CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH', ['Invalid Record Length:', "columns length is ".concat(columns.length, ","), // rename columns
+        "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.options, this.__context(), {
+          record: record
+        });
+
         if (relax_column_count === true || relax_column_count_less === true && recordLength < this.state.expectedRecordLength || relax_column_count_more === true && recordLength > this.state.expectedRecordLength) {
           this.info.invalid_field_length++;
+          this.state.error = err; // Error is undefined with skip_lines_with_error
         } else {
-          if (columns === false) {
-            var err = this.__error(new CsvError('CSV_INCONSISTENT_RECORD_LENGTH', ['Invalid Record Length:', "expect ".concat(this.state.expectedRecordLength, ","), "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.__context(), {
-              record: record
-            }));
+          var finalErr = this.__error(err);
 
-            if (err !== undefined) return err;
-          } else {
-            var _err5 = this.__error( // CSV_INVALID_RECORD_LENGTH_DONT_MATCH_COLUMNS
-            new CsvError('CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH', ['Invalid Record Length:', "columns length is ".concat(columns.length, ","), // rename columns
-            "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.__context(), {
-              record: record
-            }));
-
-            if (_err5 !== undefined) return _err5;
-          }
+          if (finalErr) return finalErr;
         }
       }
 
@@ -13905,8 +14092,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
           var obj = {}; // Transform record array to an object
 
           for (var i = 0, l = record.length; i < l; i++) {
-            if (columns[i] === undefined || columns[i].disabled) continue; // obj[columns[i].name] = record[i]
-            // Turn duplicate columns into an array
+            if (columns[i] === undefined || columns[i].disabled) continue; // Turn duplicate columns into an array
 
             if (columns_duplicates_to_array === true && obj[columns[i].name]) {
               if (Array.isArray(obj[columns[i].name])) {
@@ -13923,63 +14109,63 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
           if (objname === undefined) {
             if (raw === true || info === true) {
-              var _err6 = this.__push(Object.assign({
+              var _err5 = this.__push(Object.assign({
                 record: obj
               }, raw === true ? {
-                raw: this.state.rawBuffer.toString()
+                raw: this.state.rawBuffer.toString(encoding)
               } : {}, info === true ? {
                 info: this.state.info
               } : {}));
+
+              if (_err5) {
+                return _err5;
+              }
+            } else {
+              var _err6 = this.__push(obj);
 
               if (_err6) {
                 return _err6;
               }
-            } else {
-              var _err7 = this.__push(obj);
-
-              if (_err7) {
-                return _err7;
-              }
             }
           } else {
             if (raw === true || info === true) {
-              var _err8 = this.__push(Object.assign({
+              var _err7 = this.__push(Object.assign({
                 record: [obj[objname], obj]
               }, raw === true ? {
-                raw: this.state.rawBuffer.toString()
+                raw: this.state.rawBuffer.toString(encoding)
               } : {}, info === true ? {
                 info: this.state.info
               } : {}));
 
-              if (_err8) {
-                return _err8;
+              if (_err7) {
+                return _err7;
               }
             } else {
-              var _err9 = this.__push([obj[objname], obj]);
+              var _err8 = this.__push([obj[objname], obj]);
 
-              if (_err9) {
-                return _err9;
+              if (_err8) {
+                return _err8;
               }
             }
           }
         } else {
           if (raw === true || info === true) {
-            var _err10 = this.__push(Object.assign({
+            var _err9 = this.__push(Object.assign({
               record: record
             }, raw === true ? {
-              raw: this.state.rawBuffer.toString()
+              raw: this.state.rawBuffer.toString(encoding)
             } : {}, info === true ? {
               info: this.state.info
             } : {}));
 
-            if (_err10) {
-              return _err10;
+            if (_err9) {
+              return _err9;
             }
           } else {
-            var _err11 = this.__push(record);
+            var _err10 = this.__push(record);
 
-            if (_err11) {
-              return _err11;
+            if (_err10) {
+              return _err10;
             }
           }
         }
@@ -13996,7 +14182,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         var headers = firstLineToHeaders === undefined ? record : firstLineToHeaders.call(null, record);
 
         if (!Array.isArray(headers)) {
-          return this.__error(new CsvError('CSV_INVALID_COLUMN_MAPPING', ['Invalid Column Mapping:', 'expect an array from column function,', "got ".concat(JSON.stringify(headers))], this.__context(), {
+          return this.__error(new CsvError('CSV_INVALID_COLUMN_MAPPING', ['Invalid Column Mapping:', 'expect an array from column function,', "got ".concat(JSON.stringify(headers))], this.options, this.__context(), {
             headers: headers
           }));
         }
@@ -14019,6 +14205,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         this.state.rawBuffer.reset();
       }
 
+      this.state.error = undefined;
       this.state.record = [];
       this.state.record_length = 0;
     }
@@ -14027,6 +14214,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
     value: function __onField() {
       var _this$options3 = this.options,
           cast = _this$options3.cast,
+          encoding = _this$options3.encoding,
           rtrim = _this$options3.rtrim,
           max_record_size = _this$options3.max_record_size;
       var _this$state3 = this.state,
@@ -14038,7 +14226,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         return this.__resetField();
       }
 
-      var field = this.state.field.toString();
+      var field = this.state.field.toString(encoding);
 
       if (rtrim === true && wasQuoting === false) {
         field = field.trimRight();
@@ -14135,12 +14323,12 @@ var Parser = /*#__PURE__*/function (_Transform) {
     }
   }, {
     key: "__compareBytes",
-    value: function __compareBytes(sourceBuf, targetBuf, pos, firtByte) {
-      if (sourceBuf[0] !== firtByte) return 0;
+    value: function __compareBytes(sourceBuf, targetBuf, targetPos, firstByte) {
+      if (sourceBuf[0] !== firstByte) return 0;
       var sourceLength = sourceBuf.length;
 
       for (var i = 1; i < sourceLength; i++) {
-        if (sourceBuf[i] !== targetBuf[pos + i]) return 0;
+        if (sourceBuf[i] !== targetBuf[targetPos + i]) return 0;
       }
 
       return sourceLength;
@@ -14148,30 +14336,22 @@ var Parser = /*#__PURE__*/function (_Transform) {
   }, {
     key: "__needMoreData",
     value: function __needMoreData(i, bufLen, end) {
-      if (end) {
-        return false;
-      }
-
-      var _this$options5 = this.options,
-          comment = _this$options5.comment,
-          delimiter = _this$options5.delimiter;
+      if (end) return false;
+      var quote = this.options.quote;
       var _this$state4 = this.state,
           quoting = _this$state4.quoting,
+          needMoreDataSize = _this$state4.needMoreDataSize,
           recordDelimiterMaxLength = _this$state4.recordDelimiterMaxLength;
       var numOfCharLeft = bufLen - i - 1;
-      var requiredLength = Math.max( // Skip if the remaining buffer smaller than comment
-      comment ? comment.length : 0, // Skip if the remaining buffer smaller than row delimiter
+      var requiredLength = Math.max(needMoreDataSize, // Skip if the remaining buffer smaller than record delimiter
       recordDelimiterMaxLength, // Skip if the remaining buffer can be row delimiter following the closing quote
       // 1 is for quote.length
-      quoting ? 1 + recordDelimiterMaxLength : 0, // Skip if the remaining buffer can be delimiter
-      delimiter.length, // Skip if the remaining buffer can be escape sequence
-      // 1 is for escape.length
-      1);
+      quoting ? quote.length + recordDelimiterMaxLength : 0);
       return numOfCharLeft < requiredLength;
     }
   }, {
     key: "__isDelimiter",
-    value: function __isDelimiter(chr, buf, pos) {
+    value: function __isDelimiter(buf, pos, chr) {
       var delimiter = this.options.delimiter;
 
       loop1: for (var i = 0; i < delimiter.length; i++) {
@@ -14214,22 +14394,57 @@ var Parser = /*#__PURE__*/function (_Transform) {
       return 0;
     }
   }, {
+    key: "__isEscape",
+    value: function __isEscape(buf, pos, chr) {
+      var escape = this.options.escape;
+      if (escape === null) return false;
+      var l = escape.length;
+
+      if (escape[0] === chr) {
+        for (var i = 0; i < l; i++) {
+          if (escape[i] !== buf[pos + i]) {
+            return false;
+          }
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+  }, {
+    key: "__isQuote",
+    value: function __isQuote(buf, pos) {
+      var quote = this.options.quote;
+      if (quote === null) return false;
+      var l = quote.length;
+
+      for (var i = 0; i < l; i++) {
+        if (quote[i] !== buf[pos + i]) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }, {
     key: "__autoDiscoverRowDelimiter",
     value: function __autoDiscoverRowDelimiter(buf, pos) {
+      var encoding = this.options.encoding;
       var chr = buf[pos];
 
       if (chr === cr) {
         if (buf[pos + 1] === nl) {
-          this.options.record_delimiter.push(Buffer.from('\r\n'));
+          this.options.record_delimiter.push(Buffer.from('\r\n', encoding));
           this.state.recordDelimiterMaxLength = 2;
           return 2;
         } else {
-          this.options.record_delimiter.push(Buffer.from('\r'));
+          this.options.record_delimiter.push(Buffer.from('\r', encoding));
           this.state.recordDelimiterMaxLength = 1;
           return 1;
         }
       } else if (chr === nl) {
-        this.options.record_delimiter.push(Buffer.from('\n'));
+        this.options.record_delimiter.push(Buffer.from('\n', encoding));
         this.state.recordDelimiterMaxLength = 1;
         return 1;
       }
@@ -14258,6 +14473,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
       return {
         column: isColumns === true ? columns.length > this.state.record.length ? columns[this.state.record.length].name : null : this.state.record.length,
         empty_lines: this.info.empty_lines,
+        error: this.state.error,
         header: columns === true,
         index: this.state.record.length,
         invalid_field_length: this.info.invalid_field_length,
@@ -14286,7 +14502,7 @@ var parse = function parse() {
     } else if (callback === undefined && type === 'function') {
       callback = argument;
     } else {
-      throw new CsvError('CSV_INVALID_ARGUMENT', ['Invalid argument:', "got ".concat(JSON.stringify(argument), " at index ").concat(i)]);
+      throw new CsvError('CSV_INVALID_ARGUMENT', ['Invalid argument:', "got ".concat(JSON.stringify(argument), " at index ").concat(i)], this.options);
     }
   }
 
@@ -14332,13 +14548,15 @@ var parse = function parse() {
 var CsvError = /*#__PURE__*/function (_Error) {
   _inherits(CsvError, _Error);
 
-  function CsvError(code, message) {
+  var _super2 = _createSuper(CsvError);
+
+  function CsvError(code, message, options) {
     var _this2;
 
     _classCallCheck(this, CsvError);
 
     if (Array.isArray(message)) message = message.join(' ');
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(CsvError).call(this, message));
+    _this2 = _super2.call(this, message);
 
     if (Error.captureStackTrace !== undefined) {
       Error.captureStackTrace(_assertThisInitialized(_this2), CsvError);
@@ -14346,8 +14564,8 @@ var CsvError = /*#__PURE__*/function (_Error) {
 
     _this2.code = code;
 
-    for (var _len = arguments.length, contexts = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-      contexts[_key - 2] = arguments[_key];
+    for (var _len = arguments.length, contexts = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
+      contexts[_key - 3] = arguments[_key];
     }
 
     for (var _i2 = 0, _contexts = contexts; _i2 < _contexts.length; _i2++) {
@@ -14355,7 +14573,7 @@ var CsvError = /*#__PURE__*/function (_Error) {
 
       for (var key in context) {
         var value = context[key];
-        _this2[key] = Buffer.isBuffer(value) ? value.toString() : value == null ? value : JSON.parse(JSON.stringify(value));
+        _this2[key] = Buffer.isBuffer(value) ? value.toString(options.encoding) : value == null ? value : JSON.parse(JSON.stringify(value));
       }
     }
 
@@ -14412,9 +14630,9 @@ var normalizeColumnsArray = function normalizeColumnsArray(columns) {
 
   return normalizedColumns;
 };
-}).call(this,require("buffer").Buffer,require("timers").setImmediate)
+}).call(this)}).call(this,require("buffer").Buffer,require("timers").setImmediate)
 },{"./ResizeableBuffer":"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","stream":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/index.js","timers":"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/sync.js":[function(require,module,exports){
-(function (Buffer){
+(function (Buffer){(function (){
 "use strict";
 
 var parse = require('.');
@@ -14448,19 +14666,25 @@ module.exports = function (data) {
   if (err2 !== undefined) throw err2;
   return records;
 };
-}).call(this,require("buffer").Buffer)
+}).call(this)}).call(this,require("buffer").Buffer)
 },{".":"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/index.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/d3-format/dist/d3-format.js":[function(require,module,exports){
-// https://d3js.org/d3-format/ v1.4.4 Copyright 2020 Mike Bostock
+// https://d3js.org/d3-format/ v1.4.5 Copyright 2020 Mike Bostock
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
-(global = global || self, factory(global.d3 = global.d3 || {}));
-}(this, function (exports) { 'use strict';
+(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.d3 = global.d3 || {}));
+}(this, (function (exports) { 'use strict';
+
+function formatDecimal(x) {
+  return Math.abs(x = Math.round(x)) >= 1e21
+      ? x.toLocaleString("en").replace(/,/g, "")
+      : x.toString(10);
+}
 
 // Computes the decimal coefficient and exponent of the specified number x with
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimal(1.23) returns ["123", 0].
-function formatDecimal(x, p) {
+// For example, formatDecimalParts(1.23) returns ["123", 0].
+function formatDecimalParts(x, p) {
   if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
   var i, coefficient = x.slice(0, i);
 
@@ -14473,7 +14697,7 @@ function formatDecimal(x, p) {
 }
 
 function exponent(x) {
-  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+  return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
 
 function formatGroup(grouping, thousands) {
@@ -14566,7 +14790,7 @@ function formatTrim(s) {
 var prefixExponent;
 
 function formatPrefixAuto(x, p) {
-  var d = formatDecimal(x, p);
+  var d = formatDecimalParts(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1],
@@ -14575,11 +14799,11 @@ function formatPrefixAuto(x, p) {
   return i === n ? coefficient
       : i > n ? coefficient + new Array(i - n + 1).join("0")
       : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
-      : "0." + new Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+      : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 }
 
 function formatRounded(x, p) {
-  var d = formatDecimal(x, p);
+  var d = formatDecimalParts(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1];
@@ -14592,7 +14816,7 @@ var formatTypes = {
   "%": function(x, p) { return (x * 100).toFixed(p); },
   "b": function(x) { return Math.round(x).toString(2); },
   "c": function(x) { return x + ""; },
-  "d": function(x) { return Math.round(x).toString(10); },
+  "d": formatDecimal,
   "e": function(x, p) { return x.toExponential(p); },
   "f": function(x, p) { return x.toFixed(p); },
   "g": function(x, p) { return x.toPrecision(p); },
@@ -14788,10 +15012,10 @@ exports.precisionRound = precisionRound;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/d3-selection/dist/d3-selection.js":[function(require,module,exports){
-// https://d3js.org/d3-selection/ v1.4.1 Copyright 2019 Mike Bostock
+// https://d3js.org/d3-selection/ v1.4.2 Copyright 2020 Mike Bostock
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -15855,7 +16079,7 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '.')
 }
 
-},{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2019/RequireObjectCoercible.js":[function(require,module,exports){
+},{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2020/RequireObjectCoercible.js":[function(require,module,exports){
 'use strict';
 
 module.exports = require('../5/CheckObjectCoercible');
@@ -15880,13 +16104,26 @@ module.exports = function CheckObjectCoercible(value, optMessage) {
 'use strict';
 
 /* globals
+	AggregateError,
 	Atomics,
+	FinalizationRegistry,
 	SharedArrayBuffer,
+	WeakRef,
 */
 
 var undefined;
 
+var $SyntaxError = SyntaxError;
+var $Function = Function;
 var $TypeError = TypeError;
+
+// eslint-disable-next-line consistent-return
+var getEvalledConstructor = function (expressionSyntax) {
+	try {
+		// eslint-disable-next-line no-new-func
+		return Function('"use strict"; return (' + expressionSyntax + ').constructor;')();
+	} catch (e) {}
+};
 
 var $gOPD = Object.getOwnPropertyDescriptor;
 if ($gOPD) {
@@ -15919,129 +16156,137 @@ var hasSymbols = require('has-symbols')();
 
 var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
 
-var generator; // = function * () {};
-var generatorFunction = generator ? getProto(generator) : undefined;
-var asyncFn; // async function() {};
-var asyncFunction = asyncFn ? asyncFn.constructor : undefined;
-var asyncGen; // async function * () {};
-var asyncGenFunction = asyncGen ? getProto(asyncGen) : undefined;
-var asyncGenIterator = asyncGen ? asyncGen() : undefined;
+var asyncGenFunction = getEvalledConstructor('async function* () {}');
+var asyncGenFunctionPrototype = asyncGenFunction ? asyncGenFunction.prototype : undefined;
+var asyncGenPrototype = asyncGenFunctionPrototype ? asyncGenFunctionPrototype.prototype : undefined;
 
 var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
 
 var INTRINSICS = {
+	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
 	'%Array%': Array,
 	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
-	'%ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer.prototype,
 	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
-	'%ArrayPrototype%': Array.prototype,
-	'%ArrayProto_entries%': Array.prototype.entries,
-	'%ArrayProto_forEach%': Array.prototype.forEach,
-	'%ArrayProto_keys%': Array.prototype.keys,
-	'%ArrayProto_values%': Array.prototype.values,
 	'%AsyncFromSyncIteratorPrototype%': undefined,
-	'%AsyncFunction%': asyncFunction,
-	'%AsyncFunctionPrototype%': asyncFunction ? asyncFunction.prototype : undefined,
-	'%AsyncGenerator%': asyncGen ? getProto(asyncGenIterator) : undefined,
+	'%AsyncFunction%': getEvalledConstructor('async function () {}'),
+	'%AsyncGenerator%': asyncGenFunctionPrototype,
 	'%AsyncGeneratorFunction%': asyncGenFunction,
-	'%AsyncGeneratorPrototype%': asyncGenFunction ? asyncGenFunction.prototype : undefined,
-	'%AsyncIteratorPrototype%': asyncGenIterator && hasSymbols && Symbol.asyncIterator ? asyncGenIterator[Symbol.asyncIterator]() : undefined,
+	'%AsyncIteratorPrototype%': asyncGenPrototype ? getProto(asyncGenPrototype) : undefined,
 	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
+	'%BigInt%': typeof BigInt === 'undefined' ? undefined : BigInt,
 	'%Boolean%': Boolean,
-	'%BooleanPrototype%': Boolean.prototype,
 	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
-	'%DataViewPrototype%': typeof DataView === 'undefined' ? undefined : DataView.prototype,
 	'%Date%': Date,
-	'%DatePrototype%': Date.prototype,
 	'%decodeURI%': decodeURI,
 	'%decodeURIComponent%': decodeURIComponent,
 	'%encodeURI%': encodeURI,
 	'%encodeURIComponent%': encodeURIComponent,
 	'%Error%': Error,
-	'%ErrorPrototype%': Error.prototype,
 	'%eval%': eval, // eslint-disable-line no-eval
 	'%EvalError%': EvalError,
-	'%EvalErrorPrototype%': EvalError.prototype,
 	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
-	'%Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined : Float32Array.prototype,
 	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
-	'%Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined : Float64Array.prototype,
-	'%Function%': Function,
-	'%FunctionPrototype%': Function.prototype,
-	'%Generator%': generator ? getProto(generator()) : undefined,
-	'%GeneratorFunction%': generatorFunction,
-	'%GeneratorPrototype%': generatorFunction ? generatorFunction.prototype : undefined,
+	'%FinalizationRegistry%': typeof FinalizationRegistry === 'undefined' ? undefined : FinalizationRegistry,
+	'%Function%': $Function,
+	'%GeneratorFunction%': getEvalledConstructor('function* () {}'),
 	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined : Int8Array,
-	'%Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined : Int8Array.prototype,
 	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined : Int16Array,
-	'%Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined : Int8Array.prototype,
 	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
-	'%Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined : Int32Array.prototype,
 	'%isFinite%': isFinite,
 	'%isNaN%': isNaN,
 	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
 	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
-	'%JSONParse%': typeof JSON === 'object' ? JSON.parse : undefined,
 	'%Map%': typeof Map === 'undefined' ? undefined : Map,
 	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
-	'%MapPrototype%': typeof Map === 'undefined' ? undefined : Map.prototype,
 	'%Math%': Math,
 	'%Number%': Number,
-	'%NumberPrototype%': Number.prototype,
 	'%Object%': Object,
-	'%ObjectPrototype%': Object.prototype,
-	'%ObjProto_toString%': Object.prototype.toString,
-	'%ObjProto_valueOf%': Object.prototype.valueOf,
 	'%parseFloat%': parseFloat,
 	'%parseInt%': parseInt,
 	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
-	'%PromisePrototype%': typeof Promise === 'undefined' ? undefined : Promise.prototype,
-	'%PromiseProto_then%': typeof Promise === 'undefined' ? undefined : Promise.prototype.then,
-	'%Promise_all%': typeof Promise === 'undefined' ? undefined : Promise.all,
-	'%Promise_reject%': typeof Promise === 'undefined' ? undefined : Promise.reject,
-	'%Promise_resolve%': typeof Promise === 'undefined' ? undefined : Promise.resolve,
 	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
 	'%RangeError%': RangeError,
-	'%RangeErrorPrototype%': RangeError.prototype,
 	'%ReferenceError%': ReferenceError,
-	'%ReferenceErrorPrototype%': ReferenceError.prototype,
 	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
 	'%RegExp%': RegExp,
-	'%RegExpPrototype%': RegExp.prototype,
 	'%Set%': typeof Set === 'undefined' ? undefined : Set,
 	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
-	'%SetPrototype%': typeof Set === 'undefined' ? undefined : Set.prototype,
 	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
-	'%SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer.prototype,
 	'%String%': String,
 	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
-	'%StringPrototype%': String.prototype,
 	'%Symbol%': hasSymbols ? Symbol : undefined,
-	'%SymbolPrototype%': hasSymbols ? Symbol.prototype : undefined,
-	'%SyntaxError%': SyntaxError,
-	'%SyntaxErrorPrototype%': SyntaxError.prototype,
+	'%SyntaxError%': $SyntaxError,
 	'%ThrowTypeError%': ThrowTypeError,
 	'%TypedArray%': TypedArray,
-	'%TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined,
 	'%TypeError%': $TypeError,
-	'%TypeErrorPrototype%': $TypeError.prototype,
 	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array,
-	'%Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array.prototype,
 	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
-	'%Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray.prototype,
 	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
-	'%Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array.prototype,
 	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
-	'%Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array.prototype,
 	'%URIError%': URIError,
-	'%URIErrorPrototype%': URIError.prototype,
 	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
-	'%WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined : WeakMap.prototype,
-	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet,
-	'%WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined : WeakSet.prototype
+	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
+	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
+};
+
+var LEGACY_ALIASES = {
+	'%ArrayBufferPrototype%': ['ArrayBuffer', 'prototype'],
+	'%ArrayPrototype%': ['Array', 'prototype'],
+	'%ArrayProto_entries%': ['Array', 'prototype', 'entries'],
+	'%ArrayProto_forEach%': ['Array', 'prototype', 'forEach'],
+	'%ArrayProto_keys%': ['Array', 'prototype', 'keys'],
+	'%ArrayProto_values%': ['Array', 'prototype', 'values'],
+	'%AsyncFunctionPrototype%': ['AsyncFunction', 'prototype'],
+	'%AsyncGenerator%': ['AsyncGeneratorFunction', 'prototype'],
+	'%AsyncGeneratorPrototype%': ['AsyncGeneratorFunction', 'prototype', 'prototype'],
+	'%BooleanPrototype%': ['Boolean', 'prototype'],
+	'%DataViewPrototype%': ['DataView', 'prototype'],
+	'%DatePrototype%': ['Date', 'prototype'],
+	'%ErrorPrototype%': ['Error', 'prototype'],
+	'%EvalErrorPrototype%': ['EvalError', 'prototype'],
+	'%Float32ArrayPrototype%': ['Float32Array', 'prototype'],
+	'%Float64ArrayPrototype%': ['Float64Array', 'prototype'],
+	'%FunctionPrototype%': ['Function', 'prototype'],
+	'%Generator%': ['GeneratorFunction', 'prototype'],
+	'%GeneratorPrototype%': ['GeneratorFunction', 'prototype', 'prototype'],
+	'%Int8ArrayPrototype%': ['Int8Array', 'prototype'],
+	'%Int16ArrayPrototype%': ['Int16Array', 'prototype'],
+	'%Int32ArrayPrototype%': ['Int32Array', 'prototype'],
+	'%JSONParse%': ['JSON', 'parse'],
+	'%JSONStringify%': ['JSON', 'stringify'],
+	'%MapPrototype%': ['Map', 'prototype'],
+	'%NumberPrototype%': ['Number', 'prototype'],
+	'%ObjectPrototype%': ['Object', 'prototype'],
+	'%ObjProto_toString%': ['Object', 'prototype', 'toString'],
+	'%ObjProto_valueOf%': ['Object', 'prototype', 'valueOf'],
+	'%PromisePrototype%': ['Promise', 'prototype'],
+	'%PromiseProto_then%': ['Promise', 'prototype', 'then'],
+	'%Promise_all%': ['Promise', 'all'],
+	'%Promise_reject%': ['Promise', 'reject'],
+	'%Promise_resolve%': ['Promise', 'resolve'],
+	'%RangeErrorPrototype%': ['RangeError', 'prototype'],
+	'%ReferenceErrorPrototype%': ['ReferenceError', 'prototype'],
+	'%RegExpPrototype%': ['RegExp', 'prototype'],
+	'%SetPrototype%': ['Set', 'prototype'],
+	'%SharedArrayBufferPrototype%': ['SharedArrayBuffer', 'prototype'],
+	'%StringPrototype%': ['String', 'prototype'],
+	'%SymbolPrototype%': ['Symbol', 'prototype'],
+	'%SyntaxErrorPrototype%': ['SyntaxError', 'prototype'],
+	'%TypedArrayPrototype%': ['TypedArray', 'prototype'],
+	'%TypeErrorPrototype%': ['TypeError', 'prototype'],
+	'%Uint8ArrayPrototype%': ['Uint8Array', 'prototype'],
+	'%Uint8ClampedArrayPrototype%': ['Uint8ClampedArray', 'prototype'],
+	'%Uint16ArrayPrototype%': ['Uint16Array', 'prototype'],
+	'%Uint32ArrayPrototype%': ['Uint32Array', 'prototype'],
+	'%URIErrorPrototype%': ['URIError', 'prototype'],
+	'%WeakMapPrototype%': ['WeakMap', 'prototype'],
+	'%WeakSetPrototype%': ['WeakSet', 'prototype']
 };
 
 var bind = require('function-bind');
+var hasOwn = require('has');
+var $concat = bind.call(Function.call, Array.prototype.concat);
+var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
 var $replace = bind.call(Function.call, String.prototype.replace);
 
 /* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
@@ -16050,89 +16295,103 @@ var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. 
 var stringToPath = function stringToPath(string) {
 	var result = [];
 	$replace(string, rePropName, function (match, number, quote, subString) {
-		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
+		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : number || match;
 	});
 	return result;
 };
 /* end adaptation */
 
 var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
-	if (!(name in INTRINSICS)) {
-		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
+	var intrinsicName = name;
+	var alias;
+	if (hasOwn(LEGACY_ALIASES, intrinsicName)) {
+		alias = LEGACY_ALIASES[intrinsicName];
+		intrinsicName = '%' + alias[0] + '%';
 	}
 
-	// istanbul ignore if // hopefully this is impossible to test :-)
-	if (typeof INTRINSICS[name] === 'undefined' && !allowMissing) {
-		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+	if (hasOwn(INTRINSICS, intrinsicName)) {
+		var value = INTRINSICS[intrinsicName];
+		if (typeof value === 'undefined' && !allowMissing) {
+			throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+		}
+
+		return {
+			alias: alias,
+			name: intrinsicName,
+			value: value
+		};
 	}
 
-	return INTRINSICS[name];
+	throw new $SyntaxError('intrinsic ' + name + ' does not exist!');
 };
 
 module.exports = function GetIntrinsic(name, allowMissing) {
 	if (typeof name !== 'string' || name.length === 0) {
-		throw new TypeError('intrinsic name must be a non-empty string');
+		throw new $TypeError('intrinsic name must be a non-empty string');
 	}
 	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
-		throw new TypeError('"allowMissing" argument must be a boolean');
+		throw new $TypeError('"allowMissing" argument must be a boolean');
 	}
 
 	var parts = stringToPath(name);
+	var intrinsicBaseName = parts.length > 0 ? parts[0] : '';
 
-	var value = getBaseIntrinsic('%' + (parts.length > 0 ? parts[0] : '') + '%', allowMissing);
-	for (var i = 1; i < parts.length; i += 1) {
-		if (value != null) {
+	var intrinsic = getBaseIntrinsic('%' + intrinsicBaseName + '%', allowMissing);
+	var intrinsicRealName = intrinsic.name;
+	var value = intrinsic.value;
+	var skipFurtherCaching = false;
+
+	var alias = intrinsic.alias;
+	if (alias) {
+		intrinsicBaseName = alias[0];
+		$spliceApply(parts, $concat([0, 1], alias));
+	}
+
+	for (var i = 1, isOwn = true; i < parts.length; i += 1) {
+		var part = parts[i];
+		if (part === 'constructor' || !isOwn) {
+			skipFurtherCaching = true;
+		}
+
+		intrinsicBaseName += '.' + part;
+		intrinsicRealName = '%' + intrinsicBaseName + '%';
+
+		if (hasOwn(INTRINSICS, intrinsicRealName)) {
+			value = INTRINSICS[intrinsicRealName];
+		} else if (value != null) {
 			if ($gOPD && (i + 1) >= parts.length) {
-				var desc = $gOPD(value, parts[i]);
-				if (!allowMissing && !(parts[i] in value)) {
+				var desc = $gOPD(value, part);
+				isOwn = !!desc;
+
+				if (!allowMissing && !(part in value)) {
 					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
 				}
-				value = desc ? (desc.get || desc.value) : value[parts[i]];
+				// By convention, when a data property is converted to an accessor
+				// property to emulate a data property that does not suffer from
+				// the override mistake, that accessor's getter is marked with
+				// an `originalValue` property. Here, when we detect this, we
+				// uphold the illusion by pretending to see that original data
+				// property, i.e., returning the value rather than the getter
+				// itself.
+				if (isOwn && 'get' in desc && !('originalValue' in desc.get)) {
+					value = desc.get;
+				} else {
+					value = value[part];
+				}
 			} else {
-				value = value[parts[i]];
+				isOwn = hasOwn(value, part);
+				value = value[part];
+			}
+
+			if (isOwn && !skipFurtherCaching) {
+				INTRINSICS[intrinsicRealName] = value;
 			}
 		}
 	}
 	return value;
 };
 
-},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","has-symbols":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBind.js":[function(require,module,exports){
-'use strict';
-
-var bind = require('function-bind');
-
-var GetIntrinsic = require('../GetIntrinsic');
-
-var $Function = GetIntrinsic('%Function%');
-var $apply = $Function.apply;
-var $call = $Function.call;
-
-module.exports = function callBind() {
-	return bind.apply($call, arguments);
-};
-
-module.exports.apply = function applyBind() {
-	return bind.apply($apply, arguments);
-};
-
-},{"../GetIntrinsic":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js","function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js":[function(require,module,exports){
-'use strict';
-
-var GetIntrinsic = require('../GetIntrinsic');
-
-var callBind = require('./callBind');
-
-var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
-
-module.exports = function callBoundIntrinsic(name, allowMissing) {
-	var intrinsic = GetIntrinsic(name, !!allowMissing);
-	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.')) {
-		return callBind(intrinsic);
-	}
-	return intrinsic;
-};
-
-},{"../GetIntrinsic":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js","./callBind":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBind.js"}],"/usr/local/lib/node_modules/idyll/node_modules/events/events.js":[function(require,module,exports){
+},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js","has-symbols":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16657,7 +16916,42 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/falafel/index.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js":[function(require,module,exports){
+'use strict';
+
+var isObject = require('is-extendable');
+
+module.exports = function extend(o/*, objects*/) {
+  if (!isObject(o)) { o = {}; }
+
+  var len = arguments.length;
+  for (var i = 1; i < len; i++) {
+    var obj = arguments[i];
+
+    if (isObject(obj)) {
+      assign(o, obj);
+    }
+  }
+  return o;
+};
+
+function assign(a, b) {
+  for (var key in b) {
+    if (hasOwn(b, key)) {
+      a[key] = b[key];
+    }
+  }
+}
+
+/**
+ * Returns true if the given `key` is an own property of `obj`.
+ */
+
+function hasOwn(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+},{"is-extendable":"/usr/local/lib/node_modules/idyll/node_modules/is-extendable/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/falafel/index.js":[function(require,module,exports){
 var acorn = require('acorn');
 var isArray = require('isarray');
 var objectKeys = require('object-keys');
@@ -16943,7 +17237,322 @@ var implementation = require('./implementation');
 
 module.exports = Function.prototype.bind || implementation;
 
-},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/implementation.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/index.js":[function(require,module,exports){
+},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/implementation.js"}],"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js":[function(require,module,exports){
+'use strict';
+
+/* globals
+	AggregateError,
+	Atomics,
+	FinalizationRegistry,
+	SharedArrayBuffer,
+	WeakRef,
+*/
+
+var undefined;
+
+var $SyntaxError = SyntaxError;
+var $Function = Function;
+var $TypeError = TypeError;
+
+// eslint-disable-next-line consistent-return
+var getEvalledConstructor = function (expressionSyntax) {
+	try {
+		// eslint-disable-next-line no-new-func
+		return Function('"use strict"; return (' + expressionSyntax + ').constructor;')();
+	} catch (e) {}
+};
+
+var $gOPD = Object.getOwnPropertyDescriptor;
+if ($gOPD) {
+	try {
+		$gOPD({}, '');
+	} catch (e) {
+		$gOPD = null; // this is IE 8, which has a broken gOPD
+	}
+}
+
+var throwTypeError = function () {
+	throw new $TypeError();
+};
+var ThrowTypeError = $gOPD
+	? (function () {
+		try {
+			// eslint-disable-next-line no-unused-expressions, no-caller, no-restricted-properties
+			arguments.callee; // IE 8 does not throw here
+			return throwTypeError;
+		} catch (calleeThrows) {
+			try {
+				// IE 8 throws on Object.getOwnPropertyDescriptor(arguments, '')
+				return $gOPD(arguments, 'callee').get;
+			} catch (gOPDthrows) {
+				return throwTypeError;
+			}
+		}
+	}())
+	: throwTypeError;
+
+var hasSymbols = require('has-symbols')();
+
+var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+
+var asyncGenFunction = getEvalledConstructor('async function* () {}');
+var asyncGenFunctionPrototype = asyncGenFunction ? asyncGenFunction.prototype : undefined;
+var asyncGenPrototype = asyncGenFunctionPrototype ? asyncGenFunctionPrototype.prototype : undefined;
+
+var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
+
+var INTRINSICS = {
+	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
+	'%Array%': Array,
+	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
+	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
+	'%AsyncFromSyncIteratorPrototype%': undefined,
+	'%AsyncFunction%': getEvalledConstructor('async function () {}'),
+	'%AsyncGenerator%': asyncGenFunctionPrototype,
+	'%AsyncGeneratorFunction%': asyncGenFunction,
+	'%AsyncIteratorPrototype%': asyncGenPrototype ? getProto(asyncGenPrototype) : undefined,
+	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
+	'%BigInt%': typeof BigInt === 'undefined' ? undefined : BigInt,
+	'%Boolean%': Boolean,
+	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
+	'%Date%': Date,
+	'%decodeURI%': decodeURI,
+	'%decodeURIComponent%': decodeURIComponent,
+	'%encodeURI%': encodeURI,
+	'%encodeURIComponent%': encodeURIComponent,
+	'%Error%': Error,
+	'%eval%': eval, // eslint-disable-line no-eval
+	'%EvalError%': EvalError,
+	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
+	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
+	'%FinalizationRegistry%': typeof FinalizationRegistry === 'undefined' ? undefined : FinalizationRegistry,
+	'%Function%': $Function,
+	'%GeneratorFunction%': getEvalledConstructor('function* () {}'),
+	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined : Int8Array,
+	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined : Int16Array,
+	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
+	'%isFinite%': isFinite,
+	'%isNaN%': isNaN,
+	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
+	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
+	'%Map%': typeof Map === 'undefined' ? undefined : Map,
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
+	'%Math%': Math,
+	'%Number%': Number,
+	'%Object%': Object,
+	'%parseFloat%': parseFloat,
+	'%parseInt%': parseInt,
+	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
+	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
+	'%RangeError%': RangeError,
+	'%ReferenceError%': ReferenceError,
+	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
+	'%RegExp%': RegExp,
+	'%Set%': typeof Set === 'undefined' ? undefined : Set,
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
+	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
+	'%String%': String,
+	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
+	'%Symbol%': hasSymbols ? Symbol : undefined,
+	'%SyntaxError%': $SyntaxError,
+	'%ThrowTypeError%': ThrowTypeError,
+	'%TypedArray%': TypedArray,
+	'%TypeError%': $TypeError,
+	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array,
+	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
+	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
+	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
+	'%URIError%': URIError,
+	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
+	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
+	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
+};
+
+var LEGACY_ALIASES = {
+	'%ArrayBufferPrototype%': ['ArrayBuffer', 'prototype'],
+	'%ArrayPrototype%': ['Array', 'prototype'],
+	'%ArrayProto_entries%': ['Array', 'prototype', 'entries'],
+	'%ArrayProto_forEach%': ['Array', 'prototype', 'forEach'],
+	'%ArrayProto_keys%': ['Array', 'prototype', 'keys'],
+	'%ArrayProto_values%': ['Array', 'prototype', 'values'],
+	'%AsyncFunctionPrototype%': ['AsyncFunction', 'prototype'],
+	'%AsyncGenerator%': ['AsyncGeneratorFunction', 'prototype'],
+	'%AsyncGeneratorPrototype%': ['AsyncGeneratorFunction', 'prototype', 'prototype'],
+	'%BooleanPrototype%': ['Boolean', 'prototype'],
+	'%DataViewPrototype%': ['DataView', 'prototype'],
+	'%DatePrototype%': ['Date', 'prototype'],
+	'%ErrorPrototype%': ['Error', 'prototype'],
+	'%EvalErrorPrototype%': ['EvalError', 'prototype'],
+	'%Float32ArrayPrototype%': ['Float32Array', 'prototype'],
+	'%Float64ArrayPrototype%': ['Float64Array', 'prototype'],
+	'%FunctionPrototype%': ['Function', 'prototype'],
+	'%Generator%': ['GeneratorFunction', 'prototype'],
+	'%GeneratorPrototype%': ['GeneratorFunction', 'prototype', 'prototype'],
+	'%Int8ArrayPrototype%': ['Int8Array', 'prototype'],
+	'%Int16ArrayPrototype%': ['Int16Array', 'prototype'],
+	'%Int32ArrayPrototype%': ['Int32Array', 'prototype'],
+	'%JSONParse%': ['JSON', 'parse'],
+	'%JSONStringify%': ['JSON', 'stringify'],
+	'%MapPrototype%': ['Map', 'prototype'],
+	'%NumberPrototype%': ['Number', 'prototype'],
+	'%ObjectPrototype%': ['Object', 'prototype'],
+	'%ObjProto_toString%': ['Object', 'prototype', 'toString'],
+	'%ObjProto_valueOf%': ['Object', 'prototype', 'valueOf'],
+	'%PromisePrototype%': ['Promise', 'prototype'],
+	'%PromiseProto_then%': ['Promise', 'prototype', 'then'],
+	'%Promise_all%': ['Promise', 'all'],
+	'%Promise_reject%': ['Promise', 'reject'],
+	'%Promise_resolve%': ['Promise', 'resolve'],
+	'%RangeErrorPrototype%': ['RangeError', 'prototype'],
+	'%ReferenceErrorPrototype%': ['ReferenceError', 'prototype'],
+	'%RegExpPrototype%': ['RegExp', 'prototype'],
+	'%SetPrototype%': ['Set', 'prototype'],
+	'%SharedArrayBufferPrototype%': ['SharedArrayBuffer', 'prototype'],
+	'%StringPrototype%': ['String', 'prototype'],
+	'%SymbolPrototype%': ['Symbol', 'prototype'],
+	'%SyntaxErrorPrototype%': ['SyntaxError', 'prototype'],
+	'%TypedArrayPrototype%': ['TypedArray', 'prototype'],
+	'%TypeErrorPrototype%': ['TypeError', 'prototype'],
+	'%Uint8ArrayPrototype%': ['Uint8Array', 'prototype'],
+	'%Uint8ClampedArrayPrototype%': ['Uint8ClampedArray', 'prototype'],
+	'%Uint16ArrayPrototype%': ['Uint16Array', 'prototype'],
+	'%Uint32ArrayPrototype%': ['Uint32Array', 'prototype'],
+	'%URIErrorPrototype%': ['URIError', 'prototype'],
+	'%WeakMapPrototype%': ['WeakMap', 'prototype'],
+	'%WeakSetPrototype%': ['WeakSet', 'prototype']
+};
+
+var bind = require('function-bind');
+var hasOwn = require('has');
+var $concat = bind.call(Function.call, Array.prototype.concat);
+var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
+var $replace = bind.call(Function.call, String.prototype.replace);
+var $strSlice = bind.call(Function.call, String.prototype.slice);
+
+/* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
+var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
+var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
+var stringToPath = function stringToPath(string) {
+	var first = $strSlice(string, 0, 1);
+	var last = $strSlice(string, -1);
+	if (first === '%' && last !== '%') {
+		throw new $SyntaxError('invalid intrinsic syntax, expected closing `%`');
+	} else if (last === '%' && first !== '%') {
+		throw new $SyntaxError('invalid intrinsic syntax, expected opening `%`');
+	}
+	var result = [];
+	$replace(string, rePropName, function (match, number, quote, subString) {
+		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : number || match;
+	});
+	return result;
+};
+/* end adaptation */
+
+var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
+	var intrinsicName = name;
+	var alias;
+	if (hasOwn(LEGACY_ALIASES, intrinsicName)) {
+		alias = LEGACY_ALIASES[intrinsicName];
+		intrinsicName = '%' + alias[0] + '%';
+	}
+
+	if (hasOwn(INTRINSICS, intrinsicName)) {
+		var value = INTRINSICS[intrinsicName];
+		if (typeof value === 'undefined' && !allowMissing) {
+			throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+		}
+
+		return {
+			alias: alias,
+			name: intrinsicName,
+			value: value
+		};
+	}
+
+	throw new $SyntaxError('intrinsic ' + name + ' does not exist!');
+};
+
+module.exports = function GetIntrinsic(name, allowMissing) {
+	if (typeof name !== 'string' || name.length === 0) {
+		throw new $TypeError('intrinsic name must be a non-empty string');
+	}
+	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
+		throw new $TypeError('"allowMissing" argument must be a boolean');
+	}
+
+	var parts = stringToPath(name);
+	var intrinsicBaseName = parts.length > 0 ? parts[0] : '';
+
+	var intrinsic = getBaseIntrinsic('%' + intrinsicBaseName + '%', allowMissing);
+	var intrinsicRealName = intrinsic.name;
+	var value = intrinsic.value;
+	var skipFurtherCaching = false;
+
+	var alias = intrinsic.alias;
+	if (alias) {
+		intrinsicBaseName = alias[0];
+		$spliceApply(parts, $concat([0, 1], alias));
+	}
+
+	for (var i = 1, isOwn = true; i < parts.length; i += 1) {
+		var part = parts[i];
+		var first = $strSlice(part, 0, 1);
+		var last = $strSlice(part, -1);
+		if (
+			(
+				(first === '"' || first === "'" || first === '`')
+				|| (last === '"' || last === "'" || last === '`')
+			)
+			&& first !== last
+		) {
+			throw new $SyntaxError('property names with quotes must have matching quotes');
+		}
+		if (part === 'constructor' || !isOwn) {
+			skipFurtherCaching = true;
+		}
+
+		intrinsicBaseName += '.' + part;
+		intrinsicRealName = '%' + intrinsicBaseName + '%';
+
+		if (hasOwn(INTRINSICS, intrinsicRealName)) {
+			value = INTRINSICS[intrinsicRealName];
+		} else if (value != null) {
+			if (!(part in value)) {
+				if (!allowMissing) {
+					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
+				}
+				return void undefined;
+			}
+			if ($gOPD && (i + 1) >= parts.length) {
+				var desc = $gOPD(value, part);
+				isOwn = !!desc;
+
+				// By convention, when a data property is converted to an accessor
+				// property to emulate a data property that does not suffer from
+				// the override mistake, that accessor's getter is marked with
+				// an `originalValue` property. Here, when we detect this, we
+				// uphold the illusion by pretending to see that original data
+				// property, i.e., returning the value rather than the getter
+				// itself.
+				if (isOwn && 'get' in desc && !('originalValue' in desc.get)) {
+					value = desc.get;
+				} else {
+					value = value[part];
+				}
+			} else {
+				isOwn = hasOwn(value, part);
+				value = value[part];
+			}
+
+			if (isOwn && !skipFurtherCaching) {
+				INTRINSICS[intrinsicRealName] = value;
+			}
+		}
+	}
+	return value;
+};
+
+},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js","has-symbols":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/index.js":[function(require,module,exports){
 'use strict';
 
 var fs = require('fs');
@@ -17152,7 +17761,7 @@ matter.language = function(str, options) {
 
 module.exports = matter;
 
-},{"./lib/defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./lib/engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./lib/excerpt":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js","./lib/parse":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/parse.js","./lib/stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./lib/to-file":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js","./lib/utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js","fs":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js":[function(require,module,exports){
+},{"./lib/defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./lib/engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./lib/excerpt":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js","./lib/parse":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/parse.js","./lib/stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./lib/to-file":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js","./lib/utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js","fs":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js":[function(require,module,exports){
 'use strict';
 
 var extend = require('extend-shallow');
@@ -17173,7 +17782,7 @@ module.exports = function(options) {
   return opts;
 };
 
-},{"./engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js":[function(require,module,exports){
+},{"./engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js":[function(require,module,exports){
 'use strict';
 
 module.exports = function(name, options) {
@@ -17262,7 +17871,7 @@ engines.javascript = {
   }
 };
 
-},{"extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js","js-yaml":"/usr/local/lib/node_modules/idyll/node_modules/js-yaml/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js":[function(require,module,exports){
+},{"extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js","js-yaml":"/usr/local/lib/node_modules/idyll/node_modules/js-yaml/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js":[function(require,module,exports){
 'use strict';
 
 var defaults = require('./defaults');
@@ -17373,7 +17982,7 @@ function newline(str) {
   return str.slice(-1) !== '\n' ? str + '\n' : str;
 }
 
-},{"./defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./engine":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js":[function(require,module,exports){
+},{"./defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./engine":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js":[function(require,module,exports){
 'use strict';
 
 var typeOf = require('kind-of');
@@ -17437,8 +18046,8 @@ module.exports = function(file) {
   return file;
 };
 
-},{"./stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
-(function (Buffer){
+},{"./stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
+(function (Buffer){(function (){
 'use strict';
 
 var stripBom = require('strip-bom-string');
@@ -17502,193 +18111,9 @@ exports.startsWith = function(str, substr, len) {
   return str.slice(0, len) === substr;
 };
 
-}).call(this,require("buffer").Buffer)
-},{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js","strip-bom-string":"/usr/local/lib/node_modules/idyll/node_modules/strip-bom-string/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js":[function(require,module,exports){
-'use strict';
-
-var isObject = require('is-extendable');
-
-module.exports = function extend(o/*, objects*/) {
-  if (!isObject(o)) { o = {}; }
-
-  var len = arguments.length;
-  for (var i = 1; i < len; i++) {
-    var obj = arguments[i];
-
-    if (isObject(obj)) {
-      assign(o, obj);
-    }
-  }
-  return o;
-};
-
-function assign(a, b) {
-  for (var key in b) {
-    if (hasOwn(b, key)) {
-      a[key] = b[key];
-    }
-  }
-}
-
-/**
- * Returns true if the given `key` is an own property of `obj`.
- */
-
-function hasOwn(obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-},{"is-extendable":"/usr/local/lib/node_modules/idyll/node_modules/is-extendable/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js":[function(require,module,exports){
-var toString = Object.prototype.toString;
-
-/**
- * Get the native `typeof` a value.
- *
- * @param  {*} `val`
- * @return {*} Native javascript type
- */
-
-module.exports = function kindOf(val) {
-  var type = typeof val;
-
-  // primitivies
-  if (type === 'undefined') {
-    return 'undefined';
-  }
-  if (val === null) {
-    return 'null';
-  }
-  if (val === true || val === false || val instanceof Boolean) {
-    return 'boolean';
-  }
-  if (type === 'string' || val instanceof String) {
-    return 'string';
-  }
-  if (type === 'number' || val instanceof Number) {
-    return 'number';
-  }
-
-  // functions
-  if (type === 'function' || val instanceof Function) {
-    if (typeof val.constructor.name !== 'undefined' && val.constructor.name.slice(0, 9) === 'Generator') {
-      return 'generatorfunction';
-    }
-    return 'function';
-  }
-
-  // array
-  if (typeof Array.isArray !== 'undefined' && Array.isArray(val)) {
-    return 'array';
-  }
-
-  // check for instances of RegExp and Date before calling `toString`
-  if (val instanceof RegExp) {
-    return 'regexp';
-  }
-  if (val instanceof Date) {
-    return 'date';
-  }
-
-  // other objects
-  type = toString.call(val);
-
-  if (type === '[object RegExp]') {
-    return 'regexp';
-  }
-  if (type === '[object Date]') {
-    return 'date';
-  }
-  if (type === '[object Arguments]') {
-    return 'arguments';
-  }
-  if (type === '[object Error]') {
-    return 'error';
-  }
-  if (type === '[object Promise]') {
-    return 'promise';
-  }
-
-  // buffer
-  if (isBuffer(val)) {
-    return 'buffer';
-  }
-
-  // es6: Map, WeakMap, Set, WeakSet
-  if (type === '[object Set]') {
-    return 'set';
-  }
-  if (type === '[object WeakSet]') {
-    return 'weakset';
-  }
-  if (type === '[object Map]') {
-    return 'map';
-  }
-  if (type === '[object WeakMap]') {
-    return 'weakmap';
-  }
-  if (type === '[object Symbol]') {
-    return 'symbol';
-  }
-  
-  if (type === '[object Map Iterator]') {
-    return 'mapiterator';
-  }
-  if (type === '[object Set Iterator]') {
-    return 'setiterator';
-  }
-  if (type === '[object String Iterator]') {
-    return 'stringiterator';
-  }
-  if (type === '[object Array Iterator]') {
-    return 'arrayiterator';
-  }
-  
-  // typed arrays
-  if (type === '[object Int8Array]') {
-    return 'int8array';
-  }
-  if (type === '[object Uint8Array]') {
-    return 'uint8array';
-  }
-  if (type === '[object Uint8ClampedArray]') {
-    return 'uint8clampedarray';
-  }
-  if (type === '[object Int16Array]') {
-    return 'int16array';
-  }
-  if (type === '[object Uint16Array]') {
-    return 'uint16array';
-  }
-  if (type === '[object Int32Array]') {
-    return 'int32array';
-  }
-  if (type === '[object Uint32Array]') {
-    return 'uint32array';
-  }
-  if (type === '[object Float32Array]') {
-    return 'float32array';
-  }
-  if (type === '[object Float64Array]') {
-    return 'float64array';
-  }
-
-  // must be a plain object
-  return 'object';
-};
-
-/**
- * If you need to support Safari 5-7 (8-10 yr-old browser),
- * take a look at https://github.com/feross/is-buffer
- */
-
-function isBuffer(val) {
-  return val.constructor
-    && typeof val.constructor.isBuffer === 'function'
-    && val.constructor.isBuffer(val);
-}
-
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js":[function(require,module,exports){
-(function (global){
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js","strip-bom-string":"/usr/local/lib/node_modules/idyll/node_modules/strip-bom-string/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js":[function(require,module,exports){
+(function (global){(function (){
 'use strict';
 
 var origSymbol = global.Symbol;
@@ -17703,7 +18128,7 @@ module.exports = function hasNativeSymbols() {
 	return hasSymbolSham();
 };
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./shams":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/shams.js"}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/shams.js":[function(require,module,exports){
 'use strict';
 
@@ -19416,7 +19841,7 @@ module.exports = {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-compiler/dist/cjs/grammar.js":[function(require,module,exports){
 "use strict";
 
-// Generated automatically by nearley, version 2.16.0
+// Generated automatically by nearley, version 2.19.7
 // http://github.com/Hardmath123/nearley
 (function () {
   function id(x) {
@@ -20956,7 +21381,47 @@ var GenerateHeaders = function GenerateHeaders(props) {
 };
 
 exports.default = GenerateHeaders;
-},{"react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
+},{"react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h1.js":[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _generateHeaders = require('./generateHeaders');
+
+var _generateHeaders2 = _interopRequireDefault(_generateHeaders);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var H1 = function (_React$PureComponent) {
+  _inherits(H1, _React$PureComponent);
+
+  function H1() {
+    _classCallCheck(this, H1);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.apply(this, arguments));
+  }
+
+  H1.prototype.render = function render() {
+    return _react2.default.createElement(_generateHeaders2.default, _extends({ size: '1' }, this.props));
+  };
+
+  return H1;
+}(_react2.default.PureComponent);
+
+exports.default = H1;
+},{"./generateHeaders":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -21150,7 +21615,8 @@ var Header = function (_React$PureComponent) {
     var _props = this.props,
         background = _props.background,
         color = _props.color,
-        byLineTemplate = _props.byLineTemplate;
+        byLineTemplate = _props.byLineTemplate,
+        idyll = _props.idyll;
 
     var _byLineDefault$byLine = _extends({}, byLineDefault, byLineTemplate),
         joint = _byLineDefault$byLine.joint,
@@ -21159,7 +21625,13 @@ var Header = function (_React$PureComponent) {
 
     return _react2.default.createElement(
       'div',
-      { className: 'article-header', style: { background: background, color: color } },
+      {
+        className: 'article-header',
+        style: {
+          background: background || (idyll && idyll.theme ? idyll.theme.headerBackground : undefined),
+          color: color || (idyll && idyll.theme ? idyll.theme.headerColor : undefined)
+        }
+      },
       _react2.default.createElement(
         'h1',
         { className: 'hed' },
@@ -21230,7 +21702,6 @@ Header._idyll = {
     name: 'background',
     type: 'string',
     example: '"blue"',
-    defaultValue: '"#222"',
     description: 'The background of the header. Can pass a color or a url().'
   }, {
     name: 'byLineTemplate',
@@ -21241,7 +21712,6 @@ Header._idyll = {
     name: 'color',
     type: 'string',
     example: '"#000"',
-    defaultValue: '"#fff"',
     description: 'The text color of the header.'
   }]
 };
@@ -21378,9 +21848,11 @@ var TextContainer = function (_React$PureComponent) {
 }(_react2.default.PureComponent);
 
 TextContainer._idyll = {
-  name: "TextContainer",
-  tagType: "open"
+  name: 'TextContainer',
+  tagType: 'open',
+  children: ['This is my text.']
 };
+
 exports.default = TextContainer;
 },{"react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-document/dist/cjs/components/author-tool.js":[function(require,module,exports){
 'use strict';
@@ -23266,7 +23738,10 @@ var _styles2 = _interopRequireDefault(_styles);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var config = {};
+var config = {
+  headerColor: '#ffffff',
+  headerBackground: '#222222'
+};
 
 exports.default = _extends({}, config, {
   styles: (0, _styles2.default)(config)
@@ -23351,11 +23826,46 @@ Object.defineProperty(exports, 'tufte', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 },{"./default":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js","./github":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/github/index.js","./idyll":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/idyll/index.js","./none":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/index.js","./tufte":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/index.js":[function(require,module,exports){
-arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _styles = require('./styles');
+
+var _styles2 = _interopRequireDefault(_styles);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var config = {};
+
+exports.default = _extends({}, config, {
+  styles: (0, _styles2.default)(config)
+});
 },{"./styles":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/styles.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/styles.js":[function(require,module,exports){
 arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-layouts/dist/cjs/none/styles.js"][0].apply(exports,arguments)
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/index.js":[function(require,module,exports){
-arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _styles = require('./styles');
+
+var _styles2 = _interopRequireDefault(_styles);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var config = {
+  headerColor: '#111',
+  headerBackground: '#fffff8'
+};
+
+exports.default = _extends({}, config, {
+  styles: (0, _styles2.default)(config)
+});
 },{"./styles":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/styles.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/styles.js":[function(require,module,exports){
 "use strict";
 
@@ -23365,6 +23875,7 @@ exports.default = function () {
   return "\n@charset \"UTF-8\";\n\n/* Import ET Book styles\n   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: italic; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: bold;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book-roman-old-style\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n\n             .ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n             ReactTable .-pagination .-btn {\n              margin: 0;\n            }\n/* Tufte CSS styles */\n\nhtml {\n  font-size: 15px;\n}\n\nbody {\n  background-color: #fffff8;\n}\n\nbody { font-family: et-book, Palatino, \"Palatino Linotype\", \"Palatino LT STD\", \"Book Antiqua\", Georgia, serif;\n       background-color: #fffff8;\n       color: #111;\n       counter-reset: sidenote-counter; }\n\n\n.idyll-root { position: relative;\n          padding: 5rem 0rem;\n          margin-left: 0;\n          width: auto;\n          margin: auto; }\n\nh1, .hed { font-weight: 400;\n     margin-top: 4rem;\n     margin-bottom: 1.5rem;\n     font-size: 3.2rem;\n     line-height: 1; }\n\nh2 { font-style: italic;\n     font-weight: 400;\n     margin-top: 2.1rem;\n     margin-bottom: 0;\n     font-size: 2.2rem;\n     line-height: 1; }\n\nh3 { font-style: italic;\n     font-weight: 400;\n     font-size: 1.7rem;\n     margin-top: 2rem;\n     margin-bottom: 0;\n     line-height: 1; }\n\nhr { display: block;\n     height: 1px;\n     width: 55%;\n     border: 0;\n     border-top: 1px solid #ccc;\n     margin: 1em 0;\n     padding: 0; }\n\np.subtitle,\n.dek { font-style: italic;\n             margin-top: 1rem;\n             margin-bottom: 1rem;\n             font-size: 1.8rem;\n             display: block;\n             line-height: 1; }\n\n.numeral { font-family: et-book-roman-old-style; }\n\n.danger { color: red; }\n\nsection { padding-top: 1rem;\n          padding-bottom: 1rem; }\n\np, ol, ul { font-size: 1.4rem; }\n\np { line-height: 2rem;\n    margin-top: 1.4rem;\n    margin-bottom: 1.4rem;\n    padding-right: 0;\n    vertical-align: baseline; }\n\n/* Chapter Epigraphs */\ndiv.epigraph { margin: 5em 0; }\n\ndiv.epigraph > blockquote { margin-top: 3em;\n                            margin-bottom: 3em; }\n\ndiv.epigraph > blockquote, div.epigraph > blockquote > p { font-style: italic; }\n\ndiv.epigraph > blockquote > footer { font-style: normal; }\n\ndiv.epigraph > blockquote > footer > cite { font-style: italic; }\n/* end chapter epigraphs styles */\n\nblockquote { font-size: 1.4rem; }\n\nblockquote p { width: 55%;\n               margin-right: 40px; }\n\nblockquote footer { width: 55%;\n                    font-size: 1.1rem;\n                    text-align: right; }\n\nsection>ol, section>ul { width: 45%;\n                         -webkit-padding-start: 5%;\n                         -webkit-padding-end: 5%; }\n\nli { padding: 0.5rem 0; }\n\nfigure { padding: 0;\n         border: 0;\n         font-size: 100%;\n         font: inherit;\n         vertical-align: baseline;\n         max-width: 55%;\n         -webkit-margin-start: 0;\n         -webkit-margin-end: 0;\n         margin: 0 0 3em 0; }\n\nfigcaption { float: right;\n             clear: right;\n             margin-top: 0;\n             margin-bottom: 0;\n             font-size: 1.1rem;\n             line-height: 1.6;\n             vertical-align: baseline;\n             position: relative;\n             max-width: 40%; }\n\nfigure.fullwidth figcaption { margin-right: 24%; }\n\n/* Links: replicate underline that clears descenders */\na:link, a:visited { color: inherit; }\n\n@media screen and (-webkit-min-device-pixel-ratio: 0) { a:link { background-position-y: 87%, 87%, 87%; } }\n\n\na:link::-moz-selection { text-shadow: 0.03em 0 #b4d5fe, -0.03em 0 #b4d5fe, 0 0.03em #b4d5fe, 0 -0.03em #b4d5fe, 0.06em 0 #b4d5fe, -0.06em 0 #b4d5fe, 0.09em 0 #b4d5fe, -0.09em 0 #b4d5fe, 0.12em 0 #b4d5fe, -0.12em 0 #b4d5fe, 0.15em 0 #b4d5fe, -0.15em 0 #b4d5fe;\n                         background: #b4d5fe; }\n\n/* Sidenotes, margin notes, figures, captions */\nimg { max-width: 100%; }\n\n.aside, .sidenote, .marginnote { float: right;\n                         clear: right;\n                         margin-right: -60%;\n                         width: 50%;\n                         margin-top: 0;\n                         margin-bottom: 0;\n                         font-size: 1.1rem;\n                         line-height: 1.3;\n                         vertical-align: baseline;\n                         position: relative; }\n\n.sidenote-number { counter-increment: sidenote-counter; }\n\n.sidenote-number:after, .sidenote:before { content: counter(sidenote-counter) \" \";\n                                           font-family: et-book-roman-old-style;\n                                           position: relative;\n                                           vertical-align: baseline; }\n\n.sidenote-number:after { content: counter(sidenote-counter);\n                         font-size: 1rem;\n                         top: -0.5rem;\n                         left: 0.1rem; }\n\n.sidenote:before { content: counter(sidenote-counter) \" \";\n                   top: -0.5rem; }\n\nblockquote .sidenote, blockquote .marginnote, blockquote .aside { margin-right: -82%;\n                                               min-width: 59%;\n                                               text-align: left; }\n\n.aside-container {\n  position: static;\n  width: 55%;\n}\ndiv.fullwidth, table.fullwidth { width: 100%; }\n\ndiv.table-wrapper { overflow-x: auto;\n                    font-family: \"Trebuchet MS\", \"Gill Sans\", \"Gill Sans MT\", sans-serif; }\n\n.sans { font-family: \"Gill Sans\", \"Gill Sans MT\", Calibri, sans-serif;\n        letter-spacing: .03em; }\n\ncode { font-family: Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n       font-size: 1.0rem;\n       line-height: 1.42; }\n\n.sans > code { font-size: 1.2rem; }\n\nh1 > code, h2 > code, h3 > code { font-size: 0.80em; }\n\n.marginnote > code, .sidenote > code { font-size: 1rem; }\n\npre.code { font-size: 0.9rem;\n           width: 52.5%;\n           margin-left: 2.5%;\n           overflow-x: auto; }\n\npre.code.fullwidth { width: 90%; }\n\n.fullwidth { max-width: 90%;\n             clear:both; }\n\nspan.newthought { font-variant: small-caps;\n                  font-size: 1.2em; }\n\ninput.margin-toggle { display: none; }\n\nlabel.sidenote-number { display: inline; }\n\nlabel.margin-toggle:not(.sidenote-number) { display: none; }\n\n@media (max-width: 760px) { p, footer { width: 100%; }\n                            pre.code { width: 97%; }\n                            ul { width: 85%; }\n                            figure { max-width: 90%; }\n                            figcaption, figure.fullwidth figcaption { margin-right: 0%;\n                                                                      max-width: none; }\n                            blockquote { margin-left: 1.5em;\n                                         margin-right: 0em; }\n                            blockquote p, blockquote footer { width: 100%; }\n                            label.margin-toggle:not(.sidenote-number) { display: inline; }\n                            .sidenote, .marginnote { display: none; }\n                            .margin-toggle:checked + .sidenote,\n                            .margin-toggle:checked + .marginnote { display: block;\n                                                                   float: left;\n                                                                   left: 1rem;\n                                                                   clear: both;\n                                                                   width: 95%;\n                                                                   margin: 1rem 2.5%;\n                                                                   vertical-align: baseline;\n                                                                   position: relative; }\n                            label { cursor: pointer; }\n                            div.table-wrapper, table { width: 85%; }\n                            img { width: 100%; } }\n\n\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: #fff;\n  border: solid 1px #111;\n}\n\n.idyll-scroll-text .idyll-step h2 {\n  margin-top: 0;\n}\n\npre {\n  background: #f3f3f3;\n  padding: 15px;\n  overflow-x: auto;\n}\n\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/ieee754/index.js":[function(require,module,exports){
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -23479,7 +23990,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/is-buffer/index.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/insert-module-globals/node_modules/is-buffer/index.js":[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -25830,7 +26341,7 @@ function readAlias(state) {
 
   alias = state.input.slice(_position, state.position);
 
-  if (!state.anchorMap.hasOwnProperty(alias)) {
+  if (!_hasOwnProperty.call(state.anchorMap, alias)) {
     throwError(state, 'unidentified alias "' + alias + '"');
   }
 
@@ -43772,6 +44283,155 @@ module.exports = {
 /***/ })
 /******/ ])["default"];
 });
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js":[function(require,module,exports){
+var toString = Object.prototype.toString;
+
+/**
+ * Get the native `typeof` a value.
+ *
+ * @param  {*} `val`
+ * @return {*} Native javascript type
+ */
+
+module.exports = function kindOf(val) {
+  var type = typeof val;
+
+  // primitivies
+  if (type === 'undefined') {
+    return 'undefined';
+  }
+  if (val === null) {
+    return 'null';
+  }
+  if (val === true || val === false || val instanceof Boolean) {
+    return 'boolean';
+  }
+  if (type === 'string' || val instanceof String) {
+    return 'string';
+  }
+  if (type === 'number' || val instanceof Number) {
+    return 'number';
+  }
+
+  // functions
+  if (type === 'function' || val instanceof Function) {
+    if (typeof val.constructor.name !== 'undefined' && val.constructor.name.slice(0, 9) === 'Generator') {
+      return 'generatorfunction';
+    }
+    return 'function';
+  }
+
+  // array
+  if (typeof Array.isArray !== 'undefined' && Array.isArray(val)) {
+    return 'array';
+  }
+
+  // check for instances of RegExp and Date before calling `toString`
+  if (val instanceof RegExp) {
+    return 'regexp';
+  }
+  if (val instanceof Date) {
+    return 'date';
+  }
+
+  // other objects
+  type = toString.call(val);
+
+  if (type === '[object RegExp]') {
+    return 'regexp';
+  }
+  if (type === '[object Date]') {
+    return 'date';
+  }
+  if (type === '[object Arguments]') {
+    return 'arguments';
+  }
+  if (type === '[object Error]') {
+    return 'error';
+  }
+  if (type === '[object Promise]') {
+    return 'promise';
+  }
+
+  // buffer
+  if (isBuffer(val)) {
+    return 'buffer';
+  }
+
+  // es6: Map, WeakMap, Set, WeakSet
+  if (type === '[object Set]') {
+    return 'set';
+  }
+  if (type === '[object WeakSet]') {
+    return 'weakset';
+  }
+  if (type === '[object Map]') {
+    return 'map';
+  }
+  if (type === '[object WeakMap]') {
+    return 'weakmap';
+  }
+  if (type === '[object Symbol]') {
+    return 'symbol';
+  }
+  
+  if (type === '[object Map Iterator]') {
+    return 'mapiterator';
+  }
+  if (type === '[object Set Iterator]') {
+    return 'setiterator';
+  }
+  if (type === '[object String Iterator]') {
+    return 'stringiterator';
+  }
+  if (type === '[object Array Iterator]') {
+    return 'arrayiterator';
+  }
+  
+  // typed arrays
+  if (type === '[object Int8Array]') {
+    return 'int8array';
+  }
+  if (type === '[object Uint8Array]') {
+    return 'uint8array';
+  }
+  if (type === '[object Uint8ClampedArray]') {
+    return 'uint8clampedarray';
+  }
+  if (type === '[object Int16Array]') {
+    return 'int16array';
+  }
+  if (type === '[object Uint16Array]') {
+    return 'uint16array';
+  }
+  if (type === '[object Int32Array]') {
+    return 'int32array';
+  }
+  if (type === '[object Uint32Array]') {
+    return 'uint32array';
+  }
+  if (type === '[object Float32Array]') {
+    return 'float32array';
+  }
+  if (type === '[object Float64Array]') {
+    return 'float64array';
+  }
+
+  // must be a plain object
+  return 'object';
+};
+
+/**
+ * If you need to support Safari 5-7 (8-10 yr-old browser),
+ * take a look at https://github.com/feross/is-buffer
+ */
+
+function isBuffer(val) {
+  return val.constructor
+    && typeof val.constructor.isBuffer === 'function'
+    && val.constructor.isBuffer(val);
+}
+
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/lex/lexer.js":[function(require,module,exports){
 if (typeof module === "object" && typeof module.exports === "object") module.exports = Lexer;
 
@@ -44014,15 +44674,11 @@ module.exports = function (str, locale) {
     Rule.highestId = 0;
 
     Rule.prototype.toString = function(withCursorAt) {
-        function stringifySymbolSequence (e) {
-            return e.literal ? JSON.stringify(e.literal) :
-                   e.type ? '%' + e.type : e.toString();
-        }
         var symbolSequence = (typeof withCursorAt === "undefined")
-                             ? this.symbols.map(stringifySymbolSequence).join(' ')
-                             : (   this.symbols.slice(0, withCursorAt).map(stringifySymbolSequence).join(' ')
+                             ? this.symbols.map(getSymbolShortDisplay).join(' ')
+                             : (   this.symbols.slice(0, withCursorAt).map(getSymbolShortDisplay).join(' ')
                                  + " ● "
-                                 + this.symbols.slice(withCursorAt).map(stringifySymbolSequence).join(' ')     );
+                                 + this.symbols.slice(withCursorAt).map(getSymbolShortDisplay).join(' ')     );
         return this.name + " → " + symbolSequence;
     }
 
@@ -44212,19 +44868,34 @@ module.exports = function (str, locale) {
         // so the culprit is index-1
         var buffer = this.buffer;
         if (typeof buffer === 'string') {
+            var lines = buffer
+                .split("\n")
+                .slice(
+                    Math.max(0, this.line - 5), 
+                    this.line
+                );
+
             var nextLineBreak = buffer.indexOf('\n', this.index);
             if (nextLineBreak === -1) nextLineBreak = buffer.length;
-            var line = buffer.substring(this.lastLineBreak, nextLineBreak)
             var col = this.index - this.lastLineBreak;
+            var lastLineDigits = String(this.line).length;
             message += " at line " + this.line + " col " + col + ":\n\n";
-            message += "  " + line + "\n"
-            message += "  " + Array(col).join(" ") + "^"
+            message += lines
+                .map(function(line, i) {
+                    return pad(this.line - lines.length + i + 1, lastLineDigits) + " " + line;
+                }, this)
+                .join("\n");
+            message += "\n" + pad("", lastLineDigits + col) + "^\n";
             return message;
         } else {
             return message + " at index " + (this.index - 1);
         }
-    }
 
+        function pad(n, length) {
+            var s = String(n);
+            return Array(length - s.length + 1).join(" ") + s;
+        }
+    }
 
     function Parser(rules, start, options) {
         if (rules instanceof Grammar) {
@@ -44268,7 +44939,22 @@ module.exports = function (str, locale) {
         lexer.reset(chunk, this.lexerState);
 
         var token;
-        while (token = lexer.next()) {
+        while (true) {
+            try {
+                token = lexer.next();
+                if (!token) {
+                    break;
+                }
+            } catch (e) {
+                // Create the next column so that the error reporter
+                // can display the correctly predicted states.
+                var nextColumn = new Column(this.grammar, this.current + 1);
+                this.table.push(nextColumn);
+                var err = new Error(this.reportLexerError(e));
+                err.offset = this.current;
+                err.token = e.token;
+                throw err;
+            }
             // We add new states to table[current+1]
             var column = this.table[this.current];
 
@@ -44336,11 +45022,30 @@ module.exports = function (str, locale) {
         return this;
     };
 
+    Parser.prototype.reportLexerError = function(lexerError) {
+        var tokenDisplay, lexerMessage;
+        // Planning to add a token property to moo's thrown error
+        // even on erroring tokens to be used in error display below
+        var token = lexerError.token;
+        if (token) {
+            tokenDisplay = "input " + JSON.stringify(token.text[0]) + " (lexer error)";
+            lexerMessage = this.lexer.formatError(token, "Syntax error");
+        } else {
+            tokenDisplay = "input (lexer error)";
+            lexerMessage = lexerError.message;
+        }
+        return this.reportErrorCommon(lexerMessage, tokenDisplay);
+    };
+
     Parser.prototype.reportError = function(token) {
-        var lines = [];
         var tokenDisplay = (token.type ? token.type + " token: " : "") + JSON.stringify(token.value !== undefined ? token.value : token);
-        lines.push(this.lexer.formatError(token, "Syntax error"));
-        lines.push('Unexpected ' + tokenDisplay + '. Instead, I was expecting to see one of the following:\n');
+        var lexerMessage = this.lexer.formatError(token, "Syntax error");
+        return this.reportErrorCommon(lexerMessage, tokenDisplay);
+    };
+
+    Parser.prototype.reportErrorCommon = function(lexerMessage, tokenDisplay) {
+        var lines = [];
+        lines.push(lexerMessage);
         var lastColumnIndex = this.table.length - 2;
         var lastColumn = this.table[lastColumnIndex];
         var expectantStates = lastColumn.states
@@ -44349,26 +45054,31 @@ module.exports = function (str, locale) {
                 return nextSymbol && typeof nextSymbol !== "string";
             });
 
-        // Display a "state stack" for each expectant state
-        // - which shows you how this state came to be, step by step.
-        // If there is more than one derivation, we only display the first one.
-        var stateStacks = expectantStates
-            .map(function(state) {
-                return this.buildFirstStateStack(state, []) || [state];
+        if (expectantStates.length === 0) {
+            lines.push('Unexpected ' + tokenDisplay + '. I did not expect any more input. Here is the state of my parse table:\n');
+            this.displayStateStack(lastColumn.states, lines);
+        } else {
+            lines.push('Unexpected ' + tokenDisplay + '. Instead, I was expecting to see one of the following:\n');
+            // Display a "state stack" for each expectant state
+            // - which shows you how this state came to be, step by step.
+            // If there is more than one derivation, we only display the first one.
+            var stateStacks = expectantStates
+                .map(function(state) {
+                    return this.buildFirstStateStack(state, []) || [state];
+                }, this);
+            // Display each state that is expecting a terminal symbol next.
+            stateStacks.forEach(function(stateStack) {
+                var state = stateStack[0];
+                var nextSymbol = state.rule.symbols[state.dot];
+                var symbolDisplay = this.getSymbolDisplay(nextSymbol);
+                lines.push('A ' + symbolDisplay + ' based on:');
+                this.displayStateStack(stateStack, lines);
             }, this);
-        // Display each state that is expecting a terminal symbol next.
-        stateStacks.forEach(function(stateStack) {
-            var state = stateStack[0];
-            var nextSymbol = state.rule.symbols[state.dot];
-            var symbolDisplay = this.getSymbolDisplay(nextSymbol);
-            lines.push('A ' + symbolDisplay + ' based on:');
-            this.displayStateStack(stateStack, lines);
-        }, this);
-
+        }
         lines.push("");
         return lines.join("\n");
-    };
-
+    }
+    
     Parser.prototype.displayStateStack = function(stateStack, lines) {
         var lastDisplay;
         var sameDisplayCount = 0;
@@ -44379,7 +45089,7 @@ module.exports = function (str, locale) {
                 sameDisplayCount++;
             } else {
                 if (sameDisplayCount > 0) {
-                    lines.push('    ⬆ ︎' + sameDisplayCount + ' more lines identical to this');
+                    lines.push('    ^ ' + sameDisplayCount + ' more lines identical to this');
                 }
                 sameDisplayCount = 0;
                 lines.push('    ' + display);
@@ -44389,18 +45099,7 @@ module.exports = function (str, locale) {
     };
 
     Parser.prototype.getSymbolDisplay = function(symbol) {
-        var type = typeof symbol;
-        if (type === "string") {
-            return symbol;
-        } else if (type === "object" && symbol.literal) {
-            return JSON.stringify(symbol.literal);
-        } else if (type === "object" && symbol instanceof RegExp) {
-            return 'character matching ' + symbol;
-        } else if (type === "object" && symbol.type) {
-            return symbol.type + ' token';
-        } else {
-            throw new Error('Unknown symbol type: ' + symbol);
-        }
+        return getSymbolLongDisplay(symbol);
     };
 
     /*
@@ -44475,6 +45174,44 @@ module.exports = function (str, locale) {
         });
         return considerations.map(function(c) {return c.data; });
     };
+
+    function getSymbolLongDisplay(symbol) {
+        var type = typeof symbol;
+        if (type === "string") {
+            return symbol;
+        } else if (type === "object") {
+            if (symbol.literal) {
+                return JSON.stringify(symbol.literal);
+            } else if (symbol instanceof RegExp) {
+                return 'character matching ' + symbol;
+            } else if (symbol.type) {
+                return symbol.type + ' token';
+            } else if (symbol.test) {
+                return 'token matching ' + String(symbol.test);
+            } else {
+                throw new Error('Unknown symbol type: ' + symbol);
+            }
+        }
+    }
+
+    function getSymbolShortDisplay(symbol) {
+        var type = typeof symbol;
+        if (type === "string") {
+            return symbol;
+        } else if (type === "object") {
+            if (symbol.literal) {
+                return JSON.stringify(symbol.literal);
+            } else if (symbol instanceof RegExp) {
+                return symbol.toString();
+            } else if (symbol.type) {
+                return '%' + symbol.type;
+            } else if (symbol.test) {
+                return '<' + String(symbol.test) + '>';
+            } else {
+                throw new Error('Unknown symbol type: ' + symbol);
+            }
+        }
+    }
 
     return {
         Parser: Parser,
@@ -44807,9 +45544,9 @@ module.exports = function isArguments(value) {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/implementation.js":[function(require,module,exports){
 'use strict';
 
-var RequireObjectCoercible = require('es-abstract/2019/RequireObjectCoercible');
+var RequireObjectCoercible = require('es-abstract/2020/RequireObjectCoercible');
 var has = require('has');
-var callBound = require('es-abstract/helpers/callBound');
+var callBound = require('call-bind/callBound');
 var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
 
 module.exports = function entries(O) {
@@ -44823,11 +45560,11 @@ module.exports = function entries(O) {
 	return entrys;
 };
 
-},{"es-abstract/2019/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/index.js":[function(require,module,exports){
+},{"call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","es-abstract/2020/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2020/RequireObjectCoercible.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/index.js":[function(require,module,exports){
 'use strict';
 
 var define = require('define-properties');
-var callBind = require('es-abstract/helpers/callBind');
+var callBind = require('call-bind');
 
 var implementation = require('./implementation');
 var getPolyfill = require('./polyfill');
@@ -44843,7 +45580,7 @@ define(polyfill, {
 
 module.exports = polyfill;
 
-},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/shim.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js","es-abstract/helpers/callBind":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBind.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js":[function(require,module,exports){
+},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/shim.js","call-bind":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -44872,8 +45609,8 @@ module.exports = function shimEntries() {
 'use strict';
 
 var has = require('has');
-var RequireObjectCoercible = require('es-abstract/2019/RequireObjectCoercible');
-var callBound = require('es-abstract/helpers/callBound');
+var RequireObjectCoercible = require('es-abstract/2020/RequireObjectCoercible');
+var callBound = require('call-bind/callBound');
 
 var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
 
@@ -44888,26 +45625,9 @@ module.exports = function values(O) {
 	return vals;
 };
 
-},{"es-abstract/2019/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/index.js":[function(require,module,exports){
-'use strict';
-
-var define = require('define-properties');
-
-var implementation = require('./implementation');
-var getPolyfill = require('./polyfill');
-var shim = require('./shim');
-
-var polyfill = getPolyfill();
-
-define(polyfill, {
-	getPolyfill: getPolyfill,
-	implementation: implementation,
-	shim: shim
-});
-
-module.exports = polyfill;
-
-},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.values/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.values/shim.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js":[function(require,module,exports){
+},{"call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","es-abstract/2020/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2020/RequireObjectCoercible.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/index.js":[function(require,module,exports){
+arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/object.entries/index.js"][0].apply(exports,arguments)
+},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.values/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.values/shim.js","call-bind":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -44977,7 +45697,7 @@ module.exports = function (value, locale) {
 }
 
 },{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js":[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 'use strict';
 
 if (typeof process === 'undefined' ||
@@ -45024,7 +45744,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
@@ -46010,7 +46730,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/react-dom-factories/index.js":[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 'use strict';
 
 /**
@@ -46207,9 +46927,9 @@ module.exports = ReactPropTypesSecret;
 });
 
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/react-dom/cjs/react-dom.development.js":[function(require,module,exports){
-/** @license React v16.13.1
+/** @license React v16.14.0
  * react-dom.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -70779,7 +71499,7 @@ function injectIntoDevTools(devToolsConfig) {
     // Enables DevTools to append owner stacks to error messages in DEV mode.
     getCurrentFiber:  function () {
       return current;
-    } 
+    }
   }));
 }
 var IsSomeRendererActing$1 = ReactSharedInternals.IsSomeRendererActing;
@@ -71131,7 +71851,7 @@ implementation) {
   };
 }
 
-var ReactVersion = '16.13.1';
+var ReactVersion = '16.14.0';
 
 setAttemptUserBlockingHydration(attemptUserBlockingHydration$1);
 setAttemptContinuousHydration(attemptContinuousHydration$1);
@@ -71223,7 +71943,7 @@ exports.version = ReactVersion;
 }
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/checkPropTypes.js","react":"react","scheduler":"/usr/local/lib/node_modules/idyll/node_modules/scheduler/index.js","scheduler/tracing":"/usr/local/lib/node_modules/idyll/node_modules/scheduler/tracing.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-dom/cjs/react-dom.production.min.js":[function(require,module,exports){
-/** @license React v16.13.1
+/** @license React v16.14.0
  * react-dom.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -71510,14 +72230,14 @@ function ik(a,b,c,d,e){var f=c._reactRootContainer;if(f){var g=f._internalRoot;i
 wc=function(a){if(13===a.tag){var b=hg(Gg(),150,100);Ig(a,b);ek(a,b)}};xc=function(a){13===a.tag&&(Ig(a,3),ek(a,3))};yc=function(a){if(13===a.tag){var b=Gg();b=Hg(b,a,null);Ig(a,b);ek(a,b)}};
 za=function(a,b,c){switch(b){case "input":Cb(a,c);b=c.name;if("radio"===c.type&&null!=b){for(c=a;c.parentNode;)c=c.parentNode;c=c.querySelectorAll("input[name="+JSON.stringify(""+b)+'][type="radio"]');for(b=0;b<c.length;b++){var d=c[b];if(d!==a&&d.form===a.form){var e=Qd(d);if(!e)throw Error(u(90));yb(d);Cb(d,e)}}}break;case "textarea":Kb(a,c);break;case "select":b=c.value,null!=b&&Hb(a,!!c.multiple,b,!1)}};Fa=Mj;
 Ga=function(a,b,c,d,e){var f=W;W|=4;try{return cg(98,a.bind(null,b,c,d,e))}finally{W=f,W===V&&gg()}};Ha=function(){(W&(1|fj|gj))===V&&(Lj(),Dj())};Ia=function(a,b){var c=W;W|=2;try{return a(b)}finally{W=c,W===V&&gg()}};function kk(a,b){var c=2<arguments.length&&void 0!==arguments[2]?arguments[2]:null;if(!gk(b))throw Error(u(200));return jk(a,b,null,c)}var lk={Events:[Nc,Pd,Qd,xa,ta,Xd,function(a){jc(a,Wd)},Da,Ea,id,mc,Dj,{current:!1}]};
-(function(a){var b=a.findFiberByHostInstance;return Yj(n({},a,{overrideHookState:null,overrideProps:null,setSuspenseHandler:null,scheduleUpdate:null,currentDispatcherRef:Wa.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hc(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null},findHostInstancesForRefresh:null,scheduleRefresh:null,scheduleRoot:null,setRefreshHandler:null,getCurrentFiber:null}))})({findFiberByHostInstance:tc,bundleType:0,version:"16.13.1",
+(function(a){var b=a.findFiberByHostInstance;return Yj(n({},a,{overrideHookState:null,overrideProps:null,setSuspenseHandler:null,scheduleUpdate:null,currentDispatcherRef:Wa.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hc(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null},findHostInstancesForRefresh:null,scheduleRefresh:null,scheduleRoot:null,setRefreshHandler:null,getCurrentFiber:null}))})({findFiberByHostInstance:tc,bundleType:0,version:"16.14.0",
 rendererPackageName:"react-dom"});exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED=lk;exports.createPortal=kk;exports.findDOMNode=function(a){if(null==a)return null;if(1===a.nodeType)return a;var b=a._reactInternalFiber;if(void 0===b){if("function"===typeof a.render)throw Error(u(188));throw Error(u(268,Object.keys(a)));}a=hc(b);a=null===a?null:a.stateNode;return a};
 exports.flushSync=function(a,b){if((W&(fj|gj))!==V)throw Error(u(187));var c=W;W|=1;try{return cg(99,a.bind(null,b))}finally{W=c,gg()}};exports.hydrate=function(a,b,c){if(!gk(b))throw Error(u(200));return ik(null,a,b,!0,c)};exports.render=function(a,b,c){if(!gk(b))throw Error(u(200));return ik(null,a,b,!1,c)};
 exports.unmountComponentAtNode=function(a){if(!gk(a))throw Error(u(40));return a._reactRootContainer?(Nj(function(){ik(null,null,a,!1,function(){a._reactRootContainer=null;a[Od]=null})}),!0):!1};exports.unstable_batchedUpdates=Mj;exports.unstable_createPortal=function(a,b){return kk(a,b,2<arguments.length&&void 0!==arguments[2]?arguments[2]:null)};
-exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.13.1";
+exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.14.0";
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js","react":"react","scheduler":"/usr/local/lib/node_modules/idyll/node_modules/scheduler/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.development.js":[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 /** @license React v16.13.1
  * react-is.development.js
  *
@@ -71700,7 +72420,7 @@ exports.typeOf = typeOf;
   })();
 }
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.production.min.js":[function(require,module,exports){
 /** @license React v16.13.1
  * react-is.production.min.js
@@ -71719,7 +72439,7 @@ exports.isMemo=function(a){return z(a)===r};exports.isPortal=function(a){return 
 exports.isValidElementType=function(a){return"string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||a===q||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n||a.$$typeof===w||a.$$typeof===x||a.$$typeof===y||a.$$typeof===v)};exports.typeOf=z;
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/react-is/index.js":[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 'use strict';
 
 if (process.env.NODE_ENV === 'production') {
@@ -71728,7 +72448,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = require('./cjs/react-is.development.js');
 }
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"./cjs/react-is.development.js":"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.development.js","./cjs/react-is.production.min.js":"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.production.min.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-latex-patched/build/latex.js":[function(require,module,exports){
 "use strict";
 
@@ -71868,7 +72588,7 @@ if (module && module.exports) {
 }
 
 },{"katex":"/usr/local/lib/node_modules/idyll/node_modules/katex/dist/katex.js","prop-types":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/index.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/react-tooltip/dist/index.js":[function(require,module,exports){
-(function (process){
+(function (process){(function (){
 'use strict';
 
 
@@ -74385,9 +75105,9 @@ function (_React$Component) {
 module.exports = ReactTooltip;
 
 
-}).call(this,require('_process'))
+}).call(this)}).call(this,require('_process'))
 },{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/react/cjs/react.development.js":[function(require,module,exports){
-/** @license React v16.13.1
+/** @license React v16.14.0
  * react.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -74407,7 +75127,7 @@ if ("development" !== "production") {
 var _assign = require('object-assign');
 var checkPropTypes = require('prop-types/checkPropTypes');
 
-var ReactVersion = '16.13.1';
+var ReactVersion = '16.14.0';
 
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
@@ -76301,7 +77021,7 @@ exports.version = ReactVersion;
 }
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/checkPropTypes.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react/cjs/react.production.min.js":[function(require,module,exports){
-/** @license React v16.13.1
+/** @license React v16.14.0
  * react.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -76325,7 +77045,7 @@ exports.Component=F;exports.Fragment=r;exports.Profiler=u;exports.PureComponent=
 exports.cloneElement=function(a,b,c){if(null===a||void 0===a)throw Error(C(267,a));var e=l({},a.props),d=a.key,g=a.ref,k=a._owner;if(null!=b){void 0!==b.ref&&(g=b.ref,k=J.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(h in b)K.call(b,h)&&!L.hasOwnProperty(h)&&(e[h]=void 0===b[h]&&void 0!==f?f[h]:b[h])}var h=arguments.length-2;if(1===h)e.children=c;else if(1<h){f=Array(h);for(var m=0;m<h;m++)f[m]=arguments[m+2];e.children=f}return{$$typeof:p,type:a.type,
 key:d,ref:g,props:e,_owner:k}};exports.createContext=function(a,b){void 0===b&&(b=null);a={$$typeof:w,_calculateChangedBits:b,_currentValue:a,_currentValue2:a,_threadCount:0,Provider:null,Consumer:null};a.Provider={$$typeof:v,_context:a};return a.Consumer=a};exports.createElement=M;exports.createFactory=function(a){var b=M.bind(null,a);b.type=a;return b};exports.createRef=function(){return{current:null}};exports.forwardRef=function(a){return{$$typeof:x,render:a}};exports.isValidElement=O;
 exports.lazy=function(a){return{$$typeof:A,_ctor:a,_status:-1,_result:null}};exports.memo=function(a,b){return{$$typeof:z,type:a,compare:void 0===b?null:b}};exports.useCallback=function(a,b){return Z().useCallback(a,b)};exports.useContext=function(a,b){return Z().useContext(a,b)};exports.useDebugValue=function(){};exports.useEffect=function(a,b){return Z().useEffect(a,b)};exports.useImperativeHandle=function(a,b,c){return Z().useImperativeHandle(a,b,c)};
-exports.useLayoutEffect=function(a,b){return Z().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return Z().useMemo(a,b)};exports.useReducer=function(a,b,c){return Z().useReducer(a,b,c)};exports.useRef=function(a){return Z().useRef(a)};exports.useState=function(a){return Z().useState(a)};exports.version="16.13.1";
+exports.useLayoutEffect=function(a,b){return Z().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return Z().useMemo(a,b)};exports.useReducer=function(a,b,c){return Z().useReducer(a,b,c)};exports.useRef=function(a){return Z().useRef(a)};exports.useState=function(a){return Z().useState(a)};exports.version="16.14.0";
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/duplex-browser.js":[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
@@ -76511,7 +77231,7 @@ PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
 },{"./_stream_transform":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
-(function (process,global){
+(function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -77531,7 +78251,7 @@ function indexOf(xs, x) {
   }
   return -1;
 }
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/BufferList":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/BufferList.js","./internal/streams/destroy":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","isarray":"/usr/local/lib/node_modules/idyll/node_modules/isarray/index.js","process-nextick-args":"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js","safe-buffer":"/usr/local/lib/node_modules/idyll/node_modules/safe-buffer/index.js","string_decoder/":"/usr/local/lib/node_modules/idyll/node_modules/string_decoder/lib/string_decoder.js","util":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -77748,7 +78468,7 @@ function done(stream, er, data) {
   return stream.push(null);
 }
 },{"./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
-(function (process,global,setImmediate){
+(function (process,global,setImmediate){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -78436,7 +79156,7 @@ Writable.prototype._destroy = function (err, cb) {
   this.end();
   cb(err);
 };
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
 },{"./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/destroy":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","process-nextick-args":"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js","safe-buffer":"/usr/local/lib/node_modules/idyll/node_modules/safe-buffer/index.js","timers":"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js","util-deprecate":"/usr/local/lib/node_modules/idyll/node_modules/util-deprecate/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/BufferList.js":[function(require,module,exports){
 'use strict';
 
@@ -78632,6 +79352,24 @@ var runtime = (function (exports) {
   var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
   var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
 
+  function define(obj, key, value) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+    return obj[key];
+  }
+  try {
+    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
+    define({}, "");
+  } catch (err) {
+    define = function(obj, key, value) {
+      return obj[key] = value;
+    };
+  }
+
   function wrap(innerFn, outerFn, self, tryLocsList) {
     // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
     var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
@@ -78702,16 +79440,19 @@ var runtime = (function (exports) {
     Generator.prototype = Object.create(IteratorPrototype);
   GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
   GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunctionPrototype[toStringTagSymbol] =
-    GeneratorFunction.displayName = "GeneratorFunction";
+  GeneratorFunction.displayName = define(
+    GeneratorFunctionPrototype,
+    toStringTagSymbol,
+    "GeneratorFunction"
+  );
 
   // Helper for defining the .next, .throw, and .return methods of the
   // Iterator interface in terms of a single ._invoke method.
   function defineIteratorMethods(prototype) {
     ["next", "throw", "return"].forEach(function(method) {
-      prototype[method] = function(arg) {
+      define(prototype, method, function(arg) {
         return this._invoke(method, arg);
-      };
+      });
     });
   }
 
@@ -78730,9 +79471,7 @@ var runtime = (function (exports) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
       genFun.__proto__ = GeneratorFunctionPrototype;
-      if (!(toStringTagSymbol in genFun)) {
-        genFun[toStringTagSymbol] = "GeneratorFunction";
-      }
+      define(genFun, toStringTagSymbol, "GeneratorFunction");
     }
     genFun.prototype = Object.create(Gp);
     return genFun;
@@ -79002,7 +79741,7 @@ var runtime = (function (exports) {
   // unified ._invoke helper method.
   defineIteratorMethods(Gp);
 
-  Gp[toStringTagSymbol] = "Generator";
+  define(Gp, toStringTagSymbol, "Generator");
 
   // A Generator should always return itself as the iterator object when the
   // @@iterator function is called on it. Some browsers' implementations of the
@@ -80740,7 +81479,7 @@ module.exports = function (value, locale) {
 }
 
 },{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js","upper-case-first":"/usr/local/lib/node_modules/idyll/node_modules/upper-case-first/upper-case-first.js"}],"/usr/local/lib/node_modules/idyll/node_modules/smartquotes/dist/smartquotes.js":[function(require,module,exports){
-(function(a,b){'object'==typeof exports&&'object'==typeof module?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.smartquotes=b():a.smartquotes=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=3)}([function(a,b,c){'use strict';var d=c(1);a.exports=function(a,b){return b=b||{},d.forEach(function(c){var d='function'==typeof c[1]?c[1](b.retainLength):c[1];a=a.replace(c[0],d)}),a}},function(a){'use strict';a.exports=[[/'''/g,function(a){return'\u2034'+(a?'\u2063\u2063':'')}],[/(\W|^)"(\w)/g,'$1\u201C$2'],[/(\u201c[^"]*)"([^"]*$|[^\u201c"]*\u201c)/g,'$1\u201D$2'],[/([^0-9])"/g,'$1\u201D'],[/''/g,function(a){return'\u2033'+(a?'\u2063':'')}],[/(\W|^)'(\S)/g,'$1\u2018$2'],[/([a-z])'([a-z])/ig,'$1\u2019$2'],[/(\u2018)([0-9]{2}[^\u2019]*)(\u2018([^0-9]|$)|$|\u2019[a-z])/ig,'\u2019$2$3'],[/((\u2018[^']*)|[a-z])'([^0-9]|$)/ig,'$1\u2019$3'],[/(\B|^)\u2018(?=([^\u2018\u2019]*\u2019\b)*([^\u2018\u2019]*\B\W[\u2018\u2019]\b|[^\u2018\u2019]*$))/ig,'$1\u2019'],[/"/g,'\u2033'],[/'/g,'\u2032']]},function(a,b,c){'use strict';function d(a){if(-1===['CODE','PRE','SCRIPT','STYLE'].indexOf(a.nodeName.toUpperCase())){var b,c,h,i='',j=a.childNodes,k=[];for(b=0;b<j.length;b++)c=j[b],c.nodeType===g||'#text'===c.nodeName?(k.push([c,i.length]),i+=c.nodeValue||c.value):c.childNodes&&c.childNodes.length&&(i+=d(c));for(b in i=f(i,{retainLength:!0}),k)h=k[b],h[0].nodeValue?h[0].nodeValue=e(i,h[0].nodeValue,h[1]):h[0].value&&(h[0].value=e(i,h[0].value,h[1]));return i}}function e(a,b,c){return a.substr(c,b.length).replace('\u2063','')}var f=c(0),g='undefined'!=typeof Element&&Element.TEXT_NODE||3;a.exports=function(a){return d(a),a}},function(a,b,c){'use strict';function d(a){return'undefined'!=typeof document&&'undefined'==typeof a?(g.runOnReady(function(){return f(document.body)}),d):'string'==typeof a?h(a):f(a)}var e=c(1),f=c(2),g=c(4),h=c(0);a.exports=d,a.exports.string=h,a.exports.element=f,a.exports.replacements=e,a.exports.listen=g},function(a,b,c){'use strict';function d(a){var b=new MutationObserver(function(a){a.forEach(function(a){var b,c=!0,d=!1;try{for(var f,g,h=a.addedNodes[Symbol.iterator]();!(c=(f=h.next()).done);c=!0)g=f.value,e(g)}catch(a){d=!0,b=a}finally{try{!c&&h.return&&h.return()}finally{if(d)throw b}}})});return d.runOnReady(function(){b.observe(a||document.body,{childList:!0,subtree:!0})}),b}var e=c(2),f=c(0);d.runOnReady=function(a){if('loading'!==document.readyState)a();else if(document.addEventListener)document.addEventListener('DOMContentLoaded',a,!1);else var b=setInterval(function(){'loading'!==document.readyState&&(clearInterval(b),a())},10)},a.exports=d}])});
+(function(a,b){'object'==typeof exports&&'object'==typeof module?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.smartquotes=b():a.smartquotes=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=3)}([function(a,b,c){'use strict';var d=c(1);a.exports=function(a,b){return b=b||{},d.forEach(function(c){var d='function'==typeof c[1]?c[1](b.retainLength):c[1];a=a.replace(c[0],d)}),a}},function(a){'use strict';a.exports=[[/'''/g,function(a){return'\u2034'+(a?'\u2063\u2063':'')}],[/(\W|^)"(\w)/g,'$1\u201C$2'],[/(\u201c[^"]*)"([^"]*$|[^\u201c"]*\u201c)/g,'$1\u201D$2'],[/([^0-9])"/g,'$1\u201D'],[/''/g,function(a){return'\u2033'+(a?'\u2063':'')}],[/(\W|^)'(\S)/g,'$1\u2018$2'],[/([a-z0-9])'([a-z])/ig,'$1\u2019$2'],[/(\u2018)([0-9]{2}[^\u2019]*)(\u2018([^0-9]|$)|$|\u2019[a-z])/ig,'\u2019$2$3'],[/((\u2018[^']*)|[a-z])'([^0-9]|$)/ig,'$1\u2019$3'],[/(\B|^)\u2018(?=([^\u2018\u2019]*\u2019\b)*([^\u2018\u2019]*\B\W[\u2018\u2019]\b|[^\u2018\u2019]*$))/ig,'$1\u2019'],[/"/g,'\u2033'],[/'/g,'\u2032']]},function(a,b,c){'use strict';function d(a){if(-1===['CODE','PRE','SCRIPT','STYLE','NOSCRIPT'].indexOf(a.nodeName.toUpperCase())){var b,c,h,i='',j=a.childNodes,k=[];for(b=0;b<j.length;b++)c=j[b],c.nodeType===g||'#text'===c.nodeName?(k.push([c,i.length]),i+=c.nodeValue||c.value):c.childNodes&&c.childNodes.length&&(i+=d(c));for(b in i=f(i,{retainLength:!0}),k)h=k[b],h[0].nodeValue?h[0].nodeValue=e(i,h[0].nodeValue,h[1]):h[0].value&&(h[0].value=e(i,h[0].value,h[1]));return i}}function e(a,b,c){return a.substr(c,b.length).replace('\u2063','')}var f=c(0),g='undefined'!=typeof Element&&Element.TEXT_NODE||3;a.exports=function(a){return d(a),a}},function(a,b,c){'use strict';function d(a){return'undefined'!=typeof document&&'undefined'==typeof a?(g.runOnReady(function(){return f(document.body)}),d):'string'==typeof a?h(a):f(a)}var e=c(1),f=c(2),g=c(4),h=c(0);a.exports=d,a.exports.string=h,a.exports.element=f,a.exports.replacements=e,a.exports.listen=g},function(a,b,c){'use strict';function d(a){var b=new MutationObserver(function(a){a.forEach(function(a){var b,c=!0,d=!1;try{for(var f,g,h=a.addedNodes[Symbol.iterator]();!(c=(f=h.next()).done);c=!0)g=f.value,e(g)}catch(a){d=!0,b=a}finally{try{!c&&h.return&&h.return()}finally{if(d)throw b}}})});return d.runOnReady(function(){b.observe(a||document.body,{childList:!0,subtree:!0})}),b}var e=c(2),f=c(0);d.runOnReady=function(a){if('loading'!==document.readyState)a();else if(document.addEventListener)document.addEventListener('DOMContentLoaded',a,!1);else var b=setInterval(function(){'loading'!==document.readyState&&(clearInterval(b),a())},10)},a.exports=d}])});
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/snake-case/snake-case.js":[function(require,module,exports){
 var noCase = require('no-case')
@@ -81229,7 +81968,7 @@ module.exports = function (str, locale) {
 }
 
 },{"lower-case":"/usr/local/lib/node_modules/idyll/node_modules/lower-case/lower-case.js","upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js":[function(require,module,exports){
-(function (setImmediate,clearImmediate){
+(function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -81306,7 +82045,7 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","timers":"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js"}],"/usr/local/lib/node_modules/idyll/node_modules/title-case/title-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 var upperCase = require('upper-case')
@@ -81396,7 +82135,7 @@ module.exports = function (str, locale) {
 }
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/uri-js/dist/es5/uri.all.js":[function(require,module,exports){
-/** @license URI.js v4.2.1 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */
+/** @license URI.js v4.4.0 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -82359,9 +83098,9 @@ function _recomposeAuthority(components, options) {
             return "[" + $1 + ($2 ? "%25" + $2 : "") + "]";
         }));
     }
-    if (typeof components.port === "number") {
+    if (typeof components.port === "number" || typeof components.port === "string") {
         uriTokens.push(":");
-        uriTokens.push(components.port.toString(10));
+        uriTokens.push(String(components.port));
     }
     return uriTokens.length ? uriTokens.join("") : undefined;
 }
@@ -82564,8 +83303,9 @@ var handler = {
         return components;
     },
     serialize: function serialize(components, options) {
+        var secure = String(components.scheme).toLowerCase() === "https";
         //normalize the default port
-        if (components.port === (String(components.scheme).toLowerCase() !== "https" ? 80 : 443) || components.port === "") {
+        if (components.port === (secure ? 443 : 80) || components.port === "") {
             components.port = undefined;
         }
         //normalize the empty path
@@ -82584,6 +83324,57 @@ var handler$1 = {
     domainHost: handler.domainHost,
     parse: handler.parse,
     serialize: handler.serialize
+};
+
+function isSecure(wsComponents) {
+    return typeof wsComponents.secure === 'boolean' ? wsComponents.secure : String(wsComponents.scheme).toLowerCase() === "wss";
+}
+//RFC 6455
+var handler$2 = {
+    scheme: "ws",
+    domainHost: true,
+    parse: function parse(components, options) {
+        var wsComponents = components;
+        //indicate if the secure flag is set
+        wsComponents.secure = isSecure(wsComponents);
+        //construct resouce name
+        wsComponents.resourceName = (wsComponents.path || '/') + (wsComponents.query ? '?' + wsComponents.query : '');
+        wsComponents.path = undefined;
+        wsComponents.query = undefined;
+        return wsComponents;
+    },
+    serialize: function serialize(wsComponents, options) {
+        //normalize the default port
+        if (wsComponents.port === (isSecure(wsComponents) ? 443 : 80) || wsComponents.port === "") {
+            wsComponents.port = undefined;
+        }
+        //ensure scheme matches secure flag
+        if (typeof wsComponents.secure === 'boolean') {
+            wsComponents.scheme = wsComponents.secure ? 'wss' : 'ws';
+            wsComponents.secure = undefined;
+        }
+        //reconstruct path from resource name
+        if (wsComponents.resourceName) {
+            var _wsComponents$resourc = wsComponents.resourceName.split('?'),
+                _wsComponents$resourc2 = slicedToArray(_wsComponents$resourc, 2),
+                path = _wsComponents$resourc2[0],
+                query = _wsComponents$resourc2[1];
+
+            wsComponents.path = path && path !== '/' ? path : undefined;
+            wsComponents.query = query;
+            wsComponents.resourceName = undefined;
+        }
+        //forbid fragment component
+        wsComponents.fragment = undefined;
+        return wsComponents;
+    }
+};
+
+var handler$3 = {
+    scheme: "wss",
+    domainHost: handler$2.domainHost,
+    parse: handler$2.parse,
+    serialize: handler$2.serialize
 };
 
 var O = {};
@@ -82616,7 +83407,7 @@ function decodeUnreserved(str) {
     var decStr = pctDecChars(str);
     return !decStr.match(UNRESERVED) ? str : decStr;
 }
-var handler$2 = {
+var handler$4 = {
     scheme: "mailto",
     parse: function parse$$1(components, options) {
         var mailtoComponents = components;
@@ -82704,7 +83495,7 @@ var handler$2 = {
 
 var URN_PARSE = /^([^\:]+)\:(.*)/;
 //RFC 2141
-var handler$3 = {
+var handler$5 = {
     scheme: "urn",
     parse: function parse$$1(components, options) {
         var matches = components.path && components.path.match(URN_PARSE);
@@ -82743,7 +83534,7 @@ var handler$3 = {
 
 var UUID = /^[0-9A-Fa-f]{8}(?:\-[0-9A-Fa-f]{4}){3}\-[0-9A-Fa-f]{12}$/;
 //RFC 4122
-var handler$4 = {
+var handler$6 = {
     scheme: "urn:uuid",
     parse: function parse(urnComponents, options) {
         var uuidComponents = urnComponents;
@@ -82767,6 +83558,8 @@ SCHEMES[handler$1.scheme] = handler$1;
 SCHEMES[handler$2.scheme] = handler$2;
 SCHEMES[handler$3.scheme] = handler$3;
 SCHEMES[handler$4.scheme] = handler$4;
+SCHEMES[handler$5.scheme] = handler$5;
+SCHEMES[handler$6.scheme] = handler$6;
 
 exports.SCHEMES = SCHEMES;
 exports.pctEncChar = pctEncChar;
@@ -82787,7 +83580,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/util-deprecate/browser.js":[function(require,module,exports){
-(function (global){
+(function (global){(function (){
 
 /**
  * Module exports.
@@ -82856,7 +83649,7 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/util/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
@@ -82890,7 +83683,7 @@ module.exports = function isBuffer(arg) {
     && typeof arg.readUInt8 === 'function';
 }
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/util/util.js":[function(require,module,exports){
-(function (process,global){
+(function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -83478,7 +84271,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":"/usr/local/lib/node_modules/idyll/node_modules/util/support/isBufferBrowser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/util/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/src/client/build.js":[function(require,module,exports){
 'use strict';
 
@@ -83525,7 +84318,7 @@ ReactDOM[mountMethod](React.createElement(IdyllDocument, {
 },{"__IDYLL_AST__":"__IDYLL_AST__","__IDYLL_COMPONENTS__":"__IDYLL_COMPONENTS__","__IDYLL_CONTEXT__":"__IDYLL_CONTEXT__","__IDYLL_DATA__":"__IDYLL_DATA__","__IDYLL_OPTS__":"__IDYLL_OPTS__","__IDYLL_SYNTAX_HIGHLIGHT__":"__IDYLL_SYNTAX_HIGHLIGHT__","idyll-document":"/usr/local/lib/node_modules/idyll/node_modules/idyll-document/dist/cjs/index.js","react":"react","react-dom":"react-dom","regenerator-runtime/runtime":"/usr/local/lib/node_modules/idyll/node_modules/regenerator-runtime/runtime.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo321" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo321" }, "value": { "type": "value", "value": "" } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo321" }, "value": { "type": "value", "value": "" } } }, { "id": 6, "type": "component", "name": "TextContainer", "children": [{ "id": 7, "type": "meta", "properties": { "title": { "type": "value", "value": "Homework" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 8, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "PHYS 2331 Computational Homework" }, "subtitle": { "type": "value", "value": "Solving problems with Python" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0B465F" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 9, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 10, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 11, "type": "textnode", "value": "Overview" }] }, { "id": 12, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"Info\"" } }, "children": [{ "id": 13, "type": "textnode", "value": "Background Info" }] }, { "id": 14, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW1\"" } }, "children": [{ "id": 15, "type": "textnode", "value": "HW 1" }] }, { "id": 16, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW2\"" } }, "children": [{ "id": 17, "type": "textnode", "value": "HW 2" }] }, { "id": 18, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW3\"" } }, "children": [{ "id": 19, "type": "textnode", "value": "HW 3" }] }, { "id": 20, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW4\"" } }, "children": [{ "id": 21, "type": "textnode", "value": "HW 4" }] }, { "id": 22, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW5\"" } }, "children": [{ "id": 23, "type": "textnode", "value": "HW 5" }] }, { "id": 24, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW6\"" } }, "children": [{ "id": 25, "type": "textnode", "value": "HW 6" }] }, { "id": 26, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW7\"" } }, "children": [{ "id": 27, "type": "textnode", "value": "HW 7" }] }, { "id": 28, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW8\"" } }, "children": [{ "id": 29, "type": "textnode", "value": "HW 8" }] }, { "id": 30, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW9\"" } }, "children": [{ "id": 31, "type": "textnode", "value": "HW 9" }] }] }, { "id": 32, "type": "component", "name": "TextContainer", "children": [{ "id": 33, "type": "component", "name": "br", "children": [] }, { "id": 34, "type": "component", "name": "br", "children": [] }] }, { "id": 35, "type": "component", "name": "hr", "children": [] }, { "id": 36, "type": "component", "name": "TextContainer", "children": [{ "id": 37, "type": "component", "name": "br", "children": [] }] }, { "id": 38, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "value", "value": "100%" } }, "children": [{ "id": 39, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 40, "type": "component", "name": "Default", "children": [{ "id": 41, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 42, "type": "component", "name": "h2", "children": [{ "id": 43, "type": "textnode", "value": "Overview" }] }, { "id": 44, "type": "component", "name": "p", "children": [{ "id": 45, "type": "textnode", "value": "Click the tabs to go to a specific homework page. Each of the homework" }] }, { "id": 46, "type": "component", "name": "p", "children": [{ "id": 47, "type": "textnode", "value": "The problems are included in Homework 1 through WileyPlus. Work\n           through the problems by hand first using the given information, key equations,\n           and references listed. Then, try to use Python to solve the same problem." }] }, { "id": 48, "type": "component", "name": "p", "children": [{ "id": 49, "type": "textnode", "value": "Each problem page has the following sections:" }] }, { "id": 50, "type": "component", "name": "h4", "children": [{ "id": 51, "type": "textnode", "value": "Content" }] }, { "id": 52, "type": "component", "name": "p", "children": [{ "id": 53, "type": "textnode", "value": "Chapter PowerPoints, Videos, Links" }] }, { "id": 54, "type": "component", "name": "h4", "children": [{ "id": 55, "type": "textnode", "value": "Homework" }] }, { "id": 56, "type": "component", "name": "p", "children": [{ "id": 57, "type": "textnode", "value": "Link to Essential Skills in Python." }] }, { "id": 58, "type": "component", "name": "p", "children": [{ "id": 59, "type": "textnode", "value": "Link to WileyPlus Homework in Python." }] }, { "id": 60, "type": "component", "name": "h4", "children": [{ "id": 61, "type": "textnode", "value": "Challenge Problem" }] }, { "id": 62, "type": "component", "name": "p", "children": [{ "id": 63, "type": "textnode", "value": "Link to challenge problem on Trinket." }] }, { "id": 64, "type": "component", "name": "hr", "children": [] }, { "id": 65, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 66, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 67, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 68, "type": "textnode", "value": "Physics Department" }] }, { "id": 69, "type": "component", "name": "br", "children": [] }, { "id": 70, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 71, "type": "textnode", "value": "Feedback Form" }] }] }] }] }, { "id": 72, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Info" } }, "children": [{ "id": 73, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 74, "type": "component", "name": "h2", "children": [{ "id": 75, "type": "textnode", "value": "Background Information" }] }, { "id": 76, "type": "component", "name": "hr", "children": [] }, { "id": 77, "type": "component", "name": "h3", "children": [{ "id": 78, "type": "textnode", "value": "Content" }] }, { "id": 79, "type": "component", "name": "h3", "children": [{ "id": 80, "type": "textnode", "value": "Homework" }] }, { "id": 81, "type": "component", "name": "h3", "children": [{ "id": 82, "type": "textnode", "value": "Challenge Problem" }] }] }, { "id": 83, "type": "component", "name": "hr", "children": [] }, { "id": 84, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 85, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 86, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 87, "type": "textnode", "value": "Physics Department" }] }, { "id": 88, "type": "component", "name": "br", "children": [] }, { "id": 89, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 90, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 91, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW1" } }, "children": [{ "id": 92, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 93, "type": "component", "name": "h2", "children": [{ "id": 94, "type": "textnode", "value": "Homework " }, { "id": 95, "type": "textnode", "value": "1" }] }, { "id": 96, "type": "component", "name": "hr", "children": [] }, { "id": 97, "type": "component", "name": "h3", "children": [{ "id": 98, "type": "textnode", "value": "Content" }] }, { "id": 99, "type": "component", "name": "h3", "children": [{ "id": 100, "type": "textnode", "value": "Homework" }] }, { "id": 101, "type": "component", "name": "h3", "children": [{ "id": 102, "type": "textnode", "value": "Challenge Problem" }] }] }, { "id": 103, "type": "component", "name": "hr", "children": [] }, { "id": 104, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 105, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 106, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 107, "type": "textnode", "value": "Physics Department" }] }, { "id": 108, "type": "component", "name": "br", "children": [] }, { "id": 109, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 110, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 111, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW2" } }, "children": [{ "id": 112, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 113, "type": "component", "name": "h2", "children": [{ "id": 114, "type": "textnode", "value": "Homework " }, { "id": 115, "type": "textnode", "value": "2" }] }, { "id": 116, "type": "component", "name": "hr", "children": [] }, { "id": 117, "type": "component", "name": "h3", "children": [{ "id": 118, "type": "textnode", "value": "Content" }] }, { "id": 119, "type": "component", "name": "h3", "children": [{ "id": 120, "type": "textnode", "value": "Homework" }] }, { "id": 121, "type": "component", "name": "h3", "children": [{ "id": 122, "type": "textnode", "value": "Challenge Problem" }] }] }, { "id": 123, "type": "component", "name": "hr", "children": [] }, { "id": 124, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 125, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 126, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 127, "type": "textnode", "value": "Physics Department" }] }, { "id": 128, "type": "component", "name": "br", "children": [] }, { "id": 129, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 130, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 131, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW3" } }, "children": [{ "id": 132, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 133, "type": "component", "name": "h2", "children": [{ "id": 134, "type": "textnode", "value": "Homework " }, { "id": 135, "type": "textnode", "value": "3" }] }, { "id": 136, "type": "component", "name": "hr", "children": [] }, { "id": 137, "type": "component", "name": "h3", "children": [{ "id": 138, "type": "textnode", "value": "Content" }] }, { "id": 139, "type": "component", "name": "h3", "children": [{ "id": 140, "type": "textnode", "value": "Homework" }] }, { "id": 141, "type": "component", "name": "h3", "children": [{ "id": 142, "type": "textnode", "value": "Challenge Problem" }] }] }, { "id": 143, "type": "component", "name": "hr", "children": [] }, { "id": 144, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 145, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 146, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 147, "type": "textnode", "value": "Physics Department" }] }, { "id": 148, "type": "component", "name": "br", "children": [] }, { "id": 149, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 150, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 151, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW4" } }, "children": [{ "id": 152, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 153, "type": "component", "name": "h2", "children": [{ "id": 154, "type": "textnode", "value": "1" }, { "id": 155, "type": "textnode", "value": "6" }, { "id": 156, "type": "textnode", "value": "." }, { "id": 157, "type": "textnode", "value": "2" }, { "id": 158, "type": "textnode", "value": "6" }] }, { "id": 159, "type": "component", "name": "hr", "children": [] }, { "id": 160, "type": "component", "name": "h3", "children": [{ "id": 161, "type": "textnode", "value": "Problem" }] }, { "id": 162, "type": "component", "name": "p", "children": [{ "id": 163, "type": "textnode", "value": "You move from location i at " }, { "id": 164, "type": "component", "name": "equation", "children": [{ "id": 165, "type": "textnode", "value": "\\langle 1, 4, 4 \\rangle" }] }, { "id": 166, "type": "textnode", "value": " m\n          to location f at " }, { "id": 167, "type": "component", "name": "equation", "children": [{ "id": 168, "type": "textnode", "value": "\\langle 6, 6, 9 \\rangle" }] }, { "id": 169, "type": "textnode", "value": " m. All along this\n          path there is a nearly uniform electric field " }, { "id": 170, "type": "component", "name": "equation", "children": [{ "id": 171, "type": "textnode", "value": "\\vec{E} = \\langle 1000, 180, -470 \\rangle" }] }, { "id": 172, "type": "textnode", "value": "\n          N/C. Calculate " }, { "id": 173, "type": "component", "name": "equation", "children": [{ "id": 174, "type": "textnode", "value": "\\Delta V = V_{f} - V_{i}" }] }, { "id": 175, "type": "textnode", "value": ", including sign and units." }] }, { "id": 176, "type": "component", "name": "hr", "children": [] }, { "id": 177, "type": "component", "name": "h3", "children": [{ "id": 178, "type": "textnode", "value": "Computation" }] }, { "id": 179, "type": "component", "name": "p", "children": [{ "id": 180, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n          above. Need help with python? See Physics Fundamentals (" }, { "id": 181, "type": "component", "name": "em", "children": [{ "id": 182, "type": "textnode", "value": "NEED LINK" }] }, { "id": 183, "type": "textnode", "value": ") for\n          ideas on how to solve this problem with python. Reveal the answer by\n          clicking the button below to see if you got the right answer!" }] }, { "id": 184, "type": "component", "name": "ul", "children": [{ "id": 185, "type": "component", "name": "li", "children": [{ "id": 186, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 187, "type": "component", "name": "li", "children": [{ "id": 188, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 189, "type": "component", "name": "li", "children": [{ "id": 190, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n            given in WileyPLUS before submitting the answers." }] }] }, { "id": 191, "type": "component", "name": "br", "children": [] }, { "id": 192, "type": "component", "name": "em", "children": [{ "id": 193, "type": "textnode", "value": "Insert Trinket" }] }] }, { "id": 194, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 195, "type": "component", "name": "h3", "children": [{ "id": 196, "type": "textnode", "value": "About this Problem" }] }, { "id": 197, "type": "component", "name": "hr", "children": [] }, { "id": 198, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 199, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"\"" } }, "children": [{ "id": 200, "type": "textnode", "value": "Skills Involved" }] }, { "id": 201, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Objective\"" } }, "children": [{ "id": 202, "type": "textnode", "value": "Objective" }] }, { "id": 203, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"GivenInfo\"" } }, "children": [{ "id": 204, "type": "textnode", "value": "Given Information" }] }, { "id": 205, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"KeyEq\"" } }, "children": [{ "id": 206, "type": "textnode", "value": "Key Equations" }] }, { "id": 207, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Ref\"" } }, "children": [{ "id": 208, "type": "textnode", "value": "References" }] }] }, { "id": 209, "type": "component", "name": "br", "children": [] }, { "id": 210, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 211, "type": "component", "name": "br", "children": [] }, { "id": 212, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo321" } }, "children": [{ "id": 213, "type": "component", "name": "Default", "children": [{ "id": 214, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 215, "type": "component", "name": "ul", "children": [{ "id": 216, "type": "component", "name": "li", "children": [{ "id": 217, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 218, "type": "component", "name": "li", "children": [{ "id": 219, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 220, "type": "component", "name": "li", "children": [{ "id": 221, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 222, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 223, "type": "textnode", "value": "Find the sign of the source charge, the direction of the electric\n                force on the charge, the electric field, the electric force, and the direction\n                of the electric force." }] }, { "id": 224, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 225, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 226, "type": "component", "name": "ul", "children": [{ "id": 227, "type": "component", "name": "li", "children": [{ "id": 228, "type": "textnode", "value": " Diagram of point charge and electric field." }] }, { "id": 229, "type": "component", "name": "li", "children": [{ "id": 230, "type": "textnode", "value": " Charge of particle placed at a given location." }] }, { "id": 231, "type": "component", "name": "li", "children": [{ "id": 232, "type": "textnode", "value": " Electric field at location D. " }] }] }] }] }, { "id": 233, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 234, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 235, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 236, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|} = \\frac{\\lt x, y, z \\gt}{\\sqrt{x^{2} + y^{2} + z^{2}}}" }] }, { "id": 237, "type": "component", "name": "br", "children": [] }, { "id": 238, "type": "component", "name": "br", "children": [] }, { "id": 239, "type": "component", "name": "equation", "children": [{ "id": 240, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 241, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 242, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 243, "type": "component", "name": "ul", "children": [{ "id": 244, "type": "component", "name": "li", "children": [{ "id": 245, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 246, "type": "component", "name": "li", "children": [{ "id": 247, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 248, "type": "component", "name": "li", "children": [{ "id": 249, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 250, "type": "component", "name": "li", "children": [{ "id": 251, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 252, "type": "component", "name": "li", "children": [{ "id": 253, "type": "textnode", "value": " " }, { "id": 254, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 255, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 256, "type": "component", "name": "hr", "children": [] }, { "id": 257, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 258, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 259, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 260, "type": "textnode", "value": "Physics Department" }] }, { "id": 261, "type": "component", "name": "br", "children": [] }, { "id": 262, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 263, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 264, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW5" } }, "children": [{ "id": 265, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 266, "type": "component", "name": "h2", "children": [{ "id": 267, "type": "textnode", "value": "1" }, { "id": 268, "type": "textnode", "value": "6" }, { "id": 269, "type": "textnode", "value": "." }, { "id": 270, "type": "textnode", "value": "2" }, { "id": 271, "type": "textnode", "value": "7" }] }, { "id": 272, "type": "component", "name": "hr", "children": [] }, { "id": 273, "type": "component", "name": "h3", "children": [{ "id": 274, "type": "textnode", "value": "Problem" }] }, { "id": 275, "type": "component", "name": "p", "children": [{ "id": 276, "type": "textnode", "value": "A capacitor with a gap of 1 mm has a potential difference from one plate to the other of 26 volts.\n          What is the magnitude of the electric field between the plates?" }] }, { "id": 277, "type": "component", "name": "hr", "children": [] }, { "id": 278, "type": "component", "name": "h3", "children": [{ "id": 279, "type": "textnode", "value": "Computation" }] }, { "id": 280, "type": "component", "name": "p", "children": [{ "id": 281, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n          above. Need help with python? See Physics Fundamentals (" }, { "id": 282, "type": "component", "name": "em", "children": [{ "id": 283, "type": "textnode", "value": "NEED LINK" }] }, { "id": 284, "type": "textnode", "value": ") for\n          ideas on how to solve this problem with python. Reveal the answer by\n          clicking the button below to see if you got the right answer!" }] }, { "id": 285, "type": "component", "name": "ul", "children": [{ "id": 286, "type": "component", "name": "li", "children": [{ "id": 287, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 288, "type": "component", "name": "li", "children": [{ "id": 289, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 290, "type": "component", "name": "li", "children": [{ "id": 291, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n            given in WileyPLUS before submitting the answers." }] }] }, { "id": 292, "type": "component", "name": "br", "children": [] }, { "id": 293, "type": "component", "name": "em", "children": [{ "id": 294, "type": "textnode", "value": "Insert Trinket" }] }] }, { "id": 295, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 296, "type": "component", "name": "h3", "children": [{ "id": 297, "type": "textnode", "value": "About this Problem" }] }, { "id": 298, "type": "component", "name": "hr", "children": [] }, { "id": 299, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 300, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"\"" } }, "children": [{ "id": 301, "type": "textnode", "value": "Skills Involved" }] }, { "id": 302, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Objective\"" } }, "children": [{ "id": 303, "type": "textnode", "value": "Objective" }] }, { "id": 304, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"GivenInfo\"" } }, "children": [{ "id": 305, "type": "textnode", "value": "Given Information" }] }, { "id": 306, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"KeyEq\"" } }, "children": [{ "id": 307, "type": "textnode", "value": "Key Equations" }] }, { "id": 308, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Ref\"" } }, "children": [{ "id": 309, "type": "textnode", "value": "References" }] }] }, { "id": 310, "type": "component", "name": "br", "children": [] }, { "id": 311, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 312, "type": "component", "name": "br", "children": [] }, { "id": 313, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo321" } }, "children": [{ "id": 314, "type": "component", "name": "Default", "children": [{ "id": 315, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 316, "type": "component", "name": "ul", "children": [{ "id": 317, "type": "component", "name": "li", "children": [{ "id": 318, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 319, "type": "component", "name": "li", "children": [{ "id": 320, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 321, "type": "component", "name": "li", "children": [{ "id": 322, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 323, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 324, "type": "textnode", "value": "Find the sign of the source charge, the direction of the electric\n                force on the charge, the electric field, the electric force, and the direction\n                of the electric force." }] }, { "id": 325, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 326, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 327, "type": "component", "name": "ul", "children": [{ "id": 328, "type": "component", "name": "li", "children": [{ "id": 329, "type": "textnode", "value": " Diagram of point charge and electric field." }] }, { "id": 330, "type": "component", "name": "li", "children": [{ "id": 331, "type": "textnode", "value": " Charge of particle placed at a given location." }] }, { "id": 332, "type": "component", "name": "li", "children": [{ "id": 333, "type": "textnode", "value": " Electric field at location D. " }] }] }] }] }, { "id": 334, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 335, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 336, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 337, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|} = \\frac{\\lt x, y, z \\gt}{\\sqrt{x^{2} + y^{2} + z^{2}}}" }] }, { "id": 338, "type": "component", "name": "br", "children": [] }, { "id": 339, "type": "component", "name": "br", "children": [] }, { "id": 340, "type": "component", "name": "equation", "children": [{ "id": 341, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 342, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 343, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 344, "type": "component", "name": "ul", "children": [{ "id": 345, "type": "component", "name": "li", "children": [{ "id": 346, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 347, "type": "component", "name": "li", "children": [{ "id": 348, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 349, "type": "component", "name": "li", "children": [{ "id": 350, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 351, "type": "component", "name": "li", "children": [{ "id": 352, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 353, "type": "component", "name": "li", "children": [{ "id": 354, "type": "textnode", "value": " " }, { "id": 355, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 356, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 357, "type": "component", "name": "hr", "children": [] }, { "id": 358, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 359, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 360, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 361, "type": "textnode", "value": "Physics Department" }] }, { "id": 362, "type": "component", "name": "br", "children": [] }, { "id": 363, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 364, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 365, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW6" } }, "children": [{ "id": 366, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 367, "type": "component", "name": "h2", "children": [{ "id": 368, "type": "textnode", "value": "1" }, { "id": 369, "type": "textnode", "value": "6" }, { "id": 370, "type": "textnode", "value": "." }, { "id": 371, "type": "textnode", "value": "5" }, { "id": 372, "type": "textnode", "value": "2" }] }, { "id": 373, "type": "component", "name": "hr", "children": [] }, { "id": 374, "type": "component", "name": "h3", "children": [{ "id": 375, "type": "textnode", "value": "Problem" }] }, { "id": 376, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p16.52.png" }, "title": { "type": "value", "value": "Problem 16.52 - Matter and Interactions" } }, "children": [] }, { "id": 377, "type": "component", "name": "h4", "children": [{ "id": 378, "type": "textnode", "value": "Questions" }] }, { "id": 379, "type": "component", "name": "p", "children": [{ "id": 380, "type": "textnode", "value": "1. What is the magnitude of the electric field in the region between disks 1 and 2?\n            " }, { "id": 381, "type": "component", "name": "br", "children": [] }, { "id": 382, "type": "textnode", "value": "2. What is the direction of the electric field between disks 1 and 2?\n            " }, { "id": 383, "type": "component", "name": "br", "children": [] }, { "id": 384, "type": "textnode", "value": "3. Which of the given statements are true?\n            " }, { "id": 385, "type": "component", "name": "br", "children": [] }, { "id": 386, "type": "textnode", "value": "4. To calculate " }, { "id": 387, "type": "component", "name": "equation", "children": [{ "id": 388, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 389, "type": "textnode", "value": ", which path should you choose?\n            " }, { "id": 390, "type": "component", "name": "br", "children": [] }, { "id": 391, "type": "textnode", "value": "5. What should the sign of " }, { "id": 392, "type": "component", "name": "equation", "children": [{ "id": 393, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 394, "type": "textnode", "value": " be?\n            " }, { "id": 395, "type": "component", "name": "br", "children": [] }, { "id": 396, "type": "textnode", "value": "6. What is the potential difference " }, { "id": 397, "type": "component", "name": "equation", "children": [{ "id": 398, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 399, "type": "textnode", "value": "?\n            " }, { "id": 400, "type": "component", "name": "br", "children": [] }, { "id": 401, "type": "textnode", "value": "7. What is the potential difference " }, { "id": 402, "type": "component", "name": "equation", "children": [{ "id": 403, "type": "textnode", "value": "V_{D}-V_{C}" }] }, { "id": 404, "type": "textnode", "value": "?\n            " }, { "id": 405, "type": "component", "name": "br", "children": [] }, { "id": 406, "type": "textnode", "value": "8. What is the potential difference " }, { "id": 407, "type": "component", "name": "equation", "children": [{ "id": 408, "type": "textnode", "value": "V_{F}-V_{D}" }] }, { "id": 409, "type": "textnode", "value": "?\n            " }, { "id": 410, "type": "component", "name": "br", "children": [] }, { "id": 411, "type": "textnode", "value": "9. What is the potential difference " }, { "id": 412, "type": "component", "name": "equation", "children": [{ "id": 413, "type": "textnode", "value": "V_{G}-V_{F}" }] }, { "id": 414, "type": "textnode", "value": "?\n            " }, { "id": 415, "type": "component", "name": "br", "children": [] }, { "id": 416, "type": "textnode", "value": "10. What is the potential difference " }, { "id": 417, "type": "component", "name": "equation", "children": [{ "id": 418, "type": "textnode", "value": "V_{G}-V_{A}" }] }, { "id": 419, "type": "textnode", "value": "?\n            " }, { "id": 420, "type": "component", "name": "br", "children": [] }, { "id": 421, "type": "textnode", "value": "11. What is the change in potential energy of the system?\n            " }, { "id": 422, "type": "component", "name": "br", "children": [] }, { "id": 423, "type": "textnode", "value": "12. What is the change in kinetic energy of the electron?" }] }, { "id": 424, "type": "component", "name": "hr", "children": [] }] }, { "id": 425, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 426, "type": "component", "name": "h3", "children": [{ "id": 427, "type": "textnode", "value": "About this Problem" }] }, { "id": 428, "type": "component", "name": "hr", "children": [] }, { "id": 429, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 430, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"\"" } }, "children": [{ "id": 431, "type": "textnode", "value": "Skills Involved" }] }, { "id": 432, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Objective\"" } }, "children": [{ "id": 433, "type": "textnode", "value": "Objective" }] }, { "id": 434, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"GivenInfo\"" } }, "children": [{ "id": 435, "type": "textnode", "value": "Given Information" }] }, { "id": 436, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"KeyEq\"" } }, "children": [{ "id": 437, "type": "textnode", "value": "Key Equations" }] }, { "id": 438, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Ref\"" } }, "children": [{ "id": 439, "type": "textnode", "value": "References" }] }] }, { "id": 440, "type": "component", "name": "br", "children": [] }, { "id": 441, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 442, "type": "component", "name": "br", "children": [] }, { "id": 443, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo321" } }, "children": [{ "id": 444, "type": "component", "name": "Default", "children": [{ "id": 445, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 446, "type": "component", "name": "ul", "children": [{ "id": 447, "type": "component", "name": "li", "children": [{ "id": 448, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 449, "type": "component", "name": "li", "children": [{ "id": 450, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 451, "type": "component", "name": "li", "children": [{ "id": 452, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 453, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 454, "type": "textnode", "value": "Find the sign of the source charge, the direction of the electric\n                force on the charge, the electric field, the electric force, and the direction\n                of the electric force." }] }, { "id": 455, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 456, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 457, "type": "component", "name": "ul", "children": [{ "id": 458, "type": "component", "name": "li", "children": [{ "id": 459, "type": "textnode", "value": " Diagram of point charge and electric field." }] }, { "id": 460, "type": "component", "name": "li", "children": [{ "id": 461, "type": "textnode", "value": " Charge of particle placed at a given location." }] }, { "id": 462, "type": "component", "name": "li", "children": [{ "id": 463, "type": "textnode", "value": " Electric field at location D. " }] }] }] }] }, { "id": 464, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 465, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 466, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 467, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|} = \\frac{\\lt x, y, z \\gt}{\\sqrt{x^{2} + y^{2} + z^{2}}}" }] }, { "id": 468, "type": "component", "name": "br", "children": [] }, { "id": 469, "type": "component", "name": "br", "children": [] }, { "id": 470, "type": "component", "name": "equation", "children": [{ "id": 471, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 472, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 473, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 474, "type": "component", "name": "ul", "children": [{ "id": 475, "type": "component", "name": "li", "children": [{ "id": 476, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 477, "type": "component", "name": "li", "children": [{ "id": 478, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 479, "type": "component", "name": "li", "children": [{ "id": 480, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 481, "type": "component", "name": "li", "children": [{ "id": 482, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 483, "type": "component", "name": "li", "children": [{ "id": 484, "type": "textnode", "value": " " }, { "id": 485, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 486, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 487, "type": "component", "name": "hr", "children": [] }, { "id": 488, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 489, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 490, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 491, "type": "textnode", "value": "Physics Department" }] }, { "id": 492, "type": "component", "name": "br", "children": [] }, { "id": 493, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 494, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 495, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW7" } }, "children": [] }, { "id": 496, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW8" } }, "children": [] }, { "id": 497, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW9" } }, "children": [] }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo321" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo321" }, "value": { "type": "value", "value": "" } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo321" }, "value": { "type": "value", "value": "" } } }, { "id": 6, "type": "component", "name": "TextContainer", "children": [{ "id": 7, "type": "meta", "properties": { "title": { "type": "value", "value": "Homework" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 8, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "PHYS 2331 Computational Homework" }, "subtitle": { "type": "value", "value": "Solving problems with Python" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0B465F" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 9, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 10, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 11, "type": "textnode", "value": "Overview" }] }, { "id": 12, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW1\"" } }, "children": [{ "id": 13, "type": "textnode", "value": "HW 1" }] }, { "id": 14, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW2\"" } }, "children": [{ "id": 15, "type": "textnode", "value": "HW 2" }] }, { "id": 16, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW3\"" } }, "children": [{ "id": 17, "type": "textnode", "value": "HW 3" }] }, { "id": 18, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW4\"" } }, "children": [{ "id": 19, "type": "textnode", "value": "HW 4" }] }, { "id": 20, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW5\"" } }, "children": [{ "id": 21, "type": "textnode", "value": "HW 5" }] }, { "id": 22, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW6\"" } }, "children": [{ "id": 23, "type": "textnode", "value": "HW 6" }] }, { "id": 24, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW7\"" } }, "children": [{ "id": 25, "type": "textnode", "value": "HW 7" }] }, { "id": 26, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW8\"" } }, "children": [{ "id": 27, "type": "textnode", "value": "HW 8" }] }, { "id": 28, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"HW9\"" } }, "children": [{ "id": 29, "type": "textnode", "value": "HW 9" }] }] }, { "id": 30, "type": "component", "name": "TextContainer", "children": [{ "id": 31, "type": "component", "name": "br", "children": [] }, { "id": 32, "type": "component", "name": "br", "children": [] }] }, { "id": 33, "type": "component", "name": "hr", "children": [] }, { "id": 34, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "value", "value": "100%" } }, "children": [{ "id": 35, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 36, "type": "component", "name": "Default", "children": [{ "id": 37, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 38, "type": "component", "name": "h2", "children": [{ "id": 39, "type": "textnode", "value": "Overview" }] }, { "id": 40, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "paddedParas" } }, "children": [{ "id": 41, "type": "component", "name": "p", "children": [{ "id": 42, "type": "textnode", "value": "\n             Click the tabs to go to a specific homework page. Each of the homework\n             tabs has Content, Homework, and Challenge Problem sections.\n             Try to work these in order to get a full understanding of the subject matter.\n             The homework will introduce Python as the semester progresses that will\n             be tested in the Challenge Problem on the Trinket website." }] }, { "id": 43, "type": "component", "name": "p", "children": [{ "id": 44, "type": "textnode", "value": "It is suggested to work through the homework problems by hand first\n             using the given information, key equations, and references listed.\n             Then, try to use Python to solve the same problem. While the associated\n             math is important to understand, try to focus on the ‘why’ for each\n             problem.\n         " }] }] }, { "id": 45, "type": "component", "name": "hr", "children": [] }, { "id": 46, "type": "component", "name": "h2", "children": [{ "id": 47, "type": "textnode", "value": "Background Information" }] }, { "id": 48, "type": "component", "name": "br", "children": [] }, { "id": 49, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitLeft" } }, "children": [{ "id": 50, "type": "component", "name": "h2", "children": [{ "id": 51, "type": "textnode", "value": "Python skills" }] }, { "id": 52, "type": "component", "name": "p", "children": [{ "id": 53, "type": "textnode", "value": "The box to the right is an interactive Python 3 coding area by Trinket.\n              These will be used to solve homework problems and focus on specific\n              computational skills and Physics 2." }] }, { "id": 54, "type": "component", "name": "h4", "children": [{ "id": 55, "type": "textnode", "value": "Try it out" }, { "id": 56, "type": "textnode", "value": "!" }] }, { "id": 57, "type": "component", "name": "ol", "children": [{ "id": 58, "type": "component", "name": "li", "children": [{ "id": 59, "type": "component", "name": "p", "children": [{ "id": 60, "type": "textnode", "value": "\n                Type " }, { "id": 61, "type": "component", "name": "code", "children": [{ "id": 62, "type": "textnode", "value": "x = 2" }] }, { "id": 63, "type": "textnode", "value": " under the " }, { "id": 64, "type": "component", "name": "code", "children": [{ "id": 65, "type": "textnode", "value": "## Variables" }] }, { "id": 66, "type": "textnode", "value": " heading and press the triangle button to run the code.\n                There should be no output displayed. To edit the code, click the pencil button." }] }, { "id": 67, "type": "component", "name": "p", "children": [{ "id": 68, "type": "component", "name": "code", "children": [{ "id": 69, "type": "textnode", "value": "x = 2" }] }, { "id": 70, "type": "textnode", "value": " means that we are storing the value (2) as a variable\n                that can be called later. Under " }, { "id": 71, "type": "component", "name": "code", "children": [{ "id": 72, "type": "textnode", "value": "x = 2" }] }, { "id": 73, "type": "textnode", "value": ", type " }, { "id": 74, "type": "component", "name": "code", "children": [{ "id": 75, "type": "textnode", "value": "y = 16.2" }] }, { "id": 76, "type": "textnode", "value": ". This is\n                another variable with a different value." }] }, { "id": 77, "type": "component", "name": "p", "children": [{ "id": 78, "type": "textnode", "value": "For more information, click this link: " }, { "id": 79, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://www.guru99.com/variables-in-python.html#:~:text=A%20Python%20variable%20is%20a,to%20the%20computer%20for%20processing" } }, "children": [{ "id": 80, "type": "textnode", "value": "Python Variables" }] }] }] }, { "id": 81, "type": "component", "name": "li", "children": [{ "id": 82, "type": "textnode", "value": "\n                Now type the following under the " }, { "id": 83, "type": "component", "name": "code", "children": [{ "id": 84, "type": "textnode", "value": "## Calculations" }] }, { "id": 85, "type": "textnode", "value": " heading:\n                " }, { "id": 86, "type": "component", "name": "ul", "children": [{ "id": 87, "type": "component", "name": "li", "children": [{ "id": 88, "type": "component", "name": "code", "children": [{ "id": 89, "type": "textnode", "value": "add = x + y" }] }] }, { "id": 90, "type": "component", "name": "li", "children": [{ "id": 91, "type": "component", "name": "code", "children": [{ "id": 92, "type": "textnode", "value": "subt = y - x" }] }] }, { "id": 93, "type": "component", "name": "li", "children": [{ "id": 94, "type": "component", "name": "code", "children": [{ "id": 95, "type": "textnode", "value": "mult = y * 32.45 * x" }] }] }, { "id": 96, "type": "component", "name": "li", "children": [{ "id": 97, "type": "component", "name": "code", "children": [{ "id": 98, "type": "textnode", "value": "div = x/15" }] }] }, { "id": 99, "type": "component", "name": "li", "children": [{ "id": 100, "type": "component", "name": "code", "children": [{ "id": 101, "type": "textnode", "value": "power = x * 10**-19" }] }] }] }] }, { "id": 102, "type": "component", "name": "li", "children": [{ "id": 103, "type": "textnode", "value": "\n                Under the " }, { "id": 104, "type": "component", "name": "code", "children": [{ "id": 105, "type": "textnode", "value": "## Print" }] }, { "id": 106, "type": "textnode", "value": " heading, type the following print commands\n                so that output displays when you click the run button:\n                " }, { "id": 107, "type": "component", "name": "ul", "children": [{ "id": 108, "type": "component", "name": "li", "children": [{ "id": 109, "type": "component", "name": "code", "children": [{ "id": 110, "type": "textnode", "value": "print(\"addition:\", add)" }] }] }, { "id": 111, "type": "component", "name": "li", "children": [{ "id": 112, "type": "component", "name": "code", "children": [{ "id": 113, "type": "textnode", "value": "print(\"subtraction:\", subt)" }] }] }, { "id": 114, "type": "component", "name": "li", "children": [{ "id": 115, "type": "component", "name": "code", "children": [{ "id": 116, "type": "textnode", "value": "print(print(\"multiplication and division:\", mult, div))" }] }] }, { "id": 117, "type": "component", "name": "li", "children": [{ "id": 118, "type": "component", "name": "code", "children": [{ "id": 119, "type": "textnode", "value": "print(\"power:\", power, \",\", power*10**19)" }] }] }, { "id": 120, "type": "component", "name": "li", "children": [{ "id": 121, "type": "component", "name": "code", "children": [{ "id": 122, "type": "textnode", "value": "print(\"a list:\", list)" }] }] }, { "id": 123, "type": "component", "name": "li", "children": [{ "id": 124, "type": "component", "name": "code", "children": [{ "id": 125, "type": "textnode", "value": "print(\"a value from the list:\", list[2])" }] }] }] }, { "id": 126, "type": "textnode", "value": "\n                For more information, click this link: " }, { "id": 127, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://www.w3schools.com/python/ref_func_print.asp" } }, "children": [{ "id": 128, "type": "textnode", "value": "print() function" }] }] }, { "id": 129, "type": "component", "name": "li", "children": [{ "id": 130, "type": "textnode", "value": "Finally, click the run button again to see the output. What do you notice?" }] }] }] }, { "id": 131, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitRight" } }, "children": [{ "id": 132, "type": "component", "name": "h2", "children": [{ "id": 133, "type": "textnode", "value": "Trinket" }] }, { "id": 134, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/c4bc808444?toggleCode=true" }, "width": { "type": "value", "value": "50%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 135, "type": "component", "name": "br", "children": [] }, { "id": 136, "type": "component", "name": "br", "children": [] }] }, { "id": 137, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "footer" } }, "children": [{ "id": 138, "type": "component", "name": "hr", "children": [] }, { "id": 139, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./images/ucdenverlogo2.png" }, "alt": { "type": "value", "value": "title" } }, "children": [] }, { "id": 140, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 141, "type": "textnode", "value": "Physics Department" }] }, { "id": 142, "type": "component", "name": "br", "children": [] }, { "id": 143, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 144, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 145, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW1" } }, "children": [{ "id": 146, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 147, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 148, "type": "component", "name": "h1", "children": [{ "id": 149, "type": "textnode", "value": "Homework " }, { "id": 150, "type": "textnode", "value": "1" }] }] }, { "id": 151, "type": "component", "name": "hr", "children": [] }, { "id": 152, "type": "component", "name": "h2", "children": [{ "id": 153, "type": "textnode", "value": "1" }, { "id": 154, "type": "textnode", "value": ". Content" }] }, { "id": 155, "type": "component", "name": "p", "children": [{ "id": 156, "type": "textnode", "value": "The following PowerPoint highlights the key ideas from Chapter 13: Electric Fields\n       in Matter and Interactions. For more details or examples, navigate to the eBook through\n       your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab)." }] }, { "id": 157, "type": "component", "name": "p", "children": [{ "id": 158, "type": "textnode", "value": "Click through the slides below using the left and right arrow buttons or by clicking\n       on the slides. To download a copy, click the Menu button on the bottom right. Then, view\n       the videos and articles below before moving on to the homework." }] }, { "id": 159, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218425&authkey=AJobFCMKPvEPdbI&em=2&wdAr=1.7777777777777777" }, "width": { "type": "value", "value": "1186px" }, "height": { "type": "value", "value": "691px" }, "frameborder": { "type": "value", "value": "0" } }, "children": [] }, { "id": 160, "type": "component", "name": "br", "children": [] }, { "id": 161, "type": "component", "name": "br", "children": [] }, { "id": 162, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "frameWidth" } }, "children": [{ "id": 163, "type": "component", "name": "iframe", "properties": { "width": { "type": "value", "value": "560" }, "height": { "type": "value", "value": "315" }, "src": { "type": "value", "value": "https://www.youtube.com/embed/mdulzEfQXDE" }, "frameborder": { "type": "value", "value": "0" }, "allow": { "type": "value", "value": "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" } }, "children": [] }] }, { "id": 164, "type": "component", "name": "br", "children": [] }, { "id": 165, "type": "component", "name": "br", "children": [] }, { "id": 166, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "frameWidth" } }, "children": [{ "id": 167, "type": "component", "name": "iframe", "properties": { "width": { "type": "value", "value": "560" }, "height": { "type": "value", "value": "315" }, "src": { "type": "value", "value": "https://www.youtube.com/embed/pFM-a7_qjFM" }, "frameborder": { "type": "value", "value": "0" }, "allow": { "type": "value", "value": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" } }, "children": [] }] }, { "id": 168, "type": "component", "name": "br", "children": [] }, { "id": 169, "type": "component", "name": "br", "children": [] }, { "id": 170, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "frameWidth" } }, "children": [{ "id": 171, "type": "component", "name": "iframe", "properties": { "width": { "type": "value", "value": "560" }, "height": { "type": "value", "value": "315" }, "src": { "type": "value", "value": "https://www.youtube.com/embed/PvMSFtS97Zc" }, "frameborder": { "type": "value", "value": "0" }, "allow": { "type": "value", "value": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" } }, "children": [] }] }, { "id": 172, "type": "component", "name": "br", "children": [] }, { "id": 173, "type": "component", "name": "br", "children": [] }, { "id": 174, "type": "component", "name": "div", "properties": { "class": { "type": "value", "value": "frameWidth" } }, "children": [{ "id": 175, "type": "component", "name": "iframe", "properties": { "width": { "type": "value", "value": "560" }, "height": { "type": "value", "value": "315" }, "src": { "type": "value", "value": "https://www.youtube.com/embed/yUPdtFqilXo" }, "frameborder": { "type": "value", "value": "0" }, "allow": { "type": "value", "value": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" } }, "children": [] }] }, { "id": 176, "type": "component", "name": "h2", "children": [{ "id": 177, "type": "textnode", "value": "2" }, { "id": 178, "type": "textnode", "value": ". Homework" }] }, { "id": 179, "type": "component", "name": "p", "children": [{ "id": 180, "type": "textnode", "value": "Click the link below to go to the computational homework 1 page. This exercise\n       will take you through the required WileyPLUS homework problems with Python. Once\n       you complete each problem, enter the answers into the Wiley homework interface\n       to check your work!" }] }, { "id": 181, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 182, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./Wiley_HW_1_rev2" } }, "children": [{ "id": 183, "type": "textnode", "value": "WileyPLUS Homework 1" }] }] }, { "id": 184, "type": "component", "name": "h3", "children": [{ "id": 185, "type": "textnode", "value": "Python Skills" }] }, { "id": 186, "type": "component", "name": "p", "children": [{ "id": 187, "type": "textnode", "value": "The following Python skills are introduced in Homework 1:" }] }, { "id": 188, "type": "component", "name": "ul", "children": [{ "id": 189, "type": "component", "name": "li", "children": [{ "id": 190, "type": "textnode", "value": " blahblahblah " }] }, { "id": 191, "type": "component", "name": "li", "children": [{ "id": 192, "type": "textnode", "value": " blahblahblah " }] }, { "id": 193, "type": "component", "name": "li", "children": [{ "id": 194, "type": "textnode", "value": " blahblahblah " }] }, { "id": 195, "type": "component", "name": "li", "children": [{ "id": 196, "type": "textnode", "value": " blahblahblah " }] }, { "id": 197, "type": "component", "name": "li", "children": [{ "id": 198, "type": "textnode", "value": " blahblahblah " }] }] }, { "id": 199, "type": "component", "name": "h2", "children": [{ "id": 200, "type": "textnode", "value": "3" }, { "id": 201, "type": "textnode", "value": ". Challenge Problem" }] }, { "id": 202, "type": "component", "name": "p", "children": [{ "id": 203, "type": "textnode", "value": "Click the link below to go to the Trinket course page for PHYS 2331. Click\n       the Challenge Problem for Homework 1 to test your Python on a brand new problem.\n       Try to use the techniques and calculations introduced in this homework section." }] }, { "id": 204, "type": "component", "name": "p", "children": [{ "id": 205, "type": "textnode", "value": "Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.\n       For problems with this guide, contact Mary Span or Dr. Roberts." }] }] }, { "id": 206, "type": "component", "name": "hr", "children": [] }, { "id": 207, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 208, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 209, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 210, "type": "textnode", "value": "Physics Department" }] }, { "id": 211, "type": "component", "name": "br", "children": [] }, { "id": 212, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 213, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 214, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW2" } }, "children": [{ "id": 215, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 216, "type": "component", "name": "h2", "children": [{ "id": 217, "type": "textnode", "value": "Homework " }, { "id": 218, "type": "textnode", "value": "2" }] }, { "id": 219, "type": "component", "name": "hr", "children": [] }, { "id": 220, "type": "component", "name": "h3", "children": [{ "id": 221, "type": "textnode", "value": "Content" }] }, { "id": 222, "type": "component", "name": "h3", "children": [{ "id": 223, "type": "textnode", "value": "Homework" }] }, { "id": 224, "type": "component", "name": "h3", "children": [{ "id": 225, "type": "textnode", "value": "Challenge Problem" }] }] }, { "id": 226, "type": "component", "name": "hr", "children": [] }, { "id": 227, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 228, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 229, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 230, "type": "textnode", "value": "Physics Department" }] }, { "id": 231, "type": "component", "name": "br", "children": [] }, { "id": 232, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 233, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 234, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW3" } }, "children": [{ "id": 235, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 236, "type": "component", "name": "h2", "children": [{ "id": 237, "type": "textnode", "value": "Homework " }, { "id": 238, "type": "textnode", "value": "3" }] }, { "id": 239, "type": "component", "name": "hr", "children": [] }, { "id": 240, "type": "component", "name": "h3", "children": [{ "id": 241, "type": "textnode", "value": "Content" }] }, { "id": 242, "type": "component", "name": "h3", "children": [{ "id": 243, "type": "textnode", "value": "Homework" }] }, { "id": 244, "type": "component", "name": "h3", "children": [{ "id": 245, "type": "textnode", "value": "Challenge Problem" }] }] }, { "id": 246, "type": "component", "name": "hr", "children": [] }, { "id": 247, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 248, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 249, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 250, "type": "textnode", "value": "Physics Department" }] }, { "id": 251, "type": "component", "name": "br", "children": [] }, { "id": 252, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 253, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 254, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW4" } }, "children": [{ "id": 255, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 256, "type": "component", "name": "h2", "children": [{ "id": 257, "type": "textnode", "value": "1" }, { "id": 258, "type": "textnode", "value": "6" }, { "id": 259, "type": "textnode", "value": "." }, { "id": 260, "type": "textnode", "value": "2" }, { "id": 261, "type": "textnode", "value": "6" }] }, { "id": 262, "type": "component", "name": "hr", "children": [] }, { "id": 263, "type": "component", "name": "h3", "children": [{ "id": 264, "type": "textnode", "value": "Problem" }] }, { "id": 265, "type": "component", "name": "p", "children": [{ "id": 266, "type": "textnode", "value": "You move from location i at " }, { "id": 267, "type": "component", "name": "equation", "children": [{ "id": 268, "type": "textnode", "value": "\\langle 1, 4, 4 \\rangle" }] }, { "id": 269, "type": "textnode", "value": " m\n          to location f at " }, { "id": 270, "type": "component", "name": "equation", "children": [{ "id": 271, "type": "textnode", "value": "\\langle 6, 6, 9 \\rangle" }] }, { "id": 272, "type": "textnode", "value": " m. All along this\n          path there is a nearly uniform electric field " }, { "id": 273, "type": "component", "name": "equation", "children": [{ "id": 274, "type": "textnode", "value": "\\vec{E} = \\langle 1000, 180, -470 \\rangle" }] }, { "id": 275, "type": "textnode", "value": "\n          N/C. Calculate " }, { "id": 276, "type": "component", "name": "equation", "children": [{ "id": 277, "type": "textnode", "value": "\\Delta V = V_{f} - V_{i}" }] }, { "id": 278, "type": "textnode", "value": ", including sign and units." }] }, { "id": 279, "type": "component", "name": "hr", "children": [] }, { "id": 280, "type": "component", "name": "h3", "children": [{ "id": 281, "type": "textnode", "value": "Computation" }] }, { "id": 282, "type": "component", "name": "p", "children": [{ "id": 283, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n          above. Need help with python? See Physics Fundamentals (" }, { "id": 284, "type": "component", "name": "em", "children": [{ "id": 285, "type": "textnode", "value": "NEED LINK" }] }, { "id": 286, "type": "textnode", "value": ") for\n          ideas on how to solve this problem with python. Reveal the answer by\n          clicking the button below to see if you got the right answer!" }] }, { "id": 287, "type": "component", "name": "ul", "children": [{ "id": 288, "type": "component", "name": "li", "children": [{ "id": 289, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 290, "type": "component", "name": "li", "children": [{ "id": 291, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 292, "type": "component", "name": "li", "children": [{ "id": 293, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n            given in WileyPLUS before submitting the answers." }] }] }, { "id": 294, "type": "component", "name": "br", "children": [] }, { "id": 295, "type": "component", "name": "em", "children": [{ "id": 296, "type": "textnode", "value": "Insert Trinket" }] }] }, { "id": 297, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 298, "type": "component", "name": "h3", "children": [{ "id": 299, "type": "textnode", "value": "About this Problem" }] }, { "id": 300, "type": "component", "name": "hr", "children": [] }, { "id": 301, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 302, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"\"" } }, "children": [{ "id": 303, "type": "textnode", "value": "Skills Involved" }] }, { "id": 304, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Objective\"" } }, "children": [{ "id": 305, "type": "textnode", "value": "Objective" }] }, { "id": 306, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"GivenInfo\"" } }, "children": [{ "id": 307, "type": "textnode", "value": "Given Information" }] }, { "id": 308, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"KeyEq\"" } }, "children": [{ "id": 309, "type": "textnode", "value": "Key Equations" }] }, { "id": 310, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Ref\"" } }, "children": [{ "id": 311, "type": "textnode", "value": "References" }] }] }, { "id": 312, "type": "component", "name": "br", "children": [] }, { "id": 313, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 314, "type": "component", "name": "br", "children": [] }, { "id": 315, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo321" } }, "children": [{ "id": 316, "type": "component", "name": "Default", "children": [{ "id": 317, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 318, "type": "component", "name": "ul", "children": [{ "id": 319, "type": "component", "name": "li", "children": [{ "id": 320, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 321, "type": "component", "name": "li", "children": [{ "id": 322, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 323, "type": "component", "name": "li", "children": [{ "id": 324, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 325, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 326, "type": "textnode", "value": "Find the sign of the source charge, the direction of the electric\n                force on the charge, the electric field, the electric force, and the direction\n                of the electric force." }] }, { "id": 327, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 328, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 329, "type": "component", "name": "ul", "children": [{ "id": 330, "type": "component", "name": "li", "children": [{ "id": 331, "type": "textnode", "value": " Diagram of point charge and electric field." }] }, { "id": 332, "type": "component", "name": "li", "children": [{ "id": 333, "type": "textnode", "value": " Charge of particle placed at a given location." }] }, { "id": 334, "type": "component", "name": "li", "children": [{ "id": 335, "type": "textnode", "value": " Electric field at location D. " }] }] }] }] }, { "id": 336, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 337, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 338, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 339, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|} = \\frac{\\lt x, y, z \\gt}{\\sqrt{x^{2} + y^{2} + z^{2}}}" }] }, { "id": 340, "type": "component", "name": "br", "children": [] }, { "id": 341, "type": "component", "name": "br", "children": [] }, { "id": 342, "type": "component", "name": "equation", "children": [{ "id": 343, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 344, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 345, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 346, "type": "component", "name": "ul", "children": [{ "id": 347, "type": "component", "name": "li", "children": [{ "id": 348, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 349, "type": "component", "name": "li", "children": [{ "id": 350, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 351, "type": "component", "name": "li", "children": [{ "id": 352, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 353, "type": "component", "name": "li", "children": [{ "id": 354, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 355, "type": "component", "name": "li", "children": [{ "id": 356, "type": "textnode", "value": " " }, { "id": 357, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 358, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 359, "type": "component", "name": "hr", "children": [] }, { "id": 360, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 361, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 362, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 363, "type": "textnode", "value": "Physics Department" }] }, { "id": 364, "type": "component", "name": "br", "children": [] }, { "id": 365, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 366, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 367, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW5" } }, "children": [{ "id": 368, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 369, "type": "component", "name": "h2", "children": [{ "id": 370, "type": "textnode", "value": "1" }, { "id": 371, "type": "textnode", "value": "6" }, { "id": 372, "type": "textnode", "value": "." }, { "id": 373, "type": "textnode", "value": "2" }, { "id": 374, "type": "textnode", "value": "7" }] }, { "id": 375, "type": "component", "name": "hr", "children": [] }, { "id": 376, "type": "component", "name": "h3", "children": [{ "id": 377, "type": "textnode", "value": "Problem" }] }, { "id": 378, "type": "component", "name": "p", "children": [{ "id": 379, "type": "textnode", "value": "A capacitor with a gap of 1 mm has a potential difference from one plate to the other of 26 volts.\n          What is the magnitude of the electric field between the plates?" }] }, { "id": 380, "type": "component", "name": "hr", "children": [] }, { "id": 381, "type": "component", "name": "h3", "children": [{ "id": 382, "type": "textnode", "value": "Computation" }] }, { "id": 383, "type": "component", "name": "p", "children": [{ "id": 384, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n          above. Need help with python? See Physics Fundamentals (" }, { "id": 385, "type": "component", "name": "em", "children": [{ "id": 386, "type": "textnode", "value": "NEED LINK" }] }, { "id": 387, "type": "textnode", "value": ") for\n          ideas on how to solve this problem with python. Reveal the answer by\n          clicking the button below to see if you got the right answer!" }] }, { "id": 388, "type": "component", "name": "ul", "children": [{ "id": 389, "type": "component", "name": "li", "children": [{ "id": 390, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 391, "type": "component", "name": "li", "children": [{ "id": 392, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 393, "type": "component", "name": "li", "children": [{ "id": 394, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n            given in WileyPLUS before submitting the answers." }] }] }, { "id": 395, "type": "component", "name": "br", "children": [] }, { "id": 396, "type": "component", "name": "em", "children": [{ "id": 397, "type": "textnode", "value": "Insert Trinket" }] }] }, { "id": 398, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 399, "type": "component", "name": "h3", "children": [{ "id": 400, "type": "textnode", "value": "About this Problem" }] }, { "id": 401, "type": "component", "name": "hr", "children": [] }, { "id": 402, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 403, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"\"" } }, "children": [{ "id": 404, "type": "textnode", "value": "Skills Involved" }] }, { "id": 405, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Objective\"" } }, "children": [{ "id": 406, "type": "textnode", "value": "Objective" }] }, { "id": 407, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"GivenInfo\"" } }, "children": [{ "id": 408, "type": "textnode", "value": "Given Information" }] }, { "id": 409, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"KeyEq\"" } }, "children": [{ "id": 410, "type": "textnode", "value": "Key Equations" }] }, { "id": 411, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Ref\"" } }, "children": [{ "id": 412, "type": "textnode", "value": "References" }] }] }, { "id": 413, "type": "component", "name": "br", "children": [] }, { "id": 414, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 415, "type": "component", "name": "br", "children": [] }, { "id": 416, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo321" } }, "children": [{ "id": 417, "type": "component", "name": "Default", "children": [{ "id": 418, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 419, "type": "component", "name": "ul", "children": [{ "id": 420, "type": "component", "name": "li", "children": [{ "id": 421, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 422, "type": "component", "name": "li", "children": [{ "id": 423, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 424, "type": "component", "name": "li", "children": [{ "id": 425, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 426, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 427, "type": "textnode", "value": "Find the sign of the source charge, the direction of the electric\n                force on the charge, the electric field, the electric force, and the direction\n                of the electric force." }] }, { "id": 428, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 429, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 430, "type": "component", "name": "ul", "children": [{ "id": 431, "type": "component", "name": "li", "children": [{ "id": 432, "type": "textnode", "value": " Diagram of point charge and electric field." }] }, { "id": 433, "type": "component", "name": "li", "children": [{ "id": 434, "type": "textnode", "value": " Charge of particle placed at a given location." }] }, { "id": 435, "type": "component", "name": "li", "children": [{ "id": 436, "type": "textnode", "value": " Electric field at location D. " }] }] }] }] }, { "id": 437, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 438, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 439, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 440, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|} = \\frac{\\lt x, y, z \\gt}{\\sqrt{x^{2} + y^{2} + z^{2}}}" }] }, { "id": 441, "type": "component", "name": "br", "children": [] }, { "id": 442, "type": "component", "name": "br", "children": [] }, { "id": 443, "type": "component", "name": "equation", "children": [{ "id": 444, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 445, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 446, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 447, "type": "component", "name": "ul", "children": [{ "id": 448, "type": "component", "name": "li", "children": [{ "id": 449, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 450, "type": "component", "name": "li", "children": [{ "id": 451, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 452, "type": "component", "name": "li", "children": [{ "id": 453, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 454, "type": "component", "name": "li", "children": [{ "id": 455, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 456, "type": "component", "name": "li", "children": [{ "id": 457, "type": "textnode", "value": " " }, { "id": 458, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 459, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 460, "type": "component", "name": "hr", "children": [] }, { "id": 461, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 462, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 463, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 464, "type": "textnode", "value": "Physics Department" }] }, { "id": 465, "type": "component", "name": "br", "children": [] }, { "id": 466, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 467, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 468, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW6" } }, "children": [{ "id": 469, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 470, "type": "component", "name": "h2", "children": [{ "id": 471, "type": "textnode", "value": "1" }, { "id": 472, "type": "textnode", "value": "6" }, { "id": 473, "type": "textnode", "value": "." }, { "id": 474, "type": "textnode", "value": "5" }, { "id": 475, "type": "textnode", "value": "2" }] }, { "id": 476, "type": "component", "name": "hr", "children": [] }, { "id": 477, "type": "component", "name": "h3", "children": [{ "id": 478, "type": "textnode", "value": "Problem" }] }, { "id": 479, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p16.52.png" }, "title": { "type": "value", "value": "Problem 16.52 - Matter and Interactions" } }, "children": [] }, { "id": 480, "type": "component", "name": "h4", "children": [{ "id": 481, "type": "textnode", "value": "Questions" }] }, { "id": 482, "type": "component", "name": "p", "children": [{ "id": 483, "type": "textnode", "value": "1. What is the magnitude of the electric field in the region between disks 1 and 2?\n            " }, { "id": 484, "type": "component", "name": "br", "children": [] }, { "id": 485, "type": "textnode", "value": "2. What is the direction of the electric field between disks 1 and 2?\n            " }, { "id": 486, "type": "component", "name": "br", "children": [] }, { "id": 487, "type": "textnode", "value": "3. Which of the given statements are true?\n            " }, { "id": 488, "type": "component", "name": "br", "children": [] }, { "id": 489, "type": "textnode", "value": "4. To calculate " }, { "id": 490, "type": "component", "name": "equation", "children": [{ "id": 491, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 492, "type": "textnode", "value": ", which path should you choose?\n            " }, { "id": 493, "type": "component", "name": "br", "children": [] }, { "id": 494, "type": "textnode", "value": "5. What should the sign of " }, { "id": 495, "type": "component", "name": "equation", "children": [{ "id": 496, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 497, "type": "textnode", "value": " be?\n            " }, { "id": 498, "type": "component", "name": "br", "children": [] }, { "id": 499, "type": "textnode", "value": "6. What is the potential difference " }, { "id": 500, "type": "component", "name": "equation", "children": [{ "id": 501, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 502, "type": "textnode", "value": "?\n            " }, { "id": 503, "type": "component", "name": "br", "children": [] }, { "id": 504, "type": "textnode", "value": "7. What is the potential difference " }, { "id": 505, "type": "component", "name": "equation", "children": [{ "id": 506, "type": "textnode", "value": "V_{D}-V_{C}" }] }, { "id": 507, "type": "textnode", "value": "?\n            " }, { "id": 508, "type": "component", "name": "br", "children": [] }, { "id": 509, "type": "textnode", "value": "8. What is the potential difference " }, { "id": 510, "type": "component", "name": "equation", "children": [{ "id": 511, "type": "textnode", "value": "V_{F}-V_{D}" }] }, { "id": 512, "type": "textnode", "value": "?\n            " }, { "id": 513, "type": "component", "name": "br", "children": [] }, { "id": 514, "type": "textnode", "value": "9. What is the potential difference " }, { "id": 515, "type": "component", "name": "equation", "children": [{ "id": 516, "type": "textnode", "value": "V_{G}-V_{F}" }] }, { "id": 517, "type": "textnode", "value": "?\n            " }, { "id": 518, "type": "component", "name": "br", "children": [] }, { "id": 519, "type": "textnode", "value": "10. What is the potential difference " }, { "id": 520, "type": "component", "name": "equation", "children": [{ "id": 521, "type": "textnode", "value": "V_{G}-V_{A}" }] }, { "id": 522, "type": "textnode", "value": "?\n            " }, { "id": 523, "type": "component", "name": "br", "children": [] }, { "id": 524, "type": "textnode", "value": "11. What is the change in potential energy of the system?\n            " }, { "id": 525, "type": "component", "name": "br", "children": [] }, { "id": 526, "type": "textnode", "value": "12. What is the change in kinetic energy of the electron?" }] }, { "id": 527, "type": "component", "name": "hr", "children": [] }] }, { "id": 528, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 529, "type": "component", "name": "h3", "children": [{ "id": 530, "type": "textnode", "value": "About this Problem" }] }, { "id": 531, "type": "component", "name": "hr", "children": [] }, { "id": 532, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 533, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"\"" } }, "children": [{ "id": 534, "type": "textnode", "value": "Skills Involved" }] }, { "id": 535, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Objective\"" } }, "children": [{ "id": 536, "type": "textnode", "value": "Objective" }] }, { "id": 537, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"GivenInfo\"" } }, "children": [{ "id": 538, "type": "textnode", "value": "Given Information" }] }, { "id": 539, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"KeyEq\"" } }, "children": [{ "id": 540, "type": "textnode", "value": "Key Equations" }] }, { "id": 541, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo321 = \"Ref\"" } }, "children": [{ "id": 542, "type": "textnode", "value": "References" }] }] }, { "id": 543, "type": "component", "name": "br", "children": [] }, { "id": 544, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 545, "type": "component", "name": "br", "children": [] }, { "id": 546, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo321" } }, "children": [{ "id": 547, "type": "component", "name": "Default", "children": [{ "id": 548, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 549, "type": "component", "name": "ul", "children": [{ "id": 550, "type": "component", "name": "li", "children": [{ "id": 551, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 552, "type": "component", "name": "li", "children": [{ "id": 553, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 554, "type": "component", "name": "li", "children": [{ "id": 555, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 556, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 557, "type": "textnode", "value": "Find the sign of the source charge, the direction of the electric\n                force on the charge, the electric field, the electric force, and the direction\n                of the electric force." }] }, { "id": 558, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 559, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 560, "type": "component", "name": "ul", "children": [{ "id": 561, "type": "component", "name": "li", "children": [{ "id": 562, "type": "textnode", "value": " Diagram of point charge and electric field." }] }, { "id": 563, "type": "component", "name": "li", "children": [{ "id": 564, "type": "textnode", "value": " Charge of particle placed at a given location." }] }, { "id": 565, "type": "component", "name": "li", "children": [{ "id": 566, "type": "textnode", "value": " Electric field at location D. " }] }] }] }] }, { "id": 567, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 568, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 569, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 570, "type": "textnode", "value": "\\hat{r} = \\frac{\\vec{r}}{|\\vec{r}|} = \\frac{\\lt x, y, z \\gt}{\\sqrt{x^{2} + y^{2} + z^{2}}}" }] }, { "id": 571, "type": "component", "name": "br", "children": [] }, { "id": 572, "type": "component", "name": "br", "children": [] }, { "id": 573, "type": "component", "name": "equation", "children": [{ "id": 574, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 575, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 576, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 577, "type": "component", "name": "ul", "children": [{ "id": 578, "type": "component", "name": "li", "children": [{ "id": 579, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 580, "type": "component", "name": "li", "children": [{ "id": 581, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 582, "type": "component", "name": "li", "children": [{ "id": 583, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 584, "type": "component", "name": "li", "children": [{ "id": 585, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 586, "type": "component", "name": "li", "children": [{ "id": 587, "type": "textnode", "value": " " }, { "id": 588, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 589, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 590, "type": "component", "name": "hr", "children": [] }, { "id": 591, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 592, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 593, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 594, "type": "textnode", "value": "Physics Department" }] }, { "id": 595, "type": "component", "name": "br", "children": [] }, { "id": 596, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 597, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 598, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW7" } }, "children": [] }, { "id": 599, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW8" } }, "children": [] }, { "id": 600, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "HW9" } }, "children": [] }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -83537,13 +84330,14 @@ module.exports = {
 	'h2': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js'),
 	'h4': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js'),
 	'default': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/default.js'),
+	'h1': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h1.js'),
 	'h3': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js'),
 	'case': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/case.js'),
 	'equation': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js'),
 	'switch': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/switch.js')
 };
 
-},{"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/case.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/case.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/default.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/default.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/switch.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/switch.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
+},{"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/case.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/case.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/default.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/default.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h1.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h1.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/switch.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/switch.js","/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/text-container.js"}],"__IDYLL_CONTEXT__":[function(require,module,exports){
 "use strict";
 
 module.exports = function () {};
