@@ -52,6 +52,10 @@
 
         ## Background Information
 
+        ### Vectors and Physics I
+
+        [iframe src:"https://onedrive.live.com/embed?resid=FA0DBF36E679630E%218470&authkey=%21ALG8PGdADOd8rU8&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+
         [br /]
 
         [div className:"splitLeft"]
@@ -105,7 +109,7 @@
         [div className:"splitRight"]
           ## Trinket
 
-            [iframe src:"https://trinket.io/embed/python3/c4bc808444?toggleCode=true" width:"50%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"https://trinket.io/embed/python3/c4bc808444?toggleCode=true" width:"50%" height:"600" frameBorder:"0" marginWidth:"0" marginHeight:"0"][/iframe]
 
         [/div]
 
@@ -163,6 +167,8 @@
             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/yUPdtFqilXo" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
           [/div]
 
+      [br /]
+      [hr /]
 
        ## 2. Homework
 
@@ -175,17 +181,86 @@
           [WileyPLUS Homework 1](./Wiley_HW_1_rev2)
        [/div]
 
-       ### Python Skills
+       [br /]
+
+       Then, navigate to the Essential Skills quiz on the course Canvas page in a
+       separate browser tab and click the link below. This will take you through
+       the quiz by solving the problems with Python.
+
+       [div className:"centerPara"]
+          [Essential Skills]()
+       [/div]
+
+       ### Python Skills in HW 1
 
        The following Python skills are introduced in Homework 1:
 
        [ul]
-        [li] blahblahblah [/li]
-        [li] blahblahblah [/li]
-        [li] blahblahblah [/li]
-        [li] blahblahblah [/li]
-        [li] blahblahblah [/li]
+        [li]
+          ```import numpy as np```
+          [ul]
+            [li] This imports the NumPy Python library: [NumPy](https://numpy.org/)[/li]
+            [li] What is a Python library? Click this link for more information: [Python Libraries](https://data-flair.training/blogs/python-libraries/#:~:text=A%20Python%20library%20is%20a,a%20collection%20of%20core%20modules.)[/li]
+          [/ul]
+        [/li]
+        [li]
+          ```from scipy import constants```
+          [ul]
+            [li] SciPy is another Python library that allows us to easily assign common constants to variables.[/li]
+            [li] Instead of importing all of SciPy, we are just importing the constants package. ```from <library> import <package>``` is a standard way to do this.[/li]
+            [li]
+              There are a few ways to call a SciPy constant:
+              [ul]
+                [li]
+                ```constants.<constant>```. Example: ```q1 = 2*constants.e``` assigns 2 times the elementary charge to the q1 variable.
+
+                This way pertains to Physical and Mathematical constants listed at the top of the SciPy constants page linked [Here](https://docs.scipy.org/doc/scipy/reference/constants.html).
+                [/li]
+                [li]
+                ```constants.value(u'<constant>')```. Example: ```p = constants.value(u'proton mass')``` assigns the proton mass constant to the variable p.
+
+                These constants are listed under the Constants Database on the linked page.
+                [/li]
+              [/ul]
+            [/li]
+          [/ul]
+        [/li]
+        [li]
+          ```np.array([x, x, x])```
+          [ul]
+            [li]What is an array? They are similar to variables but can store more than one value. Python
+            doesn't have built-in arrays but uses ```list()```. For more information about the differences
+            between a list and an array, click this link: [Array vs. List](https://learnpython.com/blog/python-array-vs-list/)[/li]
+            [li]Also, note that this comes from the NumPy library. More information can be found here: [NumPy Array](https://numpy.org/doc/stable/reference/generated/numpy.array.html)[/li]
+            [li]We will use ```np.array()``` for vectors.[/li]
+          [/ul]
+        [/li]
+        [li]
+          ```numpy.linalg.norm( )```
+          [ul]
+            [li]We will use this function to find the magnitude of a vector. However, there are many different uses for it. Read more about it in the manual: [np.linalg.norm](https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html)[/li]
+          [/ul]
+        [/li]
+        [li]
+          ```np.round(x, dec #)```
+          [ul]
+            [li]This function is from the NumPy library and will round the components of an array to a specified decimal placement.[/li]
+            [li]For more information, click the following link: [Using NumPy to round vectors](https://numpy.org/doc/stable/reference/generated/numpy.round_.html)[/li]
+          [/ul]
+        [/li]
+        [li]```np.abs()```
+          [ul]
+            [li]This function will give the absolute value of the variable.[/li]
+            [li]'np.absolute()' can also be used for the same purpose.[/li]
+            [li]More information can be found here: [Absolute value](https://numpy.org/doc/stable/reference/generated/numpy.absolute.html)[/li]
+          [/ul]
+        [/li]
+        [li]'"{:e}".format()'[/li]
+        [li]'print("string", float)'[/li]
        [/ul]
+
+       [br /]
+       [hr /]
 
        ## 3. Challenge Problem
 
@@ -193,6 +268,11 @@
        the Challenge Problem for Homework 1 to test your Python on a brand new problem.
        Try to use the techniques and calculations introduced in this homework section.
 
+       [div className:"centerPara"]
+        [Challenge Problem 1](https://trinket.io/mspan-vt-edu/courses/physics-2331-python#/challenge-problems/homework-1)
+       [/div]
+
+       [br /]
 
        Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
        For problems with this guide, contact Mary Span or Dr. Roberts.
