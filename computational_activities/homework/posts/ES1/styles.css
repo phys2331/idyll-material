@@ -1,0 +1,53 @@
+body {
+  background-color: white;
+}
+
+.problemBody {
+  padding: 1px 20px 1px 20px;
+  text-align: justify;
+  font-size: 15px;
+}
+
+.centerHead h2{
+  text-align: center;
+  color: #084C05;
+}
+
+.centerHead h3, h4{
+  text-align: center;
+  color: #084C05;
+}
+
+.centerHead h4{
+  font-style: italic;
+}
+
+hr {
+  border: 0;
+  background: #50AC4C;
+  height: 2px;
+}
+
+.paddedParas {
+  padding-left: 200px;
+  padding-right: 200px;
+}
+
+.ESQuestions {
+  border: 3px solid gray;
+  margin-left: 200px;
+  margin-right: 200px;
+  padding: 10px 10px 10px 10px;
+}
+
+.splitLeft {
+  width: 60%;
+  padding-right: 20px;
+  float: left;
+  background-color: inherit;
+
+}
+
+.splitRight {
+  background-color: inherit;
+}

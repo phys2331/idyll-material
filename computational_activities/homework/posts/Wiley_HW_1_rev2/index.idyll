@@ -28,59 +28,35 @@
      [Default]
        [div className:"centerHead"]
 
+       ## How to Complete this Activity
+
+       [hr /]
+       [br /]
+
+       [div className:"mainInfoBullets"]
+             [ol]
+              [li]
+                [span className:"mainInfoFront"]Click the tabs[/span] to go to a specific homework problem page.
+                [ul]
+                  [li]**Note:** Not all of the homework problem pages are populated in every homework.[/li]
+                  [li]The problems are included in Homework 1 through WileyPLUS.[/li]
+                  [li]Work through the problems by hand first using the given information, key equations,
+                  and references listed at the bottom of each page. Then, try to use Python to solve the same problem.[/li]
+                [/ul]
+              [/li]
+              [li][span className:"mainInfoFront"]Read the problem[/span] and try to [span className:"mainInfoFront"]answer the questions[/span] that are given. These are extra and only there to help![/li]
+              [li][span className:"mainInfoFront"]Use the simulations[/span] when provided. These may help with your conceptual understanding of the problem.[/li]
+              [li][span className:"mainInfoFront"]Complete the Computation section[/span] by following the instructions to the left of the Trinket. This should give
+              you the answers you need to complete the homework![/li]
+              [li]After completing all of the resources provided, please complete the [span className:"mainInfoFront"][a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a][/span]. [/li]
+             [/ol]
+        [/div]
+
+
+
        [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 1.
+
        [/div]
-
-         ## Problem Pages
-
-           Click the tabs to go to a specific homework problem page.
-           The problems are included in Homework 1 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
-
-           Each problem page has the following sections:
-
-           #### Skills involved
-
-           The skills involved in the particular homework problem will be tagged
-           with other problems in the course that deal with the same content
-           (*TO DO*). Click these to find more problems in these areas. It may
-           help to look at the Resources page for videos and simulations that
-           target specific skills these homework problems involve.
-
-           #### Problem
-
-           The problems will be listed as they are seen in WileyPlus. Note that
-           the values will change for *each* problem.
-
-           This section also includes a computation section.
-
-           #### Important information
-
-           To solve the homework problems, there are several areas that need to
-           be understood. To help, the following sections are available:
-
-           [ul]
-             [li] **Objective**: summarizes what the question is asking. [/li]
-             [li] **Key Equations**: lists the equations that may help in solving
-             and understanding the problem. [/li]
-             [li] **References**: lists the pages of the book where
-             explanations of the concepts in the homework can be found. It may
-             also include outside references that may be useful. [/li]
-             [li] **Things to Think About**: covers tricky aspects of the
-             question that may lead to incorrect answers. Thinking about these
-             may help in solving the question faster. [/li]
-           [/ul]
-
-         ## Resources
-
-           Need help doing physics problems in Python? Visit the Computational Activities pages.
-
-           Need help doing the physics problems? Check out the resources section
-           on each problem page for specific text entries in Matter and Interactions
-           and any outside resource that may help in solving them. Visit the resources
-           page for videos and simulations about the specific physics problem.
 
          [hr /]
 
@@ -243,12 +219,14 @@
 
              [Conditional if:`showResult4`]
                [Conditional if:`radioVal4 === "a" || radioVal4 === "c"`]
+                 [hr /]
                  Incorrect. While it's true that neutral objects can have an induced charge,
                  this question is asking about the specific interaction between a positively
                  charged particle and an uncharged particle. Read this [a href:"https://www.khanacademy.org/science/electrical-engineering/ee-electrostatics/ee-electric-force-and-electric-field/a/ee-electric-force" target:"_blank"]electric force[/a]
                  article for more information. Plug the values into the force equation and see what the result is.
                [/Conditional]
                [Conditional if:`radioVal4 === "b"`]
+                 [hr /]
                  Correct!
                [/Conditional]
              [/Conditional]
@@ -319,21 +297,20 @@
          ideas on how to solve this problem with python. Reveal the answer by
          clicking the button below to see if you got the right answer!
 
-         [ul]
-           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-           [li]Click the Run button to output the answers![/li]
-           [li]If using numbers from this page, make sure to switch them with the numbers
-           given in WileyPLUS before submitting the answers.[/li]
-         [/ul]
-
-         [br /]
-
-         [iframe src:"https://trinket.io/embed/python3/17c14dabbd?showInstructions:True" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [div className:"splitLeft"]
+           #### Instructions
+            [iframe src:"./static/HW1Comp.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
 
          [/div]
+
+         [div className:"splitRight"]
+           #### Trinket
+           [br /]
+           [iframe src:"https://trinket.io/embed/python3/17c14dabbd?toggleCode=true" width:"40%" height:"600" frameborder:"0"][/iframe]
+         [/div]
+         [/div]
+
          [div className:"extraInfo centerHead"]
-
-
 
          ### About this Problem
 
@@ -552,8 +529,17 @@
 
            [br /]
 
-           [iframe src:"https://trinket.io/embed/python3/06474e75ce?showInstructions:True" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"100"][/iframe]
+           [div className:"splitLeft"]
+              #### Instructions
 
+              [iframe src:"./static/HW1Comp2.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+           [/div]
+
+           [div className:"splitRight"]
+              #### Trinket
+              [br /]
+              [iframe src:"https://trinket.io/embed/python3/06474e75ce?toggleCode=true" width:"40%" height:"600" frameBorder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+           [/div]
        [/div]
        [div className:"extraInfo centerHead"]
 
@@ -705,8 +691,18 @@
 
            [br /]
 
-           [iframe src:"https://trinket.io/embed/python3/e747813d99?showInstructions:True" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+           [div className:"splitLeft"]
+              #### Instructions
 
+              [iframe src:"./static/HW1Comp3.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+           [/div]
+
+           [div className:"splitRight"]
+              #### Trinket
+
+              [iframe src:"https://trinket.io/embed/python3/e747813d99?toggleCode=true" width:"40%" height:"600" frameBorder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+
+           [/div]
        [/div]
        [div className:"extraInfo centerHead"]
 

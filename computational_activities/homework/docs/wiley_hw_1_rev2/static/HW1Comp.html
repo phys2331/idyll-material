@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, type <code>import numpy as np</code>
+     <ol type="i">
+       <li>This imports the NumPy Python library: <a href="https://numpy.org/"> NumPy</a></li>
+       <li>What is a Python library? Click this link for more information:<a href="https://data-flair.training/blogs/python-libraries/#:~:text=A%20Python%20library%20is%20a,a%20collection%20of%20core%20modules."> Python Libraries</a></li>
+     </ol>
+   </li>
+   <li>Under <code># Add the electric field and particle charge</code>, type <code>E_field = np.array([x, y, z])</code>. This assigned
+   the electric field vector to the <b>E_field</b> variable so that we can call it at a later time.
+     <ol type="i">
+       <li>Replace x, y, and z with the given electric field vector components.</li>
+       <li><code>np.array([x, x, x])</code> is an array. These are similar to variables but can store more than one
+       value. Python does not have built-in arrays and uses <code>list()</code> instead. For more information about
+       the differences between a list and an array, click this link: </li>
+       <li>Also, note that this comes from the NumPy library. More information can be found here: </li>
+       <li>In this course, we will use <code>np.array()</code> for vectors.</li>
+     </ol>
+   </li>
+   <li>In the same section, add <code>particle_charge = #</code>. What does this do? <b>Hint:</b> it's the same concept as the previous entry.
+     <ol type="i">
+       <li>Replace # with the given charge of the particle in the problem.</li>
+       <li>What does this do? Review the information on variables in the Homework Overview.</li>
+     </ol>
+   </li>
+   <li>
+     Under <code># Calculations</code>, type <code>E_hat = E_field/np.linalg.norm(EField)</code>. We want to find the unit vector in the direction
+     of \(\vec{E}\), so we will need to use an equation that divides the electric field vector components by the magnitude of the electric field.
+     See <b>Key Equations</b> in the <b>About this Problem</b> section for an example of the unit vector equation.
+     <ol type="i">
+       <li><code>np.linalg.nom()</code> will be used in this course to find the magnitude of a vector. However, there are many different uses for it.
+       Read more about it in the manual: <a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html">np.linalg.norm</a></li>
+     </ol>
+   </li>
+   <li>
+     In the same section, add <code>Force = particle_charge*E_field</code>. This assigns the product of the charge and the electric field to the Force variable.
+     Which equation on the equation sheet is this using?
+   </li>
+   <li>
+     Add <code>F_hat = Force/np.linalg.norm(Force)</code>. This is the same concept as our first equation (\(\hat{E}\)) but with \(\hat{F}\).
+   </li>
+   <li>
+     Under <code># Print the answers</code>, add <code>print("The unit vector in the direction of the electric field is:", list(E_hat))</code>
+     <ol type="i">
+       <li><code>print("string", float)</code> is similar to <code>print()</code> (see Homework Overview) but it prints a string (surrounded
+         by single or double quotation marks) and a number with a decimal.</li>
+       <li>What is a string? Click here: <a href="https://www.w3schools.com/python/python_strings.asp">Python Strings</a></li>
+     </ol>
+   </li>
+   <li>Add: <code>print("The electric force on the charge is:", list(Force))</code></li>
+     <ol type="i">
+       <li><b><i>Hint:</i></b> Want space between the answers in Trinket? Add a blank <code>print()</code> between each line.</li>
+     </ol>
+   <li>Add: <code>print("The unit vector in the direction of the electric force is:", list(F_hat))</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

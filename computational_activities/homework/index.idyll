@@ -172,6 +172,8 @@
 
        ## 2. Homework
 
+       Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
        Click the link below to go to the computational homework 1 page. This exercise
        will take you through the required WileyPLUS homework problems with Python. Once
        you complete each problem, enter the answers into the Wiley homework interface
@@ -182,14 +184,6 @@
        [/div]
 
        [br /]
-
-       Then, navigate to the Essential Skills quiz on the course Canvas page in a
-       separate browser tab and click the link below. This will take you through
-       the quiz by solving the problems with Python.
-
-       [div className:"centerPara"]
-          [Essential Skills]()
-       [/div]
 
        ### Python Skills in HW 1
 
@@ -264,12 +258,11 @@
 
        ## 3. Challenge Problem
 
-       Click the link below to go to the Trinket course page for PHYS 2331. Click
-       the Challenge Problem for Homework 1 to test your Python on a brand new problem.
+       Complete the Challenge Problem for Homework 1 to test your Python on a brand new problem.
        Try to use the techniques and calculations introduced in this homework section.
 
        [div className:"centerPara"]
-        [Challenge Problem 1](https://trinket.io/mspan-vt-edu/courses/physics-2331-python#/challenge-problems/homework-1)
+        **TBD**
        [/div]
 
        [br /]
