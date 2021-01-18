@@ -119,597 +119,750 @@
        [/div]
        [div className:"footer"]
          [hr /]
-         ![title](./images/ucdenverlogo2.png)
-         [Physics Department](https://clas.ucdenver.edu/physics/)
-         [br /]
+         //![title](./ucdenverlogo2.png)
          [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+         [br /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
        [/div]
      [/Default]
      [Case test:"HW1"]
-     [div className:"centerHead pBwithAside"]
+       [div className:"centerHead pBwithAside"]
 
-      [div className:"centerPara"]
-       # Homework 1
-      [/div]
+        [div className:"centerPara"]
+         # Homework 1
+        [/div]
 
-       [hr /]
+         [hr /]
 
-       ## 1. Content
+         ## 1. Content
 
-       The following PowerPoint highlights the key ideas from Chapter 13: Electric Fields
-       in Matter and Interactions. For more details or examples, navigate to the eBook through
-       your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
+         The following PowerPoint highlights the key ideas from Chapter 13: Electric Fields
+         in Matter and Interactions. For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-       Click through the slides below using the left and right arrow buttons or by clicking
-       on the slides. To download a copy, click the Menu button on the bottom right. Then, view
-       the videos and articles below before moving on to the homework.
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
 
-       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218425&authkey=AJobFCMKPvEPdbI&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameborder:"0"][/iframe]
+         [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218425&authkey=AJobFCMKPvEPdbI&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+
+           [br /]
+           [br /]
+             [div class:"frameWidth"]
+               [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mdulzEfQXDE" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+             [/div]
+          [br /]
+          [br /]
+             [div class:"frameWidth"]
+               [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/pFM-a7_qjFM" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+             [/div]
+          [br /]
+          [br /]
+            [div class:"frameWidth"]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/PvMSFtS97Zc" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+            [/div]
+          [br /]
+          [br /]
+            [div class:"frameWidth"]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/yUPdtFqilXo" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+            [/div]
+
+        [br /]
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 1 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 1](./Wiley_HW_1_rev2)
+         [/div]
 
          [br /]
+
+         ### Python Skills in HW 1
+
+         The following Python skills are introduced in Homework 1:
+
+         [ul]
+          [li]`import numpy as np`[/li]
+          [li]`from scipy import constants`[/li]
+          [li]`np.array([x, x, x])`[/li]
+          [li]`np.linalg.norm( )`[/li]
+          [li]`np.round(x, dec #)`[/li]
+          [li]`np.abs()`[/li]
+          [li]`"{:e}".format()`[/li]
+          [li]`print("string", float)`[/li]
+         [/ul]
+
          [br /]
-           [div class:"frameWidth"]
-             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mdulzEfQXDE" frameborder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
-           [/div]
-        [br /]
-        [br /]
-           [div class:"frameWidth"]
-             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/pFM-a7_qjFM" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
-           [/div]
-        [br /]
-        [br /]
-          [div class:"frameWidth"]
-            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/PvMSFtS97Zc" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
-          [/div]
-        [br /]
-        [br /]
-          [div class:"frameWidth"]
-            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/yUPdtFqilXo" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
-          [/div]
+         [hr /]
 
-      [br /]
-      [hr /]
+         ## 3. Challenge Problem
 
-       ## 2. Homework
+         Complete the Challenge Problem for Homework 1 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
 
-       Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
 
-       Click the link below to go to the computational homework 1 page. This exercise
-       will take you through the required WileyPLUS homework problems with Python. Once
-       you complete each problem, enter the answers into the Wiley homework interface
-       to check your work!
-
-       [div className:"centerPara"]
-          [WileyPLUS Homework 1](./Wiley_HW_1_rev2)
-       [/div]
-
-       [br /]
-
-       ### Python Skills in HW 1
-
-       The following Python skills are introduced in Homework 1:
-
-       [ul]
-        [li]
-          ```import numpy as np```
-          [ul]
-            [li] This imports the NumPy Python library: [NumPy](https://numpy.org/)[/li]
-            [li] What is a Python library? Click this link for more information: [Python Libraries](https://data-flair.training/blogs/python-libraries/#:~:text=A%20Python%20library%20is%20a,a%20collection%20of%20core%20modules.)[/li]
-          [/ul]
-        [/li]
-        [li]
-          ```from scipy import constants```
-          [ul]
-            [li] SciPy is another Python library that allows us to easily assign common constants to variables.[/li]
-            [li] Instead of importing all of SciPy, we are just importing the constants package. ```from <library> import <package>``` is a standard way to do this.[/li]
-            [li]
-              There are a few ways to call a SciPy constant:
-              [ul]
-                [li]
-                ```constants.<constant>```. Example: ```q1 = 2*constants.e``` assigns 2 times the elementary charge to the q1 variable.
-
-                This way pertains to Physical and Mathematical constants listed at the top of the SciPy constants page linked [Here](https://docs.scipy.org/doc/scipy/reference/constants.html).
-                [/li]
-                [li]
-                ```constants.value(u'<constant>')```. Example: ```p = constants.value(u'proton mass')``` assigns the proton mass constant to the variable p.
-
-                These constants are listed under the Constants Database on the linked page.
-                [/li]
-              [/ul]
-            [/li]
-          [/ul]
-        [/li]
-        [li]
-          ```np.array([x, x, x])```
-          [ul]
-            [li]What is an array? They are similar to variables but can store more than one value. Python
-            doesn't have built-in arrays but uses ```list()```. For more information about the differences
-            between a list and an array, click this link: [Array vs. List](https://learnpython.com/blog/python-array-vs-list/)[/li]
-            [li]Also, note that this comes from the NumPy library. More information can be found here: [NumPy Array](https://numpy.org/doc/stable/reference/generated/numpy.array.html)[/li]
-            [li]We will use ```np.array()``` for vectors.[/li]
-          [/ul]
-        [/li]
-        [li]
-          ```numpy.linalg.norm( )```
-          [ul]
-            [li]We will use this function to find the magnitude of a vector. However, there are many different uses for it. Read more about it in the manual: [np.linalg.norm](https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html)[/li]
-          [/ul]
-        [/li]
-        [li]
-          ```np.round(x, dec #)```
-          [ul]
-            [li]This function is from the NumPy library and will round the components of an array to a specified decimal placement.[/li]
-            [li]For more information, click the following link: [Using NumPy to round vectors](https://numpy.org/doc/stable/reference/generated/numpy.round_.html)[/li]
-          [/ul]
-        [/li]
-        [li]```np.abs()```
-          [ul]
-            [li]This function will give the absolute value of the variable.[/li]
-            [li]'np.absolute()' can also be used for the same purpose.[/li]
-            [li]More information can be found here: [Absolute value](https://numpy.org/doc/stable/reference/generated/numpy.absolute.html)[/li]
-          [/ul]
-        [/li]
-        [li]'"{:e}".format()'[/li]
-        [li]'print("string", float)'[/li]
-       [/ul]
-
-       [br /]
-       [hr /]
-
-       ## 3. Challenge Problem
-
-       Complete the Challenge Problem for Homework 1 to test your Python on a brand new problem.
-       Try to use the techniques and calculations introduced in this homework section.
-
-       [div className:"centerPara"]
-        **TBD**
-       [/div]
-
-       [br /]
-
-       Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
-       For problems with this guide, contact Mary Span or Dr. Roberts.
-
-      [/div]
-
-       [hr /]
-
-       [div className:"centerPara"]
-         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-         [Physics Department](https://clas.ucdenver.edu/physics/)
          [br /]
-         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-       [/div]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
+
+         [hr /]
+
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW2"]
-     [div className:"centerHead pBwithAside"]
+       [div className:"centerHead pBwithAside"]
 
-       ## Homework 2
+        [div className:"centerPara"]
+         # Homework 2
+        [/div]
 
-       [hr /]
+         [hr /]
 
-       ### Content
+         ## 1. Content
 
-       ### Homework
+         The following PowerPoint highlights the key ideas from Chapter 15: Electric Fields
+         of Distributed Charges in Matter and Interactions. See HW 1 for a review of Chapter 13.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-       ### Challenge Problem
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
 
-      [/div]
-
-       [hr /]
-
-       [div className:"centerPara"]
-         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218469&authkey=AHkMsbwZSVwcdOU&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
          [br /]
-         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-       [/div]
+         [br /]
+             [div class:"frameWidth splitLeft"]
+               [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ULJTDCzKcZA" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+             [/div]
+          [br /]
+          [br /]
+             [div class:"frameWidth splitLeft"]
+               [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/Ta1q5_d-7yM" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+             [/div]
+          [br /]
+          [br /]
+            [div class:"frameWidth splitLeft"]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/i68CGhgGkxs" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+            [/div]
+
+            [div class:"frameWidth splitRight"]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/XSXKk_A3xUM" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+            [/div]
+          [br /]
+          [br /]
+            [div class:"frameWidth splitRight"]
+              [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/B5UyXkFCg5s" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+            [/div]
+
+        [br /]
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 1 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 2](./wiley-homework-2)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 2
+
+         The following Python skills are introduced in Homework 2:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
+         [hr /]
+
+         ## 3. Challenge Problem
+
+         Complete the Challenge Problem for Homework 2 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
+
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
+
+         [br /]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
+
+         [hr /]
+
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW3"]
-     [div className:"centerHead pBwithAside"]
+       [div className:"centerHead pBwithAside"]
 
-       ## Homework 3
+        [div className:"centerPara"]
+         # Homework 3
+        [/div]
 
-       [hr /]
+         [hr /]
 
-       ### Content
+         ## 1. Content
 
-       ### Homework
+         The following PowerPoints highlight the key ideas from Chapter 14: Electric Fields
+         and Matter and Chapter 16: Electric Potential in Matter and Interactions.
+         See HW 1 for a review of Chapter 13 and HW 2 for a review of Chapter 15.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-       ### Challenge Problem
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
 
-      [/div]
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218466&authkey=ANGlEDFKpYy-Dlo&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218475&authkey=ALsiJLFFi0EE7tA&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [hr /]
 
-       [hr /]
+         ## 2. Homework
 
-       [div className:"centerPara"]
-         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-         [Physics Department](https://clas.ucdenver.edu/physics/)
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 1 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 3](./wiley_hw_3)
+         [/div]
+
          [br /]
-         [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-       [/div]
+
+         ### Python Skills in HW 3
+
+         The following Python skills are introduced in Homework 3:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
+         [hr /]
+
+         ## 3. Challenge Problem
+
+         Complete the Challenge Problem for Homework 3 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
+
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
+
+         [br /]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
+
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW4"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.26
+        [div className:"centerPara"]
+         # Homework 4
+        [/div]
 
          [hr /]
 
-         ### Problem
+         ## 1. Content
 
-          You move from location i at [Equation]\langle 1, 4, 4 \rangle[/Equation] m
-          to location f at [Equation]\langle 6, 6, 9 \rangle[/Equation] m. All along this
-          path there is a nearly uniform electric field [Equation]\vec{E} = \langle 1000, 180, -470 \rangle[/Equation]
-          N/C. Calculate [Equation]\Delta V = V_{f} - V_{i}[/Equation], including sign and units.
+         The following PowerPoint highlights the key ideas from Chapter 18: Electric Field and Circuits
+         in Matter and Interactions. See HW 3 for a review of Chapter 16.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
+
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218478&authkey=ADHs6ZH0Lf9r6xc&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 4-1 and 4-2 pages. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 4-1](./wiley_hw_4-1)
+         [/div]
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 4-2](./wiley_hw_4-2)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 4
+
+         The following Python skills are introduced in Homework 4:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
          [hr /]
 
-         ### Computation
+         ## 3. Challenge Problem
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Complete the Challenge Problem for Homework 4 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
 
-          [br /]
+         [br /]
 
-          *Insert Trinket*
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
 
         [/div]
-        [div className:"extraInfo centerHead"]
 
-          ### About this Problem
-
-          [hr /]
-
-            [var name:"extraInfo321" value:"" /]
-
-            [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
-            [/div]
-
-            [br /]
-            [hr fullWidth:true /]
-            [br /]
-
-            [Switch value:extraInfo321]
-              [Default]
-                [div className:"extraInfoBullets"]
-
-                  [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
-                  [/ul]
-                [/div]
-
-              [/Default]
-              [Case test:"Objective"]
-
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
-
-              [/Case]
-              [Case test:"GivenInfo"]
-                 [div className: "extraInfoBullets"]
-                  [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
-                  [/ul]
-                 [/div]
-
-              [/Case]
-              [Case test:"KeyEq"]
-
-                  [div className:"equations"]
-                    [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-                    [/equation]
-
-                    [br /]
-                    [br /]
-
-                    [Equation]
-                    \vec{F} = q\vec{E}
-                    [/Equation]
-                  [/div]
-
-              [/Case]
-              [Case test:"Ref"]
-                 [div className:"extraInfoBullets"]
-                  [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
-                  [/ul]
-                 [/div]
-
-              [/Case]
-           [/Switch]
-          [/div]
-
-          [hr /]
-
-          [div className:"centerPara"]
-            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-            [Physics Department](https://clas.ucdenver.edu/physics/)
-            [br /]
-            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-        [/div]
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW5"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.27
+        [div className:"centerPara"]
+         # Homework 5
+        [/div]
 
          [hr /]
 
-         ### Problem
+         ## 1. Content
 
-          A capacitor with a gap of 1 mm has a potential difference from one plate to the other of 26 volts.
-          What is the magnitude of the electric field between the plates?
+         The following PowerPoint highlights the key ideas from Chapter 19: Circuit Elements
+         in Matter and Interactions. See HW 3 for a review of Chapter 16.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
+
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218480&authkey=AOQwyICHJI1TCEw&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 5 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 5](./wiley_hw_5)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 5
+
+         The following Python skills are introduced in Homework 5:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
          [hr /]
 
-         ### Computation
+         ## 3. Challenge Problem
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Complete the Challenge Problem for Homework 5 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
 
-          [br /]
+         [br /]
 
-          *Insert Trinket*
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
 
         [/div]
-        [div className:"extraInfo centerHead"]
 
-          ### About this Problem
-
-          [hr /]
-
-            [var name:"extraInfo321" value:"" /]
-
-            [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
-            [/div]
-
-            [br /]
-            [hr fullWidth:true /]
-            [br /]
-
-            [Switch value:extraInfo321]
-              [Default]
-                [div className:"extraInfoBullets"]
-
-                  [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
-                  [/ul]
-                [/div]
-
-              [/Default]
-              [Case test:"Objective"]
-
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
-
-              [/Case]
-              [Case test:"GivenInfo"]
-                 [div className: "extraInfoBullets"]
-                  [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
-                  [/ul]
-                 [/div]
-
-              [/Case]
-              [Case test:"KeyEq"]
-
-                  [div className:"equations"]
-                    [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-                    [/equation]
-
-                    [br /]
-                    [br /]
-
-                    [Equation]
-                    \vec{F} = q\vec{E}
-                    [/Equation]
-                  [/div]
-
-              [/Case]
-              [Case test:"Ref"]
-                 [div className:"extraInfoBullets"]
-                  [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
-                  [/ul]
-                 [/div]
-
-              [/Case]
-           [/Switch]
-          [/div]
-
-          [hr /]
-
-          [div className:"centerPara"]
-            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-            [Physics Department](https://clas.ucdenver.edu/physics/)
-            [br /]
-            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-        [/div]
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW6"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.52
+        [div className:"centerPara"]
+         # Homework 6
+        [/div]
 
          [hr /]
 
-         ### Problem
+         ## 1. Content
 
-           [img src:"./static/images/p16.52.png" title:"Problem 16.52 - Matter and Interactions" /]
+         The following PowerPoint highlights the key ideas from Chapter 20: Magnetic Force
+         in Matter and Interactions. For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-           #### Questions
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
 
-            1. What is the magnitude of the electric field in the region between disks 1 and 2?
-            [br /]
-            2. What is the direction of the electric field between disks 1 and 2?
-            [br /]
-            3. Which of the given statements are true?
-            [br /]
-            4. To calculate [Equation]V_{C}-V_{B}[/Equation], which path should you choose?
-            [br /]
-            5. What should the sign of [Equation]V_{C}-V_{B}[/Equation] be?
-            [br /]
-            6. What is the potential difference [Equation]V_{C}-V_{B}[/Equation]?
-            [br /]
-            7. What is the potential difference [Equation]V_{D}-V_{C}[/Equation]?
-            [br /]
-            8. What is the potential difference [Equation]V_{F}-V_{D}[/Equation]?
-            [br /]
-            9. What is the potential difference [Equation]V_{G}-V_{F}[/Equation]?
-            [br /]
-            10. What is the potential difference [Equation]V_{G}-V_{A}[/Equation]?
-            [br /]
-            11. What is the change in potential energy of the system?
-            [br /]
-            12. What is the change in kinetic energy of the electron?
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218482&authkey=ALUi849cvKrw6ks&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [hr /]
 
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 6 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 6](./wiley_hw_6)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 6
+
+         The following Python skills are introduced in Homework 6:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
+         [hr /]
+
+         ## 3. Challenge Problem
+
+         Complete the Challenge Problem for Homework 6 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
+
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
+
+         [br /]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
 
          [hr /]
 
-        [/div]
-        [div className:"extraInfo centerHead"]
-
-          ### About this Problem
-
-          [hr /]
-
-            [var name:"extraInfo321" value:"" /]
-
-            [div className:"tabLookProbs" fullWidth:true]
-             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
-             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
-             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
-             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
-             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
-            [/div]
-
-            [br /]
-            [hr fullWidth:true /]
-            [br /]
-
-            [Switch value:extraInfo321]
-              [Default]
-                [div className:"extraInfoBullets"]
-
-                  [ul]
-                    [li]Vectors: Direction[/li]
-                    [li]Vectors: Fields[/li]
-                    [li]Electric field: Due to Point Charges[/li]
-                  [/ul]
-                [/div]
-
-              [/Default]
-              [Case test:"Objective"]
-
-                Find the sign of the source charge, the direction of the electric
-                force on the charge, the electric field, the electric force, and the direction
-                of the electric force.
-
-              [/Case]
-              [Case test:"GivenInfo"]
-                 [div className: "extraInfoBullets"]
-                  [ul]
-                    [li] Diagram of point charge and electric field.[/li]
-                    [li] Charge of particle placed at a given location.[/li]
-                    [li] Electric field at location D. [/li]
-                  [/ul]
-                 [/div]
-
-              [/Case]
-              [Case test:"KeyEq"]
-
-                  [div className:"equations"]
-                    [Equation text-align:center]
-                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
-                    [/equation]
-
-                    [br /]
-                    [br /]
-
-                    [Equation]
-                    \vec{F} = q\vec{E}
-                    [/Equation]
-                  [/div]
-
-              [/Case]
-              [Case test:"Ref"]
-                 [div className:"extraInfoBullets"]
-                  [ul]
-                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
-                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
-                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
-                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
-                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
-                  [/ul]
-                 [/div]
-
-              [/Case]
-           [/Switch]
-          [/div]
-
-          [hr /]
-
-          [div className:"centerPara"]
-            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-            [Physics Department](https://clas.ucdenver.edu/physics/)
-            [br /]
-            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-        [/div]
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW7"]
+       [div className:"centerHead pBwithAside"]
+
+        [div className:"centerPara"]
+         # Homework 7
+        [/div]
+
+         [hr /]
+
+         ## 1. Content
+
+         The following PowerPoint highlights the key ideas from Chapter 17: Magnetic Field
+         in Matter and Interactions. See HW 6 for a review of Chapter 20.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
+
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
+
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218484&authkey=AI2WszY_IT-RJcQ&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 7 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 7](./wiley_hw_7)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 7
+
+         The following Python skills are introduced in Homework 7:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
+         [hr /]
+
+         ## 3. Challenge Problem
+
+         Complete the Challenge Problem for Homework 7 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
+
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
+
+         [br /]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
+
+         [hr /]
+
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW8"]
+       [div className:"centerHead pBwithAside"]
+
+        [div className:"centerPara"]
+         # Homework 8
+        [/div]
+
+         [hr /]
+
+         ## 1. Content
+
+         The following PowerPoints highlight the key ideas from Chapter 15: Electric Fields
+         of Distributed Charges in Matter and Interactions. See HW 1 for a review of Chapter 13.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
+
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
+
+        [br /]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218486&authkey=AIyYwZZbQp5Gksk&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218488&authkey=AHXS1UfmADcG-Ik&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+        [br /]
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 8 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 8](./wiley_hw_8)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 8
+
+         The following Python skills are introduced in Homework 8:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
+         [hr /]
+
+         ## 3. Challenge Problem
+
+         Complete the Challenge Problem for Homework 8 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
+
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
+
+         [br /]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
+
+         [hr /]
+
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
      [Case test:"HW9"]
+       [div className:"centerHead pBwithAside"]
+
+        [div className:"centerPara"]
+         # Homework 9
+        [/div]
+
+         [hr /]
+
+         ## 1. Content
+
+         The following PowerPoint highlights the key ideas from Chapter 15: Electric Fields
+         of Distributed Charges in Matter and Interactions. See HW 1 for a review of Chapter 13.
+         For more details or examples, navigate to the eBook through
+         your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
+
+         Click through the slides below using the left and right arrow buttons or by clicking
+         on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+         the videos and articles below before moving on to the homework.
+
+        [br /]
+        [hr /]
+
+         ## 2. Homework
+
+         Complete the Essential Skills quiz in Canvas (PHYS 2331 [Equation]>[/Equation] Quizzes [Equation]>[/Equation] Assignment Quizzes).
+
+         Click the link below to go to the computational homework 9 page. This exercise
+         will take you through the required WileyPLUS homework problems with Python. Once
+         you complete each problem, enter the answers into the Wiley homework interface
+         to check your work!
+
+         [div className:"centerPara"]
+            [WileyPLUS Homework 9](./wiley_hw_9)
+         [/div]
+
+         [br /]
+
+         ### Python Skills in HW 9
+
+         The following Python skills are introduced in Homework 9:
+
+         [ul]
+          [li]`TBD`[/li]
+         [/ul]
+
+         [br /]
+         [hr /]
+
+         ## 3. Challenge Problem
+
+         Complete the Challenge Problem for Homework 9 to test your Python on a brand new problem.
+         Try to use the techniques and calculations introduced in this homework section.
+
+         [div className:"centerPara"]
+          **TBD**
+         [/div]
+
+         [br /]
+
+         Need help with any of these problems? Contact Dr. Amy Roberts or a Learning Assistant.
+         For problems with this guide, contact Mary Span or Dr. Roberts.
+
+        [/div]
+
+         [hr /]
+
+         [div className:"footer"]
+           [hr /]
+           //![title](./ucdenverlogo2.png)
+           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [br /]
+           [Physics Department](https://clas.ucdenver.edu/physics/)
+         [/div]
      [/Case]
    [/Switch]
  [/div]
