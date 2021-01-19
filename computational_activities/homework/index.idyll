@@ -69,19 +69,19 @@
 
             [ol]
               [li]
-                Type ```x = 2``` under the ```## Variables``` heading and press the triangle button to run the code.
+                Type `x = 2` under the `## Variables` heading and press the triangle button to run the code.
                 There should be no output displayed. To edit the code, click the pencil button.
 
-                ```x = 2``` means that we are storing the value (2) as a variable
-                that can be called later. Under ```x = 2```, type ```y = 16.2```. This is
+                `x = 2` means that we are storing the value (2) as a variable
+                that can be called later. Under `x = 2`, type `y = 16.2`. This is
                 another variable with a different value.
 
                 For more information, click this link: [Python Variables](https://www.guru99.com/variables-in-python.html#:~:text=A%20Python%20variable%20is%20a,to%20the%20computer%20for%20processing)
               [/li]
               [li]
-                Now type the following under the ```## Calculations``` heading:
+                Now type the following under the `## Calculations` heading:
                 [ul]
-                  [li]```add = x + y```[/li]
+                  [li]`add = x + y`[/li]
                   [li]```subt = y - x```[/li]
                   [li]```mult = y * 32.45 * x```[/li]
                   [li]```div = x/15```[/li]
@@ -180,7 +180,7 @@
          to check your work!
 
          [div className:"centerPara"]
-            [WileyPLUS Homework 1](./Wiley_HW_1_rev2)
+            [WileyPLUS Homework 1](./wiley_HW_1_rev2)
          [/div]
 
          [br /]
@@ -655,8 +655,6 @@
          on the slides. To download a copy, click the Menu button on the bottom right. Then, view
          the videos and articles below before moving on to the homework.
 
-        [br /]
-        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218484&authkey=AI2WszY_IT-RJcQ&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
         [hr /]
 
          ## 2. Homework
@@ -732,9 +730,7 @@
          the videos and articles below before moving on to the homework.
 
         [br /]
-        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218486&authkey=AIyYwZZbQp5Gksk&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
-        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218488&authkey=AHXS1UfmADcG-Ik&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
-        [br /]
+
         [hr /]
 
          ## 2. Homework
