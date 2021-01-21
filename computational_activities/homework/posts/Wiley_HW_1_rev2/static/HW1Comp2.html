@@ -25,7 +25,7 @@
        <li>
          There are a few ways to call a SciPy constant:
          <ol type="a">
-           <li><code>constants.[constant]</code>. <b>Example:</b> <code>q1 = 2*constants.e</code> assigns 1 times the elementary
+           <li><code>constants.[constant]</code>. <b>Example:</b> <code>q1 = 2*constants.e</code> assigns 2 times the elementary
            charge to the q1 variable. This way pertains to the <b>Physical and Mathematical</b> constants listed at the top
            of the SciPy constants page (<a href="https://docs.scipy.org/doc/scipy/reference/constants.html">SciPy Constants</a>).</li>
            <li><code>constants.value(u'[constant]')</code>. <b>Example:</b> <code>p = constants.value(u'proton mass')</code> assigns the proton
@@ -48,7 +48,7 @@
        <li>
          Under <code># First Way</code>, create a variable for the proton location and set it equal to a NumPy array (See 13.21). <b>Hint:</b> set this location at the origin.
          <ol type="a">
-           <li>Add another variable for the electron location and set it equal to a NumPy array. Use the location given in the homework.</li>
+           <li>Add another variable for the electron location and set it equal to a NumPy array. Use the distance given in the homework to figure out the location.</li>
            <li>Add a variable for \(\vec{r}\). Remember that \(\vec{r}\) is found by subtracting the location of the source charge from the observation location.
              Which is which in this question (Proton or electron)? Remember to use the variables you assigned.</li>
            <li>Add a variable for |\(\vec{r}\)|. What is this? The magnitude! Remember that we can use <code>np.linalg.norm()</code> to quickly find the
