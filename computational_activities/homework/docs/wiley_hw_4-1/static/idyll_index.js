@@ -167,6 +167,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     colon: new TokenType(":", beforeExpr),
     dot: new TokenType("."),
     question: new TokenType("?", beforeExpr),
+    questionDot: new TokenType("?."),
     arrow: new TokenType("=>", beforeExpr),
     template: new TokenType("template"),
     invalidTemplate: new TokenType("invalidTemplate"),
@@ -1706,6 +1707,10 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
         this.toAssignable(node.expression, isBinding, refDestructuringErrors);
         break
 
+      case "ChainExpression":
+        this.raiseRecoverable(node.start, "Optional chaining cannot appear in left-hand side");
+        break
+
       case "MemberExpression":
         if (!isBinding) { break }
 
@@ -1834,6 +1839,10 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
         checkClashes[expr.name] = true;
       }
       if (bindingType !== BIND_NONE && bindingType !== BIND_OUTSIDE) { this.declareName(expr.name, bindingType, expr.start); }
+      break
+
+    case "ChainExpression":
+      this.raiseRecoverable(expr.start, "Optional chaining cannot appear in left-hand side");
       break
 
     case "MemberExpression":
@@ -2133,21 +2142,40 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     var maybeAsyncArrow = this.options.ecmaVersion >= 8 && base.type === "Identifier" && base.name === "async" &&
         this.lastTokEnd === base.end && !this.canInsertSemicolon() && base.end - base.start === 5 &&
         this.potentialArrowAt === base.start;
+    var optionalChained = false;
+
     while (true) {
-      var element = this.parseSubscript(base, startPos, startLoc, noCalls, maybeAsyncArrow);
-      if (element === base || element.type === "ArrowFunctionExpression") { return element }
+      var element = this.parseSubscript(base, startPos, startLoc, noCalls, maybeAsyncArrow, optionalChained);
+
+      if (element.optional) { optionalChained = true; }
+      if (element === base || element.type === "ArrowFunctionExpression") {
+        if (optionalChained) {
+          var chainNode = this.startNodeAt(startPos, startLoc);
+          chainNode.expression = element;
+          element = this.finishNode(chainNode, "ChainExpression");
+        }
+        return element
+      }
+
       base = element;
     }
   };
 
-  pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArrow) {
+  pp$3.parseSubscript = function(base, startPos, startLoc, noCalls, maybeAsyncArrow, optionalChained) {
+    var optionalSupported = this.options.ecmaVersion >= 11;
+    var optional = optionalSupported && this.eat(types.questionDot);
+    if (noCalls && optional) { this.raise(this.lastTokStart, "Optional chaining cannot appear in the callee of new expressions"); }
+
     var computed = this.eat(types.bracketL);
-    if (computed || this.eat(types.dot)) {
+    if (computed || (optional && this.type !== types.parenL && this.type !== types.backQuote) || this.eat(types.dot)) {
       var node = this.startNodeAt(startPos, startLoc);
       node.object = base;
       node.property = computed ? this.parseExpression() : this.parseIdent(this.options.allowReserved !== "never");
       node.computed = !!computed;
       if (computed) { this.expect(types.bracketR); }
+      if (optionalSupported) {
+        node.optional = optional;
+      }
       base = this.finishNode(node, "MemberExpression");
     } else if (!noCalls && this.eat(types.parenL)) {
       var refDestructuringErrors = new DestructuringErrors, oldYieldPos = this.yieldPos, oldAwaitPos = this.awaitPos, oldAwaitIdentPos = this.awaitIdentPos;
@@ -2155,7 +2183,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
       this.awaitPos = 0;
       this.awaitIdentPos = 0;
       var exprList = this.parseExprList(types.parenR, this.options.ecmaVersion >= 8, false, refDestructuringErrors);
-      if (maybeAsyncArrow && !this.canInsertSemicolon() && this.eat(types.arrow)) {
+      if (maybeAsyncArrow && !optional && !this.canInsertSemicolon() && this.eat(types.arrow)) {
         this.checkPatternErrors(refDestructuringErrors, false);
         this.checkYieldAwaitInDefaultParams();
         if (this.awaitIdentPos > 0)
@@ -2172,8 +2200,14 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
       var node$1 = this.startNodeAt(startPos, startLoc);
       node$1.callee = base;
       node$1.arguments = exprList;
+      if (optionalSupported) {
+        node$1.optional = optional;
+      }
       base = this.finishNode(node$1, "CallExpression");
     } else if (this.type === types.backQuote) {
+      if (optional || optionalChained) {
+        this.raise(this.start, "Optional chaining cannot appear in the tag of tagged template expressions");
+      }
       var node$2 = this.startNodeAt(startPos, startLoc);
       node$2.tag = base;
       node$2.quasi = this.parseTemplate({isTagged: true});
@@ -2604,7 +2638,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     } else if (!isPattern && !containsEsc &&
                this.options.ecmaVersion >= 5 && !prop.computed && prop.key.type === "Identifier" &&
                (prop.key.name === "get" || prop.key.name === "set") &&
-               (this.type !== types.comma && this.type !== types.braceR)) {
+               (this.type !== types.comma && this.type !== types.braceR && this.type !== types.eq)) {
       if (isGenerator || isAsync) { this.unexpected(); }
       prop.kind = prop.key.name;
       this.parsePropertyName(prop);
@@ -4577,6 +4611,10 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
   pp$9.readToken_question = function() { // '?'
     if (this.options.ecmaVersion >= 11) {
       var next = this.input.charCodeAt(this.pos + 1);
+      if (next === 46) {
+        var next2 = this.input.charCodeAt(this.pos + 2);
+        if (next2 < 48 || next2 > 57) { return this.finishOp(types.questionDot, 2) }
+      }
       if (next === 63) { return this.finishOp(types.coalesce, 2) }
     }
     return this.finishOp(types.question, 1)
@@ -5023,7 +5061,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 
-  var version = "7.1.0";
+  var version = "7.3.1";
 
   Parser.acorn = {
     Parser: Parser,
@@ -6024,7 +6062,7 @@ function compile(schema, root, localRefs, baseId) {
                    + vars(defaults, defaultCode) + vars(customRules, customRuleCode)
                    + sourceCode;
 
-    if (opts.processCode) sourceCode = opts.processCode(sourceCode);
+    if (opts.processCode) sourceCode = opts.processCode(sourceCode, _schema);
     // console.log('\n\n\n *** \n', JSON.stringify(sourceCode));
     var validate;
     try {
@@ -6686,8 +6724,6 @@ module.exports = {
   ucs2length: require('./ucs2length'),
   varOccurences: varOccurences,
   varReplace: varReplace,
-  cleanUpCode: cleanUpCode,
-  finalCleanUpCode: finalCleanUpCode,
   schemaHasRules: schemaHasRules,
   schemaHasRulesExcept: schemaHasRulesExcept,
   schemaUnknownRules: schemaUnknownRules,
@@ -6709,7 +6745,7 @@ function copy(o, to) {
 }
 
 
-function checkDataType(dataType, data, negate) {
+function checkDataType(dataType, data, strictNumbers, negate) {
   var EQUAL = negate ? ' !== ' : ' === '
     , AND = negate ? ' || ' : ' && '
     , OK = negate ? '!' : ''
@@ -6722,15 +6758,18 @@ function checkDataType(dataType, data, negate) {
                           NOT + 'Array.isArray(' + data + '))';
     case 'integer': return '(typeof ' + data + EQUAL + '"number"' + AND +
                            NOT + '(' + data + ' % 1)' +
-                           AND + data + EQUAL + data + ')';
+                           AND + data + EQUAL + data +
+                           (strictNumbers ? (AND + OK + 'isFinite(' + data + ')') : '') + ')';
+    case 'number': return '(typeof ' + data + EQUAL + '"' + dataType + '"' +
+                          (strictNumbers ? (AND + OK + 'isFinite(' + data + ')') : '') + ')';
     default: return 'typeof ' + data + EQUAL + '"' + dataType + '"';
   }
 }
 
 
-function checkDataTypes(dataTypes, data) {
+function checkDataTypes(dataTypes, data, strictNumbers) {
   switch (dataTypes.length) {
-    case 1: return checkDataType(dataTypes[0], data, true);
+    case 1: return checkDataType(dataTypes[0], data, strictNumbers, true);
     default:
       var code = '';
       var types = toHash(dataTypes);
@@ -6743,7 +6782,7 @@ function checkDataTypes(dataTypes, data) {
       }
       if (types.number) delete types.integer;
       for (var t in types)
-        code += (code ? ' && ' : '' ) + checkDataType(t, data, true);
+        code += (code ? ' && ' : '' ) + checkDataType(t, data, strictNumbers, true);
 
       return code;
   }
@@ -6806,42 +6845,6 @@ function varReplace(str, dataVar, expr) {
   dataVar += '([^0-9])';
   expr = expr.replace(/\$/g, '$$$$');
   return str.replace(new RegExp(dataVar, 'g'), expr + '$1');
-}
-
-
-var EMPTY_ELSE = /else\s*{\s*}/g
-  , EMPTY_IF_NO_ELSE = /if\s*\([^)]+\)\s*\{\s*\}(?!\s*else)/g
-  , EMPTY_IF_WITH_ELSE = /if\s*\(([^)]+)\)\s*\{\s*\}\s*else(?!\s*if)/g;
-function cleanUpCode(out) {
-  return out.replace(EMPTY_ELSE, '')
-            .replace(EMPTY_IF_NO_ELSE, '')
-            .replace(EMPTY_IF_WITH_ELSE, 'if (!($1))');
-}
-
-
-var ERRORS_REGEXP = /[^v.]errors/g
-  , REMOVE_ERRORS = /var errors = 0;|var vErrors = null;|validate.errors = vErrors;/g
-  , REMOVE_ERRORS_ASYNC = /var errors = 0;|var vErrors = null;/g
-  , RETURN_VALID = 'return errors === 0;'
-  , RETURN_TRUE = 'validate.errors = null; return true;'
-  , RETURN_ASYNC = /if \(errors === 0\) return data;\s*else throw new ValidationError\(vErrors\);/
-  , RETURN_DATA_ASYNC = 'return data;'
-  , ROOTDATA_REGEXP = /[^A-Za-z_$]rootData[^A-Za-z0-9_$]/g
-  , REMOVE_ROOTDATA = /if \(rootData === undefined\) rootData = data;/;
-
-function finalCleanUpCode(out, async) {
-  var matches = out.match(ERRORS_REGEXP);
-  if (matches && matches.length == 2) {
-    out = async
-          ? out.replace(REMOVE_ERRORS_ASYNC, '')
-               .replace(RETURN_ASYNC, RETURN_DATA_ASYNC)
-          : out.replace(REMOVE_ERRORS, '')
-               .replace(RETURN_VALID, RETURN_TRUE);
-  }
-
-  matches = out.match(ROOTDATA_REGEXP);
-  if (!matches || matches.length !== 3) return out;
-  return out.replace(REMOVE_ROOTDATA, '');
 }
 
 
@@ -6923,7 +6926,7 @@ function getData($data, lvl, paths) {
 
 function joinPaths (a, b) {
   if (a == '""') return b;
-  return (a + ' + ' + b).replace(/' \+ '/g, '');
+  return (a + ' + ' + b).replace(/([^\\])' \+ '/g, '$1');
 }
 
 
@@ -6987,7 +6990,7 @@ module.exports = function (metaSchema, keywordsJsonPointers) {
         keywords[key] = {
           anyOf: [
             schema,
-            { $ref: 'https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#' }
+            { $ref: 'https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#' }
           ]
         };
       }
@@ -7003,7 +7006,7 @@ module.exports = function (metaSchema, keywordsJsonPointers) {
 var metaSchema = require('./refs/json-schema-draft-07.json');
 
 module.exports = {
-  $id: 'https://github.com/epoberezkin/ajv/blob/master/lib/definition_schema.js',
+  $id: 'https://github.com/ajv-validator/ajv/blob/master/lib/definition_schema.js',
   definitions: {
     simpleTypes: metaSchema.definitions.simpleTypes
   },
@@ -7063,6 +7066,12 @@ module.exports = function generate__limit(it, $keyword, $ruleType) {
     $op = $isMax ? '<' : '>',
     $notOp = $isMax ? '>' : '<',
     $errorKeyword = undefined;
+  if (!($isData || typeof $schema == 'number' || $schema === undefined)) {
+    throw new Error($keyword + ' must be number');
+  }
+  if (!($isDataExcl || $schemaExcl === undefined || typeof $schemaExcl == 'number' || typeof $schemaExcl == 'boolean')) {
+    throw new Error($exclusiveKeyword + ' must be number or boolean');
+  }
   if ($isDataExcl) {
     var $schemaValueExcl = it.util.getData($schemaExcl.$data, $dataLvl, it.dataPathArr),
       $exclusive = 'exclusive' + $lvl,
@@ -7215,6 +7224,9 @@ module.exports = function generate__limitItems(it, $keyword, $ruleType) {
   } else {
     $schemaValue = $schema;
   }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
+  }
   var $op = $keyword == 'maxItems' ? '>' : '<';
   out += 'if ( ';
   if ($isData) {
@@ -7293,6 +7305,9 @@ module.exports = function generate__limitLength(it, $keyword, $ruleType) {
     $schemaValue = 'schema' + $lvl;
   } else {
     $schemaValue = $schema;
+  }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
   }
   var $op = $keyword == 'maxLength' ? '>' : '<';
   out += 'if ( ';
@@ -7377,6 +7392,9 @@ module.exports = function generate__limitProperties(it, $keyword, $ruleType) {
     $schemaValue = 'schema' + $lvl;
   } else {
     $schemaValue = $schema;
+  }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
   }
   var $op = $keyword == 'maxProperties' ? '>' : '<';
   out += 'if ( ';
@@ -7478,7 +7496,6 @@ module.exports = function generate_allOf(it, $keyword, $ruleType) {
       out += ' ' + ($closingBraces.slice(0, -1)) + ' ';
     }
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -7549,7 +7566,6 @@ module.exports = function generate_anyOf(it, $keyword, $ruleType) {
     if (it.opts.allErrors) {
       out += ' } ';
     }
-    out = it.util.cleanUpCode(out);
   } else {
     if ($breakOnError) {
       out += ' if (true) { ';
@@ -7712,7 +7728,6 @@ module.exports = function generate_contains(it, $keyword, $ruleType) {
   if (it.opts.allErrors) {
     out += ' } ';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -7966,6 +7981,7 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
     $propertyDeps = {},
     $ownProperties = it.opts.ownProperties;
   for ($property in $schema) {
+    if ($property == '__proto__') continue;
     var $sch = $schema[$property];
     var $deps = Array.isArray($sch) ? $propertyDeps : $schemaDeps;
     $deps[$property] = $sch;
@@ -8112,7 +8128,6 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += '   ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -8433,7 +8448,6 @@ module.exports = function generate_if(it, $keyword, $ruleType) {
     if ($breakOnError) {
       out += ' else { ';
     }
-    out = it.util.cleanUpCode(out);
   } else {
     if ($breakOnError) {
       out += ' if (true) { ';
@@ -8616,7 +8630,6 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += ' ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -8638,6 +8651,9 @@ module.exports = function generate_multipleOf(it, $keyword, $ruleType) {
     $schemaValue = 'schema' + $lvl;
   } else {
     $schemaValue = $schema;
+  }
+  if (!($isData || typeof $schema == 'number')) {
+    throw new Error($keyword + ' must be number');
   }
   out += 'var division' + ($lvl) + ';if (';
   if ($isData) {
@@ -8958,9 +8974,9 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
     $dataNxt = $it.dataLevel = it.dataLevel + 1,
     $nextData = 'data' + $dataNxt,
     $dataProperties = 'dataProperties' + $lvl;
-  var $schemaKeys = Object.keys($schema || {}),
+  var $schemaKeys = Object.keys($schema || {}).filter(notProto),
     $pProperties = it.schema.patternProperties || {},
-    $pPropertyKeys = Object.keys($pProperties),
+    $pPropertyKeys = Object.keys($pProperties).filter(notProto),
     $aProperties = it.schema.additionalProperties,
     $someProperties = $schemaKeys.length || $pPropertyKeys.length,
     $noAdditional = $aProperties === false,
@@ -8970,7 +8986,13 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
     $ownProperties = it.opts.ownProperties,
     $currentBaseId = it.baseId;
   var $required = it.schema.required;
-  if ($required && !(it.opts.$data && $required.$data) && $required.length < it.opts.loopRequired) var $requiredHash = it.util.toHash($required);
+  if ($required && !(it.opts.$data && $required.$data) && $required.length < it.opts.loopRequired) {
+    var $requiredHash = it.util.toHash($required);
+  }
+
+  function notProto(p) {
+    return p !== '__proto__';
+  }
   out += 'var ' + ($errs) + ' = errors;var ' + ($nextValid) + ' = true;';
   if ($ownProperties) {
     out += ' var ' + ($dataProperties) + ' = undefined;';
@@ -9265,7 +9287,6 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += ' ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -9349,7 +9370,6 @@ module.exports = function generate_propertyNames(it, $keyword, $ruleType) {
   if ($breakOnError) {
     out += ' ' + ($closingBraces) + ' if (' + ($errs) + ' == errors) {';
   }
-  out = it.util.cleanUpCode(out);
   return out;
 }
 
@@ -9783,7 +9803,7 @@ module.exports = function generate_uniqueItems(it, $keyword, $ruleType) {
     } else {
       out += ' var itemIndices = {}, item; for (;i--;) { var item = ' + ($data) + '[i]; ';
       var $method = 'checkDataType' + ($typeIsArray ? 's' : '');
-      out += ' if (' + (it.util[$method]($itemType, 'item', true)) + ') continue; ';
+      out += ' if (' + (it.util[$method]($itemType, 'item', it.opts.strictNumbers, true)) + ') continue; ';
       if ($typeIsArray) {
         out += ' if (typeof item == \'string\') item = \'"\' + item; ';
       }
@@ -9991,7 +10011,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
       var $schemaPath = it.schemaPath + '.type',
         $errSchemaPath = it.errSchemaPath + '/type',
         $method = $typeIsArray ? 'checkDataTypes' : 'checkDataType';
-      out += ' if (' + (it.util[$method]($typeSchema, $data, true)) + ') { ';
+      out += ' if (' + (it.util[$method]($typeSchema, $data, it.opts.strictNumbers, true)) + ') { ';
       if ($coerceToTypes) {
         var $dataType = 'dataType' + $lvl,
           $coerced = 'coerced' + $lvl;
@@ -10144,7 +10164,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
         $rulesGroup = arr2[i2 += 1];
         if ($shouldUseGroup($rulesGroup)) {
           if ($rulesGroup.type) {
-            out += ' if (' + (it.util.checkDataType($rulesGroup.type, $data)) + ') { ';
+            out += ' if (' + (it.util.checkDataType($rulesGroup.type, $data, it.opts.strictNumbers)) + ') { ';
           }
           if (it.opts.useDefaults) {
             if ($rulesGroup.type == 'object' && it.schema.properties) {
@@ -10312,10 +10332,6 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
   } else {
     out += ' var ' + ($valid) + ' = errors === errs_' + ($lvl) + ';';
   }
-  out = it.util.cleanUpCode(out);
-  if ($top) {
-    out = it.util.finalCleanUpCode(out, $async);
-  }
 
   function $shouldUseGroup($rulesGroup) {
     var rules = $rulesGroup.rules;
@@ -10384,7 +10400,7 @@ function addKeyword(keyword, definition) {
         metaSchema = {
           anyOf: [
             metaSchema,
-            { '$ref': 'https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#' }
+            { '$ref': 'https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#' }
           ]
         };
       }
@@ -10486,7 +10502,7 @@ function validateKeyword(definition, throwError) {
 },{"./definition_schema":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/definition_schema.js","./dotjs/custom":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/dotjs/custom.js"}],"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/refs/data.json":[function(require,module,exports){
 module.exports={
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/epoberezkin/ajv/master/lib/refs/data.json#",
+    "$id": "https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#",
     "description": "Meta-schema for $data reference (JSON Schema extension proposal)",
     "type": "object",
     "required": [ "$data" ],
@@ -12937,8 +12953,8 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-}).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":"/usr/local/lib/node_modules/idyll/node_modules/is-buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
+}).call(this,{"isBuffer":require("../../insert-module-globals/node_modules/is-buffer/index.js")})
+},{"../../insert-module-globals/node_modules/is-buffer/index.js":"/usr/local/lib/node_modules/idyll/node_modules/insert-module-globals/node_modules/is-buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
 (function (Buffer){
 "use strict";
 
@@ -13025,29 +13041,31 @@ module.exports = ResizeableBuffer;
 
 function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
 
-function isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _construct(Parent, args, Class) { if (isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
 
 function _isNativeFunction(fn) { return Function.toString.call(fn).indexOf("[native code]") !== -1; }
 
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -13061,15 +13079,19 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 /*
 CSV Parse
@@ -13092,6 +13114,8 @@ var bom_utf8 = Buffer.from([239, 187, 191]);
 var Parser = /*#__PURE__*/function (_Transform) {
   _inherits(Parser, _Transform);
 
+  var _super = _createSuper(Parser);
+
   function Parser() {
     var _this;
 
@@ -13099,9 +13123,9 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
     _classCallCheck(this, Parser);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Parser).call(this, _objectSpread({}, {
+    _this = _super.call(this, _objectSpread(_objectSpread({}, {
       readableObjectMode: true
-    }, {}, opts)));
+    }), opts));
     var options = {}; // Merge with user options
 
     for (var opt in opts) {
@@ -13200,18 +13224,22 @@ var Parser = /*#__PURE__*/function (_Transform) {
       return delimiter;
     }); // Normalize option `escape`
 
-    if (options.escape === undefined || options.escape === null) {
+    if (options.escape === undefined || options.escape === true) {
       options.escape = Buffer.from('"');
     } else if (typeof options.escape === 'string') {
       options.escape = Buffer.from(options.escape);
+    } else if (options.escape === null || options.escape === false) {
+      options.escape = null;
     }
 
-    if (!Buffer.isBuffer(options.escape)) {
-      throw new Error("Invalid Option: escape must be a buffer or a string, got ".concat(JSON.stringify(options.escape)));
-    } else if (options.escape.length !== 1) {
-      throw new Error("Invalid Option Length: escape must be one character, got ".concat(options.escape.length));
-    } else {
-      options.escape = options.escape[0];
+    if (options.escape !== null) {
+      if (!Buffer.isBuffer(options.escape)) {
+        throw new Error("Invalid Option: escape must be a buffer, a string or a boolean, got ".concat(JSON.stringify(options.escape)));
+      } else if (options.escape.length !== 1) {
+        throw new Error("Invalid Option Length: escape must be one character, got ".concat(options.escape.length));
+      } else {
+        options.escape = options.escape[0];
+      }
     } // Normalize option `from`
 
 
@@ -13631,7 +13659,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         } else {
           // Escape is only active inside quoted fields
           // We are quoting, the char is an escape chr and there is a chr to escape
-          if (this.state.quoting === true && chr === escape && pos + 1 < bufLen) {
+          if (escape !== null && this.state.quoting === true && chr === escape && pos + 1 < bufLen) {
             if (escapeIsQuote) {
               if (buf[pos + 1] === quote) {
                 this.state.escaping = true;
@@ -13660,7 +13688,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
               // Treat next char as a regular character
               // TODO: need to compare bytes instead of single char
 
-              if (chr === escape && nextChr === quote) {
+              if (escape !== null && chr === escape && nextChr === quote) {
                 pos++;
               } else if (!nextChr || isNextChrDelimiter || isNextChrRowDelimiter || isNextChrComment || isNextChrTrimable) {
                 this.state.quoting = false;
@@ -14332,13 +14360,15 @@ var parse = function parse() {
 var CsvError = /*#__PURE__*/function (_Error) {
   _inherits(CsvError, _Error);
 
+  var _super2 = _createSuper(CsvError);
+
   function CsvError(code, message) {
     var _this2;
 
     _classCallCheck(this, CsvError);
 
     if (Array.isArray(message)) message = message.join(' ');
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(CsvError).call(this, message));
+    _this2 = _super2.call(this, message);
 
     if (Error.captureStackTrace !== undefined) {
       Error.captureStackTrace(_assertThisInitialized(_this2), CsvError);
@@ -16103,16 +16133,16 @@ var bind = require('function-bind');
 
 var GetIntrinsic = require('../GetIntrinsic');
 
-var $Function = GetIntrinsic('%Function%');
-var $apply = $Function.apply;
-var $call = $Function.call;
+var $apply = GetIntrinsic('%Function.prototype.apply%');
+var $call = GetIntrinsic('%Function.prototype.call%');
+var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
 
 module.exports = function callBind() {
-	return bind.apply($call, arguments);
+	return $reflectApply(bind, $call, arguments);
 };
 
 module.exports.apply = function applyBind() {
-	return bind.apply($apply, arguments);
+	return $reflectApply(bind, $apply, arguments);
 };
 
 },{"../GetIntrinsic":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js","function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js":[function(require,module,exports){
@@ -16657,7 +16687,42 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/falafel/index.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js":[function(require,module,exports){
+'use strict';
+
+var isObject = require('is-extendable');
+
+module.exports = function extend(o/*, objects*/) {
+  if (!isObject(o)) { o = {}; }
+
+  var len = arguments.length;
+  for (var i = 1; i < len; i++) {
+    var obj = arguments[i];
+
+    if (isObject(obj)) {
+      assign(o, obj);
+    }
+  }
+  return o;
+};
+
+function assign(a, b) {
+  for (var key in b) {
+    if (hasOwn(b, key)) {
+      a[key] = b[key];
+    }
+  }
+}
+
+/**
+ * Returns true if the given `key` is an own property of `obj`.
+ */
+
+function hasOwn(obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+},{"is-extendable":"/usr/local/lib/node_modules/idyll/node_modules/is-extendable/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/falafel/index.js":[function(require,module,exports){
 var acorn = require('acorn');
 var isArray = require('isarray');
 var objectKeys = require('object-keys');
@@ -17152,7 +17217,7 @@ matter.language = function(str, options) {
 
 module.exports = matter;
 
-},{"./lib/defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./lib/engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./lib/excerpt":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js","./lib/parse":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/parse.js","./lib/stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./lib/to-file":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js","./lib/utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js","fs":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js":[function(require,module,exports){
+},{"./lib/defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./lib/engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./lib/excerpt":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js","./lib/parse":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/parse.js","./lib/stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./lib/to-file":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js","./lib/utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js","fs":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js":[function(require,module,exports){
 'use strict';
 
 var extend = require('extend-shallow');
@@ -17173,7 +17238,7 @@ module.exports = function(options) {
   return opts;
 };
 
-},{"./engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js":[function(require,module,exports){
+},{"./engines":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engines.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js":[function(require,module,exports){
 'use strict';
 
 module.exports = function(name, options) {
@@ -17262,7 +17327,7 @@ engines.javascript = {
   }
 };
 
-},{"extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js","js-yaml":"/usr/local/lib/node_modules/idyll/node_modules/js-yaml/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js":[function(require,module,exports){
+},{"extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js","js-yaml":"/usr/local/lib/node_modules/idyll/node_modules/js-yaml/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/excerpt.js":[function(require,module,exports){
 'use strict';
 
 var defaults = require('./defaults');
@@ -17373,7 +17438,7 @@ function newline(str) {
   return str.slice(-1) !== '\n' ? str + '\n' : str;
 }
 
-},{"./defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./engine":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js":[function(require,module,exports){
+},{"./defaults":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/defaults.js","./engine":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/engine.js","extend-shallow":"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/to-file.js":[function(require,module,exports){
 'use strict';
 
 var typeOf = require('kind-of');
@@ -17437,7 +17502,7 @@ module.exports = function(file) {
   return file;
 };
 
-},{"./stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
+},{"./stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -17503,191 +17568,7 @@ exports.startsWith = function(str, substr, len) {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js","strip-bom-string":"/usr/local/lib/node_modules/idyll/node_modules/strip-bom-string/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/extend-shallow/index.js":[function(require,module,exports){
-'use strict';
-
-var isObject = require('is-extendable');
-
-module.exports = function extend(o/*, objects*/) {
-  if (!isObject(o)) { o = {}; }
-
-  var len = arguments.length;
-  for (var i = 1; i < len; i++) {
-    var obj = arguments[i];
-
-    if (isObject(obj)) {
-      assign(o, obj);
-    }
-  }
-  return o;
-};
-
-function assign(a, b) {
-  for (var key in b) {
-    if (hasOwn(b, key)) {
-      a[key] = b[key];
-    }
-  }
-}
-
-/**
- * Returns true if the given `key` is an own property of `obj`.
- */
-
-function hasOwn(obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-},{"is-extendable":"/usr/local/lib/node_modules/idyll/node_modules/is-extendable/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/node_modules/kind-of/index.js":[function(require,module,exports){
-var toString = Object.prototype.toString;
-
-/**
- * Get the native `typeof` a value.
- *
- * @param  {*} `val`
- * @return {*} Native javascript type
- */
-
-module.exports = function kindOf(val) {
-  var type = typeof val;
-
-  // primitivies
-  if (type === 'undefined') {
-    return 'undefined';
-  }
-  if (val === null) {
-    return 'null';
-  }
-  if (val === true || val === false || val instanceof Boolean) {
-    return 'boolean';
-  }
-  if (type === 'string' || val instanceof String) {
-    return 'string';
-  }
-  if (type === 'number' || val instanceof Number) {
-    return 'number';
-  }
-
-  // functions
-  if (type === 'function' || val instanceof Function) {
-    if (typeof val.constructor.name !== 'undefined' && val.constructor.name.slice(0, 9) === 'Generator') {
-      return 'generatorfunction';
-    }
-    return 'function';
-  }
-
-  // array
-  if (typeof Array.isArray !== 'undefined' && Array.isArray(val)) {
-    return 'array';
-  }
-
-  // check for instances of RegExp and Date before calling `toString`
-  if (val instanceof RegExp) {
-    return 'regexp';
-  }
-  if (val instanceof Date) {
-    return 'date';
-  }
-
-  // other objects
-  type = toString.call(val);
-
-  if (type === '[object RegExp]') {
-    return 'regexp';
-  }
-  if (type === '[object Date]') {
-    return 'date';
-  }
-  if (type === '[object Arguments]') {
-    return 'arguments';
-  }
-  if (type === '[object Error]') {
-    return 'error';
-  }
-  if (type === '[object Promise]') {
-    return 'promise';
-  }
-
-  // buffer
-  if (isBuffer(val)) {
-    return 'buffer';
-  }
-
-  // es6: Map, WeakMap, Set, WeakSet
-  if (type === '[object Set]') {
-    return 'set';
-  }
-  if (type === '[object WeakSet]') {
-    return 'weakset';
-  }
-  if (type === '[object Map]') {
-    return 'map';
-  }
-  if (type === '[object WeakMap]') {
-    return 'weakmap';
-  }
-  if (type === '[object Symbol]') {
-    return 'symbol';
-  }
-  
-  if (type === '[object Map Iterator]') {
-    return 'mapiterator';
-  }
-  if (type === '[object Set Iterator]') {
-    return 'setiterator';
-  }
-  if (type === '[object String Iterator]') {
-    return 'stringiterator';
-  }
-  if (type === '[object Array Iterator]') {
-    return 'arrayiterator';
-  }
-  
-  // typed arrays
-  if (type === '[object Int8Array]') {
-    return 'int8array';
-  }
-  if (type === '[object Uint8Array]') {
-    return 'uint8array';
-  }
-  if (type === '[object Uint8ClampedArray]') {
-    return 'uint8clampedarray';
-  }
-  if (type === '[object Int16Array]') {
-    return 'int16array';
-  }
-  if (type === '[object Uint16Array]') {
-    return 'uint16array';
-  }
-  if (type === '[object Int32Array]') {
-    return 'int32array';
-  }
-  if (type === '[object Uint32Array]') {
-    return 'uint32array';
-  }
-  if (type === '[object Float32Array]') {
-    return 'float32array';
-  }
-  if (type === '[object Float64Array]') {
-    return 'float64array';
-  }
-
-  // must be a plain object
-  return 'object';
-};
-
-/**
- * If you need to support Safari 5-7 (8-10 yr-old browser),
- * take a look at https://github.com/feross/is-buffer
- */
-
-function isBuffer(val) {
-  return val.constructor
-    && typeof val.constructor.isBuffer === 'function'
-    && val.constructor.isBuffer(val);
-}
-
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js":[function(require,module,exports){
+},{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js","strip-bom-string":"/usr/local/lib/node_modules/idyll/node_modules/strip-bom-string/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js":[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -23479,7 +23360,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/is-buffer/index.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/insert-module-globals/node_modules/is-buffer/index.js":[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -43772,6 +43653,155 @@ module.exports = {
 /***/ })
 /******/ ])["default"];
 });
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js":[function(require,module,exports){
+var toString = Object.prototype.toString;
+
+/**
+ * Get the native `typeof` a value.
+ *
+ * @param  {*} `val`
+ * @return {*} Native javascript type
+ */
+
+module.exports = function kindOf(val) {
+  var type = typeof val;
+
+  // primitivies
+  if (type === 'undefined') {
+    return 'undefined';
+  }
+  if (val === null) {
+    return 'null';
+  }
+  if (val === true || val === false || val instanceof Boolean) {
+    return 'boolean';
+  }
+  if (type === 'string' || val instanceof String) {
+    return 'string';
+  }
+  if (type === 'number' || val instanceof Number) {
+    return 'number';
+  }
+
+  // functions
+  if (type === 'function' || val instanceof Function) {
+    if (typeof val.constructor.name !== 'undefined' && val.constructor.name.slice(0, 9) === 'Generator') {
+      return 'generatorfunction';
+    }
+    return 'function';
+  }
+
+  // array
+  if (typeof Array.isArray !== 'undefined' && Array.isArray(val)) {
+    return 'array';
+  }
+
+  // check for instances of RegExp and Date before calling `toString`
+  if (val instanceof RegExp) {
+    return 'regexp';
+  }
+  if (val instanceof Date) {
+    return 'date';
+  }
+
+  // other objects
+  type = toString.call(val);
+
+  if (type === '[object RegExp]') {
+    return 'regexp';
+  }
+  if (type === '[object Date]') {
+    return 'date';
+  }
+  if (type === '[object Arguments]') {
+    return 'arguments';
+  }
+  if (type === '[object Error]') {
+    return 'error';
+  }
+  if (type === '[object Promise]') {
+    return 'promise';
+  }
+
+  // buffer
+  if (isBuffer(val)) {
+    return 'buffer';
+  }
+
+  // es6: Map, WeakMap, Set, WeakSet
+  if (type === '[object Set]') {
+    return 'set';
+  }
+  if (type === '[object WeakSet]') {
+    return 'weakset';
+  }
+  if (type === '[object Map]') {
+    return 'map';
+  }
+  if (type === '[object WeakMap]') {
+    return 'weakmap';
+  }
+  if (type === '[object Symbol]') {
+    return 'symbol';
+  }
+  
+  if (type === '[object Map Iterator]') {
+    return 'mapiterator';
+  }
+  if (type === '[object Set Iterator]') {
+    return 'setiterator';
+  }
+  if (type === '[object String Iterator]') {
+    return 'stringiterator';
+  }
+  if (type === '[object Array Iterator]') {
+    return 'arrayiterator';
+  }
+  
+  // typed arrays
+  if (type === '[object Int8Array]') {
+    return 'int8array';
+  }
+  if (type === '[object Uint8Array]') {
+    return 'uint8array';
+  }
+  if (type === '[object Uint8ClampedArray]') {
+    return 'uint8clampedarray';
+  }
+  if (type === '[object Int16Array]') {
+    return 'int16array';
+  }
+  if (type === '[object Uint16Array]') {
+    return 'uint16array';
+  }
+  if (type === '[object Int32Array]') {
+    return 'int32array';
+  }
+  if (type === '[object Uint32Array]') {
+    return 'uint32array';
+  }
+  if (type === '[object Float32Array]') {
+    return 'float32array';
+  }
+  if (type === '[object Float64Array]') {
+    return 'float64array';
+  }
+
+  // must be a plain object
+  return 'object';
+};
+
+/**
+ * If you need to support Safari 5-7 (8-10 yr-old browser),
+ * take a look at https://github.com/feross/is-buffer
+ */
+
+function isBuffer(val) {
+  return val.constructor
+    && typeof val.constructor.isBuffer === 'function'
+    && val.constructor.isBuffer(val);
+}
+
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/lex/lexer.js":[function(require,module,exports){
 if (typeof module === "object" && typeof module.exports === "object") module.exports = Lexer;
 
@@ -44014,15 +44044,11 @@ module.exports = function (str, locale) {
     Rule.highestId = 0;
 
     Rule.prototype.toString = function(withCursorAt) {
-        function stringifySymbolSequence (e) {
-            return e.literal ? JSON.stringify(e.literal) :
-                   e.type ? '%' + e.type : e.toString();
-        }
         var symbolSequence = (typeof withCursorAt === "undefined")
-                             ? this.symbols.map(stringifySymbolSequence).join(' ')
-                             : (   this.symbols.slice(0, withCursorAt).map(stringifySymbolSequence).join(' ')
+                             ? this.symbols.map(getSymbolShortDisplay).join(' ')
+                             : (   this.symbols.slice(0, withCursorAt).map(getSymbolShortDisplay).join(' ')
                                  + " ● "
-                                 + this.symbols.slice(withCursorAt).map(stringifySymbolSequence).join(' ')     );
+                                 + this.symbols.slice(withCursorAt).map(getSymbolShortDisplay).join(' ')     );
         return this.name + " → " + symbolSequence;
     }
 
@@ -44212,19 +44238,34 @@ module.exports = function (str, locale) {
         // so the culprit is index-1
         var buffer = this.buffer;
         if (typeof buffer === 'string') {
+            var lines = buffer
+                .split("\n")
+                .slice(
+                    Math.max(0, this.line - 5), 
+                    this.line
+                );
+
             var nextLineBreak = buffer.indexOf('\n', this.index);
             if (nextLineBreak === -1) nextLineBreak = buffer.length;
-            var line = buffer.substring(this.lastLineBreak, nextLineBreak)
             var col = this.index - this.lastLineBreak;
+            var lastLineDigits = String(this.line).length;
             message += " at line " + this.line + " col " + col + ":\n\n";
-            message += "  " + line + "\n"
-            message += "  " + Array(col).join(" ") + "^"
+            message += lines
+                .map(function(line, i) {
+                    return pad(this.line - lines.length + i + 1, lastLineDigits) + " " + line;
+                }, this)
+                .join("\n");
+            message += "\n" + pad("", lastLineDigits + col) + "^\n";
             return message;
         } else {
             return message + " at index " + (this.index - 1);
         }
-    }
 
+        function pad(n, length) {
+            var s = String(n);
+            return Array(length - s.length + 1).join(" ") + s;
+        }
+    }
 
     function Parser(rules, start, options) {
         if (rules instanceof Grammar) {
@@ -44268,7 +44309,22 @@ module.exports = function (str, locale) {
         lexer.reset(chunk, this.lexerState);
 
         var token;
-        while (token = lexer.next()) {
+        while (true) {
+            try {
+                token = lexer.next();
+                if (!token) {
+                    break;
+                }
+            } catch (e) {
+                // Create the next column so that the error reporter
+                // can display the correctly predicted states.
+                var nextColumn = new Column(this.grammar, this.current + 1);
+                this.table.push(nextColumn);
+                var err = new Error(this.reportLexerError(e));
+                err.offset = this.current;
+                err.token = e.token;
+                throw err;
+            }
             // We add new states to table[current+1]
             var column = this.table[this.current];
 
@@ -44336,11 +44392,30 @@ module.exports = function (str, locale) {
         return this;
     };
 
+    Parser.prototype.reportLexerError = function(lexerError) {
+        var tokenDisplay, lexerMessage;
+        // Planning to add a token property to moo's thrown error
+        // even on erroring tokens to be used in error display below
+        var token = lexerError.token;
+        if (token) {
+            tokenDisplay = "input " + JSON.stringify(token.text[0]) + " (lexer error)";
+            lexerMessage = this.lexer.formatError(token, "Syntax error");
+        } else {
+            tokenDisplay = "input (lexer error)";
+            lexerMessage = lexerError.message;
+        }
+        return this.reportErrorCommon(lexerMessage, tokenDisplay);
+    };
+
     Parser.prototype.reportError = function(token) {
-        var lines = [];
         var tokenDisplay = (token.type ? token.type + " token: " : "") + JSON.stringify(token.value !== undefined ? token.value : token);
-        lines.push(this.lexer.formatError(token, "Syntax error"));
-        lines.push('Unexpected ' + tokenDisplay + '. Instead, I was expecting to see one of the following:\n');
+        var lexerMessage = this.lexer.formatError(token, "Syntax error");
+        return this.reportErrorCommon(lexerMessage, tokenDisplay);
+    };
+
+    Parser.prototype.reportErrorCommon = function(lexerMessage, tokenDisplay) {
+        var lines = [];
+        lines.push(lexerMessage);
         var lastColumnIndex = this.table.length - 2;
         var lastColumn = this.table[lastColumnIndex];
         var expectantStates = lastColumn.states
@@ -44349,26 +44424,31 @@ module.exports = function (str, locale) {
                 return nextSymbol && typeof nextSymbol !== "string";
             });
 
-        // Display a "state stack" for each expectant state
-        // - which shows you how this state came to be, step by step.
-        // If there is more than one derivation, we only display the first one.
-        var stateStacks = expectantStates
-            .map(function(state) {
-                return this.buildFirstStateStack(state, []) || [state];
+        if (expectantStates.length === 0) {
+            lines.push('Unexpected ' + tokenDisplay + '. I did not expect any more input. Here is the state of my parse table:\n');
+            this.displayStateStack(lastColumn.states, lines);
+        } else {
+            lines.push('Unexpected ' + tokenDisplay + '. Instead, I was expecting to see one of the following:\n');
+            // Display a "state stack" for each expectant state
+            // - which shows you how this state came to be, step by step.
+            // If there is more than one derivation, we only display the first one.
+            var stateStacks = expectantStates
+                .map(function(state) {
+                    return this.buildFirstStateStack(state, []) || [state];
+                }, this);
+            // Display each state that is expecting a terminal symbol next.
+            stateStacks.forEach(function(stateStack) {
+                var state = stateStack[0];
+                var nextSymbol = state.rule.symbols[state.dot];
+                var symbolDisplay = this.getSymbolDisplay(nextSymbol);
+                lines.push('A ' + symbolDisplay + ' based on:');
+                this.displayStateStack(stateStack, lines);
             }, this);
-        // Display each state that is expecting a terminal symbol next.
-        stateStacks.forEach(function(stateStack) {
-            var state = stateStack[0];
-            var nextSymbol = state.rule.symbols[state.dot];
-            var symbolDisplay = this.getSymbolDisplay(nextSymbol);
-            lines.push('A ' + symbolDisplay + ' based on:');
-            this.displayStateStack(stateStack, lines);
-        }, this);
-
+        }
         lines.push("");
         return lines.join("\n");
-    };
-
+    }
+    
     Parser.prototype.displayStateStack = function(stateStack, lines) {
         var lastDisplay;
         var sameDisplayCount = 0;
@@ -44379,7 +44459,7 @@ module.exports = function (str, locale) {
                 sameDisplayCount++;
             } else {
                 if (sameDisplayCount > 0) {
-                    lines.push('    ⬆ ︎' + sameDisplayCount + ' more lines identical to this');
+                    lines.push('    ^ ' + sameDisplayCount + ' more lines identical to this');
                 }
                 sameDisplayCount = 0;
                 lines.push('    ' + display);
@@ -44389,18 +44469,7 @@ module.exports = function (str, locale) {
     };
 
     Parser.prototype.getSymbolDisplay = function(symbol) {
-        var type = typeof symbol;
-        if (type === "string") {
-            return symbol;
-        } else if (type === "object" && symbol.literal) {
-            return JSON.stringify(symbol.literal);
-        } else if (type === "object" && symbol instanceof RegExp) {
-            return 'character matching ' + symbol;
-        } else if (type === "object" && symbol.type) {
-            return symbol.type + ' token';
-        } else {
-            throw new Error('Unknown symbol type: ' + symbol);
-        }
+        return getSymbolLongDisplay(symbol);
     };
 
     /*
@@ -44475,6 +44544,44 @@ module.exports = function (str, locale) {
         });
         return considerations.map(function(c) {return c.data; });
     };
+
+    function getSymbolLongDisplay(symbol) {
+        var type = typeof symbol;
+        if (type === "string") {
+            return symbol;
+        } else if (type === "object") {
+            if (symbol.literal) {
+                return JSON.stringify(symbol.literal);
+            } else if (symbol instanceof RegExp) {
+                return 'character matching ' + symbol;
+            } else if (symbol.type) {
+                return symbol.type + ' token';
+            } else if (symbol.test) {
+                return 'token matching ' + String(symbol.test);
+            } else {
+                throw new Error('Unknown symbol type: ' + symbol);
+            }
+        }
+    }
+
+    function getSymbolShortDisplay(symbol) {
+        var type = typeof symbol;
+        if (type === "string") {
+            return symbol;
+        } else if (type === "object") {
+            if (symbol.literal) {
+                return JSON.stringify(symbol.literal);
+            } else if (symbol instanceof RegExp) {
+                return symbol.toString();
+            } else if (symbol.type) {
+                return '%' + symbol.type;
+            } else if (symbol.test) {
+                return '<' + String(symbol.test) + '>';
+            } else {
+                throw new Error('Unknown symbol type: ' + symbol);
+            }
+        }
+    }
 
     return {
         Parser: Parser,
@@ -78698,12 +78805,21 @@ var runtime = (function (exports) {
     IteratorPrototype = NativeIteratorPrototype;
   }
 
+  function ensureDefaultToStringTag(object, defaultValue) {
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1644581#c6
+    return toStringTagSymbol in object
+      ? object[toStringTagSymbol]
+      : object[toStringTagSymbol] = defaultValue;
+  }
+
   var Gp = GeneratorFunctionPrototype.prototype =
     Generator.prototype = Object.create(IteratorPrototype);
   GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
   GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunctionPrototype[toStringTagSymbol] =
-    GeneratorFunction.displayName = "GeneratorFunction";
+  GeneratorFunction.displayName = ensureDefaultToStringTag(
+    GeneratorFunctionPrototype,
+    "GeneratorFunction"
+  );
 
   // Helper for defining the .next, .throw, and .return methods of the
   // Iterator interface in terms of a single ._invoke method.
@@ -78730,9 +78846,7 @@ var runtime = (function (exports) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
       genFun.__proto__ = GeneratorFunctionPrototype;
-      if (!(toStringTagSymbol in genFun)) {
-        genFun[toStringTagSymbol] = "GeneratorFunction";
-      }
+      ensureDefaultToStringTag(genFun, "GeneratorFunction");
     }
     genFun.prototype = Object.create(Gp);
     return genFun;
@@ -79002,7 +79116,7 @@ var runtime = (function (exports) {
   // unified ._invoke helper method.
   defineIteratorMethods(Gp);
 
-  Gp[toStringTagSymbol] = "Generator";
+  ensureDefaultToStringTag(Gp, "Generator");
 
   // A Generator should always return itself as the iterator object when the
   // @@iterator function is called on it. Some browsers' implementations of the
@@ -83525,7 +83639,7 @@ ReactDOM[mountMethod](React.createElement(IdyllDocument, {
 },{"__IDYLL_AST__":"__IDYLL_AST__","__IDYLL_COMPONENTS__":"__IDYLL_COMPONENTS__","__IDYLL_CONTEXT__":"__IDYLL_CONTEXT__","__IDYLL_DATA__":"__IDYLL_DATA__","__IDYLL_OPTS__":"__IDYLL_OPTS__","__IDYLL_SYNTAX_HIGHLIGHT__":"__IDYLL_SYNTAX_HIGHLIGHT__","idyll-document":"/usr/local/lib/node_modules/idyll/node_modules/idyll-document/dist/cjs/index.js","react":"react","react-dom":"react-dom","regenerator-runtime/runtime":"/usr/local/lib/node_modules/idyll/node_modules/regenerator-runtime/runtime.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1633" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1635" }, "value": { "type": "value", "value": "" } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1640" }, "value": { "type": "value", "value": "" } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1666" }, "value": { "type": "value", "value": "" } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1666a" }, "value": { "type": "value", "value": "" } } }, { "id": 8, "type": "component", "name": "TextContainer", "children": [{ "id": 9, "type": "meta", "properties": { "title": { "type": "value", "value": "Wiley_HW_4-1" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 10, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "WileyPlus Homework 4-1" }, "subtitle": { "type": "value", "value": "Solving problems with Python" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0B465F" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 11, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 12, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 13, "type": "textnode", "value": "Main Problem Page" }] }, { "id": 14, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.33\"" } }, "children": [{ "id": 15, "type": "textnode", "value": "16.33" }] }, { "id": 16, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.35\"" } }, "children": [{ "id": 17, "type": "textnode", "value": "16.35" }] }, { "id": 18, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.40\"" } }, "children": [{ "id": 19, "type": "textnode", "value": "16.40" }] }, { "id": 20, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.66\"" } }, "children": [{ "id": 21, "type": "textnode", "value": "16.66" }] }, { "id": 22, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.66alt\"" } }, "children": [{ "id": 23, "type": "textnode", "value": "16.66 Alt01" }] }] }, { "id": 24, "type": "component", "name": "TextContainer", "children": [{ "id": 25, "type": "component", "name": "br", "children": [] }, { "id": 26, "type": "component", "name": "br", "children": [] }] }, { "id": 27, "type": "component", "name": "hr", "children": [] }, { "id": 28, "type": "component", "name": "TextContainer", "children": [{ "id": 29, "type": "component", "name": "br", "children": [] }] }, { "id": 30, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "value", "value": "100%" } }, "children": [{ "id": 31, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 32, "type": "component", "name": "Default", "children": [{ "id": 33, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 34, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "mainNote" } }, "children": [{ "id": 35, "type": "textnode", "value": "\n        Please complete the " }, { "id": 36, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 37, "type": "textnode", "value": "Feedback Form" }] }, { "id": 38, "type": "textnode", "value": " after using this resource to complete Homework 4-1.\n       " }] }, { "id": 39, "type": "component", "name": "h2", "children": [{ "id": 40, "type": "textnode", "value": "Problem Pages" }] }, { "id": 41, "type": "component", "name": "p", "children": [{ "id": 42, "type": "textnode", "value": "Click the tabs to go to a specific homework problem page.\n           The problems are included in Homework 4-1 through WileyPlus. Work\n           through the problems by hand first using the given information, key equations,\n           and references listed. Then, try to use Python to solve the same problem." }] }, { "id": 43, "type": "component", "name": "p", "children": [{ "id": 44, "type": "textnode", "value": "Each problem page has the following sections:" }] }, { "id": 45, "type": "component", "name": "h4", "children": [{ "id": 46, "type": "textnode", "value": "Skills involved" }] }, { "id": 47, "type": "component", "name": "p", "children": [{ "id": 48, "type": "textnode", "value": "The skills involved in the particular homework problem will be tagged\n           with other problems in the course that deal with the same content\n           (" }, { "id": 49, "type": "component", "name": "em", "children": [{ "id": 50, "type": "textnode", "value": "TO DO" }] }, { "id": 51, "type": "textnode", "value": "). Click these to find more problems in these areas. It may\n           help to look at the Resources page for videos and simulations that\n           target specific skills these homework problems involve." }] }, { "id": 52, "type": "component", "name": "h4", "children": [{ "id": 53, "type": "textnode", "value": "Problem" }] }, { "id": 54, "type": "component", "name": "p", "children": [{ "id": 55, "type": "textnode", "value": "The problems will be listed as they are seen in WileyPlus. Note that\n           the values will change for " }, { "id": 56, "type": "component", "name": "em", "children": [{ "id": 57, "type": "textnode", "value": "each" }] }, { "id": 58, "type": "textnode", "value": " problem." }] }, { "id": 59, "type": "component", "name": "p", "children": [{ "id": 60, "type": "textnode", "value": "This section also includes a computation section." }] }, { "id": 61, "type": "component", "name": "h4", "children": [{ "id": 62, "type": "textnode", "value": "Important information" }] }, { "id": 63, "type": "component", "name": "p", "children": [{ "id": 64, "type": "textnode", "value": "To solve the homework problems, there are several areas that need to\n           be understood. To help, the following sections are available:" }] }, { "id": 65, "type": "component", "name": "ul", "children": [{ "id": 66, "type": "component", "name": "li", "children": [{ "id": 67, "type": "textnode", "value": " " }, { "id": 68, "type": "component", "name": "strong", "children": [{ "id": 69, "type": "textnode", "value": "Objective" }] }, { "id": 70, "type": "textnode", "value": ": summarizes what the question is asking. " }] }, { "id": 71, "type": "component", "name": "li", "children": [{ "id": 72, "type": "textnode", "value": " " }, { "id": 73, "type": "component", "name": "strong", "children": [{ "id": 74, "type": "textnode", "value": "Key Equations" }] }, { "id": 75, "type": "textnode", "value": ": lists the equations that may help in solving\n             and understanding the problem. " }] }, { "id": 76, "type": "component", "name": "li", "children": [{ "id": 77, "type": "textnode", "value": " " }, { "id": 78, "type": "component", "name": "strong", "children": [{ "id": 79, "type": "textnode", "value": "References" }] }, { "id": 80, "type": "textnode", "value": ": lists the pages of the book where\n             explanations of the concepts in the homework can be found. It may\n             also include outside references that may be useful. " }] }, { "id": 81, "type": "component", "name": "li", "children": [{ "id": 82, "type": "textnode", "value": " " }, { "id": 83, "type": "component", "name": "strong", "children": [{ "id": 84, "type": "textnode", "value": "Things to Think About" }] }, { "id": 85, "type": "textnode", "value": ": covers tricky aspects of the\n             question that may lead to incorrect answers. Thinking about these\n             may help in solving the question faster. " }] }] }, { "id": 86, "type": "component", "name": "h2", "children": [{ "id": 87, "type": "textnode", "value": "Resources" }] }, { "id": 88, "type": "component", "name": "p", "children": [{ "id": 89, "type": "textnode", "value": "Need help doing physics problems in Python? Visit the Computational Activities pages." }] }, { "id": 90, "type": "component", "name": "p", "children": [{ "id": 91, "type": "textnode", "value": "Need help doing the physics problems? Check out the resources section\n           on each problem page for specific text entries in Matter and Interactions\n           and any outside resource that may help in solving them. Visit the resources\n           page for videos and simulations about the specific physics problem." }] }, { "id": 92, "type": "component", "name": "hr", "children": [] }, { "id": 93, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 94, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 95, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 96, "type": "textnode", "value": "Physics Department" }] }, { "id": 97, "type": "component", "name": "br", "children": [] }, { "id": 98, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 99, "type": "textnode", "value": "Feedback Form" }] }] }] }] }, { "id": 100, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.33" } }, "children": [{ "id": 101, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 102, "type": "component", "name": "h2", "children": [{ "id": 103, "type": "textnode", "value": "1" }, { "id": 104, "type": "textnode", "value": "6" }, { "id": 105, "type": "textnode", "value": "." }, { "id": 106, "type": "textnode", "value": "3" }, { "id": 107, "type": "textnode", "value": "3" }] }, { "id": 108, "type": "component", "name": "hr", "children": [] }, { "id": 109, "type": "component", "name": "h3", "children": [{ "id": 110, "type": "textnode", "value": "Problem" }] }, { "id": 111, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.33.png" }, "title": { "type": "value", "value": "Problem 16.33 - Matter and Interactions" } }, "children": [] }, { "id": 112, "type": "component", "name": "br", "children": [] }, { "id": 113, "type": "component", "name": "hr", "children": [] }, { "id": 114, "type": "component", "name": "h3", "children": [{ "id": 115, "type": "textnode", "value": "Computation" }] }, { "id": 116, "type": "component", "name": "p", "children": [{ "id": 117, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n         above. Need help with python? See Physics Fundamentals (" }, { "id": 118, "type": "component", "name": "em", "children": [{ "id": 119, "type": "textnode", "value": "NEED LINK" }] }, { "id": 120, "type": "textnode", "value": ") for\n         ideas on how to solve this problem with python. Reveal the answer by\n         clicking the button below to see if you got the right answer!" }] }, { "id": 121, "type": "component", "name": "ul", "children": [{ "id": 122, "type": "component", "name": "li", "children": [{ "id": 123, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 124, "type": "component", "name": "li", "children": [{ "id": 125, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 126, "type": "component", "name": "li", "children": [{ "id": 127, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n           given in WileyPLUS before submitting the answers." }] }] }, { "id": 128, "type": "component", "name": "br", "children": [] }, { "id": 129, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/761e6980d9?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 130, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 131, "type": "component", "name": "h3", "children": [{ "id": 132, "type": "textnode", "value": "About this Problem" }] }, { "id": 133, "type": "component", "name": "hr", "children": [] }, { "id": 134, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 135, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"\"" } }, "children": [{ "id": 136, "type": "textnode", "value": "Skills Involved" }] }, { "id": 137, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"Objective\"" } }, "children": [{ "id": 138, "type": "textnode", "value": "Objective" }] }, { "id": 139, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"GivenInfo\"" } }, "children": [{ "id": 140, "type": "textnode", "value": "Given Information" }] }, { "id": 141, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"KeyEq\"" } }, "children": [{ "id": 142, "type": "textnode", "value": "Key Equations" }] }, { "id": 143, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"Ref\"" } }, "children": [{ "id": 144, "type": "textnode", "value": "References" }] }] }, { "id": 145, "type": "component", "name": "br", "children": [] }, { "id": 146, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 147, "type": "component", "name": "br", "children": [] }, { "id": 148, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1633" } }, "children": [{ "id": 149, "type": "component", "name": "Default", "children": [{ "id": 150, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 151, "type": "component", "name": "ul", "children": [{ "id": 152, "type": "component", "name": "li", "children": [{ "id": 153, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 154, "type": "component", "name": "li", "children": [{ "id": 155, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 156, "type": "component", "name": "li", "children": [{ "id": 157, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 158, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 159, "type": "textnode", "value": "Find the magnitude of the electric field in the region between A and B." }] }, { "id": 160, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 161, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 162, "type": "component", "name": "ul", "children": [{ "id": 163, "type": "component", "name": "li", "children": [{ "id": 164, "type": "textnode", "value": " The electric field is uniform." }] }, { "id": 165, "type": "component", "name": "li", "children": [{ "id": 166, "type": "textnode", "value": " Change in potential." }] }] }] }] }, { "id": 167, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 168, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 169, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 170, "type": "textnode", "value": "\\vec{E} = \\frac{V}{m}" }] }] }] }, { "id": 171, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 172, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 173, "type": "component", "name": "ul", "children": [{ "id": 174, "type": "component", "name": "li", "children": [{ "id": 175, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 176, "type": "component", "name": "li", "children": [{ "id": 177, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 178, "type": "component", "name": "li", "children": [{ "id": 179, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 180, "type": "component", "name": "li", "children": [{ "id": 181, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 182, "type": "component", "name": "li", "children": [{ "id": 183, "type": "textnode", "value": " " }, { "id": 184, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 185, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 186, "type": "component", "name": "hr", "children": [] }, { "id": 187, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 188, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 189, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 190, "type": "textnode", "value": "Physics Department" }] }, { "id": 191, "type": "component", "name": "br", "children": [] }, { "id": 192, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 193, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 194, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.35" } }, "children": [{ "id": 195, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 196, "type": "component", "name": "h2", "children": [{ "id": 197, "type": "textnode", "value": "1" }, { "id": 198, "type": "textnode", "value": "6" }, { "id": 199, "type": "textnode", "value": "." }, { "id": 200, "type": "textnode", "value": "3" }, { "id": 201, "type": "textnode", "value": "5" }] }, { "id": 202, "type": "component", "name": "hr", "children": [] }, { "id": 203, "type": "component", "name": "h3", "children": [{ "id": 204, "type": "textnode", "value": "Problem" }] }, { "id": 205, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 206, "type": "textnode", "value": "\n             If the electric field exceeds about " }, { "id": 207, "type": "component", "name": "equation", "children": [{ "id": 208, "type": "textnode", "value": "3 \\times 10^{6}" }] }, { "id": 209, "type": "textnode", "value": " N/C in air,\n             a spark occurs. Approximately, what is the maximum possible potential difference between\n             the plates of a capacitor whose gap is 4 mm, without causing a spark in the air between them?\n          " }] }, { "id": 210, "type": "component", "name": "h3", "children": [{ "id": 211, "type": "textnode", "value": "Computation" }] }, { "id": 212, "type": "component", "name": "p", "children": [{ "id": 213, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 214, "type": "component", "name": "em", "children": [{ "id": 215, "type": "textnode", "value": "NEED LINK" }] }, { "id": 216, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 217, "type": "component", "name": "br", "children": [] }, { "id": 218, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/341e7bf6e4?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 219, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 220, "type": "component", "name": "h3", "children": [{ "id": 221, "type": "textnode", "value": "About this Problem" }] }, { "id": 222, "type": "component", "name": "hr", "children": [] }, { "id": 223, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 224, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"\"" } }, "children": [{ "id": 225, "type": "textnode", "value": "Skills Involved" }] }, { "id": 226, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"Objective\"" } }, "children": [{ "id": 227, "type": "textnode", "value": "Objective" }] }, { "id": 228, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"GivenInfo\"" } }, "children": [{ "id": 229, "type": "textnode", "value": "Given Information" }] }, { "id": 230, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"KeyEq\"" } }, "children": [{ "id": 231, "type": "textnode", "value": "Key Equations" }] }, { "id": 232, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"Ref\"" } }, "children": [{ "id": 233, "type": "textnode", "value": "References" }] }] }, { "id": 234, "type": "component", "name": "br", "children": [] }, { "id": 235, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 236, "type": "component", "name": "br", "children": [] }, { "id": 237, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1635" } }, "children": [{ "id": 238, "type": "component", "name": "Default", "children": [{ "id": 239, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 240, "type": "component", "name": "ul", "children": [{ "id": 241, "type": "component", "name": "li", "children": [{ "id": 242, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 243, "type": "component", "name": "li", "children": [{ "id": 244, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 245, "type": "component", "name": "li", "children": [{ "id": 246, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 247, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 248, "type": "textnode", "value": "Find the maximum potential difference between the plates of a capacitor\n           without causing a spark in the air." }] }, { "id": 249, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 250, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 251, "type": "component", "name": "ul", "children": [{ "id": 252, "type": "component", "name": "li", "children": [{ "id": 253, "type": "textnode", "value": " Max electric field without a spark." }] }, { "id": 254, "type": "component", "name": "li", "children": [{ "id": 255, "type": "textnode", "value": " Capacitor gap distance." }] }] }] }] }, { "id": 256, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 257, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 258, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 259, "type": "textnode", "value": "\\vec{E} = \\frac{1}{4\\pi\\epsilon_{0}} \\frac{q}{|\\vec{r}|^{2}} \\hat{r}" }] }] }] }, { "id": 260, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 261, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 262, "type": "component", "name": "ul", "children": [{ "id": 263, "type": "component", "name": "li", "children": [{ "id": 264, "type": "textnode", "value": " Electric Field of a Point Charge (Matter and Interactions, p. 519)" }] }, { "id": 265, "type": "component", "name": "li", "children": [{ "id": 266, "type": "textnode", "value": " Magnitude of Electric Field (Matter and Interactions, p. 520)" }] }, { "id": 267, "type": "component", "name": "li", "children": [{ "id": 268, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }] }] }] }] }] }, { "id": 269, "type": "component", "name": "hr", "children": [] }, { "id": 270, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 271, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 272, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 273, "type": "textnode", "value": "Physics Department" }] }, { "id": 274, "type": "component", "name": "br", "children": [] }, { "id": 275, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 276, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 277, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.40" } }, "children": [{ "id": 278, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 279, "type": "component", "name": "h2", "children": [{ "id": 280, "type": "textnode", "value": "1" }, { "id": 281, "type": "textnode", "value": "6" }, { "id": 282, "type": "textnode", "value": "." }, { "id": 283, "type": "textnode", "value": "4" }, { "id": 284, "type": "textnode", "value": "0" }] }, { "id": 285, "type": "component", "name": "hr", "children": [] }, { "id": 286, "type": "component", "name": "h3", "children": [{ "id": 287, "type": "textnode", "value": "Problem" }] }, { "id": 288, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.40.png" }, "title": { "type": "value", "value": "Problem 16.40 - Matter and Interactions" } }, "children": [] }, { "id": 289, "type": "component", "name": "br", "children": [] }, { "id": 290, "type": "component", "name": "hr", "children": [] }, { "id": 291, "type": "component", "name": "h3", "children": [{ "id": 292, "type": "textnode", "value": "Computation" }] }, { "id": 293, "type": "component", "name": "p", "children": [{ "id": 294, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 295, "type": "component", "name": "em", "children": [{ "id": 296, "type": "textnode", "value": "NEED LINK" }] }, { "id": 297, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 298, "type": "component", "name": "p", "children": [{ "id": 299, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 300, "type": "component", "name": "br", "children": [] }, { "id": 301, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/c62b6c5a50?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 302, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 303, "type": "component", "name": "h3", "children": [{ "id": 304, "type": "textnode", "value": "About this Problem" }] }, { "id": 305, "type": "component", "name": "hr", "children": [] }, { "id": 306, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 307, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"\"" } }, "children": [{ "id": 308, "type": "textnode", "value": "Skills Involved" }] }, { "id": 309, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"Objective\"" } }, "children": [{ "id": 310, "type": "textnode", "value": "Objective" }] }, { "id": 311, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"GivenInfo\"" } }, "children": [{ "id": 312, "type": "textnode", "value": "Given Information" }] }, { "id": 313, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"KeyEq\"" } }, "children": [{ "id": 314, "type": "textnode", "value": "Key Equations" }] }, { "id": 315, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"Ref\"" } }, "children": [{ "id": 316, "type": "textnode", "value": "References" }] }] }, { "id": 317, "type": "component", "name": "br", "children": [] }, { "id": 318, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 319, "type": "component", "name": "br", "children": [] }, { "id": 320, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1640" } }, "children": [{ "id": 321, "type": "component", "name": "Default", "children": [{ "id": 322, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 323, "type": "component", "name": "ul", "children": [{ "id": 324, "type": "component", "name": "li", "children": [{ "id": 325, "type": "textnode", "value": "Force" }] }, { "id": 326, "type": "component", "name": "li", "children": [{ "id": 327, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 328, "type": "component", "name": "li", "children": [{ "id": 329, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 330, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 331, "type": "textnode", "value": "Find the velocity of the electrons accelerating through the plates." }] }, { "id": 332, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 333, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 334, "type": "component", "name": "ul", "children": [{ "id": 335, "type": "component", "name": "li", "children": [{ "id": 336, "type": "textnode", "value": " Electrons are accelerating toward a positive plate. " }] }, { "id": 337, "type": "component", "name": "li", "children": [{ "id": 338, "type": "textnode", "value": " Potential difference between two plates." }] }] }] }] }, { "id": 339, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 340, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 341, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 342, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 343, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 344, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 345, "type": "component", "name": "ul", "children": [{ "id": 346, "type": "component", "name": "li", "children": [{ "id": 347, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 348, "type": "component", "name": "li", "children": [{ "id": 349, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 350, "type": "component", "name": "li", "children": [{ "id": 351, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 352, "type": "component", "name": "hr", "children": [] }, { "id": 353, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 354, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 355, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 356, "type": "textnode", "value": "Physics Department" }] }, { "id": 357, "type": "component", "name": "br", "children": [] }, { "id": 358, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 359, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 360, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.66" } }, "children": [{ "id": 361, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 362, "type": "component", "name": "h2", "children": [{ "id": 363, "type": "textnode", "value": "1" }, { "id": 364, "type": "textnode", "value": "6" }, { "id": 365, "type": "textnode", "value": "." }, { "id": 366, "type": "textnode", "value": "6" }, { "id": 367, "type": "textnode", "value": "6" }] }, { "id": 368, "type": "component", "name": "hr", "children": [] }, { "id": 369, "type": "component", "name": "h3", "children": [{ "id": 370, "type": "textnode", "value": "Problem" }] }, { "id": 371, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.66.png" }, "title": { "type": "value", "value": "Problem 16.66 - Matter and Interactions" } }, "children": [] }, { "id": 372, "type": "component", "name": "br", "children": [] }, { "id": 373, "type": "component", "name": "h4", "children": [{ "id": 374, "type": "textnode", "value": "Questions" }] }, { "id": 375, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 376, "type": "component", "name": "p", "children": [{ "id": 377, "type": "textnode", "value": "a) What is the electric field inside the capacitor?" }] }, { "id": 378, "type": "component", "name": "p", "children": [{ "id": 379, "type": "textnode", "value": "b) What is " }, { "id": 380, "type": "component", "name": "equation", "children": [{ "id": 381, "type": "textnode", "value": "\\Delta \\vec{l}" }] }, { "id": 382, "type": "textnode", "value": " along the " }, { "id": 383, "type": "component", "name": "equation", "children": [{ "id": 384, "type": "textnode", "value": "V_{B}-V_{A}" }] }, { "id": 385, "type": "textnode", "value": " path?" }] }, { "id": 386, "type": "component", "name": "p", "children": [{ "id": 387, "type": "textnode", "value": "c) What is " }, { "id": 388, "type": "component", "name": "equation", "children": [{ "id": 389, "type": "textnode", "value": "V_{B}-V_{A}" }] }, { "id": 390, "type": "textnode", "value": "?" }] }, { "id": 391, "type": "component", "name": "p", "children": [{ "id": 392, "type": "textnode", "value": "d) What is " }, { "id": 393, "type": "component", "name": "equation", "children": [{ "id": 394, "type": "textnode", "value": "\\Delta \\vec{l}" }] }, { "id": 395, "type": "textnode", "value": " along the " }, { "id": 396, "type": "component", "name": "equation", "children": [{ "id": 397, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 398, "type": "textnode", "value": " path?" }] }, { "id": 399, "type": "component", "name": "p", "children": [{ "id": 400, "type": "textnode", "value": "e) What is " }, { "id": 401, "type": "component", "name": "equation", "children": [{ "id": 402, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 403, "type": "textnode", "value": "?" }] }, { "id": 404, "type": "component", "name": "p", "children": [{ "id": 405, "type": "textnode", "value": "f) What is " }, { "id": 406, "type": "component", "name": "equation", "children": [{ "id": 407, "type": "textnode", "value": "\\Delta \\vec{l}" }] }, { "id": 408, "type": "textnode", "value": " along the " }, { "id": 409, "type": "component", "name": "equation", "children": [{ "id": 410, "type": "textnode", "value": "V_{A}-V_{C}" }] }, { "id": 411, "type": "textnode", "value": " path?" }] }, { "id": 412, "type": "component", "name": "p", "children": [{ "id": 413, "type": "textnode", "value": "g) What is " }, { "id": 414, "type": "component", "name": "equation", "children": [{ "id": 415, "type": "textnode", "value": "V_{A}-V_{C}" }] }, { "id": 416, "type": "textnode", "value": "?" }] }] }, { "id": 417, "type": "component", "name": "hr", "children": [] }, { "id": 418, "type": "component", "name": "h3", "children": [{ "id": 419, "type": "textnode", "value": "Computation" }] }, { "id": 420, "type": "component", "name": "p", "children": [{ "id": 421, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 422, "type": "component", "name": "em", "children": [{ "id": 423, "type": "textnode", "value": "NEED LINK" }] }, { "id": 424, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 425, "type": "component", "name": "p", "children": [{ "id": 426, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 427, "type": "component", "name": "br", "children": [] }, { "id": 428, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/a2ab41fe4d?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 429, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 430, "type": "component", "name": "h3", "children": [{ "id": 431, "type": "textnode", "value": "About this Problem" }] }, { "id": 432, "type": "component", "name": "hr", "children": [] }, { "id": 433, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 434, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"\"" } }, "children": [{ "id": 435, "type": "textnode", "value": "Skills Involved" }] }, { "id": 436, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"Objective\"" } }, "children": [{ "id": 437, "type": "textnode", "value": "Objective" }] }, { "id": 438, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"GivenInfo\"" } }, "children": [{ "id": 439, "type": "textnode", "value": "Given Information" }] }, { "id": 440, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"KeyEq\"" } }, "children": [{ "id": 441, "type": "textnode", "value": "Key Equations" }] }, { "id": 442, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"Ref\"" } }, "children": [{ "id": 443, "type": "textnode", "value": "References" }] }] }, { "id": 444, "type": "component", "name": "br", "children": [] }, { "id": 445, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 446, "type": "component", "name": "br", "children": [] }, { "id": 447, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1666" } }, "children": [{ "id": 448, "type": "component", "name": "Default", "children": [{ "id": 449, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 450, "type": "component", "name": "ul", "children": [{ "id": 451, "type": "component", "name": "li", "children": [{ "id": 452, "type": "textnode", "value": "Force" }] }, { "id": 453, "type": "component", "name": "li", "children": [{ "id": 454, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 455, "type": "component", "name": "li", "children": [{ "id": 456, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 457, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 458, "type": "textnode", "value": "Find the electric field in the capacitor and calculate potential\n           differences along different paths." }] }, { "id": 459, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 460, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 461, "type": "component", "name": "ul", "children": [{ "id": 462, "type": "component", "name": "li", "children": [{ "id": 463, "type": "textnode", "value": " Radius of capacitor disks. " }] }, { "id": 464, "type": "component", "name": "li", "children": [{ "id": 465, "type": "textnode", "value": " Distance between disks." }] }, { "id": 466, "type": "component", "name": "li", "children": [{ "id": 467, "type": "textnode", "value": " Magnitude of the charge on each disk." }] }, { "id": 468, "type": "component", "name": "li", "children": [{ "id": 469, "type": "textnode", "value": " Vertical and horizontal distances between points." }] }] }] }] }, { "id": 470, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 471, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 472, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 473, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 474, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 475, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 476, "type": "component", "name": "ul", "children": [{ "id": 477, "type": "component", "name": "li", "children": [{ "id": 478, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 479, "type": "component", "name": "li", "children": [{ "id": 480, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 481, "type": "component", "name": "li", "children": [{ "id": 482, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 483, "type": "component", "name": "hr", "children": [] }, { "id": 484, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 485, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 486, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 487, "type": "textnode", "value": "Physics Department" }] }, { "id": 488, "type": "component", "name": "br", "children": [] }, { "id": 489, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 490, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 491, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.66alt" } }, "children": [{ "id": 492, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 493, "type": "component", "name": "h2", "children": [{ "id": 494, "type": "textnode", "value": "1" }, { "id": 495, "type": "textnode", "value": "6" }, { "id": 496, "type": "textnode", "value": "." }, { "id": 497, "type": "textnode", "value": "6" }, { "id": 498, "type": "textnode", "value": "6 " }, { "id": 499, "type": "textnode", "value": "Alternate" }] }, { "id": 500, "type": "component", "name": "hr", "children": [] }, { "id": 501, "type": "component", "name": "h3", "children": [{ "id": 502, "type": "textnode", "value": "Problem" }] }, { "id": 503, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.66alt1.png" }, "title": { "type": "value", "value": "Problem 16.66alt1 - Matter and Interactions" } }, "children": [] }, { "id": 504, "type": "component", "name": "br", "children": [] }, { "id": 505, "type": "component", "name": "h4", "children": [{ "id": 506, "type": "textnode", "value": "Questions" }] }, { "id": 507, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 508, "type": "component", "name": "p", "children": [{ "id": 509, "type": "textnode", "value": "a) What is the magnitude of the electric field inside the capacitor?" }] }, { "id": 510, "type": "component", "name": "p", "children": [{ "id": 511, "type": "textnode", "value": "b) What is " }, { "id": 512, "type": "component", "name": "equation", "children": [{ "id": 513, "type": "textnode", "value": "V_{B}-V_{A}" }] }, { "id": 514, "type": "textnode", "value": ", " }, { "id": 515, "type": "component", "name": "equation", "children": [{ "id": 516, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 517, "type": "textnode", "value": ", and " }, { "id": 518, "type": "component", "name": "equation", "children": [{ "id": 519, "type": "textnode", "value": "V_{C}-V_{A}" }] }, { "id": 520, "type": "textnode", "value": "?" }] }, { "id": 521, "type": "component", "name": "p", "children": [{ "id": 522, "type": "textnode", "value": "c) What is " }, { "id": 523, "type": "component", "name": "equation", "children": [{ "id": 524, "type": "textnode", "value": "\\Delta L cos(\\theta)" }] }, { "id": 525, "type": "textnode", "value": " and " }, { "id": 526, "type": "component", "name": "equation", "children": [{ "id": 527, "type": "textnode", "value": "V_{C}-V_{A}" }] }, { "id": 528, "type": "textnode", "value": "?" }] }] }, { "id": 529, "type": "component", "name": "hr", "children": [] }, { "id": 530, "type": "component", "name": "h3", "children": [{ "id": 531, "type": "textnode", "value": "Computation" }] }, { "id": 532, "type": "component", "name": "p", "children": [{ "id": 533, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 534, "type": "component", "name": "em", "children": [{ "id": 535, "type": "textnode", "value": "NEED LINK" }] }, { "id": 536, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 537, "type": "component", "name": "p", "children": [{ "id": 538, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 539, "type": "component", "name": "br", "children": [] }, { "id": 540, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/31ab1085b6?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 541, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 542, "type": "component", "name": "h3", "children": [{ "id": 543, "type": "textnode", "value": "About this Problem" }] }, { "id": 544, "type": "component", "name": "hr", "children": [] }, { "id": 545, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 546, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"\"" } }, "children": [{ "id": 547, "type": "textnode", "value": "Skills Involved" }] }, { "id": 548, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"Objective\"" } }, "children": [{ "id": 549, "type": "textnode", "value": "Objective" }] }, { "id": 550, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"GivenInfo\"" } }, "children": [{ "id": 551, "type": "textnode", "value": "Given Information" }] }, { "id": 552, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"KeyEq\"" } }, "children": [{ "id": 553, "type": "textnode", "value": "Key Equations" }] }, { "id": 554, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"Ref\"" } }, "children": [{ "id": 555, "type": "textnode", "value": "References" }] }] }, { "id": 556, "type": "component", "name": "br", "children": [] }, { "id": 557, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 558, "type": "component", "name": "br", "children": [] }, { "id": 559, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1666a" } }, "children": [{ "id": 560, "type": "component", "name": "Default", "children": [{ "id": 561, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 562, "type": "component", "name": "ul", "children": [{ "id": 563, "type": "component", "name": "li", "children": [{ "id": 564, "type": "textnode", "value": "Force" }] }, { "id": 565, "type": "component", "name": "li", "children": [{ "id": 566, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 567, "type": "component", "name": "li", "children": [{ "id": 568, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 569, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 570, "type": "textnode", "value": "Find the electric field in the capacitor and calculate potential\n           differences along different paths." }] }, { "id": 571, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 572, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 573, "type": "component", "name": "ul", "children": [{ "id": 574, "type": "component", "name": "li", "children": [{ "id": 575, "type": "textnode", "value": " Radius of capacitor disks. " }] }, { "id": 576, "type": "component", "name": "li", "children": [{ "id": 577, "type": "textnode", "value": " Distance between disks." }] }, { "id": 578, "type": "component", "name": "li", "children": [{ "id": 579, "type": "textnode", "value": " Magnitude of the charge on each disk." }] }, { "id": 580, "type": "component", "name": "li", "children": [{ "id": 581, "type": "textnode", "value": " Vertical and horizontal distances between points." }] }] }] }] }, { "id": 582, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 583, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 584, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 585, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 586, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 587, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 588, "type": "component", "name": "ul", "children": [{ "id": 589, "type": "component", "name": "li", "children": [{ "id": 590, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 591, "type": "component", "name": "li", "children": [{ "id": 592, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 593, "type": "component", "name": "li", "children": [{ "id": 594, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 595, "type": "component", "name": "hr", "children": [] }, { "id": 596, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 597, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 598, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 599, "type": "textnode", "value": "Physics Department" }] }, { "id": 600, "type": "component", "name": "br", "children": [] }, { "id": 601, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 602, "type": "textnode", "value": "Feedback Form" }] }] }] }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1633" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1635" }, "value": { "type": "value", "value": "" } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1640" }, "value": { "type": "value", "value": "" } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1666" }, "value": { "type": "value", "value": "" } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1666a" }, "value": { "type": "value", "value": "" } } }, { "id": 8, "type": "component", "name": "TextContainer", "children": [{ "id": 9, "type": "meta", "properties": { "title": { "type": "value", "value": "Wiley_HW_4-1" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 10, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "WileyPlus Homework 4-1" }, "subtitle": { "type": "value", "value": "Solving problems with Python" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0B465F" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 11, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 12, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 13, "type": "textnode", "value": "Main Problem Page" }] }, { "id": 14, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.33\"" } }, "children": [{ "id": 15, "type": "textnode", "value": "16.33" }] }, { "id": 16, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.35\"" } }, "children": [{ "id": 17, "type": "textnode", "value": "16.35" }] }, { "id": 18, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.40\"" } }, "children": [{ "id": 19, "type": "textnode", "value": "16.40" }] }, { "id": 20, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.66\"" } }, "children": [{ "id": 21, "type": "textnode", "value": "16.66" }] }, { "id": 22, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.66alt\"" } }, "children": [{ "id": 23, "type": "textnode", "value": "16.66 Alt01" }] }] }, { "id": 24, "type": "component", "name": "TextContainer", "children": [{ "id": 25, "type": "component", "name": "br", "children": [] }, { "id": 26, "type": "component", "name": "br", "children": [] }] }, { "id": 27, "type": "component", "name": "hr", "children": [] }, { "id": 28, "type": "component", "name": "TextContainer", "children": [{ "id": 29, "type": "component", "name": "br", "children": [] }] }, { "id": 30, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "value", "value": "100%" } }, "children": [{ "id": 31, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 32, "type": "component", "name": "Default", "children": [{ "id": 33, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 34, "type": "component", "name": "h2", "children": [{ "id": 35, "type": "textnode", "value": "How to Complete this Activity" }] }, { "id": 36, "type": "component", "name": "hr", "children": [] }, { "id": 37, "type": "component", "name": "br", "children": [] }, { "id": 38, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "mainInfoBullets" } }, "children": [{ "id": 39, "type": "component", "name": "ol", "children": [{ "id": 40, "type": "component", "name": "li", "children": [{ "id": 41, "type": "component", "name": "span", "properties": { "className": { "type": "value", "value": "mainInfoFront" } }, "children": [{ "id": 42, "type": "textnode", "value": "Click the tabs" }] }, { "id": 43, "type": "textnode", "value": " to go to a specific homework problem page.\n                  " }, { "id": 44, "type": "component", "name": "ul", "children": [{ "id": 45, "type": "component", "name": "li", "children": [{ "id": 46, "type": "component", "name": "strong", "children": [{ "id": 47, "type": "textnode", "value": "Note:" }] }, { "id": 48, "type": "textnode", "value": " Not all of the homework problem pages are populated in every homework." }] }, { "id": 49, "type": "component", "name": "li", "children": [{ "id": 50, "type": "textnode", "value": "The problems are included in Homework 1 through WileyPLUS." }] }, { "id": 51, "type": "component", "name": "li", "children": [{ "id": 52, "type": "textnode", "value": "Work through the problems by hand first using the given information, key equations,\n                    and references listed at the bottom of each page. Then, try to use Python to solve the same problem." }] }] }] }, { "id": 53, "type": "component", "name": "li", "children": [{ "id": 54, "type": "component", "name": "span", "properties": { "className": { "type": "value", "value": "mainInfoFront" } }, "children": [{ "id": 55, "type": "textnode", "value": "Read the problem" }] }, { "id": 56, "type": "textnode", "value": " and try to " }, { "id": 57, "type": "component", "name": "span", "properties": { "className": { "type": "value", "value": "mainInfoFront" } }, "children": [{ "id": 58, "type": "textnode", "value": "answer the questions" }] }, { "id": 59, "type": "textnode", "value": " that are given. These are extra and only there to help!" }] }, { "id": 60, "type": "component", "name": "li", "children": [{ "id": 61, "type": "component", "name": "span", "properties": { "className": { "type": "value", "value": "mainInfoFront" } }, "children": [{ "id": 62, "type": "textnode", "value": "Use the simulations" }] }, { "id": 63, "type": "textnode", "value": " when provided. These may help with your conceptual understanding of the problem." }] }, { "id": 64, "type": "component", "name": "li", "children": [{ "id": 65, "type": "component", "name": "span", "properties": { "className": { "type": "value", "value": "mainInfoFront" } }, "children": [{ "id": 66, "type": "textnode", "value": "Complete the Computation section" }] }, { "id": 67, "type": "textnode", "value": " by following the instructions to the left of the Trinket. This should give\n                you the answers you need to complete the homework!" }] }, { "id": 68, "type": "component", "name": "li", "children": [{ "id": 69, "type": "textnode", "value": "After completing all of the resources provided, please complete the " }, { "id": 70, "type": "component", "name": "span", "properties": { "className": { "type": "value", "value": "mainInfoFront" } }, "children": [{ "id": 71, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 72, "type": "textnode", "value": "Feedback Form" }] }] }, { "id": 73, "type": "textnode", "value": ". " }] }] }] }, { "id": 74, "type": "component", "name": "hr", "children": [] }, { "id": 75, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 76, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 77, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 78, "type": "textnode", "value": "Physics Department" }] }, { "id": 79, "type": "component", "name": "br", "children": [] }, { "id": 80, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 81, "type": "textnode", "value": "Feedback Form" }] }] }] }] }, { "id": 82, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.33" } }, "children": [{ "id": 83, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 84, "type": "component", "name": "h2", "children": [{ "id": 85, "type": "textnode", "value": "1" }, { "id": 86, "type": "textnode", "value": "6" }, { "id": 87, "type": "textnode", "value": "." }, { "id": 88, "type": "textnode", "value": "3" }, { "id": 89, "type": "textnode", "value": "3" }] }, { "id": 90, "type": "component", "name": "hr", "children": [] }, { "id": 91, "type": "component", "name": "h3", "children": [{ "id": 92, "type": "textnode", "value": "Problem" }] }, { "id": 93, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.33.png" }, "title": { "type": "value", "value": "Problem 16.33 - Matter and Interactions" } }, "children": [] }, { "id": 94, "type": "component", "name": "br", "children": [] }, { "id": 95, "type": "component", "name": "hr", "children": [] }, { "id": 96, "type": "component", "name": "h3", "children": [{ "id": 97, "type": "textnode", "value": "Computation" }] }, { "id": 98, "type": "component", "name": "p", "children": [{ "id": 99, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n         above." }] }, { "id": 100, "type": "component", "name": "br", "children": [] }, { "id": 101, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitLeft" } }, "children": [{ "id": 102, "type": "component", "name": "h4", "children": [{ "id": 103, "type": "textnode", "value": "Instructions" }] }, { "id": 104, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "./static/HW4-1Comp1633.html" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameBorder": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 105, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitRight" } }, "children": [{ "id": 106, "type": "component", "name": "h4", "children": [{ "id": 107, "type": "textnode", "value": "Trinket" }] }, { "id": 108, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/761e6980d9?toggleCode=true" }, "width": { "type": "value", "value": "40%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }] }, { "id": 109, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 110, "type": "component", "name": "h3", "children": [{ "id": 111, "type": "textnode", "value": "About this Problem" }] }, { "id": 112, "type": "component", "name": "hr", "children": [] }, { "id": 113, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 114, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"\"" } }, "children": [{ "id": 115, "type": "textnode", "value": "Skills Involved" }] }, { "id": 116, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"Objective\"" } }, "children": [{ "id": 117, "type": "textnode", "value": "Objective" }] }, { "id": 118, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"GivenInfo\"" } }, "children": [{ "id": 119, "type": "textnode", "value": "Given Information" }] }, { "id": 120, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"KeyEq\"" } }, "children": [{ "id": 121, "type": "textnode", "value": "Key Equations" }] }, { "id": 122, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1633 = \"Ref\"" } }, "children": [{ "id": 123, "type": "textnode", "value": "References" }] }] }, { "id": 124, "type": "component", "name": "br", "children": [] }, { "id": 125, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 126, "type": "component", "name": "br", "children": [] }, { "id": 127, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1633" } }, "children": [{ "id": 128, "type": "component", "name": "Default", "children": [{ "id": 129, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 130, "type": "component", "name": "ul", "children": [{ "id": 131, "type": "component", "name": "li", "children": [{ "id": 132, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 133, "type": "component", "name": "li", "children": [{ "id": 134, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 135, "type": "component", "name": "li", "children": [{ "id": 136, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 137, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 138, "type": "textnode", "value": "Find the magnitude of the electric field in the region between A and B." }] }, { "id": 139, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 140, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 141, "type": "component", "name": "ul", "children": [{ "id": 142, "type": "component", "name": "li", "children": [{ "id": 143, "type": "textnode", "value": " The electric field is uniform." }] }, { "id": 144, "type": "component", "name": "li", "children": [{ "id": 145, "type": "textnode", "value": " Change in potential." }] }] }] }] }, { "id": 146, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 147, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 148, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 149, "type": "textnode", "value": "\\vec{E} = \\frac{V}{m}" }] }] }] }, { "id": 150, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 151, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 152, "type": "component", "name": "ul", "children": [{ "id": 153, "type": "component", "name": "li", "children": [{ "id": 154, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 155, "type": "component", "name": "li", "children": [{ "id": 156, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 157, "type": "component", "name": "li", "children": [{ "id": 158, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 159, "type": "component", "name": "li", "children": [{ "id": 160, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 161, "type": "component", "name": "li", "children": [{ "id": 162, "type": "textnode", "value": " " }, { "id": 163, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 164, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 165, "type": "component", "name": "hr", "children": [] }, { "id": 166, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 167, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 168, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 169, "type": "textnode", "value": "Physics Department" }] }, { "id": 170, "type": "component", "name": "br", "children": [] }, { "id": 171, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 172, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 173, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.35" } }, "children": [{ "id": 174, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 175, "type": "component", "name": "h2", "children": [{ "id": 176, "type": "textnode", "value": "1" }, { "id": 177, "type": "textnode", "value": "6" }, { "id": 178, "type": "textnode", "value": "." }, { "id": 179, "type": "textnode", "value": "3" }, { "id": 180, "type": "textnode", "value": "5" }] }, { "id": 181, "type": "component", "name": "hr", "children": [] }, { "id": 182, "type": "component", "name": "h3", "children": [{ "id": 183, "type": "textnode", "value": "Problem" }] }, { "id": 184, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 185, "type": "textnode", "value": "\n             If the electric field exceeds about " }, { "id": 186, "type": "component", "name": "equation", "children": [{ "id": 187, "type": "textnode", "value": "3 \\times 10^{6}" }] }, { "id": 188, "type": "textnode", "value": " N/C in air,\n             a spark occurs. Approximately, what is the maximum possible potential difference between\n             the plates of a capacitor whose gap is 4 mm, without causing a spark in the air between them?\n          " }] }, { "id": 189, "type": "component", "name": "h3", "children": [{ "id": 190, "type": "textnode", "value": "Computation" }] }, { "id": 191, "type": "component", "name": "p", "children": [{ "id": 192, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 193, "type": "component", "name": "em", "children": [{ "id": 194, "type": "textnode", "value": "NEED LINK" }] }, { "id": 195, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 196, "type": "component", "name": "br", "children": [] }, { "id": 197, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/341e7bf6e4?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 198, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 199, "type": "component", "name": "h3", "children": [{ "id": 200, "type": "textnode", "value": "About this Problem" }] }, { "id": 201, "type": "component", "name": "hr", "children": [] }, { "id": 202, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 203, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"\"" } }, "children": [{ "id": 204, "type": "textnode", "value": "Skills Involved" }] }, { "id": 205, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"Objective\"" } }, "children": [{ "id": 206, "type": "textnode", "value": "Objective" }] }, { "id": 207, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"GivenInfo\"" } }, "children": [{ "id": 208, "type": "textnode", "value": "Given Information" }] }, { "id": 209, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"KeyEq\"" } }, "children": [{ "id": 210, "type": "textnode", "value": "Key Equations" }] }, { "id": 211, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1635 = \"Ref\"" } }, "children": [{ "id": 212, "type": "textnode", "value": "References" }] }] }, { "id": 213, "type": "component", "name": "br", "children": [] }, { "id": 214, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 215, "type": "component", "name": "br", "children": [] }, { "id": 216, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1635" } }, "children": [{ "id": 217, "type": "component", "name": "Default", "children": [{ "id": 218, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 219, "type": "component", "name": "ul", "children": [{ "id": 220, "type": "component", "name": "li", "children": [{ "id": 221, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 222, "type": "component", "name": "li", "children": [{ "id": 223, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 224, "type": "component", "name": "li", "children": [{ "id": 225, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 226, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 227, "type": "textnode", "value": "Find the maximum potential difference between the plates of a capacitor\n           without causing a spark in the air." }] }, { "id": 228, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 229, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 230, "type": "component", "name": "ul", "children": [{ "id": 231, "type": "component", "name": "li", "children": [{ "id": 232, "type": "textnode", "value": " Max electric field without a spark." }] }, { "id": 233, "type": "component", "name": "li", "children": [{ "id": 234, "type": "textnode", "value": " Capacitor gap distance." }] }] }] }] }, { "id": 235, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 236, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 237, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 238, "type": "textnode", "value": "\\vec{E} = \\frac{1}{4\\pi\\epsilon_{0}} \\frac{q}{|\\vec{r}|^{2}} \\hat{r}" }] }] }] }, { "id": 239, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 240, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 241, "type": "component", "name": "ul", "children": [{ "id": 242, "type": "component", "name": "li", "children": [{ "id": 243, "type": "textnode", "value": " Electric Field of a Point Charge (Matter and Interactions, p. 519)" }] }, { "id": 244, "type": "component", "name": "li", "children": [{ "id": 245, "type": "textnode", "value": " Magnitude of Electric Field (Matter and Interactions, p. 520)" }] }, { "id": 246, "type": "component", "name": "li", "children": [{ "id": 247, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }] }] }] }] }] }, { "id": 248, "type": "component", "name": "hr", "children": [] }, { "id": 249, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 250, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 251, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 252, "type": "textnode", "value": "Physics Department" }] }, { "id": 253, "type": "component", "name": "br", "children": [] }, { "id": 254, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 255, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 256, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.40" } }, "children": [{ "id": 257, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 258, "type": "component", "name": "h2", "children": [{ "id": 259, "type": "textnode", "value": "1" }, { "id": 260, "type": "textnode", "value": "6" }, { "id": 261, "type": "textnode", "value": "." }, { "id": 262, "type": "textnode", "value": "4" }, { "id": 263, "type": "textnode", "value": "0" }] }, { "id": 264, "type": "component", "name": "hr", "children": [] }, { "id": 265, "type": "component", "name": "h3", "children": [{ "id": 266, "type": "textnode", "value": "Problem" }] }, { "id": 267, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.40.png" }, "title": { "type": "value", "value": "Problem 16.40 - Matter and Interactions" } }, "children": [] }, { "id": 268, "type": "component", "name": "br", "children": [] }, { "id": 269, "type": "component", "name": "hr", "children": [] }, { "id": 270, "type": "component", "name": "h3", "children": [{ "id": 271, "type": "textnode", "value": "Computation" }] }, { "id": 272, "type": "component", "name": "p", "children": [{ "id": 273, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 274, "type": "component", "name": "em", "children": [{ "id": 275, "type": "textnode", "value": "NEED LINK" }] }, { "id": 276, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 277, "type": "component", "name": "p", "children": [{ "id": 278, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 279, "type": "component", "name": "br", "children": [] }, { "id": 280, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/c62b6c5a50?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 281, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 282, "type": "component", "name": "h3", "children": [{ "id": 283, "type": "textnode", "value": "About this Problem" }] }, { "id": 284, "type": "component", "name": "hr", "children": [] }, { "id": 285, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 286, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"\"" } }, "children": [{ "id": 287, "type": "textnode", "value": "Skills Involved" }] }, { "id": 288, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"Objective\"" } }, "children": [{ "id": 289, "type": "textnode", "value": "Objective" }] }, { "id": 290, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"GivenInfo\"" } }, "children": [{ "id": 291, "type": "textnode", "value": "Given Information" }] }, { "id": 292, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"KeyEq\"" } }, "children": [{ "id": 293, "type": "textnode", "value": "Key Equations" }] }, { "id": 294, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1640 = \"Ref\"" } }, "children": [{ "id": 295, "type": "textnode", "value": "References" }] }] }, { "id": 296, "type": "component", "name": "br", "children": [] }, { "id": 297, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 298, "type": "component", "name": "br", "children": [] }, { "id": 299, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1640" } }, "children": [{ "id": 300, "type": "component", "name": "Default", "children": [{ "id": 301, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 302, "type": "component", "name": "ul", "children": [{ "id": 303, "type": "component", "name": "li", "children": [{ "id": 304, "type": "textnode", "value": "Force" }] }, { "id": 305, "type": "component", "name": "li", "children": [{ "id": 306, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 307, "type": "component", "name": "li", "children": [{ "id": 308, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 309, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 310, "type": "textnode", "value": "Find the velocity of the electrons accelerating through the plates." }] }, { "id": 311, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 312, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 313, "type": "component", "name": "ul", "children": [{ "id": 314, "type": "component", "name": "li", "children": [{ "id": 315, "type": "textnode", "value": " Electrons are accelerating toward a positive plate. " }] }, { "id": 316, "type": "component", "name": "li", "children": [{ "id": 317, "type": "textnode", "value": " Potential difference between two plates." }] }] }] }] }, { "id": 318, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 319, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 320, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 321, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 322, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 323, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 324, "type": "component", "name": "ul", "children": [{ "id": 325, "type": "component", "name": "li", "children": [{ "id": 326, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 327, "type": "component", "name": "li", "children": [{ "id": 328, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 329, "type": "component", "name": "li", "children": [{ "id": 330, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 331, "type": "component", "name": "hr", "children": [] }, { "id": 332, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 333, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 334, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 335, "type": "textnode", "value": "Physics Department" }] }, { "id": 336, "type": "component", "name": "br", "children": [] }, { "id": 337, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/58GeVKmnrP91HbtM9" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 338, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 339, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.66" } }, "children": [{ "id": 340, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 341, "type": "component", "name": "h2", "children": [{ "id": 342, "type": "textnode", "value": "1" }, { "id": 343, "type": "textnode", "value": "6" }, { "id": 344, "type": "textnode", "value": "." }, { "id": 345, "type": "textnode", "value": "6" }, { "id": 346, "type": "textnode", "value": "6" }] }, { "id": 347, "type": "component", "name": "hr", "children": [] }, { "id": 348, "type": "component", "name": "h3", "children": [{ "id": 349, "type": "textnode", "value": "Problem" }] }, { "id": 350, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.66.png" }, "title": { "type": "value", "value": "Problem 16.66 - Matter and Interactions" } }, "children": [] }, { "id": 351, "type": "component", "name": "br", "children": [] }, { "id": 352, "type": "component", "name": "h4", "children": [{ "id": 353, "type": "textnode", "value": "Questions" }] }, { "id": 354, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 355, "type": "component", "name": "p", "children": [{ "id": 356, "type": "textnode", "value": "a) What is the electric field inside the capacitor?" }] }, { "id": 357, "type": "component", "name": "p", "children": [{ "id": 358, "type": "textnode", "value": "b) What is " }, { "id": 359, "type": "component", "name": "equation", "children": [{ "id": 360, "type": "textnode", "value": "\\Delta \\vec{l}" }] }, { "id": 361, "type": "textnode", "value": " along the " }, { "id": 362, "type": "component", "name": "equation", "children": [{ "id": 363, "type": "textnode", "value": "V_{B}-V_{A}" }] }, { "id": 364, "type": "textnode", "value": " path?" }] }, { "id": 365, "type": "component", "name": "p", "children": [{ "id": 366, "type": "textnode", "value": "c) What is " }, { "id": 367, "type": "component", "name": "equation", "children": [{ "id": 368, "type": "textnode", "value": "V_{B}-V_{A}" }] }, { "id": 369, "type": "textnode", "value": "?" }] }, { "id": 370, "type": "component", "name": "p", "children": [{ "id": 371, "type": "textnode", "value": "d) What is " }, { "id": 372, "type": "component", "name": "equation", "children": [{ "id": 373, "type": "textnode", "value": "\\Delta \\vec{l}" }] }, { "id": 374, "type": "textnode", "value": " along the " }, { "id": 375, "type": "component", "name": "equation", "children": [{ "id": 376, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 377, "type": "textnode", "value": " path?" }] }, { "id": 378, "type": "component", "name": "p", "children": [{ "id": 379, "type": "textnode", "value": "e) What is " }, { "id": 380, "type": "component", "name": "equation", "children": [{ "id": 381, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 382, "type": "textnode", "value": "?" }] }, { "id": 383, "type": "component", "name": "p", "children": [{ "id": 384, "type": "textnode", "value": "f) What is " }, { "id": 385, "type": "component", "name": "equation", "children": [{ "id": 386, "type": "textnode", "value": "\\Delta \\vec{l}" }] }, { "id": 387, "type": "textnode", "value": " along the " }, { "id": 388, "type": "component", "name": "equation", "children": [{ "id": 389, "type": "textnode", "value": "V_{A}-V_{C}" }] }, { "id": 390, "type": "textnode", "value": " path?" }] }, { "id": 391, "type": "component", "name": "p", "children": [{ "id": 392, "type": "textnode", "value": "g) What is " }, { "id": 393, "type": "component", "name": "equation", "children": [{ "id": 394, "type": "textnode", "value": "V_{A}-V_{C}" }] }, { "id": 395, "type": "textnode", "value": "?" }] }] }, { "id": 396, "type": "component", "name": "hr", "children": [] }, { "id": 397, "type": "component", "name": "h3", "children": [{ "id": 398, "type": "textnode", "value": "Computation" }] }, { "id": 399, "type": "component", "name": "p", "children": [{ "id": 400, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 401, "type": "component", "name": "em", "children": [{ "id": 402, "type": "textnode", "value": "NEED LINK" }] }, { "id": 403, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 404, "type": "component", "name": "p", "children": [{ "id": 405, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 406, "type": "component", "name": "br", "children": [] }, { "id": 407, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/a2ab41fe4d?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 408, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 409, "type": "component", "name": "h3", "children": [{ "id": 410, "type": "textnode", "value": "About this Problem" }] }, { "id": 411, "type": "component", "name": "hr", "children": [] }, { "id": 412, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 413, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"\"" } }, "children": [{ "id": 414, "type": "textnode", "value": "Skills Involved" }] }, { "id": 415, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"Objective\"" } }, "children": [{ "id": 416, "type": "textnode", "value": "Objective" }] }, { "id": 417, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"GivenInfo\"" } }, "children": [{ "id": 418, "type": "textnode", "value": "Given Information" }] }, { "id": 419, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"KeyEq\"" } }, "children": [{ "id": 420, "type": "textnode", "value": "Key Equations" }] }, { "id": 421, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666 = \"Ref\"" } }, "children": [{ "id": 422, "type": "textnode", "value": "References" }] }] }, { "id": 423, "type": "component", "name": "br", "children": [] }, { "id": 424, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 425, "type": "component", "name": "br", "children": [] }, { "id": 426, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1666" } }, "children": [{ "id": 427, "type": "component", "name": "Default", "children": [{ "id": 428, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 429, "type": "component", "name": "ul", "children": [{ "id": 430, "type": "component", "name": "li", "children": [{ "id": 431, "type": "textnode", "value": "Force" }] }, { "id": 432, "type": "component", "name": "li", "children": [{ "id": 433, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 434, "type": "component", "name": "li", "children": [{ "id": 435, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 436, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 437, "type": "textnode", "value": "Find the electric field in the capacitor and calculate potential\n           differences along different paths." }] }, { "id": 438, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 439, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 440, "type": "component", "name": "ul", "children": [{ "id": 441, "type": "component", "name": "li", "children": [{ "id": 442, "type": "textnode", "value": " Radius of capacitor disks. " }] }, { "id": 443, "type": "component", "name": "li", "children": [{ "id": 444, "type": "textnode", "value": " Distance between disks." }] }, { "id": 445, "type": "component", "name": "li", "children": [{ "id": 446, "type": "textnode", "value": " Magnitude of the charge on each disk." }] }, { "id": 447, "type": "component", "name": "li", "children": [{ "id": 448, "type": "textnode", "value": " Vertical and horizontal distances between points." }] }] }] }] }, { "id": 449, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 450, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 451, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 452, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 453, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 454, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 455, "type": "component", "name": "ul", "children": [{ "id": 456, "type": "component", "name": "li", "children": [{ "id": 457, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 458, "type": "component", "name": "li", "children": [{ "id": 459, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 460, "type": "component", "name": "li", "children": [{ "id": 461, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 462, "type": "component", "name": "hr", "children": [] }, { "id": 463, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 464, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 465, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 466, "type": "textnode", "value": "Physics Department" }] }, { "id": 467, "type": "component", "name": "br", "children": [] }, { "id": 468, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 469, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 470, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.66alt" } }, "children": [{ "id": 471, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 472, "type": "component", "name": "h2", "children": [{ "id": 473, "type": "textnode", "value": "1" }, { "id": 474, "type": "textnode", "value": "6" }, { "id": 475, "type": "textnode", "value": "." }, { "id": 476, "type": "textnode", "value": "6" }, { "id": 477, "type": "textnode", "value": "6 " }, { "id": 478, "type": "textnode", "value": "Alternate" }] }, { "id": 479, "type": "component", "name": "hr", "children": [] }, { "id": 480, "type": "component", "name": "h3", "children": [{ "id": 481, "type": "textnode", "value": "Problem" }] }, { "id": 482, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/P16.66alt1.png" }, "title": { "type": "value", "value": "Problem 16.66alt1 - Matter and Interactions" } }, "children": [] }, { "id": 483, "type": "component", "name": "br", "children": [] }, { "id": 484, "type": "component", "name": "h4", "children": [{ "id": 485, "type": "textnode", "value": "Questions" }] }, { "id": 486, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 487, "type": "component", "name": "p", "children": [{ "id": 488, "type": "textnode", "value": "a) What is the magnitude of the electric field inside the capacitor?" }] }, { "id": 489, "type": "component", "name": "p", "children": [{ "id": 490, "type": "textnode", "value": "b) What is " }, { "id": 491, "type": "component", "name": "equation", "children": [{ "id": 492, "type": "textnode", "value": "V_{B}-V_{A}" }] }, { "id": 493, "type": "textnode", "value": ", " }, { "id": 494, "type": "component", "name": "equation", "children": [{ "id": 495, "type": "textnode", "value": "V_{C}-V_{B}" }] }, { "id": 496, "type": "textnode", "value": ", and " }, { "id": 497, "type": "component", "name": "equation", "children": [{ "id": 498, "type": "textnode", "value": "V_{C}-V_{A}" }] }, { "id": 499, "type": "textnode", "value": "?" }] }, { "id": 500, "type": "component", "name": "p", "children": [{ "id": 501, "type": "textnode", "value": "c) What is " }, { "id": 502, "type": "component", "name": "equation", "children": [{ "id": 503, "type": "textnode", "value": "\\Delta L cos(\\theta)" }] }, { "id": 504, "type": "textnode", "value": " and " }, { "id": 505, "type": "component", "name": "equation", "children": [{ "id": 506, "type": "textnode", "value": "V_{C}-V_{A}" }] }, { "id": 507, "type": "textnode", "value": "?" }] }] }, { "id": 508, "type": "component", "name": "hr", "children": [] }, { "id": 509, "type": "component", "name": "h3", "children": [{ "id": 510, "type": "textnode", "value": "Computation" }] }, { "id": 511, "type": "component", "name": "p", "children": [{ "id": 512, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 513, "type": "component", "name": "em", "children": [{ "id": 514, "type": "textnode", "value": "NEED LINK" }] }, { "id": 515, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 516, "type": "component", "name": "p", "children": [{ "id": 517, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 518, "type": "component", "name": "br", "children": [] }, { "id": 519, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/31ab1085b6?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 520, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 521, "type": "component", "name": "h3", "children": [{ "id": 522, "type": "textnode", "value": "About this Problem" }] }, { "id": 523, "type": "component", "name": "hr", "children": [] }, { "id": 524, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 525, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"\"" } }, "children": [{ "id": 526, "type": "textnode", "value": "Skills Involved" }] }, { "id": 527, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"Objective\"" } }, "children": [{ "id": 528, "type": "textnode", "value": "Objective" }] }, { "id": 529, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"GivenInfo\"" } }, "children": [{ "id": 530, "type": "textnode", "value": "Given Information" }] }, { "id": 531, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"KeyEq\"" } }, "children": [{ "id": 532, "type": "textnode", "value": "Key Equations" }] }, { "id": 533, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1666a = \"Ref\"" } }, "children": [{ "id": 534, "type": "textnode", "value": "References" }] }] }, { "id": 535, "type": "component", "name": "br", "children": [] }, { "id": 536, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 537, "type": "component", "name": "br", "children": [] }, { "id": 538, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1666a" } }, "children": [{ "id": 539, "type": "component", "name": "Default", "children": [{ "id": 540, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 541, "type": "component", "name": "ul", "children": [{ "id": 542, "type": "component", "name": "li", "children": [{ "id": 543, "type": "textnode", "value": "Force" }] }, { "id": 544, "type": "component", "name": "li", "children": [{ "id": 545, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 546, "type": "component", "name": "li", "children": [{ "id": 547, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 548, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 549, "type": "textnode", "value": "Find the electric field in the capacitor and calculate potential\n           differences along different paths." }] }, { "id": 550, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 551, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 552, "type": "component", "name": "ul", "children": [{ "id": 553, "type": "component", "name": "li", "children": [{ "id": 554, "type": "textnode", "value": " Radius of capacitor disks. " }] }, { "id": 555, "type": "component", "name": "li", "children": [{ "id": 556, "type": "textnode", "value": " Distance between disks." }] }, { "id": 557, "type": "component", "name": "li", "children": [{ "id": 558, "type": "textnode", "value": " Magnitude of the charge on each disk." }] }, { "id": 559, "type": "component", "name": "li", "children": [{ "id": 560, "type": "textnode", "value": " Vertical and horizontal distances between points." }] }] }] }] }, { "id": 561, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 562, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 563, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 564, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 565, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 566, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 567, "type": "component", "name": "ul", "children": [{ "id": 568, "type": "component", "name": "li", "children": [{ "id": 569, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 570, "type": "component", "name": "li", "children": [{ "id": 571, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 572, "type": "component", "name": "li", "children": [{ "id": 573, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 574, "type": "component", "name": "hr", "children": [] }, { "id": 575, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 576, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 577, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 578, "type": "textnode", "value": "Physics Department" }] }, { "id": 579, "type": "component", "name": "br", "children": [] }, { "id": 580, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/KwCeozr3kGBLxGzt8" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 581, "type": "textnode", "value": "Feedback Form" }] }] }] }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -83535,9 +83649,9 @@ module.exports = {
 	'header': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js'),
 	'button': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/button.js'),
 	'h2': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js'),
-	'h4': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js'),
 	'default': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/default.js'),
 	'h3': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js'),
+	'h4': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js'),
 	'case': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/case.js'),
 	'equation': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/equation.js'),
 	'switch': require('/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/switch.js')
