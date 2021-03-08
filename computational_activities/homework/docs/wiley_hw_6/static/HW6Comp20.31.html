@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add the following: <code>from scipy import constants</code></li>
+   <li>Under <code># Variables</code>, add the following variables as listed in the problem:
+     <ol type="a">
+       <li><code>B = #</code>. Replace <code>#</code> with the given fixed magnitude of the magnetic field.</li>
+       <li><code>w = #</code>. Replace <code>#</code> with the given distance from the entrance to the fixed ion detector.</li>
+       <li><code>d = #</code>. Replace <code>#</code> with the given distance between the deflection plates. Note - convert to meters!</li>
+       <li><code>q = constants.e</code></li>
+       <li><code>m = constants.value(u'atomic mass constant')</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculate</code>, add the following lines:
+     <ol type="a">
+       <li><code>dV1_12 = ((w/2)**2*q*B**2)/(2*12*m)</code></li>
+       <li><code>dV2_12 = ((w/2)*q*B**2*d)/(12*m)</code></li>
+       <li><code>dV1_14 = ((w/2)**2*q*B**2)/(2*14*m)</code></li>
+       <li><code>dV2_14 = ((w/2)*q*B**2*d)/(14*m)</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers!
+     <ol type="a">
+       <li><code>print(dV1_12)</code></li>
+       <li><code>print(dV2_12)</code></li>
+       <li><code>print(dV1_14)</code></li>
+       <li><code>print(dV2_14)</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

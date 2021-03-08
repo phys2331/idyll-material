@@ -1,0 +1,21 @@
+li {
+  margin-bottom: 20px;
+  margin-top: 20px;
+  line-height: 2;
+  padding-left: 10px;
+  border-bottom: 2px;
+}
+
+code {
+  //font-weight: bold;
+  color: white;
+  background-color: #0674CA;
+  padding: 5px 10px 5px 10px;
+  font-family:courier;
+}
+
+body {
+  font-family: sans-serif;
+  //background: #D3D3D3;
+  line-height: 1.6;
+}

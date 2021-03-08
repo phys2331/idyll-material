@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add the following lines:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+       <li><code>import matplotlib.pyplot as plt</code></li>
+       <li><code>from mpl_toolkits import mplot3d</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add the following variables as listed in the problem:
+     <ol type="a">
+       <li><code>v = np.array([x, y, z])</code></li>
+       <li><code>B = np.array([x, y, z])</code></li>
+       <li><code>q = -constants.e</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculate</code>, add <code>F_mag = np.linalg.norm(np.cross(q*v, B))</code></li>
+   <li>Under <code># Print</code>, print the answer! <code>print(F_mag)</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+   <li>To understand the direction of the magnetic force on the proton, we can graph the initial given vectors and their cross product.
+   We can also use the right-hand rule, as mentioned above. Under <code># Graph</code>, add the following to set up the graphing basics:
+   <ol type="a">
+     <li><code>fig = plt.figure()</code></li>
+     <li><code>ax = fig.gca(projection='3d')</code></li>
+     <li><code>ax.set_xlim([-5E-15, 5E-15])</code></li>
+     <li><code>ax.set_ylim([-5E-15, 5E-15])</code></li>
+     <li><code>ax.set_zlim([-5E-15, 5E-15])</code></li>
+     <li><code>ax.set_xlabel('X', color = 'green')</code></li>
+     <li><code>ax.set_ylabel('Y', color = 'green')</code></li>
+     <li><code>ax.set_zlabel('Z', color = 'green')</code></li>
+     <li><code>ax.quiver(0, 0, 0, B[0], B[1], B[2], color='blue', label = B, arrow_length_ratio = .5)</code></li>
+     <li><code>ax.quiver(0, 0, 0, q*v[0], q*v[1], q*v[2], color='green', label = q*v, arrow_length_ratio = .5)</code></li>
+     <li><code>ax.quiver(0, 0, 0, F_mag_vec[0], F_mag_vec[1], F_mag_vec[2], color='red', label = F_mag_vec, arrow_length_ratio = .5)</code></li>
+     <li><code>plt.legend(loc = 2)</code></li>
+     <li><code>plt.show()</code></li>
+   </ol>
+  </li>
+  <li>To show the output, we can use the vector form of the magnetic force by adding <code>F_mag_vec = np.cross(q*v, B)</code> in the calculation section. This
+  is what is used in the <code>ax.quiver()</code> line above.</li>
+  <li>Click the run button (&#9658;) to output graph!</li>
+  </ol>
+</body>
+</html>

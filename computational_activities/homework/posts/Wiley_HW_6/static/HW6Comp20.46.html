@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add the following lines:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add the following variables as listed in the problem:
+     <ol type="a">
+       <li><code>v = np.array([x, y, z])</code>. Replace <code>x, y, z</code> with the given velocity of the electron.</li>
+       <li><code>B = np.array([x, y, z])</code>. Replace <code>x, y, z</code> with the given magnetic field.</li>
+       <li><code>q = -constants.e</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculate</code>, add the following lines:
+     <ol type="a">
+       <li><code>F_B = np.cross(q*v, B)</code></li>
+       <li><code>F_E = -F_B</code></li>
+       <li><code>E = F_E/q</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers!
+     <ol type="a">
+       <li><code>print(F_B)</code></li>
+       <li><code>print(F_E)</code></li>
+       <li><code>print(E)</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add: <code>from scipy import constants</code></li>
+   <li>Under <code># Variables</code>, add variables for the following:
+     <ol type="a">
+       <li>Length of bar. Example: <code>L = 0.2</code></li>
+       <li>Height of bar. Example: <code>h = 0.02</code></li>
+       <li>Width of bar. Example: <code>w = 0.01</code></li>
+       <li>Magnetic field. Example: <code>B = 1.4</code></li>
+       <li>Voltmeter 1 reading. Example: <code>V1 = 0.45</code></li>
+       <li>Voltmeter 2 reading. Example: <code>V2 = 0.00026</code></li>
+       <li>Charge of an electron. Example: <code>q = -constants.e</code></li>
+       <li>Current given in step (d). Example: <code>I = 0.4</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following lines:
+     <ol type="a">
+       <li><code>v_drift = V2/(h*B)</code></li>
+       <li><code>u = v_drift/(V1/L)</code></li>
+       <li><code>n = abs(I/(q*w*h*v_drift))</code></li>
+       <li><code>R = V1/I</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers!
+     <ol type="a">
+       <li><code>print("b:", v_drift)</code></li>
+       <li><code>print("c:", u)</code></li>
+       <li><code>print("d:", n)</code></li>
+       <li><code>print("e:", R)</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

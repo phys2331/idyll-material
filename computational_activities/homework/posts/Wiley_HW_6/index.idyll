@@ -12,16 +12,16 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "20.25"`]20.25[/Button]
-  [button onClick:`currentValue = "20.26"`]20.26[/Button]
-  [button onClick:`currentValue = "20.30"`]20.30[/Button]
-  [button onClick:`currentValue = "20.31"`]20.31[/Button]
-  [button onClick:`currentValue = "20.46"`]20.46[/Button]
-  [button onClick:`currentValue = "20.56"`]20.56[/Button]
-  [button onClick:`currentValue = "20.60"`]20.60[/Button]
-  [button onClick:`currentValue = "20.61"`]20.61[/Button]
-  [button onClick:`currentValue = "20.63"`]20.63[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "20.25"`]Q1[/Button]
+  [button onClick:`currentValue = "20.26"`]Q2[/Button]
+  [button onClick:`currentValue = "20.30"`]Q3[/Button]
+  [button onClick:`currentValue = "20.31"`]Q4[/Button]
+  [button onClick:`currentValue = "20.46"`]Q5[/Button]
+  [button onClick:`currentValue = "20.56"`]Q6[/Button]
+  [button onClick:`currentValue = "20.60"`]Q7[/Button]
+  [button onClick:`currentValue = "20.61"`]Q8[/Button]
+  [button onClick:`currentValue = "20.63"`]Q9[/Button]
  [/div]
 
  [br /]
@@ -34,67 +34,29 @@
      [Default]
        [div className:"centerHead"]
 
-       [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 6.
-       [/div]
+         [div className:"centerPara"]
+          # Homework 6
+         [/div]
 
-         ## Problem Pages
+          ## Content
 
-           Click the tabs to go to a specific homework problem page.
-           The problems are included in Homework 1 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
+          The following PowerPoint highlights the key ideas from Chapter 20: Magnetic Force
+          in Matter and Interactions. For more details or examples, navigate to the eBook through
+          your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-           Each problem page has the following sections:
+          Click through the slides below using the left and right arrow buttons or by clicking
+          on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+          the videos and articles below before moving on to the homework.
 
-           #### Skills involved
-
-           The skills involved in the particular homework problem will be tagged
-           with other problems in the course that deal with the same content
-           (*TO DO*). Click these to find more problems in these areas. It may
-           help to look at the Resources page for videos and simulations that
-           target specific skills these homework problems involve.
-
-           #### Problem
-
-           The problems will be listed as they are seen in WileyPlus. Note that
-           the values will change for *each* problem.
-
-           This section also includes a computation section.
-
-           #### Important information
-
-           To solve the homework problems, there are several areas that need to
-           be understood. To help, the following sections are available:
-
-           [ul]
-             [li] **Objective**: summarizes what the question is asking. [/li]
-             [li] **Key Equations**: lists the equations that may help in solving
-             and understanding the problem. [/li]
-             [li] **References**: lists the pages of the book where
-             explanations of the concepts in the homework can be found. It may
-             also include outside references that may be useful. [/li]
-             [li] **Things to Think About**: covers tricky aspects of the
-             question that may lead to incorrect answers. Thinking about these
-             may help in solving the question faster. [/li]
-           [/ul]
-
-         ## Resources
-
-           Need help doing physics problems in Python? Visit the Computational Activities pages.
-
-           Need help doing the physics problems? Check out the resources section
-           on each problem page for specific text entries in Matter and Interactions
-           and any outside resource that may help in solving them. Visit the resources
-           page for videos and simulations about the specific physics problem.
-
+         [br /]
+         [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218482&authkey=ALUi849cvKrw6ks&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
          [hr /]
 
          [div className:"centerPara"]
            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
            [Physics Department](https://clas.ucdenver.edu/physics/)
            [br /]
-           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+           [a href:"https://forms.gle/ykqVgq5LRocopCxv7" target:"_blank"]Feedback Form[/a]
          [/div]
 
        [/div]
@@ -102,7 +64,7 @@
      [Case test:"20.25"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.25
+         ## Q1
 
          [hr /]
 
@@ -113,7 +75,7 @@
             location of the proton there is a magnetic field of magnitude 0.35 T
             in the +z direction, due to current running in a nearby coil.
 
-        #### questions
+        #### Questions
 
           1. What is the direction of the magnetic force on the proton?
           [br /]
@@ -124,20 +86,21 @@
          ### Computation
 
          Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
-
-         [ul]
-           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-           [li]Click the Run button to output the answers![/li]
-           [li]If using numbers from this page, make sure to switch them with the numbers
-           given in WileyPLUS before submitting the answers.[/li]
-         [/ul]
+         above.
 
          [br /]
 
-         *Insert Trinket*
+         [div className:"splitLeft"]
+            #### Instructions
+
+            [iframe src:"./static/HW6Comp20.25.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/00aa3638eb?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
 
          [/div]
          [div className:"extraInfo centerHead"]
@@ -232,7 +195,7 @@
      [Case test:"20.26"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.26
+         ## Q2
 
          [hr /]
 
@@ -253,16 +216,24 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-           [br /]
+         [br /]
 
-           *Insert Trinket*
+         [div className:"splitLeft"]
+            #### Instructions
 
-       [/div]
+            [iframe src:"./static/HW6Comp20.26.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/9762ba13a1?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
+
+         [/div]
        [div className:"extraInfo centerHead"]
 
        ### About this Problem
@@ -349,7 +320,7 @@
      [Case test:"20.30"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.30
+         ## Q3
 
          [hr /]
 
@@ -373,21 +344,6 @@
             6. Is this a violation of conservation of momentum for an isolated system?
 
          [hr /]
-
-         ### Computation
-
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
-
-           Note that the SciPy constants are more exact than the constants listed in the book.
-           Try calculating the answer with the SciPy constants and the constants listed in
-           Matter and Interactions to see the differences in the answer.
-
-           [br /]
-
-           *Insert Trinket*
 
        [/div]
        [div className:"extraInfo centerHead"]
@@ -477,7 +433,7 @@
      [Case test:"20.31"]
       [div className:"centerHead pBwithAside"]
 
-        ## 20.31
+        ## Q4
 
         [hr /]
 
@@ -660,87 +616,22 @@
 
         ### Computation
 
-          Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
+        Use the Trinket below to solve the problem using the values listed
+        above.
 
-         [ul]
-           [li]View the slideshow and figure out the code as described, replacing values as necessary.[/li]
-           [li]Click the Run button to output the answers![/li]
-           [li]If using numbers from this page, make sure to switch them with the numbers
-           given in WileyPLUS before submitting the answers.[/li]
-         [/ul]
+        [br /]
 
-         [br /]
+        [div className:"splitLeft"]
+           #### Instructions
 
-         [div className: "compStepper"]
-           [var name:"stepperIndex" value:0 /]
-           [Stepper currentStep:stepperIndex]
-            [Step]
-              [p]
-                ## Import Libraries
-              [/p]
-              [p]
-                The SciPy library contains common constants used in physics. A
-                list of scipy.constants is located [here](https://docs.scipy.org/doc/scipy/reference/constants.html)
-              [/p]
-              [p]
-                To import the specific constants module from SciPy, type:
+           [iframe src:"./static/HW6Comp20.31.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+        [/div]
 
-                `from scipy import constants`
-              [/p]
-            [/Step]
-            [Step]
-              [p]
-                ## Variables
-              [/p]
-              [p]
-                A variable can be defined in python by the following format:
-                [p]
-                  `variable = number`
-                [/p]
-              [/p]
-              [p]
-                Define each of the given variables in the problem.
-
-                Hint: These include the magnetic field, distance between the deflection
-                plates and the ion detector (w), and the distance between the deflection plates.
-              [/p]
-              [p]
-                The charge and mass of the particle can be defined through the
-                SciPy constants library. To use it, set a variable to `constants.[constant]`.
-              [/p]
-              [p]
-                The SciPy library has a few different names for some constants. For the elementary
-                charge (e), or [Equation]1.6 \times 10^{-19} C[/Equation], `e` or `elementary_charge`
-                can be used:
-
-                `q = constants.e` or `q = constants.elementary_charge`
-              [/p]
-              [p]
-                When a value isn't as common in the SciPy library, `constants.value()` can be used with
-                certain attributes. To define the mass of a particle, use the following line:
-
-                `m = constants.value(u'atomic mass constant')`
-              [/p]
-            [/Step]
-            [Step]
-              [p]
-                ## Calculations
-              [/p]
-            [/Step]
-            [Step]
-              [p]
-                ## Print
-              [/p]
-            [/Step]
-            [StepperControl /]
-           [/Stepper]
-         [/div]
-
-         [iframe src:"https://trinket.io/embed/python3/2981a2be59" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
-
+        [div className:"splitRight"]
+           #### Trinket
+           [br /]
+           [iframe src:"https://trinket.io/embed/python3/2981a2be59?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+        [/div]
        [/div]
        [div className:"extraInfo centerHead"]
 
@@ -834,7 +725,7 @@
      [Case test:"20.46"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.46
+         ## Q5
 
          [hr /]
 
@@ -861,22 +752,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          *Insert Trinket*
+            [iframe src:"./static/HW6Comp20.46.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/0f55fa1cce?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
         [/div]
         [div className:"extraInfo centerHead"]
 
@@ -970,7 +861,7 @@
      [Case test:"20.56"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.56
+         ## Q6
 
          [hr /]
 
@@ -998,22 +889,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          *Insert Trinket*
+            [iframe src:"./static/HW6Comp20.56.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/3756b4bf99?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
         [/div]
         [div className:"extraInfo centerHead"]
 
@@ -1107,7 +998,7 @@
      [Case test:"20.60"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.60
+         ## Q7
 
          [hr /]
 
@@ -1119,21 +1010,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
-
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
-
-          [br /]
-
-          *Insert Trinket*
+         TBD
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -1228,7 +1105,7 @@
      [Case test:"20.61"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.61
+         ## Q8
 
          [hr /]
 
@@ -1335,7 +1212,7 @@
      [Case test:"20.63"]
        [div className:"centerHead pBwithAside"]
 
-         ## 20.63
+         ## Q9
 
          [hr /]
 
@@ -1362,21 +1239,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
-
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
-
-          [br /]
-
-          *Insert Trinket*
+         TBD
 
         [/div]
         [div className:"extraInfo centerHead"]
