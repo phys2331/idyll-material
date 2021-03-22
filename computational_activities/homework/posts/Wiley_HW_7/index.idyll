@@ -17,8 +17,8 @@
   [button onClick:`currentValue = "17.15"`]Q2[/Button]
   [button onClick:`currentValue = "17.16"`]Q3[/Button]
   [button onClick:`currentValue = "17.17"`]Q4[/Button]
+  [button onClick:`currentValue = "17.33"`]Q5[/Button]
   [button onClick:`currentValue = "17.14"`]17.14[/Button]
-  [button onClick:`currentValue = "17.33"`]17.33[/Button]
   [button onClick:`currentValue = "17.36"`]17.36[/Button]
   [button onClick:`currentValue = "17.37"`]17.37[/Button]
   [button onClick:`currentValue = "17.40"`]17.40[/Button]
@@ -510,40 +510,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]Import Libraries[/li]
-              [ul]
-                [li]Add: `import numpy as np`[/li]
-                [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
-              [/ul]
-            [li]Vectors[/li]
-              [ul]
-                [li]Assign arrays to `vec1` and `vec2` variables.[/li]
-                [li]Example: `vec1 = np.array([x, y, z])`[/li]
-                [li]Note: replace x, y, and z with the components given in the problem.[/li]
-              [/ul]
-            [li]Cross `vec1` and `vec2`[/li]
-              [ul]
-                [li]Set a variable equal to the cross. This can be done with `np.cross(vec1, vec2)`.[/li]
-                [li]Example: `vec3 = np.cross(vec1, vec2)`[/li]
-              [/ul]
-            [li]Print[/li]
-              [ul]
-                [li]Print the answer using `print()`[/li]
-                [li]Example: print(vec3)[/li]
-              [/ul]
-            [li]Run the code.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          [iframe src:"https://trinket.io/embed/python3/d04adbf302" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"./static/HW7Comp17.17.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/d04adbf302?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
         [/div]
         [div className:"extraInfo centerHead"]
 
@@ -619,7 +601,7 @@
      [Case test:"17.33"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.33
+         ## Q5
 
          [hr /]
 
@@ -651,107 +633,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]Import Libraries[/li]
-              [ul]
-                [li]Add: `import numpy as np`[/li]
-                  [ul]
-                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
-                  [/ul]
-                [li]Add: `from scipy import constants`[/li]
-                [ul]
-                  [li]Why? This phrase means that we are just accessing the constants library. This will give us the
-                  magnetic constant for the magnetic field equation.[/li]
-                [/ul]
-              [/ul]
-            [li]Given Information[/li]
-              [ul]
-                [li]Assign values to the following variables:[/li]
-                  [ul]
-                    [li]Length of the wire (`L`)[/li]
-                    [li]Number of segments (`seg`)[/li]
-                    [li]Current (`I`)[/li]
-                  [/ul]
-                [li]Assign the observation location (A) to an array.[/li]
-                  [ul]
-                    [li]Example: `A = np.array([x, y, z])`[/li]
-                    [li]Note: replace x, y, and z with the components given in the problem.[/li]
-                  [/ul]
-              [/ul]
-            [li]Length of segment[/li]
-              [ul]
-                [li]Use the length and number of segment variables to find the length of 1 segment.[/li]
-                [li]Example: `seg_length = L/seg`[/li]
-              [/ul]
-            [li]Vec of a segment[/li]
-              [ul]
-                [li]Set `seg_vec` equal to a NumPy array.[/li]
-                  [ul]
-                    [li]Example: `seg_vec = np.array([x, y, z])`[/li]
-                    [li]Note: Replace x, y, and z with values derived from Part 2.[/li]
-                    [li]Hint: Will the y and z components be positive, negative, or 0? What should x be?[/li]
-                  [/ul]
-                [li]Find the magnitude of a segment[/li]
-                  [ul]
-                    [li]Use `np.linalg.norm(seg_vec)` to find the magnitude of a vector.[/li]
-                    [li]Example: `seg_vec_mag = np.linalg.norm(seg_vec)`[/li]
-                  [/ul]
-              [/ul]
-            [li]Location of the center of the segment[/li]
-              [ul]
-                [li]Set the origin to an array[/li]
-                  [ul]
-                    [li]Example: `origin = np.array([0,0,0])`[/li]
-                  [/ul]
-                [li]Find the center using the origin and the segment vector variable (`seg_vec`)[/li]
-                  [ul]
-                    [li]Example: `cent_seg = (origin - seg_vec)/2`[/li]
-                  [/ul]
-              [/ul]
-            [li]r vector from source to observation[/li]
-              [ul]
-                [li]Remember that r vector is observation minus the source.[/li]
-                [li]Set the equation equal to an `r_vec` variable using the `A` and `cent_seg` variables.[/li]
-              [/ul]
-            [li]Calculate `r_hat`[/li]
-              [ul]
-                [li]Using `r_vec` and `np.linalg.norm(r_vec)`, set an `r_hat` variable equal to the equation.[/li]
-              [/ul]
-            [li]Calculate dl cross `r_hat`[/li]
-              [ul]
-                [li]Use `np.cross(vec1, vec2)` to find the answer.[/li]
-                [li]Example: `np.cross(seg_vec, r_hat)`[/li]
-              [/ul]
-            [li]Calculate the magnetic field at observation location[/li]
-              [ul]
-                [li]Like previous homework questions, use `(constants.mu_0/(4*np.pi))` for the magnetic field constant.[/li]
-                [li]Multiply the constant by the current and dl cross `r_hat` variables defined previously.[/li]
-                [li]Divide this by the magnitude of the r vector squared. Magnitude in Python can be found by `np.linalg.norm()`[/li]
-                [li]Example: `dB = (constants.mu_0)/(4*np.pi)) * ((I * dlr)/np.linalg.norm(r_vec)**2)`[/li]
-              [/ul]
-            [li]Print the answers[/li]
-              [ul]
-                [li]Example: `print("Part 2: Segment 4 is", seg_length, "m")`[/li]
-                [li]Example: `print("Part 3: The magnitude of dl for a segment is", seg_vec_mag, "m")`[/li]
-                [li]Example: `print("Part 4: dl for a segment is", seg_vec, "m")`[/li]
-                [li]Example: `print("Part 5: The center of the segment is", cent_seg, "m")`[/li]
-                [li]Example: `print("Part 6: The r vector is", r_vec, "m")`[/li]
-                [li]Example: `print("Part 7: The unit vector is", r_hat)`[/li]
-                [li]Example: `print("Part 8: dl cross r_hat is", dlr, "m")`[/li]
-                [li]Example: `print("Part 9: The magnetic field is", dB, "T")`[/li]
-              [/ul]
-            [li]Run the code.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          [iframe src:"https://trinket.io/embed/python3/b0755f1034" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"./static/HW7Comp17.33.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/b0755f1034?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
         [/div]
         [div className:"extraInfo centerHead"]
 

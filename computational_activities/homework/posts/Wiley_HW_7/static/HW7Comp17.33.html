@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add the following:
+    <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+    </ol>
+   </li>
+   <li>Under <code># Given information</code>, add the following variables:
+     <ol type="a">
+       <li><code>L = #</code> Replace <code>#</code> with the given wire length.</li>
+       <li><code>seg_num = #</code> Replace <code>#</code> with the given number of segments.</li>
+       <li><code>A = np.array([x, y, z])</code>. Replace <code>x, y, z</code> with the observation location.</li>
+       <li><code>I = #</code>. Replace <code>#</code> with the given conventional current running through the wire.</li>
+     </ol>
+   </li>
+     <li>Under <code># Segment calculations</code>, add the following:
+     <ol type="a">
+       <li><code>seg_length = L/seg</code></li>
+       <li><code>seg_vec_init = np.array([seg_length*#, y, z])</code>. Replace <code>#</code> with the number of segments from the origin to get to the initial bounds of your target segment. For example, segment 1 would be <code>-4</code> because it starts 4 segments from the origin. Why is this negative?
+       Replace <code>y and z</code> with the appropriate values.</li>
+       <li><code>seg_vec_fin = np.array([seg_length*#, y, z])</code>. Replace <code>#</code> with the number of segments from the origin to get to the final bounds of your target segment. For example, segment 1 would be <code>-3</code> because it ends 3 segments from the origin. Why is this negative?
+       Replace <code>y and z</code> with the appropriate values.</li>
+       <li><code>cent_seg = (seg_vec_init + seg_vec_fin)/2</code></li>
+       <li><code>dl_seg = seg_vec_fin-seg_vec_init</code></li>
+       <li><code>seg_vec_mag = np.linalg.norm(dl_seg)</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculate r_vec and r_hat</code>, add the following:
+     <ol type="a">
+       <li><code>r_vec = A - cent_seg</code></li>
+       <li><code>r_hat = r_vec/np.linalg.norm(r_vec)</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculate dl cross r_hat</code>, add: <code>dlr = np.cross(dl_seg, r_hat)</code></li>
+   <li>Under <code># Calculate the magnetic field at observation location</code>, add: <code>dB = (constants.mu_0/(4*np.pi))* ((I * dlr) / np.linalg.norm(r_vec)**2)</code></li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("Part 2: The segment length is", seg_length, "m")</code></li>
+       <li><code>print("Part 3: The magnitude of dl for a segment is", seg_vec_mag, "m")</code></li>
+       <li><code>print("Part 4: dl for a segment is", dl_seg, "m")</code></li>
+       <li><code>print("Part 5: The center of the segment is", cent_seg, "m")</code></li>
+       <li><code>print("Part 6: the r vector is", r_vec, "m")</code></li>
+       <li><code>print("Part 7: The unit vector is", r_hat)</code></li>
+       <li><code>print("Part 8: dl cross r_hat is", dlr, "m")</code></li>
+       <li><code>print("Part 9: The magnetic field is", dB, "T")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>
