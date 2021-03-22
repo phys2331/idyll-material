@@ -12,13 +12,12 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "17.02"`]17.02[/Button]
-  [button onClick:`currentValue = "17.12"`]17.12[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "17.12"`]Q1[/Button]
+  [button onClick:`currentValue = "17.15"`]Q2[/Button]
+  [button onClick:`currentValue = "17.16"`]Q3[/Button]
+  [button onClick:`currentValue = "17.17"`]Q4[/Button]
   [button onClick:`currentValue = "17.14"`]17.14[/Button]
-  [button onClick:`currentValue = "17.15"`]17.15[/Button]
-  [button onClick:`currentValue = "17.16"`]17.16[/Button]
-  [button onClick:`currentValue = "17.17"`]17.17[/Button]
   [button onClick:`currentValue = "17.33"`]17.33[/Button]
   [button onClick:`currentValue = "17.36"`]17.36[/Button]
   [button onClick:`currentValue = "17.37"`]17.37[/Button]
@@ -35,253 +34,41 @@
  [div className:"problemBody" fullWidth:true padding-left:"100%"]
    [Switch value:currentValue]
      [Default]
-       [div className:"centerHead"]
+     [div className:"centerHead"]
 
-       [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/5eqW71596eGXN5LF8" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 7.
+       [div className:"centerPara"]
+        # Homework 7
        [/div]
 
-         ## Problem Pages
+        ## Content
 
-           Click the tabs to go to a specific homework problem page.
-           The problems are included in Homework 1 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
+        The following PowerPoint highlights the key ideas from Chapter 17: Magnetic Field
+        in Matter and Interactions. For more details or examples, navigate to the eBook through
+        your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-           Each problem page has the following sections:
+        Click through the slides below using the left and right arrow buttons or by clicking
+        on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+        the videos and articles below before moving on to the homework.
 
-           #### Skills involved
+        Want extra credit? Fill out the [Feedback Form](https://forms.gle/FrfdHouxbdvZw1Ru9)
 
-           The skills involved in the particular homework problem will be tagged
-           with other problems in the course that deal with the same content
-           (*TO DO*). Click these to find more problems in these areas. It may
-           help to look at the Resources page for videos and simulations that
-           target specific skills these homework problems involve.
+       [br /]
+       [iframe src:"https://onedrive.live.com/embed?resid=FA0DBF36E679630E%218484&authkey=%21AI2WszY_IT-RJcQ&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameborder:"0"][/iframe]
+       [hr /]
 
-           #### Problem
-
-           The problems will be listed as they are seen in WileyPlus. Note that
-           the values will change for *each* problem.
-
-           This section also includes a computation section.
-
-           #### Important information
-
-           To solve the homework problems, there are several areas that need to
-           be understood. To help, the following sections are available:
-
-           [ul]
-             [li] **Objective**: summarizes what the question is asking. [/li]
-             [li] **Key Equations**: lists the equations that may help in solving
-             and understanding the problem. [/li]
-             [li] **References**: lists the pages of the book where
-             explanations of the concepts in the homework can be found. It may
-             also include outside references that may be useful. [/li]
-             [li] **Things to Think About**: covers tricky aspects of the
-             question that may lead to incorrect answers. Thinking about these
-             may help in solving the question faster. [/li]
-           [/ul]
-
-         ## Resources
-
-           Need help doing physics problems in Python? Visit the Computational Activities pages.
-
-           Need help doing the physics problems? Check out the resources section
-           on each problem page for specific text entries in Matter and Interactions
-           and any outside resource that may help in solving them. Visit the resources
-           page for videos and simulations about the specific physics problem.
-
-         [hr /]
-
-         [div className:"centerPara"]
-           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-           [Physics Department](https://clas.ucdenver.edu/physics/)
-           [br /]
-           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-         [/div]
-
+       [div className:"centerPara"]
+         [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+         [Physics Department](https://clas.ucdenver.edu/physics/)
+         [br /]
+         [a href:"https://forms.gle/FrfdHouxbdvZw1Ru9" target:"_blank"]Feedback Form[/a]
        [/div]
+
+     [/div]
      [/Default]
-     [Case test:"17.02"]
-       [div className:"centerHead pBwithAside"]
-
-         ## 17.02
-
-         [hr /]
-
-         ### Problem
-
-            The vectors [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
-            both lie in the yz plane. The vector [Equation]\vec{c}[/Equation] is equal
-            to [Equation]\vec{a} \times \vec{b}[/Equation]. Which of these statements about
-            [Equation]\vec{c}[/Equation] must be true?
-
-            [br /]
-
-            [hr /]
-
-            Watch the following video and answer the questions below:
-
-            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/jpKcpsNGgFo" frameborder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
-
-            [br /]
-
-            [div className: "hwQuestions"]
-              In this problem, [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
-              lie in the yz plane and, when crossed, equal [Equation]\vec{c}[/Equation]. Which
-              of these statements are correct?
-
-              [br /]
-
-              // Set up question answers
-              [var name:"showResult1702" value:false /]
-              [var name:"showAnswer1702" value:false /]
-              [var name:"radioVal1702" value:"null" /]
-
-              [Radio value:radioVal1702 onClick:`showResult1702=false,showAnswer1702=false` options:`[{value:"a",label:"a) The x and y components of vector c are zero."}]`/]
-              [Radio value:radioVal1702 onClick:`showResult1702=false,showAnswer1702=false` options:`[{value:"b",label:"b) The y and z components of vector c are zero."}]`/]
-              [Radio value:radioVal1702 onClick:`showResult1702=false,showAnswer1702=false` options:`[{value:"c",label:"c) The z and x components of vector c are zero."}]`/]
-
-              [Button onClick:`showResult1702=true`]
-                Check Answer
-              [/Button]
-
-              [Conditional if:`showResult1702`]
-                [Conditional if:`radioVal1702 === "b"`]
-                  [hr /]
-                  Correct!
-                [/Conditional]
-                [Conditional if: `radioVal1702 !="b"`]
-                    [hr /]
-                    Incorrect. Rewatch the video above and pay attention to the portion explaining where the vectors lie based on the planes.
-                    Check out the following image from xaktly.com:
-
-                    [br /]
-
-                    [img src:"./static/images/crossproduct.png" title:"Cross Product  - xaktly.com" /]
-                [/Conditional]
-              [/Conditional]
-
-            [/div]
-            [br /]
-            [div className: "hwQuestions"]
-              What if [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation]
-              lie in the xy plane?
-
-              [br /]
-
-              // Set up question answers
-              [var name:"showResult1702_2" value:false /]
-              [var name:"showAnswer1702_2" value:false /]
-              [var name:"radioVal1702_2" value:"null" /]
-
-              [Radio value:radioVal1702_2 onClick:`showResult1702_2=false,showAnswer1702_2=false` options:`[{value:"a",label:"a) The z and x components of vector c are zero."}]`/]
-              [Radio value:radioVal1702_2 onClick:`showResult1702_2=false,showAnswer1702_2=false` options:`[{value:"b",label:"b) The y and z components of vector c are zero."}]`/]
-              [Radio value:radioVal1702_2 onClick:`showResult1702_2=false,showAnswer1702_2=false` options:`[{value:"c",label:"c) The x and y components of vector c are zero."}]`/]
-
-              [Button onClick:`showResult1702_2=true`]
-                Check Answer
-              [/Button]
-
-              [Conditional if:`showResult1702_2`]
-                [Conditional if:`radioVal1702_2 === "c"`]
-                  [hr /]
-                  Correct!
-                [/Conditional]
-                [Conditional if: `radioVal1702_2 !="c"`]
-                    [hr /]
-                    Incorrect. Rewatch the video above and pay attention to the portion explaining where the vectors lie based on the planes.
-                    Check out the following image from xaktly.com:
-
-                    [br /]
-
-                    [img src:"./static/images/crossproduct.png" title:"Cross Product  - xaktly.com" /]
-                [/Conditional]
-              [/Conditional]
-
-            [/div]
-
-         [/div]
-         [div className:"extraInfo centerHead"]
-
-         ### About this Problem
-
-         [hr /]
-
-           [var name:"extraInfo1702" value:"" /]
-
-           [div className:"tabLookProbs" fullWidth:true]
-            [button onClick:`extraInfo1702 = ""`]Skills Involved[/Button]
-            [button onClick:`extraInfo1702 = "Objective"`]Objective[/Button]
-            [button onClick:`extraInfo1702 = "GivenInfo"`]Given Information[/Button]
-            [button onClick:`extraInfo1702 = "KeyEq"`]Key Equations[/Button]
-            [button onClick:`extraInfo1702 = "Ref"`]References[/Button]
-           [/div]
-
-           [br /]
-           [hr fullWidth:true /]
-           [br /]
-
-           [Switch value:extraInfo1702]
-             [Default]
-               [div className:"extraInfoBullets"]
-
-                 [ul]
-                   [li]Vectors: Direction[/li]
-                   [li]Vectors: Cross Products[/li]
-                   [li]Electric field: Due to Point Charges[/li]
-                 [/ul]
-               [/div]
-
-             [/Default]
-             [Case test:"Objective"]
-
-               Find correct statement about [Equation]\vec{c}[/Equation]
-
-             [/Case]
-             [Case test:"GivenInfo"]
-                [div className: "extraInfoBullets"]
-                 [ul]
-                   [li] Vectors [Equation]\vec{a}[/Equation] and [Equation]\vec{b}[/Equation] lie in the same plane.[/li]
-                   [li] [Equation]\vec{c}[/Equation] is equal to [Equation]\vec{a} \times \vec{b}[/Equation].[/li]
-                 [/ul]
-                [/div]
-
-             [/Case]
-             [Case test:"KeyEq"]
-
-                 [div className:"equations"]
-                   [Equation text-align:center]
-                   \vec{a} \times \vec{b} = \vec{c}
-                   [/equation]
-                 [/div]
-
-             [/Case]
-             [Case test:"Ref"]
-                [div className:"extraInfoBullets"]
-                 [ul]
-                   [li] The Vector Cross Product (Matter and Interactions, p. 419)[/li]
-                   [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
-                 [/ul]
-                [/div]
-
-             [/Case]
-          [/Switch]
-         [/div]
-
-         [hr /]
-
-         [div className:"centerPara"]
-           [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
-           [Physics Department](https://clas.ucdenver.edu/physics/)
-           [br /]
-           [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
-         [/div]
-     [/Case]
      [Case test:"17.12"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.12
+         ## Q1
 
          [hr /]
 
@@ -477,7 +264,7 @@
      [Case test:"17.15"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.15
+         ## Q2
 
          [hr /]
 
@@ -503,54 +290,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]Import Libraries[/li]
-              [ul]
-                [li]Add: `import numpy as np`[/li]
-                  [ul]
-                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
-                  [/ul]
-                [li]Add: `import math`[/li]
-                  [ul]
-                    [li]Why? We need to use `math.sin` and `math.radians`.[/li]
-                  [/ul]
-              [/ul]
-            [li]Variables[/li]
-              [ul]
-                [li]Assign values to the following variables.[/li]
-                  [ul]
-                    [li]Vector C (`C_mag`)[/li]
-                    [li]Vector D (`D_mag`)[/li]
-                    [li]Angle of D from axis (`theta`)[/li]
-                    [li]Example: `C_mag = 5`[/li]
-                  [/ul]
-              [/ul]
-            [li]Cross C x D[/li]
-              [ul]
-                [li]Remember that the cross product can be found with [Equation]|\vec{A}||\vec{B}|sin\theta[/Equation].[/li]
-                [li]Set the equation above equal to a variable. Replace A, B, and [Equation]\theta[/Equation] with the C, D, and angle variables defined in the Variables section.[/li]
-                  [ul]
-                    [li]`math.sin` and `math.radians` will be used in this equation.[/li]
-                    [li]Example: `CD = C_mag * D_mag * math.sin(math.radians(theta))`[/li]
-                  [/ul]
-              [/ul]
-            [li]Print the answer.[/li]
-              [ul]
-                [li]Print the answer using `print()`[/li]
-                [li]Example: `print(CD)`[/li]
-              [/ul]
-            [li]Run the code.[/li]
-          [/ul]
+         [br /]
 
-           [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-           [iframe src:"https://trinket.io/embed/python3/11aa8f4475" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"./static/HW7Comp17.15.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/11aa8f4475?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
        [/div]
        [div className:"extraInfo centerHead"]
 
@@ -636,54 +391,36 @@
      [Case test:"17.16"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.16
+         ## Q3
 
          [hr /]
 
          ### Problem
 
           If [Equation]\vec{v} = \langle 369, -432, 363 \rangle[/Equation] m/s and
-          [Equation]\hat{r} = \langle 0.577, 0.577, -0.577 \rangle[/Equation] m, what
-          is [Equation]\vec{v} \times \hat{r}[/Equation]?
+          [Equation]\vec{r} = \langle 0.577, 0.577, -0.577 \rangle[/Equation] m, what
+          is [Equation]\vec{v} \times \vec{r}[/Equation]?
 
          [hr /]
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]Import Libraries[/li]
-              [ul]
-                [li]Add: `import numpy as np`[/li]
-                [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
-              [/ul]
-            [li]Vectors[/li]
-              [ul]
-                [li]Assign arrays to `v_vec` and `r_hat` variables.[/li]
-                [li]Example: `v_vec = np.array([x, y, z])`[/li]
-                [li]Note: replace x, y, and z with the components given in the problem.[/li]
-              [/ul]
-            [li]Cross `v_vec` and `r_hat`[/li]
-              [ul]
-                [li]Set a variable (vr) equal to the cross. This can be done with `np.cross(vec1, vec2)`.[/li]
-                [li]Example: `vr = np.cross(vec1, vec2)`[/li]
-              [/ul]
-            [li]Print[/li]
-              [ul]
-                [li]Print the answer using `print()`[/li]
-                [li]Example: print(vr)[/li]
-              [/ul]
-            [li]Run the code.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          [iframe src:"https://trinket.io/embed/python3/f26d19f119" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"./static/HW7Comp17.16.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/f26d19f119?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
         [/div]
         [div className:"extraInfo centerHead"]
 
@@ -761,7 +498,7 @@
      [Case test:"17.17"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.17
+         ## Q4
 
          [hr /]
 
