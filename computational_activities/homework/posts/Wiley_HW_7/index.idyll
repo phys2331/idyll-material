@@ -18,10 +18,10 @@
   [button onClick:`currentValue = "17.16"`]Q3[/Button]
   [button onClick:`currentValue = "17.17"`]Q4[/Button]
   [button onClick:`currentValue = "17.33"`]Q5[/Button]
+  [button onClick:`currentValue = "17.36"`]Q6[/Button]
+  [button onClick:`currentValue = "17.37"`]Q7[/Button]
+  [button onClick:`currentValue = "17.40"`]Q8[/Button]
   [button onClick:`currentValue = "17.14"`]17.14[/Button]
-  [button onClick:`currentValue = "17.36"`]17.36[/Button]
-  [button onClick:`currentValue = "17.37"`]17.37[/Button]
-  [button onClick:`currentValue = "17.40"`]17.40[/Button]
   [button onClick:`currentValue = "20.56"`]20.56[/Button]
 
  [/div]
@@ -767,7 +767,7 @@
      [Case test:"17.36"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.36
+         ## Q6
 
          [hr /]
 
@@ -790,82 +790,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]Import Libraries[/li]
-              [ul]
-                [li]Add: `import numpy as np`[/li]
-                  [ul]
-                    [li]Why? This gives us access to the NumPy library for the vectors and performing the cross.[/li]
-                  [/ul]
-                [li]Add: `from scipy import constants`[/li]
-                  [ul]
-                    [li]Why? This phrase means that we are just accessing the constants library. This will give us the
-                    magnetic constant for the magnetic field equation.[/li]
-                  [/ul]
-                [li]Add: `import math`[/li]
-                  [ul]
-                    [li]Why? In the magnetic field and compass deflection equations, we will want to use square root and arctan functions.
-                    While there are many ways to accomplish this, using `math.*func*` is quite simple.[/li]
-                  [/ul]
-              [/ul]
-            [li]Variables[/li]
-              [ul]
-                [li]Assign values to the following variables:[/li]
-                  [ul]
-                    [li]Length of each side (`L`)[/li]
-                    [li]Distance from the center (`d`)[/li]
-                    [li]Current (`I`)[/li]
-                    [li]Number of turns (`turns`)[/li]
-                    [li]Magnetic field of the Earth (`B_Earth`)[/li]
-                    [li]Example: `L = 0.086`[/li]
-                    [li]Note: Remember to convert to meters![/li]
-                  [/ul]
-              [/ul]
-            [li]Magnetic field magnitude[/li]
-              [ul]
-                [li]First - the equation needs to be understood! Hint: Look at section 17.7 for the Magnetic Field of a Straight Wire equation.[/li]
-                [li]Set this equation equal to a variable.[/li]
-                [li]To add the [Equation]\frac{\mu_{0}}{4\pi}[/Equation] constant, use SciPy and NumPy![/li]
-                  [ul]
-                    [li]Use: `(constants.mu_0/(4*np.pi))`[/li]
-                  [/ul]
-                [li]Multiply the constant (using `*`) by the rest of the equation.[/li]
-                  [ul]
-                    [li]This will include a square root. Use: `math.sqrt()`, inserting the appropriate math between the paraentheses.[/li]
-                  [/ul]
-                [li]Example: `B = (constants.mu_0)/4*np.pi))* (L*I)/(d * math.sqrt(d**2 + ((L/2)**2)))`[/li]
-                [li]We also want to include the turns of the triangle. We know that there are 3 turns of the coil, but we are calculating the length as one side.
-                What does this mean for the turns?[/li]
-                  [ul]
-                    [li]Multiply B by the number of turns (Hint: the number of given turns should be multiplied by another number to get the full contribution of the coil).[/li]
-                  [/ul]
-              [/ul]
-            [li]Compass deflection[/li]
-              [ul]
-                [li]Set a variable that will equal the deflection equation.[/li]
-                [li]Here, we will want to obtain the arctangent of the magnetic field of the coil over the magnetic field of the Earth.[/li]
-                  [ul]
-                    [li]To do this, use `math.degrees` and `math.atan`. Using `math.atan` alone will report the answer in radians.[/li]
-                    [li]Example: `theta = math.degrees(math.atan(B/B_Earth))`[/li]
-                  [/ul]
-              [/ul]
-            [li]Print[/li]
-              [ul]
-                [li]Use `print()` to print the answers for both (2 lines)[/li]
-                [li]Example: `print("The magnetic field is", B, "T")`[/li]
-              [/ul]
-            [li]Run the code.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          [iframe src:"https://trinket.io/embed/python3/92b0d73220" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+            [iframe src:"./static/HW7Comp17.36.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
 
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/92b0d73220?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
         [/div]
         [div className:"extraInfo centerHead"]
 
@@ -957,7 +897,7 @@
      [Case test:"17.37"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.37
+         ## Q7
 
          [hr /]
 
@@ -1059,7 +999,7 @@
      [Case test:"17.40"]
        [div className:"centerHead pBwithAside"]
 
-         ## 17.40
+         ## Q8
 
          [hr /]
 
