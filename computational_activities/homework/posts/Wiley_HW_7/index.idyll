@@ -1101,7 +1101,7 @@
               [/Default]
               [Case test:"Objective"]
 
-                Find the maximum magnitude of the alternating magnetic field.
+              Find the maximum magnitude of the alternating magnetic field.
 
               [/Case]
               [Case test:"GivenInfo"]
