@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+     </ol>
+   <li>Under <code># Variables</code>, add the following variables:
+     <ol type="a">
+       <li><code>r = #</code> Replace <code>#</code> with the given radius of the disks.</li>
+       <li><code>s = np.array([x, y, z])</code> Replace <code>x, y, z</code> with the given distance between the disks. Put the given distance into vector format.</li>
+       <li><code>t = np.array([x, y, z])</code>. Replace <code>x, y, z</code> with the given thickness of the disks. Put the thickness into vector format.</li>
+       <li><code>Q = #</code>. Replace <code>#</code> with the charge of the disk.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following:
+     <ol type="a">
+       <li><code>loc_1 = t/2</code></li>
+       <li><code>loc_2 = s/2</code></li>
+       <li><code>E_loc1 = np.array([x, y, z])</code>. Replace <code>x, y, z</code> with the components of the electric field at location 1. Is there an electric field here?</li>
+       <li><code>E_loc2 = (Q/(np.pi*r**2))/constants.epsilon_0</code></li>
+       <li><code>V1 = -np.dot(E_loc1, loc_1)</code></li>
+       <li><code>V2 = -np.dot(E_loc2, loc_2)</code></li>
+       <li><code>dV = V2 - V1</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add: <code>print(dV, "V")</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

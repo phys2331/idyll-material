@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>import math</code></li>
+       <li><code>from scipy import constants</code></li>
+     </ol>
+   <li>Under <code># Variables</code>, add the following variables:
+     <ol type="a">
+       <li><code>H = #</code> Replace <code>#</code> with the height of the box.</li>
+       <li><code>W = #</code> Replace <code>#</code> with the width of the box.</li>
+       <li><code>L = #</code>. Replace <code>#</code> with the length of the box.</li>
+       <li><code>E1 = #</code>. Replace <code>#</code> with the first electric field.</li>
+       <li><code>E2 = #</code>. Replace <code>#</code> with the second electric field.</li>
+     </ol>
+   </li>
+   <li>Under <code># Flux per side</code>, add the following:
+     <ol type="a">
+       <li><code>flux_left = E1 * H * W * math.cos(np.pi)</code></li>
+       <li><code>flux_right = E2 * H * W * math.cos(0)</code></li>
+       <li><code>flux_top = E1 * L * W * round(math.cos(np.pi/2))</code></li>
+       <li><code>flux_bottom = E1 * L * W * round(math.cos(np.pi/2))</code></li>
+       <li><code>flux_front = E1 * L * H * round(math.cos(np.pi/2), 5)</code></li>
+       <li><code>flux_back = E1 * L * H * round(math.cos(np.pi/2), 5)</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Total Flux and Charge</code>, add the following:
+     <ol type="a">
+       <li><code>flux_tot = flux_left + flux_right + flux_top + flux_bottom + flux_front + flux_back</code></li>
+       <li><code>q = flux_tot * constants.epsilon_0</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("Flux through the top =", flux_top, "Vm")</code></li>
+       <li><code>print("Flux through the bottom =", flux_bottom, "Vm")</code></li>
+       <li><code>print("Flux through the left =", flux_left, "Vm")</code></li>
+       <li><code>print("Flux through the right =", flux_right, "Vm")</code></li>
+       <li><code>print("Flux through the front =", flux_front, "Vm")</code></li>
+       <li><code>print("Flux through the back =", flux_back, "Vm")</code></li>
+       <li><code>print("The total flux =", flux_tot, "Vm")</code></li>
+       <li><code>print("The total charge inside =", q, "C")</code></li>
+     </ol>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

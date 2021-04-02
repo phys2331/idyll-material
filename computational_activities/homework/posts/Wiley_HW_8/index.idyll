@@ -12,14 +12,15 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "21.06"`]21.06[/Button]
-  [button onClick:`currentValue = "21.07"`]21.07[/Button]
-  [button onClick:`currentValue = "21.10"`]21.10[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "16.26"`]Q1[/Button]
+  [button onClick:`currentValue = "16.27"`]Q2[/Button]
+  [button onClick:`currentValue = "16.50"`]Q3[/Button]
+  [button onClick:`currentValue = "16.52"`]Q4[/Button]
+  [button onClick:`currentValue = "21.06"`]Q5[/Button]
+  [button onClick:`currentValue = "21.07"`]Q6[/Button]
+  [button onClick:`currentValue = "21.10"`]Q7[/Button]
   [button onClick:`currentValue = "22.12"`]22.12[/Button]
-  [button onClick:`currentValue = "16.26"`]16.26[/Button]
-  [button onClick:`currentValue = "16.27"`]16.27[/Button]
-  [button onClick:`currentValue = "16.52"`]16.52[/Button]
  [/div]
 
  [br /]
@@ -32,61 +33,25 @@
      [Default]
        [div className:"centerHead"]
 
-       [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/R2RxUPdVkrVSTzCWA" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 8.
+       [div className:"centerPara"]
+        # Homework 8
        [/div]
 
-         ## Problem Pages
+        ## Content
 
-           Click the tabs to go to a specific homework problem page.
-           The problems are included in Homework 1 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
+        The following PowerPoint highlights the key ideas from Chapter 20: Magnetic Force
+        in Matter and Interactions. For more details or examples, navigate to the eBook through
+        your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-           Each problem page has the following sections:
+        Click through the slides below using the left and right arrow buttons or by clicking
+        on the slides. To download a copy, click the Menu button on the bottom right. Then, view
+        the videos and articles below before moving on to the homework.
 
-           #### Skills involved
+        Want extra credit? Fill out the [Feedback Form](https://forms.gle/FrfdHouxbdvZw1Ru9)
 
-           The skills involved in the particular homework problem will be tagged
-           with other problems in the course that deal with the same content
-           (*TO DO*). Click these to find more problems in these areas. It may
-           help to look at the Resources page for videos and simulations that
-           target specific skills these homework problems involve.
-
-           #### Problem
-
-           The problems will be listed as they are seen in WileyPlus. Note that
-           the values will change for *each* problem.
-
-           This section also includes a computation section.
-
-           #### Important information
-
-           To solve the homework problems, there are several areas that need to
-           be understood. To help, the following sections are available:
-
-           [ul]
-             [li] **Objective**: summarizes what the question is asking. [/li]
-             [li] **Key Equations**: lists the equations that may help in solving
-             and understanding the problem. [/li]
-             [li] **References**: lists the pages of the book where
-             explanations of the concepts in the homework can be found. It may
-             also include outside references that may be useful. [/li]
-             [li] **Things to Think About**: covers tricky aspects of the
-             question that may lead to incorrect answers. Thinking about these
-             may help in solving the question faster. [/li]
-           [/ul]
-
-         ## Resources
-
-           Need help doing physics problems in Python? Visit the Computational Activities pages.
-
-           Need help doing the physics problems? Check out the resources section
-           on each problem page for specific text entries in Matter and Interactions
-           and any outside resource that may help in solving them. Visit the resources
-           page for videos and simulations about the specific physics problem.
-
-         [hr /]
+       [br /]
+       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218482&authkey=ALUi849cvKrw6ks&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+       [hr /]
 
          [div className:"centerPara"]
            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
@@ -100,7 +65,7 @@
      [Case test:"21.06"]
        [div className:"centerHead pBwithAside"]
 
-         ## 21.06
+         ## Q5
 
          [hr /]
 
@@ -113,60 +78,21 @@
          ### Computation
 
          Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
-
-        [ul]
-          [li]Import Libraries[/li]
-            [ul]
-              [li]Add: `import math`[/li]
-                [ul]
-                  [li]Why? We need to use `math.cos`.[/li]
-                [/ul]
-              [li]Add: `import numpy as np`[/li]
-                [ul]
-                  [li]Why? We will use it to access pi.[/li]
-                [/ul]
-            [/ul]
-          [li]Variables[/li]
-            [ul]
-              [li]Assign values to the following variables.[/li]
-                [ul]
-                  [li]Radius of the region (`r`)[/li]
-                  [li]Electric field (`E`)[/li]
-                  [li]Given angle (`theta`)[/li]
-                  [li]Angle between n_vec and E (`theta_nE`)[/li]
-                    [ul]
-                      [li]How can you find this angle? Remember the normal vector?[/li]
-                    [/ul]
-                  [li]Example: `r = 0.02`[/li]
-                [/ul]
-            [/ul]
-          [li]Calculations[/li]
-            [ul]
-              [li]Set a variable equal to the area of the disk-shaped region.[/li]
-              [ul]
-                [li]Remember to use `np.pi` to call pi from the numpy library.[/li]
-                [li]Example: `A = np.pi * (r**2)`[/li]
-              [/ul]
-              [li]Set a variable equal to the electric flux equation.[/li]
-                [ul]
-                  [li]Read 21.2 Definition of Electric Flux for more information on this equation.[/li]
-                  [li]Example: `E_flux = E * A * math.cos(math.radians(theta_nE))`[/li]
-                [/ul]
-            [/ul]
-          [li]Print the answer.[/li]
-            [ul]
-              [li]Print the answer using `print()`[/li]
-              [li]Example: `print("The electric flux is", E_flux, "Vm")`[/li]
-            [/ul]
-          [li]Run the code.[/li]
-        [/ul]
+         above.
 
          [br /]
 
-         [iframe src:"https://trinket.io/embed/python3/8070e9588c" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [div className:"splitLeft"]
+            #### Instructions
+
+            [iframe src:"./static/HW8Comp21.06.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/8070e9588c?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
 
          [/div]
          [div className:"extraInfo centerHead"]
@@ -246,7 +172,7 @@
      [Case test:"21.07"]
        [div className:"centerHead pBwithAside"]
 
-         ## 21.07
+         ## Q6
 
          [hr /]
 
@@ -258,14 +184,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-           [br /]
+         [br /]
 
-           *Insert Trinket*
+         [div className:"splitLeft"]
+            #### Instructions
+
+            [iframe src:"./static/HW8Comp21.07.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/a5971bacad?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
 
        [/div]
        [div className:"extraInfo centerHead"]
@@ -354,7 +288,7 @@
      [Case test:"21.10"]
        [div className:"centerHead pBwithAside"]
 
-         ## 21.10
+         ## Q7
 
          [hr /]
 
@@ -370,18 +304,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-           Note that the SciPy constants are more exact than the constants listed in the book.
-           Try calculating the answer with the SciPy constants and the constants listed in
-           Matter and Interactions to see the differences in the answer.
+         [br /]
 
-           [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-           *Insert Trinket*
+            [iframe src:"./static/HW8Comp21.10.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/a5971bacad?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
        [/div]
        [div className:"extraInfo centerHead"]
 
@@ -601,21 +539,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          *Insert Trinket*
+            [iframe src:"./static/HW8Comp16.26.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/dbcfb0d16d?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -710,7 +649,7 @@
      [Case test:"16.27"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.27
+         ## Q2
 
          [hr /]
 
@@ -723,21 +662,144 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          *Insert Trinket*
+            [iframe src:"./static/HW8Comp16.27.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/8a2ced06ce?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
+
+        [/div]
+        [div className:"extraInfo centerHead"]
+
+          ### About this Problem
+
+          [hr /]
+
+            [var name:"extraInfo321" value:"" /]
+
+            [div className:"tabLookProbs" fullWidth:true]
+             [button onClick:`extraInfo321 = ""`]Skills Involved[/Button]
+             [button onClick:`extraInfo321 = "Objective"`]Objective[/Button]
+             [button onClick:`extraInfo321 = "GivenInfo"`]Given Information[/Button]
+             [button onClick:`extraInfo321 = "KeyEq"`]Key Equations[/Button]
+             [button onClick:`extraInfo321 = "Ref"`]References[/Button]
+            [/div]
+
+            [br /]
+            [hr fullWidth:true /]
+            [br /]
+
+            [Switch value:extraInfo321]
+              [Default]
+                [div className:"extraInfoBullets"]
+
+                  [ul]
+                    [li]Vectors: Direction[/li]
+                    [li]Vectors: Fields[/li]
+                    [li]Electric field: Due to Point Charges[/li]
+                  [/ul]
+                [/div]
+
+              [/Default]
+              [Case test:"Objective"]
+
+                Find the sign of the source charge, the direction of the electric
+                force on the charge, the electric field, the electric force, and the direction
+                of the electric force.
+
+              [/Case]
+              [Case test:"GivenInfo"]
+                 [div className: "extraInfoBullets"]
+                  [ul]
+                    [li] Diagram of point charge and electric field.[/li]
+                    [li] Charge of particle placed at a given location.[/li]
+                    [li] Electric field at location D. [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+              [Case test:"KeyEq"]
+
+                  [div className:"equations"]
+                    [Equation text-align:center]
+                    \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                    [/equation]
+
+                    [br /]
+                    [br /]
+
+                    [Equation]
+                    \vec{F} = q\vec{E}
+                    [/Equation]
+                  [/div]
+
+              [/Case]
+              [Case test:"Ref"]
+                 [div className:"extraInfoBullets"]
+                  [ul]
+                    [li] Figure 13.12 (Matter and Interactions, p. 517)[/li]
+                    [li] Figure 13.19 (Matter and Interactions, p. 520)[/li]
+                    [li] Figure 13.30 (Matter and Interactions, p. 517)[/li]
+                    [li] Definition of Electric Field (Matter and Interactions, p. 517)[/li]
+                    [li] [Vector's Guide](./../../../../Physics_2_Resources/Vectors_Guide) [/li]
+                  [/ul]
+                 [/div]
+
+              [/Case]
+           [/Switch]
+          [/div]
+
+          [hr /]
+
+          [div className:"centerPara"]
+            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
+            [Physics Department](https://clas.ucdenver.edu/physics/)
+            [br /]
+            [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a]
+        [/div]
+     [/Case]
+     [Case test:"16.50"]
+       [div className:"centerHead pBwithAside"]
+
+         ## Q3
+
+         [hr /]
+
+         ### Problem
+
+          [img src:"./static/images/p16.50.png" title:"Problem 16.50 - Matter and Interactions" /]
+
+         [hr /]
+
+         ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above.
+
+         [br /]
+
+         [div className:"splitLeft"]
+            #### Instructions
+
+            [iframe src:"./static/HW8Comp16.50.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/4213fc0762?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
 
         [/div]
         [div className:"extraInfo centerHead"]
@@ -832,7 +894,7 @@
      [Case test:"16.52"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.52
+         ## Q4
 
          [hr /]
 
@@ -868,6 +930,26 @@
 
 
          [hr /]
+
+         ### Computation
+
+         Use the Trinket below to solve the problem using the values listed
+         above.
+
+         [br /]
+
+         [div className:"splitLeft"]
+            #### Instructions
+
+            [iframe src:"./static/HW8Comp16.52.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/3c9237931a?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
+
 
         [/div]
         [div className:"extraInfo centerHead"]

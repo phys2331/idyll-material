@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add: <code>import numpy as np</code></li>
+   <li>Under <code># Variables</code>, add the following variables:
+     <ol type="a">
+       <li><code>loc_i = np.array([x, y, z])</code> Replace <code>x, y, z</code> with the given location <i>i</i> coordinates.</li>
+       <li><code>loc_f = np.array([x, y, z])</code> Replace <code>x, y, z</code> with the given location <i>f</i> coordinates.</li>
+       <li><code>E = np.array([x, y, z])</code>. Replace <code>x, y, z</code> with the given uniform electric field.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following:
+     <ol type="a">
+       <li><code>V_i = -np.dot(E, loc_i)</code></li>
+       <li><code>V_f = -np.dot(E, loc_f)</code></li>
+       <li><code>dV = V_f - V_i</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add: <code>print(dV)</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>
