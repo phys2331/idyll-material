@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import scipy.constants as sp</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>n1_turns = #</code>. Replace <code>#</code> with the number of turns in coil 1.</li>
+       <li><code>n2_turns = #</code>. Replace <code>#</code> with the number of turns in coil 2.</li>
+       <li><code>radius_c1 = #</code>. Replace <code>#</code> with the radius of coil 1.</li>
+       <li><code>radius_c2 = #</code>. Replace <code>#</code> with the radius of coil 2.</li>
+       <li><code>distance = #</code>. Replace <code>#</code> with the distance between the coils.</li>
+       <li><code>current = #</code>. Replace <code>#</code> with the amplitude of the current.</li>
+       <li><code>freq = #</code>. Replace <code>#</code> with the given frequency.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following to calculate the amplitude (maximum voltage) of the second coil voltage:
+     <ol type="a">
+       <li><code>mu0_4pi = sp.mu_0/(4*sp.pi)</code></li>
+       <li><code>area_c1 = math.pow(radius_c1,2) * sp.pi</code></li>
+       <li><code>area_c2 = math.pow(radius_c2,2) * sp.pi</code></li>
+       <li><code>ang_freq = freq * 2 * sp.pi</code></li>
+       <li><code>l_third = 1/math.pow(distance,3)</code></li>
+       <li><code>emf_c2 = n1_turns * n2_turns * mu0_4pi * 2 * area_c1 * area_c2 * current * ang_freq * l_third</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answer! Add: <code>print("The maximum voltage of the second coil voltage =", emf_c2,"V")</code></li>
+   <li>Click the run button (&#9658;) to output the answer!</li>
+  </ol>
+</body>
+</html>
