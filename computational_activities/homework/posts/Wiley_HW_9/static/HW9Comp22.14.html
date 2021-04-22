@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import scipy.constants as sp</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>r_sol = #</code>. Replace <code>#</code> with the radius of the solenoid.</li>
+       <li><code>r_wire = #</code>. Replace <code>#</code> with the radius of the circular wire.</li>
+       <li><code>l_sol = #</code>. Replace <code>#</code> with the length of the solenoid.</li>
+       <li><code>N_sol = #</code>. Replace <code>#</code> with the number of turns in the solenoid.</li>
+       <li><code>I_rate = #</code>. Replace <code>#</code> with the rate that the current increases by.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following to calculate the emf in the wire:
+     <ol type="a">
+       <li><code>area_sol = sp.pi * r_sol**2</code></li>
+       <li><code>B_sol = (sp.mu_0 * N_sol * I_rate)/l_sol</code></li>
+       <li><code>emf = (B_sol * area_sol)</code></li>
+     </ol>
+   </li>
+   <li>In the same section, add the following to calculate the non-Coulomb electric firled in the wire: <code>E_NC = emf/(2 * sp.pi * r_wire)</code></li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("Part 1: The average emf in the wire =", emf, "V")</code></li>
+       <li><code>print("Part 2: The non-Coulomb electric field in the wire =", E_NC, "V/m")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answer!</li>
+  </ol>
+</body>
+</html>

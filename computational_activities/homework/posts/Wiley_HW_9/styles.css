@@ -32,7 +32,7 @@ body {
   transition: 0.3s;
   margin:auto;
   font-size: 20px;
-  width: 14%;
+  width: 12.5%;
   font-family: Arial;
   font-weight: bold;
   color: #0B465F;
@@ -196,4 +196,38 @@ img {
   color: red;
   font-style:italic;
   text-align: center;
+}
+
+.mainInfoFront {
+  font-family:courier;
+  font-weight: bold;
+  color: white;
+  background-color: #0674CA;
+  padding: 5px 10px 5px 10px;
+}
+
+.mainInfoFront a {
+  color: white;
+}
+
+li {
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+.splitLeft {
+  //position: s;
+  width: 60%;
+  padding-right: 20px;
+  float: left;
+  background-color: inherit;
+  //z-index: 1010101010
+}
+
+.splitRight {
+  //position: relative;
+  //width: 50%;
+  //float: left;
+  background-color: inherit;
+  //z-index: 1010101010
 }

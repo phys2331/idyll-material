@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import scipy.constants as sp</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>r_coil = #</code>. Replace <code>#</code> with the radius of the coil.</li>
+       <li><code>N_coil = #</code>. Replace <code>#</code> with the number of turns in the coil.</li>
+       <li><code>current = #</code>. Replace <code>#</code> with the current.</li>
+       <li><code>velocity = #</code>. Replace <code>#</code> with the velocity.</li>
+       <li><code>distance = #</code>. Replace <code>#</code> with the distance from the wire to the center of the coil.</li>
+       <li><code>time = #</code>. Replace <code>#</code> with a small number. Example: <code>time = 0.00000001</code>. Vary this variable and see how it changes your answers.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following to calculate the magnetic field due to the wire:
+     <ol type="a">
+       <li><code>area_coil = sp.pi * (r_coil**2)</code></li>
+       <li><code>b_i = ((sp.mu_0/(4*sp.pi)) * 2 * current)/(distance)</code></li>
+       <li><code>b_f = ((sp.mu_0/(4*sp.pi)) * 2 * current)/(distance - velocity * time)</code></li>
+       <li><code>dBdt = (b_f - b_i)/time</code></li>
+     </ol>
+   </li>
+   <li>In the same section, add the following to calculate the magnitude of the voltmeter reading: <code>vm_reading = dBdt * area_coil * N_coil</code></li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("Part 1: The magnitude of dB/dt in the coil =", dBdt, "T/s")</code></li>
+       <li><code>print("Part 2: The magnitude of the volmeter reading =", vm_reading, "V")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answer!</li>
+  </ol>
+</body>
+</html>
