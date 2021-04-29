@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>dp = np.array([x,y,z])</code>. Replace <code>x,y,z</code> with the dipole moment of the bar magnet.</li>
+       <li><code>v = np.array([x,y,z])</code>. Replace <code>x,y,z</code> with the velocity.</li>
+       <li><code>mag_cent = np.array([x,y,z])</code>. Replace <code>x,y,z</code> with the center of the magnet.</li>
+       <li><code>loc = np.array([x,y,z])</code>. Replace <code>x,y,z</code> with the observation location.</li>
+       <li><code>t = #</code>. Replace <code>#</code> with a small number. Example: <code>t = 1E-15</code>. Vary this variable
+       and see how it changes your answer.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following to calculate the electric field at the given location:
+     <ol type="a">
+       <li><code>area_flux = np.pi*(loc[0]-mag_cent[0])**2</code></li>
+       <li><code>vt = v * t</code></li>
+       <li><code>cent2 = vt + mag_cent</code></li>
+       <li><code>mu = constants.mu_0/(4*np.pi)</code></li>
+       <li><code>r1 = loc - mag_cent</code></li>
+       <li><code>r2 = loc - cent2</code></li>
+       <li><code>rmag1 = np.linalg.norm(r1)</code></li>
+       <li><code>rmag2 = np.linalg.norm(r2)</code></li>
+       <li><code>B_init = ((mu*2)/(rmag1**3))*dp</code></li>
+       <li><code>B_fin = ((mu*2)/(rmag2**3))*dp</code></li>
+       <li><code>phi_init = B_init * area_flux</code></li>
+       <li><code>phi_fin = B_fin * area_flux</code></li>
+       <li><code>delta_phi = phi_fin - phi_init</code></li>
+       <li><code>E = -delta_phi/(t * np.pi * 2 * r1[0])</code></li>
+       <li><code>E_field = np.array([0,E[2],0])</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add: <code>print("The electric field =", E_field, "N/C")</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

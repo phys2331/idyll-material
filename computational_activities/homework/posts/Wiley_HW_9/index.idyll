@@ -816,7 +816,7 @@
      [Case test:"22.33"]
        [div className:"centerHead pBwithAside"]
 
-         ## 22.33
+         ## Q7
 
          [hr /]
 
@@ -830,21 +830,22 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-          above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-          ideas on how to solve this problem with python. Reveal the answer by
-          clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed
+         above.
 
-          [ul]
-            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-            [li]Click the Run button to output the answers![/li]
-            [li]If using numbers from this page, make sure to switch them with the numbers
-            given in WileyPLUS before submitting the answers.[/li]
-          [/ul]
+         [br /]
 
-          [br /]
+         [div className:"splitLeft"]
+            #### Instructions
 
-          *Insert Trinket*
+            [iframe src:"./static/HW9Comp22.33.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+         [/div]
+
+         [div className:"splitRight"]
+            #### Trinket
+            [br /]
+            [iframe src:"https://trinket.io/embed/python3/436749799b?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+         [/div]
 
         [/div]
         [div className:"extraInfo centerHead"]
