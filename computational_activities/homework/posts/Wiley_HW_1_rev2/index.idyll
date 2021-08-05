@@ -12,10 +12,10 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "13.21"`]13.21[/Button]
-  [button onClick:`currentValue = "13.30"`]13.30[/Button]
-  [button onClick:`currentValue = "13.25"`]13.25[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "13.21"`]Q1[/Button]
+  [button onClick:`currentValue = "13.30"`]Q2[/Button]
+  [button onClick:`currentValue = "13.25"`]Q3[/Button]
  [/div]
 
  [br /]
@@ -28,30 +28,42 @@
      [Default]
        [div className:"centerHead"]
 
-       ## How to Complete this Activity
+       [div className:"centerPara"]
+        # Homework 1 Content
+       [/div]
 
-       [hr /]
+        ## Chapter PowerPoint
+
+        The following PowerPoint highlights the key ideas from Chapter 13: Electric Fields
+        in Matter and Interactions. For more details or examples, navigate to the eBook through
+        your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
+
+        Click through the slides below using the left and right arrow buttons or by clicking
+        on the slides. To download a copy, click the Menu button on the bottom right.
+
+        Want extra credit? Fill out the [a href:"https://forms.gle/vByfNRAFGDkD51437" target:"_blank"]Feedback Form[/a].
+
+       [br /]
+       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218425&authkey=AJobFCMKPvEPdbI&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
        [br /]
 
-       [div className:"mainInfoBullets"]
-             [ol]
-              [li]
-                [span className:"mainInfoFront"]Click the tabs[/span] to go to a specific homework problem page.
-                [ul]
-                  [li]**Note:** Not all of the homework problem pages are populated in every homework.[/li]
-                  [li]The problems are included in Homework 1 through WileyPLUS.[/li]
-                  [li]Work through the problems by hand first using the given information, key equations,
-                  and references listed at the bottom of each page. Then, try to use Python to solve the same problem.[/li]
-                [/ul]
-              [/li]
-              [li][span className:"mainInfoFront"]Read the problem[/span] and try to [span className:"mainInfoFront"]answer the questions[/span] that are given. These are extra and only there to help![/li]
-              [li][span className:"mainInfoFront"]Use the simulations[/span] when provided. These may help with your conceptual understanding of the problem.[/li]
-              [li][span className:"mainInfoFront"]Complete the Computation section[/span] by following the instructions to the left of the Trinket. This should give
-              you the answers you need to complete the homework![/li]
-              [li]After completing all of the resources provided, please complete the [span className:"mainInfoFront"][a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a][/span]. [/li]
-             [/ol]
-        [/div]
+       ## Helpful Videos
 
+       [br /]
+       [br /]
+         [div class:"frameWidth"]
+           [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/mdulzEfQXDE" frameBorder:"0" allow:"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+         [/div]
+      [br /]
+      [br /]
+         [div class:"frameWidth"]
+           [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/pFM-a7_qjFM" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+         [/div]
+      [br /]
+      [br /]
+        [div class:"frameWidth"]
+          [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/yUPdtFqilXo" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+        [/div]
 
 
        [div className:"mainNote"]
@@ -72,7 +84,7 @@
      [Case test:"13.21"]
        [div className:"centerHead"]
 
-         ## 13.21
+         ## Q1
 
          [hr /]
 
@@ -293,19 +305,17 @@
          ### Computation
 
          Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
+         above. Reveal the answer by clicking the button below to see if you got the right answer!
+
+         [br /]
 
          [div className:"splitLeft"]
            #### Instructions
             [iframe src:"./static/HW1Comp.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
-
          [/div]
 
          [div className:"splitRight"]
            #### Trinket
-           [br /]
            [iframe src:"https://trinket.io/embed/python3/17c14dabbd?toggleCode=true" width:"40%" height:"600" frameborder:"0"][/iframe]
          [/div]
          [/div]
@@ -402,7 +412,7 @@
      [Case test:"13.30"]
        [div className:"centerHead pBwithAside"]
 
-         ## 13.30
+         ## Q2
 
          [hr /]
 
@@ -523,21 +533,17 @@
          ### Computation
 
            Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           above. Reveal the answer by clicking the button below to see if you got the right answer!
 
            [br /]
 
            [div className:"splitLeft"]
               #### Instructions
-
               [iframe src:"./static/HW1Comp2.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
            [/div]
 
            [div className:"splitRight"]
               #### Trinket
-              [br /]
               [iframe src:"https://trinket.io/embed/python3/06474e75ce?toggleCode=true" width:"40%" height:"600" frameBorder:"0" marginwidth:"0" marginheight:"0"][/iframe]
            [/div]
        [/div]
@@ -629,7 +635,7 @@
      [Case test:"13.25"]
        [div className:"centerHead pBwithAside"]
 
-         ## 13.25
+         ## Q3
 
          [hr /]
 
@@ -681,9 +687,7 @@
          ### Computation
 
            Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           above. Reveal the answer by clicking the button below to see if you got the right answer!
 
            Note that the SciPy constants are more exact than the constants listed in the book.
            Try calculating the answer with the SciPy constants and the constants listed in
