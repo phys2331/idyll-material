@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, import NumPy</code>
+     <ol type="i">
+       <li>Need a refresher? Revisit the directions in <b>13.21</b>.</li>
+     </ol>
+   </li>
+   <li>
+     In the same section, import SciPy constants.
+     <ol type="i">
+       <li>Need a refresher? Revisit the directions in <b>13.30</b>.</li>
+     </ol>
+   </li>
+   <li>Under <code># Constants</code>, create variables for each of the charged particles in this problem.
+     <ol type="i">
+       <li>Remember that this looks like <code>x = #</code>, where <i>x</i> is the variable you get to pick and <i>#</i> is the number you want to assign to that variable.</li>
+       <li>There should be variables for the following:
+         <ol type="a">
+           <li></li>
+         </ol>
+       </li>
+     </ol>
+   </li>
+   <li>Under <code># Assign the location to variables</code>, create variables for each of the particle locations.
+     This includes the location of A.
+     <ol type="i">
+       <li>There should be 4 variables here set equal to NumPy arrays!</li>
+       <li>How do you find the locations of these particles when it's not stated?
+         <ol type="a">
+           <li>Define the coordinate system and assign an origin.</li>
+           <li>From the origin, use the grid to figure out the locations of the particles.</li>
+         </ol>
+       </li>
+       <li><b>Example:</b> <code>q2_loc=np.array([0.06, 0.02, 0])</code>
+         <ol type="a">
+           <li><b><i>Note:</b></i> this is an example! Do not use these coordinates unless they make sense in your system!</li>
+           <li>Check the units/order of magnitude here!</li>
+         </ol>
+       </li>
+     </ol>
+   </li>
+   <li>Add: <code>k = 1/(4*np.pi*constants.epsilon_0)</code>. What is this for?</li>
+   <li>Under <code># E at Q3 due to Q1</code>, create three variables for the \(\vec{r}\), \(\hat{r}\), and \(\vec{E}\) calculations.
+     <ol type="i">
+       <li>Remember that \(\vec{r}\) is <code>observation location - source charge location</code></li>
+       <li>\(\hat{r}\) is the \(\vec{r}\) divided by its magnitude.
+         <ol type="a">
+           <li>Remember that magnitude can be found in Python using <code>np.linalg.norm()</code></li>
+         </ol>
+       </li>
+       <li>What is the electric field equation? Use this for the (\(\vec{E}\)) variable.</li>
+     </ol>
+   </li>
+   <li>Under <code># E at Q3 due to Q2</code>, repeat the previous step. Create three <b>new</b> variables. These should be very similar calculations as figuring out the electric field at Q3 due to Q1.</li>
+   <li>Under <code># E net at Q3 and F net on Q3</code>, create two variables.
+     <ol type="i">
+       <li>Set the first variable equal to the net electric field at Q3.
+         <ol type="a">
+           <li>How do you do this?
+             <ol>
+               <li>Add the two electric field variables from <code># E at Q3 due to Q1</code> and <code># E at Q3 due to Q2</code> sections.</li>
+               <li><b>Example:</b><code>E_net = E_1 + E_2</code></li>
+             </ol>
+           </li>
+         </ol>
+       </li>
+       <li>Set the second variable equal to the net force on Q3
+         <ol type="a">
+           <li>What is this equation?
+             <ol>
+               <li>It involves a charge and the net electric field.</li>
+               <li>Remember that we want to find the net force on Q3. Use this information to figure out which variables to use.</li>
+             </ol>
+           </li>
+         </ol>
+       </li>
+     </ol>
+   </li>
+   <li>Under <code># E at A due to Q1</code>, create three <b>new</b> variables for the \(\vec{r}\), \(\hat{r}\), and \(\vec{E}\) calculations. Use information in the previous steps to figure out what this should look like.</li>
+   <li>Under <code># E at A due to Q2</code>, create three <b>new</b> variables for the \(\vec{r}\), \(\hat{r}\), and \(\vec{E}\) calculations. Use information in the previous steps to figure out what this should look like.</li>
+   <li>Under <code># E at A due to Q3</code>, create three <b>new</b> variables for the \(\vec{r}\), \(\hat{r}\), and \(\vec{E}\) calculations. Use information in the previous steps to figure out what this should look like.</li>
+   <li>Under <code># E net at A and F net on A with charge</code>, create a variable for the charge of A and set it equal to the number given in the homework.</li>
+   <li>In the same section, create a variable for the net electric field at A.
+     <ol type="i">
+       <li>Remember that this is a sum!</li>
+       <li>Use previously defined variables in your equation</li>
+     </ol>
+   </li>
+   <li>Create another variable for the net force on A
+     <ol type="i">
+       <li>Refer to a previous step for hints at this equation</li>
+     </ol>
+   </li>
+   <li>Under <code># Print the answers</code>, print the answers!
+     <ol type="i">
+       <li>There are so many answers in this homework that this can get confusing in the output.
+         To make it less confusing, label each of the print statements in a string, list the answer, and add the units.</li>
+       <li><b>Example:</b> <code>print("a)", list(E_1), "N/C")</code></li>
+       <li>What should you print?
+         <ol type="a">
+           <li>Electric field at Q3 due to Q1</li>
+           <li>Electric field at Q3 due to Q2</li>
+           <li>Net electric field at Q3</li>
+           <li>Net force on Q3</li>
+           <li>Electric field at A due to Q1</li>
+           <li>Electric field at A due to Q2</li>
+           <li>Electric field at A due to Q3</li>
+           <li>Net electric field at A</li>
+           <li>Force on a particle at A</li>
+         </ol>
+       </li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+   <li>What do you notice about all of these equations? When completing this on your own or creating your own scripts, you only really
+     have to do a single equation once. You can do this by:
+     <ol type="i">
+       <li>Replacing the numbers after running each equation</li>
+       <li>Creating a data file and a script. See the next step to try this out!</li>
+     </ol>
+   </li>
+   <li><i>To be continued...</i></li>
+  </ol>
+</body>
+</html>

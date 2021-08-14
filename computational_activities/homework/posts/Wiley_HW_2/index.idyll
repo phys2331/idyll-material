@@ -12,11 +12,11 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "13.47"`]13.47[/Button]
-  [button onClick:`currentValue = "13.49"`]13.49[/Button]
-  [button onClick:`currentValue = "15.22"`]15.22[/Button]
-  [button onClick:`currentValue = "15.28"`]15.28[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "13.47"`]Q1[/Button]
+  [button onClick:`currentValue = "13.49"`]Q2[/Button]
+  [button onClick:`currentValue = "15.22"`]Q3[/Button]
+  [button onClick:`currentValue = "15.28"`]Q4[/Button]
  [/div]
 
  [br /]
@@ -28,30 +28,52 @@
    [Switch value:currentValue]
      [Default]
        [div className:"centerHead"]
-         ## How to Complete this Activity
+       [div className:"centerPara"]
+        # Homework 2 Content
+       [/div]
 
-         [hr /]
-         [br /]
+        ## Chapter PowerPoint
 
-         [div className:"mainInfoBullets"]
-               [ol]
-                [li]
-                  [span className:"mainInfoFront"]Click the tabs[/span] to go to a specific homework problem page.
-                  [ul]
-                    [li]**Note:** Not all of the homework problem pages are populated in every homework.[/li]
-                    [li]The problems are included in Homework 1 through WileyPLUS.[/li]
-                    [li]Work through the problems by hand first using the given information, key equations,
-                    and references listed at the bottom of each page. Then, try to use Python to solve the same problem.[/li]
-                  [/ul]
-                [/li]
-                [li][span className:"mainInfoFront"]Read the problem[/span] and try to [span className:"mainInfoFront"]answer the questions[/span] that are given. These are extra and only there to help![/li]
-                [li][span className:"mainInfoFront"]Use the simulations[/span] when provided. These may help with your conceptual understanding of the problem.[/li]
-                [li][span className:"mainInfoFront"]Complete the Computation section[/span] by following the instructions to the left of the Trinket. This should give
-                you the answers you need to complete the homework![/li]
-                [li]After completing all of the resources provided, please complete the [span className:"mainInfoFront"][a href:"https://forms.gle/ykqVgq5LRocopCxv7" target:"_blank"]Feedback Form[/a][/span]. [/li]
-               [/ol]
+        The following PowerPoint highlights the key ideas from Chapter 13: Electric Fields
+        in Matter and Interactions. For more details or examples, navigate to the eBook through
+        your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
+
+        Click through the slides below using the left and right arrow buttons or by clicking
+        on the slides. To download a copy, click the Menu button on the bottom right.
+
+        Want extra credit? Fill out the [a href:"https://forms.gle/vByfNRAFGDkD51437" target:"_blank"]Feedback Form[/a].
+
+       [br /]
+       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218469&authkey=AHkMsbwZSVwcdOU&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+       [br /]
+
+       ## Helpful Videos
+
+       [br /]
+       [br /]
+           [div class:"frameWidth"]
+             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/ULJTDCzKcZA" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+           [/div]
+        [br /]
+        [br /]
+           [div class:"frameWidth"]
+             [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/Ta1q5_d-7yM" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+           [/div]
+        [br /]
+        [br /]
+          [div class:"frameWidth"]
+            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/i68CGhgGkxs" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
           [/div]
 
+          [div class:"frameWidth"]
+            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/XSXKk_A3xUM" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+          [/div]
+        [br /]
+        [br /]
+          [div class:"frameWidth"]
+            [iframe width:"560" height:"315" src:"https://www.youtube.com/embed/B5UyXkFCg5s" frameBorder:"0" allow:"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"][/iframe]
+          [/div]
+         [br /]
          [hr /]
 
          [div className:"centerPara"]
@@ -66,7 +88,7 @@
      [Case test:"13.47"]
        [div className:"centerHead"]
 
-         ## 13.47
+         ## Q1
 
          [hr /]
 
@@ -209,7 +231,7 @@
      [Case test:"13.49"]
        [div className:"centerHead pBwithAside"]
 
-         ## 13.49
+         ## Q2
 
          [hr /]
 
@@ -340,7 +362,7 @@
      [Case test:"15.22"]
        [div className:"centerHead pBwithAside"]
 
-         ## 15.22
+         ## Q3
 
          [hr /]
 
@@ -480,7 +502,7 @@
      [Case test:"15.28"]
        [div className:"centerHead pBwithAside"]
 
-         ## 15.28
+         ## Q4
 
          [hr /]
 
