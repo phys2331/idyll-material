@@ -41,7 +41,7 @@
         Click through the slides below using the left and right arrow buttons or by clicking
         on the slides. To download a copy, click the Menu button on the bottom right.
 
-        Want extra credit? Fill out the [a href:"https://forms.gle/vByfNRAFGDkD51437" target:"_blank"]Feedback Form[/a].
+        Want extra credit? Fill out the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a].
 
        [br /]
        [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218425&authkey=AJobFCMKPvEPdbI&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
@@ -494,7 +494,7 @@
                  Correct!
                [/Conditional]
                [Conditional if:`force || !absEfield || !EfieldandMag || EfieldNoAbs`]
-                 Inorrect!
+                 Incorrect!
                [/Conditional]
              [/Conditional]
             [/div]
