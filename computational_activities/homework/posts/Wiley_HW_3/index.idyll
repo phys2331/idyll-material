@@ -1,4 +1,4 @@
-[meta title:"Wiley_HW_1_rev2" description:"Short description of your project" /]
+[meta title:"Wiley_HW_3" description:"Short description of your project" /]
 
 [Header
   fullWidth:true
@@ -12,17 +12,17 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main[/Button]
-  [button onClick:`currentValue = "14.34"`]14.34[/Button]
-  [button onClick:`currentValue = "14.35"`]14.35[/Button]
-  [button onClick:`currentValue = "14.36"`]14.36[/Button]
-  [button onClick:`currentValue = "15.26"`]15.26[/Button]
-  [button onClick:`currentValue = "14.40"`]14.40[/Button]
-  [button onClick:`currentValue = "14.41"`]14.41[/Button]
-  [button onClick:`currentValue = "14.50"`]14.50[/Button]
-  [button onClick:`currentValue = "14.47"`]14.47[/Button]
-  [button onClick:`currentValue = "14.48"`]14.48[/Button]
-  [button onClick:`currentValue = "16.42"`]16.42[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "14.34"`]Q1[/Button]
+  [button onClick:`currentValue = "14.35"`]Q2[/Button]
+  [button onClick:`currentValue = "14.36"`]Q3[/Button]
+  [button onClick:`currentValue = "15.26"`]Q4[/Button]
+  [button onClick:`currentValue = "14.40"`]Q5[/Button]
+  [button onClick:`currentValue = "14.41"`]Q6[/Button]
+  [button onClick:`currentValue = "14.50"`]Q7[/Button]
+  [button onClick:`currentValue = "14.47"`]Q8[/Button]
+  [button onClick:`currentValue = "14.48"`]Q9[/Button]
+  [button onClick:`currentValue = "16.42"`]Q10[/Button]
  [/div]
 
  [br /]
@@ -35,61 +35,33 @@
      [Default]
        [div className:"centerHead"]
 
-       [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/58GeVKmnrP91HbtM9" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 1.
+       [div className:"centerPara"]
+        # Homework 3 Content
        [/div]
 
-         ## Problem Pages
+       ## Chapter PowerPoint
 
-           Click the tabs to go to a specific homework problem page.
-           The problems are included in Homework 3 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
+       The following PowerPoints highlight the key ideas from Chapter 14: Electric Fields
+       and Matter and Chapter 16: Electric Potential in Matter and Interactions.
+       See HW 1 for a review of Chapter 13 and HW 2 for a review of Chapter 15.
+       For more details or examples, navigate to the eBook through
+       your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-           Each problem page has the following sections:
+       Click through the slides below using the left and right arrow buttons or by clicking
+       on the slides. To download a copy, click the Menu button on the bottom right.
 
-           #### Skills involved
+       Want extra credit? Fill out the Feedback Form (Need to Update!).
 
-           The skills involved in the particular homework problem will be tagged
-           with other problems in the course that deal with the same content
-           (*TO DO*). Click these to find more problems in these areas. It may
-           help to look at the Resources page for videos and simulations that
-           target specific skills these homework problems involve.
+       [br /]
+       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218466&authkey=ANGlEDFKpYy-Dlo&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+       [br /]
+       [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218475&authkey=ALsiJLFFi0EE7tA&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
 
-           #### Problem
+      [div className:"mainNote"]
 
-           The problems will be listed as they are seen in WileyPlus. Note that
-           the values will change for *each* problem.
+      [/div]
 
-           This section also includes a computation section.
-
-           #### Important information
-
-           To solve the homework problems, there are several areas that need to
-           be understood. To help, the following sections are available:
-
-           [ul]
-             [li] **Objective**: summarizes what the question is asking. [/li]
-             [li] **Key Equations**: lists the equations that may help in solving
-             and understanding the problem. [/li]
-             [li] **References**: lists the pages of the book where
-             explanations of the concepts in the homework can be found. It may
-             also include outside references that may be useful. [/li]
-             [li] **Things to Think About**: covers tricky aspects of the
-             question that may lead to incorrect answers. Thinking about these
-             may help in solving the question faster. [/li]
-           [/ul]
-
-         ## Resources
-
-           Need help doing physics problems in Python? Visit the Computational Activities pages.
-
-           Need help doing the physics problems? Check out the resources section
-           on each problem page for specific text entries in Matter and Interactions
-           and any outside resource that may help in solving them. Visit the resources
-           page for videos and simulations about the specific physics problem.
-
-         [hr /]
+        [hr /]
 
          [div className:"centerPara"]
            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
@@ -103,7 +75,7 @@
      [Case test:"14.34"]
        [div className:"centerHead"]
 
-         ## 14.34
+         ## Q1
 
          [hr /]
 
@@ -125,43 +97,38 @@
 
            [div className: "hwQuestions"]
 
-           ####I. The neutral carbon atom polarizes, and becomes a dipole.
+            //Extra Question
 
-           Draw an electric field that points to the right. *Insert drawing of
-           of electric field with empty charges on both sides.
+             [img src:"./static/images/HW3Prob1_1.png" title:"Two Charges" /]
 
-             //Extra Question
-             1. What are the signs of possible source charges A or B?
+             1. What are the possible signs of source charges A and B based on the image above?
 
              [br /]
 
              // Set up question answers
-             [var name:"showResult1434_1" value:false /]
-             [var name:"showAnswer1434_1" value:false /]
-             [var name:"radioVal1434_1" value:"null" /]
+             [var name:"showResultQ1_1" value:false /]
+             [var name:"showAnswerQ1_1" value:false /]
+             [var name:"radioValQ1_1" value:"null" /]
 
-             [Radio value:radioVal1434_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"a",label:"a) Charges A and B could both be positive."}]`/]
-             [Radio value:radioVal1434_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"b",label:"b) Charge A could be positive and charge B could be negative."}]`/]
-             [Radio value:radioVal1434_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"c",label:"c) Charge A could be negative and charge B could be positive."}]`/]
-             [Radio value:radioVal1434_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"d",label:"d) Charges A and B could both be negative."}]`/]
+             [Radio value:radioValQ1_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"a",label:"a) Charges A and B could both be positive."}]`/]
+             [Radio value:radioValQ1_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"b",label:"b) Charge A could be positive and charge B could be negative."}]`/]
+             [Radio value:radioValQ1_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"c",label:"c) Charge A could be negative and charge B could be positive."}]`/]
+             [Radio value:radioValQ1_1 onClick:`showResult1434_1=false,showAnswer1434_1=false` options:`[{value:"d",label:"d) Charges A and B could both be negative."}]`/]
 
-             [Button onClick:`showResult1434_1=true`]
+             [Button onClick:`showResultQ1_1=true`]
                Check Answer
              [/Button]
 
-             [Conditional if:`showResult1434_1`]
-               [Conditional if:`radioVal1434_1 === "a" || "c" || "d"`]
+             [Conditional if:`showResultQ1_1`]
+               [Conditional if:`radioValQ1_1 === "a" || radioValQ1_1 === "c" || radioValQ1_1 === "d"`]
                  [hr /]
-                 Incorrect. Refer to Figures 13.19 and 13.20 in Matter and Interactions.
+                 Incorrect. Diagram the situation in [a href:"https://phet.colorado.edu/sims/html/charges-and-fields/latest/charges-and-fields_en.html" target:"blank"]PhET Charges and Fields[/a].
                [/Conditional]
-               [Conditional if:`radioVal1434_1 === "b"`]
+               [Conditional if:`radioValQ1_1 === "b"`]
                  [hr /]
                  Correct!
                [/Conditional]
              [/Conditional]
-
-
-
           [/div]
 
              [br /]
@@ -170,26 +137,38 @@
           [div className: "hwQuestions"]
 
              // Follow-up Question
-             2. If the the electric field pointed radially inward toward the magenta circle, what would be the sign of the source charge?
+
+             "Neutral matter contains both positive and negative charges (protons and electrons)." - pg. 524 Matter and Interactions
+
+             "In an atom, the electron cloud is not rigidly connected to the nucleus. The electron cloud and the nucleus can move
+             relative to each other. If an external charge is nearby, it creates an electric field, which exerts forces on the electron
+             cloud and the nucleus shift position relative to each other." - pg. 553 Matter and Interactions
+
+             2. Based on the above information from Matter and Interactions, select the option(s) below (if any) that would predict what
+             would happen if a neutral carbon atom was placed between charges A and B in the image above.
 
              // Set up question 2 answers
-             [var name:"showResult2" value:false /]
-             [var name:"showAnswer2" value:false /]
-             [var name:"radioVal2" value:"null" /]
+             [var name:"showResultQ1_2" value:false /]
+             [var name:"showAnswerQ1_2" value:false /]
+             [var name:"opt1" value:false /]
+             [var name:"opt2" value:false /]
 
-             [Radio value:radioVal2 onClick:`showResult2=false,showAnswer2=false` options:`[{value:"a",label:"a) Positive"}]`/]
-             [Radio value:radioVal2 onClick:`showResult2=false,showAnswer2=false` options:`[{value:"b",label:"b) Negative"}]`/]
+             [Boolean value:opt1 /] The neutral carbon atom polarizes, and becomes a dipole [br /]
+             [Boolean value:opt2 /] Because the net charge of the carbon atom is zero, it can not be affected by an electric field. [br /]
 
-             [Button onClick:`showResult2=true`]
+             [var name:"opt1_ans" value:false /]
+             [var name:"opt2_ans" value:false /]
+
+             [Button onClick:`showResultQ1_2=true`]
                Check Answer
              [/Button]
 
-             [Conditional if:`showResult2`]
-               [Conditional if:`radioVal2 === "a"`]
+             [Conditional if:`showResultQ1_2`]
+               [Conditional if:`opt2 || !opt1`]
                  [hr /]
-                 Incorrect. Refer to Figures 13.19 and 13.20 in Matter and Interactions.
+                 Incorrect. Refer to Section 14.3 Polarization of Atoms in Matter and Interactions.
                [/Conditional]
-               [Conditional if:`radioVal2 === "b"`]
+               [Conditional if:`opt1 && !opt2`]
                  [hr /]
                  Correct!
                [/Conditional]
@@ -198,172 +177,96 @@
 
            [br /]
 
-           [img src:"./static/images/P13.21b.png" title:"Problem 13.21 - Matter and Interactions" /]
+           [div className: "hwQuestions"]
 
-           [br /]
+            //Follow-up Question
 
-           #### To understand this question, use the Coulomb's Law PhET simulation below.
-
-           [div className: "centerBullets"]
-
-            [hr /]
-
-             [ul]
-               [li]Try both Macro and Atomic scales.[/li]
-               [li]Set Charge 1 to some positive charge.[/li]
-               [li]Set Charge 2 to some negative charge.[/li]
-               [li]Note the direction of the forces, who is creating the force, and who is feeling the force.[/li]
-               [li]Change Charge 1 to some negative charge.[/li]
-               [li]Note what happens to the force vectors when the charges change sign.[/li]
-             [/ul]
-           [/div]
-
-           [br /]
-
-           [iframe src:"https://phet.colorado.edu/sims/html/coulombs-law/latest/coulombs-law_en.html" width:"800" height:"600" scrolling:"no"][/iframe]
-
-           [br /]
-
-           [div className:"hwQuestions"]
-             // Follow-up Questions
-             3. When both charges are positive, or both charges are negative, what happens to the force vectors?
-
-             // Set up question 3 answers
-             [var name:"showResult3" value:false /]
-             [var name:"showAnswer3" value:false /]
-             [var name:"radioVal3" value:"null" /]
-
-             [Radio value:radioVal3 onClick:`showResult3=false,showAnswer3=false` options:`[{value:"a",label:"a) They point in the direction of the other charge."}]`/]
-             [Radio value:radioVal3 onClick:`showResult3=false,showAnswer3=false` options:`[{value:"b",label:"b) The higher charged particle exerts a larger force in the direction of the other particle."}]`/]
-             [Radio value:radioVal3 onClick:`showResult3=false,showAnswer3=false` options:`[{value:"c",label:"c) Both forces are equal and point in opposite directions."}]`/]
-
-             [Button onClick:`showResult3=true`]
-               Check Answer
-             [/Button]
-
-             [Conditional if:`showResult3`]
-               [Conditional if:`radioVal3 === "a" || radioVal3 === "b"`]
-                 [hr /]
-                 Incorrect. Try the PhET simulation again and read the linked article on [a href:"https://www.physicsclassroom.com/Class/estatics/u8l1c.cfm" target:"_blank"]charge interactions[/a].
-               [/Conditional]
-               [Conditional if:`radioVal3 === "c"`]
-                 [hr /]
-                 Correct!
-               [/Conditional]
-             [/Conditional]
-
-           [/div]
-           [br /]
-           [div className:"hwQuestions"]
-
-             // Follow-up Questions
-             4. When Charge 1 is positive and Charge 2 is neutral, what happens to the force vectors?
-
-             // Set up question 3 answers
-             [var name:"showResult4" value:false /]
-             [var name:"showAnswer4" value:false /]
-             [var name:"radioVal4" value:"null" /]
-
-             [Radio value:radioVal4 onClick:`showResult4=false,showAnswer3=false` options:`[{value:"a",label:"a) There is a force exerted on the neutral charge, but no force on the positive charge."}]`/]
-             [Radio value:radioVal4 onClick:`showResult4=false,showAnswer3=false` options:`[{value:"b",label:"b) Nothing. Because there is no charge on one particle, the forces equal zero."}]`/]
-             [Radio value:radioVal4 onClick:`showResult4=false,showAnswer3=false` options:`[{value:"c",label:"c) There is a small force exerted on the neutral charge that increases in magnitude as the distance decreases."}]`/]
-
-             [Button onClick:`showResult4=true`]
-               Check Answer
-             [/Button]
-
-             [Conditional if:`showResult4`]
-               [Conditional if:`radioVal4 === "a" || radioVal4 === "c"`]
-                 Incorrect. While it's true that neutral objects can have an induced charge,
-                 this question is asking about the specific interaction between a positively
-                 charged particle and an uncharged particle. Read this [a href:"https://www.khanacademy.org/science/electrical-engineering/ee-electrostatics/ee-electric-force-and-electric-field/a/ee-electric-force" target:"_blank"]electric force[/a]
-                 article for more information. Plug the values into the force equation and see what the result is.
-               [/Conditional]
-               [Conditional if:`radioVal4 === "b"`]
-                 Correct!
-               [/Conditional]
-             [/Conditional]
-           [/div]
-
-           [br /]
-
-           The electric field at location D has the value `< -4000, 4000, 0 > N/C`. What is
-           the unit vector in the direction [equation]\vec{E}[/equation] at this location?
-
-           [br /]
-
-           [div className:"hintButtons"]
-
-             //Hint 3
-             [var name:"clickHint3" value:false /]
-
-             [Button onClick:`clickHint3 = !clickHint3`]
-               [Display value:`clickHint3 ? 'Hide Hint' : 'Hint'` /]
-             [/Button]
+             3. Which of the following options depict a neutral carbon atom when placed between charges A and B?
 
              [br /]
 
-             [Conditional if: `clickHint3`]
-               [hr /]
-               We already know the electric field and need to find its unit vector.
-               Remember that unit vectors can be found by dividing a vector by its
-               magnitude. They are indicated as a variable with a hat ([Equation]\hat{E}[/Equation]).
-               [hr /]
-             [/Conditional]
+             // Set up question answers
+             [var name:"showResultQ1_3" value:false /]
+             [var name:"showAnswerQ1_3" value:false /]
+             [var name:"A" value:false /]
+             [var name:"B" value:false /]
+             [var name:"C" value:false /]
+             [var name:"D" value:false /]
+             [var name:"E" value:false /]
 
-           [/div]
+             [Boolean value:A /] [img src:"./static/images/HW3Q1OptA.png" title:"Two Charges" /] [br /]
+             [Boolean value:C /] [img src:"./static/images/HW3Q1OptC.png" title:"Two Charges" /] [br /]
+             [Boolean value:E /] [img src:"./static/images/HW3Q1OptE.png" title:"Two Charges" /] [br /]
+             [Boolean value:B /] [img src:"./static/images/HW3Q1OptB.png" title:"Two Charges" /] [br /]
+             [Boolean value:D /] [img src:"./static/images/HW3Q1OptD.png" title:"Two Charges" /] [br /]
+
+             [var name:"A_ans" value:false /]
+             [var name:"B_ans" value:false /]
+             [var name:"C_ans" value:false /]
+             [var name:"D_ans" value:false /]
+             [var name:"E_ans" value:false /]
+
+             [Button onClick:`showResultQ1_3=true`]
+               Check Answer
+             [/Button]
+
+             [Conditional if:`showResultQ1_3`]
+               [Conditional if:`A || !B || C || D || E`]
+                 [hr /]
+                 Incorrect. Refer to Section 14.3 Polarization of Atoms in Matter and Interactions.
+               [/Conditional]
+               [Conditional if:`!A && B && !C && !D && !E`]
+                 [hr /]
+                 Correct!
+               [/Conditional]
+             [/Conditional]
+          [/div]
 
            [br /]
 
-           What is the electric force on the [equation]-4 \times 10^{-9} C[/equation] charge?
+           [div className: "hwQuestions"]
 
-           [div className:"hintButtons"]
+            //Follow-up Question
 
-             //Hint 4
-             [var name:"clickHint4" value:false /]
-
-             [Button onClick:`clickHint4 = !clickHint4`]
-               [Display value:`clickHint4 ? 'Hide Hint' : 'Hint'` /]
-             [/Button]
+             4. Based on the above information, which of the following statements are correct?
 
              [br /]
 
-             [Conditional if: `clickHint4`]
-               [hr /]
-               We are given values for the electric field and a charge within that field.
-               Which equation can take these values and output the electric force?
+             // Set up question answers
+             [var name:"showResultQ1_4" value:false /]
+             [var name:"showAnswerQ1_4" value:false /]
+             [var name:"dipole" value:false /]
+             [var name:"nuc_left" value:false /]
+             [var name:"cloud_left" value:false /]
+             [var name:"no_effect" value:false /]
 
-               *Hint for tests without equation sheets:* Look at the units of the given values
-               (N/C and C) and the unit of the expected answer (N) for a quick way to
-               figure out the equation.
-               [hr /]
+             [Boolean value:dipole /] The neutral carbon atom polarizes, and becomes a dipole [br /]
+             [Boolean value:nuc_left /] The nucleus of the carbon atom shifts to the left [br /]
+             [Boolean value:cloud_left /] The electron cloud in the carbon atom shifts to the left [br /]
+             [Boolean value:no_effect /] Because the net charge of the carbon atom is zero, it can not be affected by an electric field [br /]
+
+             [var name:"dipole_ans" value:false /]
+             [var name:"nuc_left_ans" value:false /]
+             [var name:"cloud_left_ans" value:false /]
+             [var name:"no_effect_ans" value:false /]
+
+             [Button onClick:`showResultQ1_4=true`]
+               Check Answer
+             [/Button]
+
+             [Conditional if:`showResultQ1_4`]
+               [Conditional if:`nuc_left || !dipole || no_effect || !cloud_left`]
+                 [hr /]
+                 Incorrect. Refer to Section 14.3 Polarization of Atoms in Matter and Interactions.
+               [/Conditional]
+               [Conditional if:`!nuc_left && dipole && cloud_left && !no_effect`]
+                 [hr /]
+                 Correct!
+               [/Conditional]
              [/Conditional]
+          [/div]
 
-           [/div]
-
-        [hr /]
-
-         ### Computation
-
-         Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
-
-         [ul]
-           [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
-           [li]Click the Run button to output the answers![/li]
-           [li]If using numbers from this page, make sure to switch them with the numbers
-           given in WileyPLUS before submitting the answers.[/li]
-         [/ul]
-
-         [br /]
-
-         [iframe src:"https://trinket.io/embed/python3/17c14dabbd?showInstructions:True" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
-
-         [/div]
-         [div className:"extraInfo centerHead"]
-
+          [br /]
 
 
          ### About this Problem
@@ -456,7 +359,7 @@
      [Case test:"14.35"]
        [div className:"centerHead pBwithAside"]
 
-         ## 13.30
+         ## Q2
 
          [hr /]
 
@@ -674,7 +577,7 @@
      [Case test:"14.36"]
        [div className:"centerHead pBwithAside"]
 
-         ## 13.25
+         ## Q3
 
          [hr /]
 
