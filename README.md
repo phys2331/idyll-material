@@ -40,11 +40,7 @@ This list will be updated each time a new page is generated.
 
 ### Editing homework materials for PHYS 2331
 
-If you would like to update the homework tutorials, you should edit the html files in `computational_activities/homework/posts/Wiley_HW_6/static/`.
-
-If you would like to add a tutorial for a new problem, you should add a new html file to the above directory.  Once you've done that, you also need to update the index.idyll page in the following way:
-
-TBD
+If you would like to update the homework tutorials, see [this Google Doc](https://docs.google.com/document/d/1j07neCcTnclagEdnSj7ckczc20XdwJsZnMxyGgtPX6M/edit?usp=sharing) for instructions.
 
 # Contributors
 
