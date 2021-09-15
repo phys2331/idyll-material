@@ -1,6 +1,3 @@
-tasks:
-  - init: echo "Replace me with a build script for the project."
-    command: echo "Welcome to your linux environment!"
 image:
   file: .gitpod.Dockerfile
 ports:
