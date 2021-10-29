@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import scipy.constants as sp</code></li>
+       <li><code>import numpy as np</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>h_box = #</code>. Replace <code>#</code> with the height of the box.</li>
+       <li><code>w_box = #</code>. Replace <code>#</code> with the width of the box.</li>
+       <li><code>l_box = #</code>. Replace <code>#</code> with the length of the box.</li>
+       <li><code>E_1a = #</code>. Replace <code>#</code> with the first electric field.</li>
+       <li><code>E_2a = #</code>. Replace <code>#</code> with the second electric field.</li>
+       <li><code>E_3a = #</code>. Replace <code>#</code> with the third electric field.</li>
+       <li>Create variables for the given values for the cylinder and the ramp.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations Part 1</code>, add the following to calculate the amount of charge enclosed by the box:
+     <ol type="a">
+       <li>Find the area for the sides of the box:
+         <ol type="i">
+           <li>Create a variable equal to the width of the box times the length of the box. This is the area of the top and bottom sides. Example: <code>area_box_tb = w_box * l_box</code></li>
+           <li>Create a variable equal to the height of the box times the length of the box. This is the area of the back and front sides. Example: <code>area_box_fb = h_box * l_box</code></li>
+           <li>Create a variable equal to the height of the box times the width of the box. This is the area of the left and right sides. Example: <code>area_box_smallsides = h_box * w_box</code></li>
+         </ol>
+       </li>
+       <li>Find the angles between the electric fields and the sides of the box:
+         <ol type="i">
+           <li>Create a variable equal to the angle of the sides that have a normal vector perpendicular (90 &deg;) to the electric field. Example: <code>theta_box_fblr = math.cos(math.radians(90))</code></li>
+           <li>Create a variable equal to the angle of the sides that have a normal vector parallel (0 &deg;) to the electric field. Example: <code>theta_box_top = math.cos(math.radians(0))</code></li>
+           <li>Create a variable equal to the angle of the sides that have a normal vector antiparallel (180 &deg;) to the electric field. Example: <code>theta_box_bottom = math.cos(math.radians(180))</code></li>
+         </ol>
+       </li>
+       <li>Find the flux through the sides of the box:
+         <ol type="i">
+           <li>Create a variable equal to the flux through the front and back sides. Multiply the appropraite electric field variable by the area of these sides (should have the same area) and the angle between the normal vector and the electric field. Example: <code>flux_box_fb = E_2a * area_box_fb * theta_box_fblr</code></li>
+           <li>Create a variable equal to the flux through the left and right sides. Multiply the appropraite electric field variable by the area of these sides (should have the same area) and the angle between the normal vector and the electric field. Example: <code>flux_box_lr = E_2a * area_box_smallsides * theta_box_fblr</code></li>
+           <li>Create a variable equal to the flux through the top. Multiply the appropraite electric field variable by the area of the top and the angle between the normal vector and the electric field. Example: <code>flux_box_top = E_3a * area_box_tb * theta_box_top</code></li>
+           <li>Create a variable equal to the flux through the bottom. Multiply the appropraite electric field variable by the area of the bottom and the angle between the normal vector and the electric field. Example: <code>flux_box_bottom = E_1a * area_box_tb * theta_box_bottom</code></li>
+           <li>Create a variable equal to the total flux. Add the flux variables from each side. Example: <code>flux_box_total = flux_box_fb + flux_box_lr + flux_box_top + flux_box_bottom</code></li>
+         </ol>
+       </li>
+       <li>Find the charge enclosed by the box. Multiply the total flux by &epsilon;<sub>0</sub> (8.85 x 10<sup>-12</sup>). Example: <code>charge_box = flux_box_total * constants.epsilon_0</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations Part 2</code>, add the following to calculate the amount of charge enclosed by the box:
+     <ol type="a">
+       <li>Find the area for the sides of the cylinder:
+         <ol type="i">
+           <li>Create a variable equal to the area of the two circular sides. Example: <code>area_cyl_lr = constants.pi * (h_cyl/2)**2</code></li>
+           <li>Create a variable equal to the area of the rectangular portion of the cylinder. Example: <code>area_cyl_rect = l_cyl * (2 * constants.pi * h_cyl/2)</code></li>
+         </ol>
+       </li>
+       <li>Find the angles between the electric fields and the sides of the cylinder:
+         <ol type="i">
+           <li>Create a variable equal to the angle of the sides with a normal vector perpendicular (90 &deg;) to the electric field. Example: <code>theta_sides = math.cos(math.radians(90))</code></li>
+           <li>Create a variable equal to the angle of the side that has a normal vector parallel (0 &deg;) to the electric field. Example: <code>theta_right = math.cos(math.radians(0))</code></li>
+           <li>Create a variable equal to the angle of the side that has a normal vector antiparallel (180 &deg;) to the electric field. Example: <code>theta_left = math.cos(math.radians(180))</code></li>
+         </ol>
+       </li>
+       <li>Find the flux through the sides of the cylinder:
+         <ol type="i">
+           <li>Create a variable equal to the flux through the sides of the cylinder. Example: <code>flux_cyl_sides = E_2b * area_cyl_rect * theta_sides</code></li>
+           <li>Create a variable equal to the flux through the right side of the cylinder. Example: <code>flux_cyl_right = E_3b * area_cyl_lr * theta_right</code></li>
+           <li>Create a variable equal to the flux through the left side of the cylinder. Example: <code>flux_cyl_left = E_1b * area_cyl_lr * theta_left</code></li>\
+           <li>Create a variable equal to the total flux. Add the flux variables from each side. Example: <code>flux_cyl_total = flux_cyl_sides + flux_cyl_right + flux_cyl_left</code></li>
+         </ol>
+       </li>
+       <li>Find the charge enclosed by the cylinder. Multiply the total flux by &epsilon;<sub>0</sub> (8.85 x 10<sup>-12</sup>). Example: <code>charge_cyl = flux_cyl_total * constants.epsilon_0</code></li>
+     </ol>
+   <li>Under <code># Calculations Part 3</code>, add the following to calculate the amount of charge enclosed by the ramp:
+     <ol type="a">
+       <li>Find the area for the sides of the cylinder:
+         <ol type="i">
+           <li>Create a variable equal to the area of the two circular sides. Example: <code>area_cyl_lr = constants.pi * (h_cyl/2)**2</code></li>
+           <li>Create a variable equal to the area of the rectangular portion of the cylinder. Example: <code>area_cyl_rect = l_cyl * (2 * constants.pi * h_cyl/2)</code></li>
+         </ol>
+       </li>
+       <li>Find the angles between the electric fields and the sides of the cylinder:
+         <ol type="i">
+           <li>Create a variable equal to the angle of the sides with a normal vector perpendicular (90 &deg;) to the electric field. Example: <code>theta_sides = math.cos(math.radians(90))</code></li>
+           <li>Create a variable equal to the angle of the side that has a normal vector parallel (0 &deg;) to the electric field. Example: <code>theta_right = math.cos(math.radians(0))</code></li>
+           <li>Create a variable equal to the angle of the side that has a normal vector antiparallel (180 &deg;) to the electric field. Example: <code>theta_left = math.cos(math.radians(180))</code></li>
+         </ol>
+       </li>
+       <li>Find the flux through the sides of the cylinder:
+         <ol type="i">
+           <li>Create a variable equal to the flux through the sides of the cylinder. Example: <code>flux_cyl_sides = E_2b * area_cyl_rect * theta_sides</code></li>
+           <li>Create a variable equal to the flux through the right side of the cylinder. Example: <code>flux_cyl_right = E_3b * area_cyl_lr * theta_right</code></li>
+           <li>Create a variable equal to the flux through the left side of the cylinder. Example: <code>flux_cyl_left = E_1b * area_cyl_lr * theta_left</code></li>\
+           <li>Create a variable equal to the total flux. Add the flux variables from each side. Example: <code>flux_cyl_total = flux_cyl_sides + flux_cyl_right + flux_cyl_left</code></li>
+         </ol>
+       </li>
+       <li>Find the charge enclosed by the cylinder. Multiply the total flux by &epsilon;<sub>0</sub> (8.85 x 10<sup>-12</sup>). Example: <code>charge_cyl = flux_cyl_total * constants.epsilon_0</code></li>
+     </ol>
+   </li>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

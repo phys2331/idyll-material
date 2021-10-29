@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import scipy.constants as sp</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>r_sol = #</code>. Replace <code>#</code> with the given radius of the solenoid.</li>
+       <li><code>B_sol = #</code>. Replace <code>#</code> with the given magnetic field inside the solenoid.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following to calculate the amount of charge enclosed by the box:
+     <ol type="a">
+       <li>Find the area of the solenoid: <code>area_sol = sp.pi * r_sol**2</code></li>
+       <li>Find the magnetic flux: <code>mag_flux = B_sol * area_sol * math.cos(0)</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add: <code>"The flux through the outer ring =", mag_flux, "Tm^2"</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

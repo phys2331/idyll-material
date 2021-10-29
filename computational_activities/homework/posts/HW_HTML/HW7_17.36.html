@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add the following:
+    <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+       <li><code>import math</code></li>
+    </ol>
+   </li>
+   <li>Under <code># Variables</code>, add the following variables:
+     <ol type="a">
+       <li><code>L = #</code> Replace <code>#</code> with the given length of 1 side of the triangle.</li>
+       <li><code>d = #</code> Replace <code>#</code> with the given distance from the compass to a side of the triangle.</li>
+       <li><code>I = #</code>. Replace <code>#</code> with the given current.</li>
+       <li><code>turns = #</code>. Replace <code>#</code> with the number of turns of the coil.</li>
+       <li><code>sides = #</code>. Replace <code>#</code> with the number of sides of the triangle.</li>
+       <li><code>B_Earth = 2E-5</code>. Note: this value came from page 675 (17.2 Detecting Magnetic Fields in Matter and Interactions).</li>
+     </ol>
+   </li>
+   <li>Under <code># Magnetic field magnitude</code>, add the following: <code>B = (constants.mu_0/(4*np.pi))* (L*I)/(d * math.sqrt(d**2 + ((L/2)**2))) * sides * turns</code>
+     <ol type="a">
+       <li><b>Where did this equation come from?</b> Check out section 17.7 in Matter and Interactions for the Magnetic Field of a Straight Wire equation.</code></li>
+       <li><b>Note:</b> this problem can be approached another way - manipulate the given length in the equation instead of including the <code>sides</code> variable. Can you get the same answer?</li>
+     </ol>
+   </li>
+   <li>Under <code># Compass deflection</code>, add the following: <code>theta = math.degrees(math.atan(B/B_Earth))</code>
+     <ol type="a">
+       <li><b>Where did this equation come from?</b> Check out the Compass Deflection example on page 675 (section 17.2) in Matter and Interactions.</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("The magnetic field is", B, "T")</code></li>
+       <li><code>print("The deflection is", theta, "degrees")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

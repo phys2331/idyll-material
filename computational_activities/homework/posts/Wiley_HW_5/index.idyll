@@ -12,16 +12,16 @@
  [var name:"currentValue" value:"" /]
 
  [div className:"tabLook" fullWidth:true]
-  [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "19.34"`]19.34[/Button]
-  [button onClick:`currentValue = "19.36"`]19.36[/Button]
-  [button onClick:`currentValue = "19.38"`]19.38[/Button]
-  [button onClick:`currentValue = "19.40"`]19.40[/Button]
-  [button onClick:`currentValue = "19.44"`]19.44[/Button]
-  [button onClick:`currentValue = "19.56"`]19.56[/Button]
-  [button onClick:`currentValue = "16.50"`]16.50[/Button]
-  [button onClick:`currentValue = "16.64"`]16.64[/Button]
-  [button onClick:`currentValue = "19.76"`]19.76[/Button]
+  [button onClick:`currentValue = ""`]Content[/Button]
+  [button onClick:`currentValue = "16.50"`]Q1[/Button]
+  [button onClick:`currentValue = "16.64"`]Q2[/Button]
+  [button onClick:`currentValue = "19.34"`]Q3[/Button]
+  [button onClick:`currentValue = "19.36"`]Q4[/Button]
+  [button onClick:`currentValue = "19.38"`]Q5[/Button]
+  [button onClick:`currentValue = "19.40"`]Q6[/Button]
+  [button onClick:`currentValue = "19.44"`]Q7[/Button]
+  [button onClick:`currentValue = "19.56"`]Q8[/Button]
+  [button onClick:`currentValue = "19.76"`]Q9[/Button]
  [/div]
 
  [br /]
@@ -32,63 +32,35 @@
  [div className:"problemBody" fullWidth:true padding-left:"100%"]
    [Switch value:currentValue]
      [Default]
-       [div className:"centerHead"]
+     [div className:"centerHead"]
 
-       [div className:"mainNote"]
-        Please complete the [a href:"https://forms.gle/z4ooNHbMG6RLRKRe6" target:"_blank"]Feedback Form[/a] after using this resource to complete Homework 5.
-       [/div]
+     [div className:"centerPara"]
+      # Homework 5 Content
+     [/div]
 
-         ## Problem Pages
+      ## Chapter PowerPoint
 
-           Click the tabs to go to a specific homework problem page.
-           The problems are included in Homework 5 through WileyPlus. Work
-           through the problems by hand first using the given information, key equations,
-           and references listed. Then, try to use Python to solve the same problem.
+      The following PowerPoint highlights the key ideas from Chapter 19: Circuit Elements
+      in Matter and Interactions. See HW 3 for a review of Chapter 16.
+      For more details or examples, navigate to the eBook through
+      your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab).
 
-           Each problem page has the following sections:
+      Click through the slides below using the left and right arrow buttons or by clicking
+      on the slides. To download a copy, click the Menu button on the bottom right.
 
-           #### Skills involved
+      Want extra credit? Fill out the [a href:"https://forms.gle/z4ooNHbMG6RLRKRe6" target:"_blank"]Feedback Form[/a].
 
-           The skills involved in the particular homework problem will be tagged
-           with other problems in the course that deal with the same content
-           (*TO DO*). Click these to find more problems in these areas. It may
-           help to look at the Resources page for videos and simulations that
-           target specific skills these homework problems involve.
+      [br /]
+      [iframe src:"https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218480&authkey=AOQwyICHJI1TCEw&em=2&wdAr=1.7777777777777777" width:"1186px" height:"691px" frameBorder:"0"][/iframe]
+      [hr /]
 
-           #### Problem
+     ## Helpful Videos
 
-           The problems will be listed as they are seen in WileyPlus. Note that
-           the values will change for *each* problem.
+     [div className:"mainNote"]
 
-           This section also includes a computation section.
+     [/div]
 
-           #### Important information
-
-           To solve the homework problems, there are several areas that need to
-           be understood. To help, the following sections are available:
-
-           [ul]
-             [li] **Objective**: summarizes what the question is asking. [/li]
-             [li] **Key Equations**: lists the equations that may help in solving
-             and understanding the problem. [/li]
-             [li] **References**: lists the pages of the book where
-             explanations of the concepts in the homework can be found. It may
-             also include outside references that may be useful. [/li]
-             [li] **Things to Think About**: covers tricky aspects of the
-             question that may lead to incorrect answers. Thinking about these
-             may help in solving the question faster. [/li]
-           [/ul]
-
-         ## Resources
-
-           Need help doing physics problems in Python? Visit the Computational Activities pages.
-
-           Need help doing the physics problems? Check out the resources section
-           on each problem page for specific text entries in Matter and Interactions
-           and any outside resource that may help in solving them. Visit the resources
-           page for videos and simulations about the specific physics problem.
-
-         [hr /]
+       [hr /]
 
          [div className:"centerPara"]
            [img src:"./static/images/ucdenverlogo2.png" title:"UC Denver" /]
@@ -102,7 +74,7 @@
      [Case test:"19.34"]
        [div className:"centerHead"]
 
-         ## 19.34
+         ## Q3
 
          [hr /]
 
@@ -224,7 +196,7 @@
      [Case test:"19.36"]
        [div className:"centerHead pBwithAside"]
 
-         ## 19.36
+         ## Q4
 
          [hr /]
 
@@ -335,7 +307,7 @@
      [Case test:"19.38"]
        [div className:"centerHead pBwithAside"]
 
-         ## 19.38
+         ## Q5
 
          [hr /]
 
@@ -456,7 +428,7 @@
      [Case test:"19.40"]
        [div className:"centerHead pBwithAside"]
 
-         ## 19.40
+         ## Q6
 
          [hr /]
 
@@ -582,7 +554,7 @@
      [Case test:"19.44"]
        [div className:"centerHead pBwithAside"]
 
-         ## 19.44
+         ## Q7
 
          [hr /]
 
@@ -686,7 +658,7 @@
      [Case test:"19.56"]
        [div className:"centerHead pBwithAside"]
 
-         ## 19.56
+         ## Q8
 
          [hr /]
 
@@ -811,7 +783,7 @@
      [Case test:"16.50"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.50
+         ## Q1
 
          [hr /]
 
@@ -924,7 +896,7 @@
      [Case test:"16.64"]
        [div className:"centerHead pBwithAside"]
 
-         ## 16.64
+         ## Q2
 
          [hr /]
 
@@ -1063,7 +1035,7 @@
      [Case test:"19.76"]
        [div className:"centerHead pBwithAside"]
 
-         ## 19.76
+         ## Q9
 
          [hr /]
 

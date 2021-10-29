@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>from scipy import constants</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   <li>Under <code># Variables</code>, add the following variables:
+     <ol type="a">
+       <li><code>Q1 = #</code> Replace <code>#</code> with the given charge of Q1.</li>
+       <li><code>Q2 = #</code> Replace <code>#</code> with the given charge of Q2.</li>
+       <li><code>area = #</code>. Replace <code>#</code> with the given disk area.</li>
+       <li><code>disk_thickness = #</code>. Replace <code>#</code> with the given disk thickness (see image for value).</li>
+       <li><code>D1D2_dist = #</code>. Replace <code>#</code> with the given distance between disk 1 and disk 2 (see image for value).</li>
+       <li><code>D2D3_dist = #</code>. Replace <code>#</code> with the given distance between disk 2 and disk 3 (see image for value).</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following:
+     <ol type="a">
+       <li><code>E_12 = Q1/area/constants.epsilon_0</code></li>
+       <li><code>E_23 = Q2/area/constants.epsilon_0</code></li>
+       <li><code>dV_BC = -E_12 * D1D2_dist * math.cos(0)</code>.</li>
+       <li><code>dV_CD = -0 * disk_thickness * math.cos(0)</code></li>
+       <li><code>dV_DF = -E_23 * -D2D3_dist * math.cos(0)</code></li>
+       <li><code>dV_FG = -0 * disk_thickness * math.cos(0)</code></li>
+       <li><code>dV_AG = dV_BC + dV_DF</code></li>
+       <li><code>dU = dV_AG * -constants.e</code></li>
+       <li><code>dK = -dU</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("Electric field between D1 and D2:", E_12, "V/m")</code></li>
+       <li><code>print("VC-VB =", dV_BC, "V")</code></li>
+       <li><code>print("VD-VC =", dV_CD, "V")</code></li>
+       <li><code>print("VF-VD =", dV_DF, "V")</code></li>
+       <li><code>print("VG-VF =", dV_FG, "V")</code></li>
+       <li><code>print("VG-VA =", dV_AG, "V")</code></li>
+       <li><code>print("Potential energy of system:", dU, "J")</code></li>
+       <li><code>print("Kinetic energy of electron:", dK, "J")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

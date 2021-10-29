@@ -9,9 +9,10 @@
 <body>
   <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
     so you start to remember what you've done previously.</p>
+
   <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
   <ol>
-   <li>Under <code># Import Libraries</code>, import NumPy
+   <li>Under <code># Import Libraries</code>, import NumPy</code>
      <ol type="i">
        <li>Need a refresher? Revisit the directions in <b>13.21</b>.</li>
      </ol>
@@ -22,12 +23,35 @@
        <li>Need a refresher? Revisit the directions in <b>13.30</b>.</li>
      </ol>
    </li>
-   <li>Under <code># Constants</code>, create variables for each of the charged particles in this problem.
+   <li>Under <code># Assign the charges to variables</code>, create variables for each of the charged particles in this problem.
      <ol type="i">
+       <li>There should be 3 variables here!</li>
        <li>Remember that this looks like <code>x = #</code>, where <i>x</i> is the variable you get to pick and <i>#</i> is the number you want to assign to that variable.</li>
-       <li>There should be variables for the following:
+       <li>
+         We can put large numbers in Python a few different ways. Pick which one works for you and try all of them! Examples:
          <ol type="a">
-           <li></li>
+           <li><code>5*10**-11</code></li>
+           <li><code>5*pow(10,-11)</code>
+             <ol>
+               <li>This is a function built into Python!</li>
+               <li>It has three parameters - <code>pow(x, y, z)</code>
+                 <ul>
+                   <li>x = base</li>
+                   <li>y = exponent</li>
+                   <li>z = modulus</li>
+                 </ul>
+               </li>
+               <li>This is actually the same thing as using <code>**</code></li>
+             </ol>
+           </li>
+           <li><code>5*math.pow(10,-11)</code>
+             <ul>
+               <li>This is very similar to <code>pow()</code> but has some differences. Since it's
+                 very similar, it's suggested just to use the built-in function.</li>
+               <li>To use this, you must import the math module.</li>
+             </ul>
+           </li>
+           <li><code>5E-11</code></li>
          </ol>
        </li>
      </ol>

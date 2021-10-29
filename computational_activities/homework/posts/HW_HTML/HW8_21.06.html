@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   <li>Under <code># Variables</code>, add the following variables:
+     <ol type="a">
+       <li><code>r = #</code> Replace <code>#</code> with the given radius of the region.</li>
+       <li><code>E = #</code> Replace <code>#</code> with the given electric field magnitude.</li>
+       <li><code>theta = #</code>. Replace <code>#</code> with the given angle between the electric field and plane of the disk.</li>
+       <li><code>nE_theta = 90 - theta</code>. What is this? We want to know the angle between the normal vector and the electric field. We are given the complementary angle.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following:
+     <ol type="a">
+       <li><code>A = np.pi * (r**2)</code></li>
+       <li><code>E_flux = E * A * math.cos(math.radians(nE_theta))</code>. Read 21.2 Definition of Electric Flux for more information on this equation.</li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add: <code>print("The electric flux is", E_flux, "Vm")</code></li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, import NumPy.
+     <ol type="i">
+       <li>Need a refresher? Revisit the directions in <b>13.21</b>.</li>
+     </ol>
+   </li>
+   <li>
+     In the same section, add: <code>from scipy import constants</code>
+     <ol type="i">
+       <li>SciPy is another Python library that allows us to easily assign common constants to variables.</li>
+       <li>Instead of importing all of SciPy, we are just importing the constants package. <code>from [library] import [package]</code> is a standard way to do this.</li>
+       <li>
+         There are a few ways to call a SciPy constant:
+         <ol type="a">
+           <li><code>constants.[constant]</code>. <b>Example:</b> <code>q1 = 2*constants.e</code> assigns 2 times the elementary
+           charge to the q1 variable. This way pertains to the <b>Physical and Mathematical</b> constants listed at the top
+           of the SciPy constants page (<a href="https://docs.scipy.org/doc/scipy/reference/constants.html">SciPy Constants</a>).</li>
+           <li><code>constants.value(u'[constant]')</code>. <b>Example:</b> <code>p = constants.value(u'proton mass')</code> assigns the proton
+           mass constant to the variable p. These constants are listed under the <b>Constants Database</b> on the linked page.</li>
+         </ol>
+       </li>
+     </ol>
+   </li>
+   <li>Under <code># Constants</code>, add a variable that equals the charge of a proton and uses the SciPy constant for elementary charge.</li>
+   <li>
+     In the same section, add: <code>k = 1/(4*np.pi*constants.epsilon_0)</code>
+     <ol type="i">
+       <li>What is this constant? See the PowerPoint for Chapter 13 for a refresher.</li>
+     </ol>
+   </li>
+   <li>
+     This problem can be solved a few different ways. For this activity, we will solve it two ways in Python. Take note of which way makes
+     sense to you and which way is the most efficient.
+     <ol type="i">
+       <li>
+         Under <code># First Way</code>, create a variable for the proton location and set it equal to a NumPy array (See 13.21). <b>Hint:</b> set this location at the origin.
+         <ol type="a">
+           <li>Add another variable for the electron location and set it equal to a NumPy array. Use the distance given in the homework to figure out the location.</li>
+           <li>Add a variable for \(\vec{r}\). Remember that \(\vec{r}\) is found by subtracting the location of the source charge from the observation location.
+             Which is which in this question (Proton or electron)? Remember to use the variables you assigned.</li>
+           <li>Add a variable for |\(\vec{r}\)|. What is this? The magnitude! Remember that we can use <code>np.linalg.norm()</code> to quickly find the
+           magnitude of our vector. Use it and set it equal to your |\(\vec{r}\)| variable.</li>
+           <li>Add a variable for \(\hat{r}\) and set it equal to your \(\vec{r}\) variable divided by your |\(\vec{r}\)| variable.</li>
+           <li>
+             Add: <code>E_field = (k*proton_charge)/(np.abs(r_vec_mag)**2)</code>
+             <ul>
+               <li>Here, <b>E_field</b> is the electric field, <b>proton_charge</b> is Q, and <b>r_vec_mag</b> is the magnitude of \(\vec{r}\)</li>
+               <li><code>np.abs()</code> gives the absolute value of a variable. <code>np.absolute()</code> can be used for the same purpose.
+               More information can be found here: <a href="https://numpy.org/doc/stable/reference/generated/numpy.absolute.html">Absolute value</a></li>
+             </ul>
+           </li>
+           <li>Add a variable for the magnitude of the electric field. Use <code>np.linalg.norm()</code></li>
+           <li>
+             Print the answer! Remember that there are multiple ways to do this.
+             <ul>
+               <li>Try: <code>print("First way answer:", "{:e}".format(E_field_mag))</code>, replacing <b>E_field_mag</b> with
+               your variable for |\(\vec{E}\)|.</li>
+               <li><code>”{:e}”.format()</code> is used here to put our answers into readable scientific notation. For more information, see
+                the following link: <a href="https://www.w3schools.com/python/ref_string_format.asp">Python String format()</a></li>
+             </ul>
+           </li>
+         </ol>
+       </li>
+       <li>
+        Under <code># Second Way</code>, add a variable and set it equal to the distance between the electron and proton (what else is this equal to?).
+        <ol type="a">
+          <li>Add another variable equal to the magnitude of the electric field: <code>E_field2 = np.abs((k*proton_charge)/(np.abs(r)**2))</code></li>
+          <li>Print the answer! Verify that it's the second variable equal to the magnitude of the electric field. Try to print it in scientific notation.</li>
+        </ol>
+       </li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers! Did you get the same numbers for both ways? Which one is faster?</li>
+  </ol>
+</body>
+</html>

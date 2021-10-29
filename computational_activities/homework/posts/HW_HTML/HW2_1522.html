@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+    <li>Under <code># Import Libraries</code>, add:
+      <ol type="a">
+        <li><code>import numpy as np</code></li>
+        <li><code>from scipy import constants</code></li>
+      </ol>
+    </li>
+    <li>Under <code># Variables</code>, add:
+      <ol type="a">
+        <li><code>rod_length = rod length</code>.</li>
+        <li><code>rod_charge = rod charge</code>.</li>
+        <li><code>A_loc = np.array([x,y,z])</code>.</li>
+        <li><code>origin = np.array([0,0,0])</code>.</li>
+        <li><code>k = 1/(4*np.pi*constants.epsilon_0)</code>.</li>
+      </ol>
+    </li>
+   <li>Under <code># Calculations</code>, add:
+     <ol type="i">
+       <li><code>piece_length = rod_length / 8</code></li>
+       <li><code>piece_5_center = np.array([0, origin[1]-(0.5*piece_length), 0])</code></li>
+       <li><code>piece_5_charge = rod_charge/8</code></li>
+       <li><code>r_vec = A_loc - piece_5_center</code></li>
+       <li><code>r_hat = r_vec / np.linalg.norm(r_vec)</code></li>
+       <li><code>E = k * (piece_5_charge/(np.linalg.norm(r_vec)**2)) * r_hat</code></li>
+     </ol>
+   </li>
+   <li>Under <code>#Print</code>, add:
+     <ol type="i">
+       <li><code>print("The length of one piece is", piece_length, "m")</code></li>
+       <li><code>print("The center of piece number 5 is", list(piece_5_center), "m")</code></li>
+       <li><code>print("The charge on piece number 5 is", piece_5_charge, "C")</code></li>
+       <li><code>print("The electric field at A is", list(E), "N/C")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

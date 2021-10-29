@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add the following lines:
+     <ol type="a">
+       <li><code>import numpy as np</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add the following variables as listed in the problem:
+     <ol type="a">
+       <li><code>C_mag = #</code> Replace <code>#</code> with the given magnitude of vector C.</li>
+       <li><code>D_mag = #</code> Replace <code>#</code> with the given magnitude of vector D.</li>
+       <li><code>theta = angle</code> Replace <code>#</code> with the given angle between vector D and the x axis.</li>
+     </ol>
+   </li>
+   <li>Under <code># Cross C x D part 1</code>, add <code>CD = C_mag * D_mag * math.sin(math.radians(theta))</code></li>
+   <li>Under <code># Cross C x D part 2</code>, add the following variables. <b>Note:</b> In this second part, we are confirming
+     the cross from the previous section and using trigonometry to figure out the vectors based on the given vector magnitudes. This answer
+     will also help answering part (b) of this problem.
+     <ol type="a">
+       <li><code>C_vec = np.array([x, y, z])</code> Replace <code>x, y, z</code> based on the given graph and values for vector C.</li>
+       <li><code>D_opp = D_mag * math.sin(math.radians(theta))</code>.</li>
+       <li><code>D_adj = math.sqrt(D_mag**2 - D_opp**2)</code>.</li>
+       <li><code>D_vec = np.array([D_adj, D_opp, 0])</code></li>
+       <li><code>CD_vec = np.cross(C_vec, D_vec)</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Cross D x C</code>, add <code>DC_vec = np.cross(D_vec, C_vec)</code>. <b>Note:</b> Try to predict the answer before printing.</li>
+   <li>Under <code># Print</code>, print the answers!
+     <ol type="a">
+       <li><code>print(CD)</code>.</li>
+       <li><code>print(CD_vec)</code>.</li>
+       <li><code>print(DC_vec)</code>.</li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>

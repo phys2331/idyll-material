@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css"
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <p>Complete the steps below in the Trinket to solve this problem with Python. It is recommended that you type each line instead of copying/pasting
+    so you start to remember what you've done previously.</p>
+
+  <p>There may be multiple ways to get the correct answer. If you have a cool method, please fill out the feedback form for extra credit! See the footer or first page for the link.</p>
+  <ol>
+   <li>Under <code># Import Libraries</code>, add:
+     <ol type="a">
+       <li><code>import scipy.constants as sp</code></li>
+       <li><code>import math</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Variables</code>, add:
+     <ol type="a">
+       <li><code>height = #</code>. Replace <code>#</code> with the distance between the power lines and the ground.</li>
+       <li><code>length = #</code>. Replace <code>#</code> with the distance between the power lines.</li>
+       <li><code>current = #</code>. Replace <code>#</code> with the current.</li>
+       <li><code>freq = #</code>. Replace <code>#</code> with the frequency.</li>
+       <li><code>h_body = #</code>. Replace <code>#</code> with the length of the body at the base of the tower.</li>
+       <li><code>w_body = #</code>. Replace <code>#</code> with the width of the body at the base of the tower.</li>
+     </ol>
+   </li>
+   <li>Under <code># Calculations</code>, add the following to calculate the magnitude of the magnetic field:
+     <ol type="a">
+       <li><code>r = math.sqrt(height**2 + ((length**2)/4))</code></li>
+       <li><code>sin_theta = length/(2*r)</code></li>
+       <li><code>ang_freq = 2 * sp.pi * freq</code></li>
+       <li><code>area_body = h_body * w_body</code></li>
+       <li><code>B = (((sp.mu_0*current)/(2*sp.pi*r))*2)*sin_theta</code></li>
+     </ol>
+   </li>
+   <li>In the same area, add the following to calculate the maximum emf produced around the perimeter of the body:
+     <ol type="a">
+       <li><code>max_emf = B * area_body * ang_freq</code></li>
+       <li><code>max_emf_mV = max_emf * 1000</code></li>
+     </ol>
+   </li>
+   <li>Under <code># Print</code>, print the answers! Add:
+     <ol type="a">
+       <li><code>print("Part 1: The magnitude of the magnetic field =", B, "T")</code></li>
+       <li><code>print("Part 2: The maximum emf =", max_emf_mV, "mV")</code></li>
+     </ol>
+   </li>
+   <li>Click the run button (&#9658;) to output the answers!</li>
+  </ol>
+</body>
+</html>
