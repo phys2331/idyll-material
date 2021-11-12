@@ -13,11 +13,11 @@
 
  [div className:"tabLook" fullWidth:true]
   [button onClick:`currentValue = ""`]Main Problem Page[/Button]
-  [button onClick:`currentValue = "16.33"`]16.33[/Button]
-  [button onClick:`currentValue = "16.35"`]16.35[/Button]
-  [button onClick:`currentValue = "16.40"`]16.40[/Button]
-  [button onClick:`currentValue = "16.66"`]16.66[/Button]
-  [button onClick:`currentValue = "16.66alt"`]16.66 Alt01[/Button]
+  [button onClick:`currentValue = "16.33"`]Q1[/Button]
+  [button onClick:`currentValue = "16.35"`]Q2[/Button]
+  [button onClick:`currentValue = "16.40"`]Q3[/Button]
+  [button onClick:`currentValue = "16.66"`]Q4[/Button]
+  [button onClick:`currentValue = "16.66alt"`]Q5[/Button]
  [/div]
 
  [br /]
@@ -307,10 +307,8 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+          Use the Trinket below to solve the problem using the values listed
+          above.
 
            Note that the SciPy constants are more exact than the constants listed in the book.
            Try calculating the answer with the SciPy constants and the constants listed in
@@ -318,9 +316,16 @@
 
            [br /]
 
-           [iframe src:"https://trinket.io/embed/python3/c62b6c5a50?showInstructions:true" width:"100%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+           [div className:"splitLeft"]
+             #### Instructions
+              [iframe src:"./static/HW4-1_1640.html" width:"100%" height:"600" frameBorder:"0"][/iframe]
+           [/div]
 
-       [/div]
+           [div className:"splitRight"]
+             #### Trinket
+             [iframe src:"https://trinket.io/embed/python3/c62b6c5a50?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
+           [/div]
+           [/div]
        [div className:"extraInfo centerHead"]
 
        ### About this Problem
