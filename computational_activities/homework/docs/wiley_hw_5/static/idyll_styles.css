@@ -177,7 +177,6 @@ input {
 @media all and (max-width: 1000px) {
 
   .idyll-root {
-    max-width: 600px;
     margin: 0 auto;
     padding: 60px 20px;
     margin-bottom: 60px;
@@ -430,6 +429,126 @@ input {
   font-size: inherit;
   line-height: inherit;
 }
+
+
+/* Buttons
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #333;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box; }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
+
+
+/* Forms
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box; }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #666;
+  outline: 0; }
+label,
+legend {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600; }
+fieldset {
+  padding: 0;
+  border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline; }
+label > .label-body {
+  display: inline-block;
+  margin-left: .5rem;
+  font-weight: normal; }
 
 a {
   color: #0366d6;
@@ -794,19 +913,23 @@ table th {
   font-weight: 600;
 }
 
-table th,
-table td {
+:not(.gist) table th,
+:not(.gist) table td {
   padding: 6px 13px;
   border: 1px solid #dfe2e5;
 }
 
-table tr {
+:not(.gist) table tr {
   background-color: #fff;
   border-top: 1px solid #c6cbd1;
 }
 
-table tr:nth-child(2n) {
+:not(.gist) table tr:nth-child(2n) {
   background-color: #f6f8fa;
+}
+
+.vega-embed {
+  width: 100%;
 }
 
 img {
@@ -937,7 +1060,17 @@ hr {
   font-family: monospace;
 }
 
+input[type='text'].idyll-input-error {
+  border-color: red;
+}
 
+span.idyll-input-error{
+  display: block;
+  margin: 0 auto;
+  padding: 10px 5px;
+  color: red;
+  width: 100%;
+}
 
 .idyll-step-graphic {
   top: 0;
@@ -1011,11 +1144,11 @@ hr {
 }
 
 .idyll-scroll-text {
-  padding: 50vh 0;
+  padding: 0 0 50vh 0;
 }
 
 .idyll-scroll-text .idyll-step {
-  margin: 75vh 0 75vh 0;
+  margin: 0 0 90vh 0;
   padding: 50px;
   background: white;
   border: solid 1px #333;
@@ -1085,6 +1218,80 @@ img {
     font-size: 1em;
   }
 }
+
+
+/* annotated-text container */
+.annotated-text {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+.annotated-text,
+.annotated-text:visited {
+  background: #efefef;
+  padding: 0 2.5px;
+  transition: background 0.25s ease-out;
+}
+
+.annotated-text:hover {
+  background: #ccc;
+}
+
+/* annotated-text CSS */
+.annotated-text .annotation-text {
+  visibility: hidden;
+  border: solid 0.5px #666;
+  box-shadow: 0 0 5px #ccc;
+  background: #fff;
+  text-align: left;
+  padding: 5px;
+  /* border-radius: 4px; */
+  position: absolute;
+  z-index: 1;
+  font-size: 0.9em;
+  line-height: 1.2;
+}
+
+.annotated-text .annotation-text {
+  width: 250px;
+  bottom: 120%;
+  left: 50%;
+  margin-left: -125px; /* Use half of the width (120/2 = 60), to center the annotated-text */
+  opacity: 0;
+  font-weight: initial;
+}
+
+.annotated-text:hover .annotation-text {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease-out;
+}
+
+.annotated-text .annotation-text img {
+  display: block;
+  max-width: 100%;
+}
+
+.annotated-text p {
+  margin: 0;
+}
+
+@media all and (max-width: 800px) {
+  .annotated-text .annotation-text {
+    width: 50vh;
+  }
+}
+
+@media all and (max-width: 600px) {
+  .annotated-text .annotation-text {
+    width: 50vw;
+    position: fixed;
+    left: 50%;
+    bottom: 20%;
+  }
+}
+
 
 
 body {
@@ -1290,4 +1497,21 @@ img {
 .questionBody {
   margin-left: 30%;
   margin-right: 30%;
+}
+
+.splitLeft {
+  //position: s;
+  width: 60%;
+  padding-right: 20px;
+  float: left;
+  background-color: inherit;
+  //z-index: 1010101010
+}
+
+.splitRight {
+  //position: relative;
+  //width: 50%;
+  //float: left;
+  background-color: inherit;
+  //z-index: 1010101010
 }

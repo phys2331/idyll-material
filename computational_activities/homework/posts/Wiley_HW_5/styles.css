@@ -202,3 +202,20 @@ img {
   margin-left: 30%;
   margin-right: 30%;
 }
+
+.splitLeft {
+  //position: s;
+  width: 60%;
+  padding-right: 20px;
+  float: left;
+  background-color: inherit;
+  //z-index: 1010101010
+}
+
+.splitRight {
+  //position: relative;
+  //width: 50%;
+  //float: left;
+  background-color: inherit;
+  //z-index: 1010101010
+}
