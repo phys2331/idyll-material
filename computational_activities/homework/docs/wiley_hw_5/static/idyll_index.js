@@ -595,7 +595,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   // ## Parser utilities
 
-  var literal = /^(?:'((?:\\.|[^'\\])*?)'|"((?:\\.|[^"\\])*?)")/;
+  var literal = /^(?:'((?:\\.|[^'])*?)'|"((?:\\.|[^"])*?)")/;
   pp.strictDirective = function(start) {
     for (;;) {
       // Try to find string literal.
@@ -2386,7 +2386,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     var node = this.startNode();
     node.value = value;
     node.raw = this.input.slice(this.start, this.end);
-    if (node.raw.charCodeAt(node.raw.length - 1) === 110) { node.bigint = node.raw.slice(0, -1).replace(/_/g, ""); }
+    if (node.raw.charCodeAt(node.raw.length - 1) === 110) { node.bigint = node.raw.slice(0, -1); }
     this.next();
     return this.finishNode(node, "Literal")
   };
@@ -4552,13 +4552,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   pp$9.readToken_pipe_amp = function(code) { // '|&'
     var next = this.input.charCodeAt(this.pos + 1);
-    if (next === code) {
-      if (this.options.ecmaVersion >= 12) {
-        var next2 = this.input.charCodeAt(this.pos + 2);
-        if (next2 === 61) { return this.finishOp(types.assign, 3) }
-      }
-      return this.finishOp(code === 124 ? types.logicalOR : types.logicalAND, 2)
-    }
+    if (next === code) { return this.finishOp(code === 124 ? types.logicalOR : types.logicalAND, 2) }
     if (next === 61) { return this.finishOp(types.assign, 2) }
     return this.finishOp(code === 124 ? types.bitwiseOR : types.bitwiseAND, 1)
   };
@@ -4615,20 +4609,13 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
   };
 
   pp$9.readToken_question = function() { // '?'
-    var ecmaVersion = this.options.ecmaVersion;
-    if (ecmaVersion >= 11) {
+    if (this.options.ecmaVersion >= 11) {
       var next = this.input.charCodeAt(this.pos + 1);
       if (next === 46) {
         var next2 = this.input.charCodeAt(this.pos + 2);
         if (next2 < 48 || next2 > 57) { return this.finishOp(types.questionDot, 2) }
       }
-      if (next === 63) {
-        if (ecmaVersion >= 12) {
-          var next2$1 = this.input.charCodeAt(this.pos + 2);
-          if (next2$1 === 61) { return this.finishOp(types.assign, 3) }
-        }
-        return this.finishOp(types.coalesce, 2)
-      }
+      if (next === 63) { return this.finishOp(types.coalesce, 2) }
     }
     return this.finishOp(types.question, 1)
   };
@@ -4757,59 +4744,22 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
   // were read, the integer value otherwise. When `len` is given, this
   // will return `null` unless the integer has exactly `len` digits.
 
-  pp$9.readInt = function(radix, len, maybeLegacyOctalNumericLiteral) {
-    // `len` is used for character escape sequences. In that case, disallow separators.
-    var allowSeparators = this.options.ecmaVersion >= 12 && len === undefined;
-
-    // `maybeLegacyOctalNumericLiteral` is true if it doesn't have prefix (0x,0o,0b)
-    // and isn't fraction part nor exponent part. In that case, if the first digit
-    // is zero then disallow separators.
-    var isLegacyOctalNumericLiteral = maybeLegacyOctalNumericLiteral && this.input.charCodeAt(this.pos) === 48;
-
-    var start = this.pos, total = 0, lastCode = 0;
-    for (var i = 0, e = len == null ? Infinity : len; i < e; ++i, ++this.pos) {
+  pp$9.readInt = function(radix, len) {
+    var start = this.pos, total = 0;
+    for (var i = 0, e = len == null ? Infinity : len; i < e; ++i) {
       var code = this.input.charCodeAt(this.pos), val = (void 0);
-
-      if (allowSeparators && code === 95) {
-        if (isLegacyOctalNumericLiteral) { this.raiseRecoverable(this.pos, "Numeric separator is not allowed in legacy octal numeric literals"); }
-        if (lastCode === 95) { this.raiseRecoverable(this.pos, "Numeric separator must be exactly one underscore"); }
-        if (i === 0) { this.raiseRecoverable(this.pos, "Numeric separator is not allowed at the first of digits"); }
-        lastCode = code;
-        continue
-      }
-
       if (code >= 97) { val = code - 97 + 10; } // a
       else if (code >= 65) { val = code - 65 + 10; } // A
       else if (code >= 48 && code <= 57) { val = code - 48; } // 0-9
       else { val = Infinity; }
       if (val >= radix) { break }
-      lastCode = code;
+      ++this.pos;
       total = total * radix + val;
     }
-
-    if (allowSeparators && lastCode === 95) { this.raiseRecoverable(this.pos - 1, "Numeric separator is not allowed at the last of digits"); }
     if (this.pos === start || len != null && this.pos - start !== len) { return null }
 
     return total
   };
-
-  function stringToNumber(str, isLegacyOctalNumericLiteral) {
-    if (isLegacyOctalNumericLiteral) {
-      return parseInt(str, 8)
-    }
-
-    // `parseFloat(value)` stops parsing at the first numeric separator then returns a wrong value.
-    return parseFloat(str.replace(/_/g, ""))
-  }
-
-  function stringToBigInt(str) {
-    if (typeof BigInt !== "function") {
-      return null
-    }
-
-    // `BigInt(value)` throws syntax error if the string contains numeric separators.
-    return BigInt(str.replace(/_/g, ""))
-  }
 
   pp$9.readRadixNumber = function(radix) {
     var start = this.pos;
@@ -4817,7 +4767,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     var val = this.readInt(radix);
     if (val == null) { this.raise(this.start + 2, "Expected number in radix " + radix); }
     if (this.options.ecmaVersion >= 11 && this.input.charCodeAt(this.pos) === 110) {
-      val = stringToBigInt(this.input.slice(start, this.pos));
+      val = typeof BigInt !== "undefined" ? BigInt(this.input.slice(start, this.pos)) : null;
       ++this.pos;
     } else if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
     return this.finishToken(types.num, val)
@@ -4827,12 +4777,13 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   pp$9.readNumber = function(startsWithDot) {
     var start = this.pos;
-    if (!startsWithDot && this.readInt(10, undefined, true) === null) { this.raise(start, "Invalid number"); }
+    if (!startsWithDot && this.readInt(10) === null) { this.raise(start, "Invalid number"); }
     var octal = this.pos - start >= 2 && this.input.charCodeAt(start) === 48;
     if (octal && this.strict) { this.raise(start, "Invalid number"); }
     var next = this.input.charCodeAt(this.pos);
     if (!octal && !startsWithDot && this.options.ecmaVersion >= 11 && next === 110) {
-      var val$1 = stringToBigInt(this.input.slice(start, this.pos));
+      var str$1 = this.input.slice(start, this.pos);
+      var val$1 = typeof BigInt !== "undefined" ? BigInt(str$1) : null;
       ++this.pos;
       if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
       return this.finishToken(types.num, val$1)
@@ -4850,7 +4801,8 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
     }
     if (isIdentifierStart(this.fullCharCodeAtPos())) { this.raise(this.pos, "Identifier directly after number"); }
 
-    var val = stringToNumber(this.input.slice(start, this.pos), octal);
+    var str = this.input.slice(start, this.pos);
+    var val = octal ? parseInt(str, 8) : parseFloat(str);
     return this.finishToken(types.num, val)
   };
 
@@ -5109,7 +5061,7 @@ require=(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c=
 
   // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 
-  var version = "7.4.1";
+  var version = "7.3.1";
 
   Parser.acorn = {
     Parser: Parser,
@@ -5866,8 +5818,8 @@ var URITEMPLATE = /^(?:(?:[^\x00-\x20"'<>%\\^`{|}]|%[0-9a-f]{2})|\{[+#./;?&=,!@|
 // For the source: https://gist.github.com/dperini/729294
 // For test cases: https://mathiasbynens.be/demo/url-regex
 // @todo Delete current URL in favour of the commented out URL rule when this issue is fixed https://github.com/eslint/eslint/issues/7983.
-// var URL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u{00a1}-\u{ffff}0-9]+-)*[a-z\u{00a1}-\u{ffff}0-9]+)(?:\.(?:[a-z\u{00a1}-\u{ffff}0-9]+-)*[a-z\u{00a1}-\u{ffff}0-9]+)*(?:\.(?:[a-z\u{00a1}-\u{ffff}]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/iu;
-var URL = /^(?:(?:http[s\u017F]?|ftp):\/\/)(?:(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+(?::(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?@)?(?:(?!10(?:\.[0-9]{1,3}){3})(?!127(?:\.[0-9]{1,3}){3})(?!169\.254(?:\.[0-9]{1,3}){2})(?!192\.168(?:\.[0-9]{1,3}){2})(?!172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2})(?:[1-9][0-9]?|1[0-9][0-9]|2[01][0-9]|22[0-3])(?:\.(?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){2}(?:\.(?:[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-4]))|(?:(?:(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-)*(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)(?:\.(?:(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-)*(?:[0-9a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)*(?:\.(?:(?:[a-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){2,})))(?::[0-9]{2,5})?(?:\/(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?$/i;
+// var URL = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)(?:\.(?:[a-z\u{00a1}-\u{ffff}0-9]+-?)*[a-z\u{00a1}-\u{ffff}0-9]+)*(?:\.(?:[a-z\u{00a1}-\u{ffff}]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/iu;
+var URL = /^(?:(?:http[s\u017F]?|ftp):\/\/)(?:(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+(?::(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?@)?(?:(?!10(?:\.[0-9]{1,3}){3})(?!127(?:\.[0-9]{1,3}){3})(?!169\.254(?:\.[0-9]{1,3}){2})(?!192\.168(?:\.[0-9]{1,3}){2})(?!172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2})(?:[1-9][0-9]?|1[0-9][0-9]|2[01][0-9]|22[0-3])(?:\.(?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){2}(?:\.(?:[1-9][0-9]?|1[0-9][0-9]|2[0-4][0-9]|25[0-4]))|(?:(?:(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-?)*(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)(?:\.(?:(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+-?)*(?:[0-9KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])+)*(?:\.(?:(?:[KSa-z\xA1-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]){2,})))(?::[0-9]{2,5})?(?:\/(?:[\0-\x08\x0E-\x1F!-\x9F\xA1-\u167F\u1681-\u1FFF\u200B-\u2027\u202A-\u202E\u2030-\u205E\u2060-\u2FFF\u3001-\uD7FF\uE000-\uFEFE\uFF00-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)?$/i;
 var UUID = /^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
 var JSON_POINTER = /^(?:\/(?:[^~/]|~0|~1)*)*$/;
 var JSON_POINTER_URI_FRAGMENT = /^#(?:\/(?:[a-z0-9_\-.!$&'()*+,;:=@]|%[0-9a-f]{2}|~0|~1)*)*$/i;
@@ -5889,8 +5841,8 @@ formats.fast = {
   time: /^(?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)?$/i,
   'date-time': /^\d\d\d\d-[0-1]\d-[0-3]\d[t\s](?:[0-2]\d:[0-5]\d:[0-5]\d|23:59:60)(?:\.\d+)?(?:z|[+-]\d\d(?::?\d\d)?)$/i,
   // uri: https://github.com/mafintosh/is-my-json-valid/blob/master/formats.js
-  uri: /^(?:[a-z][a-z0-9+\-.]*:)(?:\/?\/)?[^\s]*$/i,
-  'uri-reference': /^(?:(?:[a-z][a-z0-9+\-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s]*)?$/i,
+  uri: /^(?:[a-z][a-z0-9+-.]*:)(?:\/?\/)?[^\s]*$/i,
+  'uri-reference': /^(?:(?:[a-z][a-z0-9+-.]*:)?\/?\/)?(?:[^\\\s#][^\s#]*)?(?:#[^\\\s]*)?$/i,
   'uri-template': URITEMPLATE,
   url: URL,
   // email (sources from jsen validator):
@@ -7523,7 +7475,7 @@ module.exports = function generate_allOf(it, $keyword, $ruleType) {
       l1 = arr1.length - 1;
     while ($i < l1) {
       $sch = arr1[$i += 1];
-      if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
+      if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
         $allSchemasEmpty = false;
         $it.schema = $sch;
         $it.schemaPath = $schemaPath + '[' + $i + ']';
@@ -7565,7 +7517,7 @@ module.exports = function generate_anyOf(it, $keyword, $ruleType) {
   $it.level++;
   var $nextValid = 'valid' + $it.level;
   var $noEmptySchema = $schema.every(function($sch) {
-    return (it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all));
+    return (it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all));
   });
   if ($noEmptySchema) {
     var $currentBaseId = $it.baseId;
@@ -7717,7 +7669,7 @@ module.exports = function generate_contains(it, $keyword, $ruleType) {
     $dataNxt = $it.dataLevel = it.dataLevel + 1,
     $nextData = 'data' + $dataNxt,
     $currentBaseId = it.baseId,
-    $nonEmptySchema = (it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all));
+    $nonEmptySchema = (it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all));
   out += 'var ' + ($errs) + ' = errors;var ' + ($valid) + ';';
   if ($nonEmptySchema) {
     var $wasComposite = it.compositeRule;
@@ -8155,7 +8107,7 @@ module.exports = function generate_dependencies(it, $keyword, $ruleType) {
   var $currentBaseId = $it.baseId;
   for (var $property in $schemaDeps) {
     var $sch = $schemaDeps[$property];
-    if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
+    if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
       out += ' ' + ($nextValid) + ' = true; if ( ' + ($data) + (it.util.getProperty($property)) + ' !== undefined ';
       if ($ownProperties) {
         out += ' && Object.prototype.hasOwnProperty.call(' + ($data) + ', \'' + (it.util.escapeQuotes($property)) + '\') ';
@@ -8417,8 +8369,8 @@ module.exports = function generate_if(it, $keyword, $ruleType) {
   var $nextValid = 'valid' + $it.level;
   var $thenSch = it.schema['then'],
     $elseSch = it.schema['else'],
-    $thenPresent = $thenSch !== undefined && (it.opts.strictKeywords ? (typeof $thenSch == 'object' && Object.keys($thenSch).length > 0) || $thenSch === false : it.util.schemaHasRules($thenSch, it.RULES.all)),
-    $elsePresent = $elseSch !== undefined && (it.opts.strictKeywords ? (typeof $elseSch == 'object' && Object.keys($elseSch).length > 0) || $elseSch === false : it.util.schemaHasRules($elseSch, it.RULES.all)),
+    $thenPresent = $thenSch !== undefined && (it.opts.strictKeywords ? typeof $thenSch == 'object' && Object.keys($thenSch).length > 0 : it.util.schemaHasRules($thenSch, it.RULES.all)),
+    $elsePresent = $elseSch !== undefined && (it.opts.strictKeywords ? typeof $elseSch == 'object' && Object.keys($elseSch).length > 0 : it.util.schemaHasRules($elseSch, it.RULES.all)),
     $currentBaseId = $it.baseId;
   if ($thenPresent || $elsePresent) {
     var $ifClause;
@@ -8608,7 +8560,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
         l1 = arr1.length - 1;
       while ($i < l1) {
         $sch = arr1[$i += 1];
-        if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
+        if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
           out += ' ' + ($nextValid) + ' = true; if (' + ($data) + '.length > ' + ($i) + ') { ';
           var $passData = $data + '[' + $i + ']';
           $it.schema = $sch;
@@ -8631,7 +8583,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
         }
       }
     }
-    if (typeof $additionalItems == 'object' && (it.opts.strictKeywords ? (typeof $additionalItems == 'object' && Object.keys($additionalItems).length > 0) || $additionalItems === false : it.util.schemaHasRules($additionalItems, it.RULES.all))) {
+    if (typeof $additionalItems == 'object' && (it.opts.strictKeywords ? typeof $additionalItems == 'object' && Object.keys($additionalItems).length > 0 : it.util.schemaHasRules($additionalItems, it.RULES.all))) {
       $it.schema = $additionalItems;
       $it.schemaPath = it.schemaPath + '.additionalItems';
       $it.errSchemaPath = it.errSchemaPath + '/additionalItems';
@@ -8655,7 +8607,7 @@ module.exports = function generate_items(it, $keyword, $ruleType) {
         $closingBraces += '}';
       }
     }
-  } else if ((it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all))) {
+  } else if ((it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all))) {
     $it.schema = $schema;
     $it.schemaPath = $schemaPath;
     $it.errSchemaPath = $errSchemaPath;
@@ -8778,7 +8730,7 @@ module.exports = function generate_not(it, $keyword, $ruleType) {
   var $it = it.util.copy(it);
   $it.level++;
   var $nextValid = 'valid' + $it.level;
-  if ((it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all))) {
+  if ((it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all))) {
     $it.schema = $schema;
     $it.schemaPath = $schemaPath;
     $it.errSchemaPath = $errSchemaPath;
@@ -8878,7 +8830,7 @@ module.exports = function generate_oneOf(it, $keyword, $ruleType) {
       l1 = arr1.length - 1;
     while ($i < l1) {
       $sch = arr1[$i += 1];
-      if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
+      if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
         $it.schema = $sch;
         $it.schemaPath = $schemaPath + '[' + $i + ']';
         $it.errSchemaPath = $errSchemaPath + '/' + $i;
@@ -9193,7 +9145,7 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
       while (i3 < l3) {
         $propertyKey = arr3[i3 += 1];
         var $sch = $schema[$propertyKey];
-        if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
+        if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
           var $prop = it.util.getProperty($propertyKey),
             $passData = $data + $prop,
             $hasDefault = $useDefaults && $sch.default !== undefined;
@@ -9296,7 +9248,7 @@ module.exports = function generate_properties(it, $keyword, $ruleType) {
       while (i4 < l4) {
         $pProperty = arr4[i4 += 1];
         var $sch = $pProperties[$pProperty];
-        if ((it.opts.strictKeywords ? (typeof $sch == 'object' && Object.keys($sch).length > 0) || $sch === false : it.util.schemaHasRules($sch, it.RULES.all))) {
+        if ((it.opts.strictKeywords ? typeof $sch == 'object' && Object.keys($sch).length > 0 : it.util.schemaHasRules($sch, it.RULES.all))) {
           $it.schema = $sch;
           $it.schemaPath = it.schemaPath + '.patternProperties' + it.util.getProperty($pProperty);
           $it.errSchemaPath = it.errSchemaPath + '/patternProperties/' + it.util.escapeFragment($pProperty);
@@ -9355,7 +9307,7 @@ module.exports = function generate_propertyNames(it, $keyword, $ruleType) {
   $it.level++;
   var $nextValid = 'valid' + $it.level;
   out += 'var ' + ($errs) + ' = errors;';
-  if ((it.opts.strictKeywords ? (typeof $schema == 'object' && Object.keys($schema).length > 0) || $schema === false : it.util.schemaHasRules($schema, it.RULES.all))) {
+  if ((it.opts.strictKeywords ? typeof $schema == 'object' && Object.keys($schema).length > 0 : it.util.schemaHasRules($schema, it.RULES.all))) {
     $it.schema = $schema;
     $it.schemaPath = $schemaPath;
     $it.errSchemaPath = $errSchemaPath;
@@ -9578,7 +9530,7 @@ module.exports = function generate_required(it, $keyword, $ruleType) {
         while (i1 < l1) {
           $property = arr1[i1 += 1];
           var $propertySch = it.schema.properties[$property];
-          if (!($propertySch && (it.opts.strictKeywords ? (typeof $propertySch == 'object' && Object.keys($propertySch).length > 0) || $propertySch === false : it.util.schemaHasRules($propertySch, it.RULES.all)))) {
+          if (!($propertySch && (it.opts.strictKeywords ? typeof $propertySch == 'object' && Object.keys($propertySch).length > 0 : it.util.schemaHasRules($propertySch, it.RULES.all)))) {
             $required[$required.length] = $property;
           }
         }
@@ -10001,7 +9953,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
     it.rootId = it.resolve.fullPath(it.self._getId(it.root.schema));
     it.baseId = it.baseId || it.rootId;
     delete it.isTop;
-    it.dataPathArr = [""];
+    it.dataPathArr = [undefined];
     if (it.schema.default !== undefined && it.opts.useDefaults && it.opts.strictDefaults) {
       var $defaultMsg = 'default is ignored in the schema root';
       if (it.opts.strictDefaults === 'log') it.logger.warn($defaultMsg);
@@ -10063,35 +10015,43 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
       if ($coerceToTypes) {
         var $dataType = 'dataType' + $lvl,
           $coerced = 'coerced' + $lvl;
-        out += ' var ' + ($dataType) + ' = typeof ' + ($data) + '; var ' + ($coerced) + ' = undefined; ';
+        out += ' var ' + ($dataType) + ' = typeof ' + ($data) + '; ';
         if (it.opts.coerceTypes == 'array') {
-          out += ' if (' + ($dataType) + ' == \'object\' && Array.isArray(' + ($data) + ') && ' + ($data) + '.length == 1) { ' + ($data) + ' = ' + ($data) + '[0]; ' + ($dataType) + ' = typeof ' + ($data) + '; if (' + (it.util.checkDataType(it.schema.type, $data, it.opts.strictNumbers)) + ') ' + ($coerced) + ' = ' + ($data) + '; } ';
+          out += ' if (' + ($dataType) + ' == \'object\' && Array.isArray(' + ($data) + ')) ' + ($dataType) + ' = \'array\'; ';
         }
-        out += ' if (' + ($coerced) + ' !== undefined) ; ';
+        out += ' var ' + ($coerced) + ' = undefined; ';
+        var $bracesCoercion = '';
         var arr1 = $coerceToTypes;
         if (arr1) {
           var $type, $i = -1,
             l1 = arr1.length - 1;
           while ($i < l1) {
             $type = arr1[$i += 1];
+            if ($i) {
+              out += ' if (' + ($coerced) + ' === undefined) { ';
+              $bracesCoercion += '}';
+            }
+            if (it.opts.coerceTypes == 'array' && $type != 'array') {
+              out += ' if (' + ($dataType) + ' == \'array\' && ' + ($data) + '.length == 1) { ' + ($coerced) + ' = ' + ($data) + ' = ' + ($data) + '[0]; ' + ($dataType) + ' = typeof ' + ($data) + ';  } ';
+            }
             if ($type == 'string') {
-              out += ' else if (' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\') ' + ($coerced) + ' = \'\' + ' + ($data) + '; else if (' + ($data) + ' === null) ' + ($coerced) + ' = \'\'; ';
+              out += ' if (' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\') ' + ($coerced) + ' = \'\' + ' + ($data) + '; else if (' + ($data) + ' === null) ' + ($coerced) + ' = \'\'; ';
             } else if ($type == 'number' || $type == 'integer') {
-              out += ' else if (' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' === null || (' + ($dataType) + ' == \'string\' && ' + ($data) + ' && ' + ($data) + ' == +' + ($data) + ' ';
+              out += ' if (' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' === null || (' + ($dataType) + ' == \'string\' && ' + ($data) + ' && ' + ($data) + ' == +' + ($data) + ' ';
               if ($type == 'integer') {
                 out += ' && !(' + ($data) + ' % 1)';
               }
               out += ')) ' + ($coerced) + ' = +' + ($data) + '; ';
             } else if ($type == 'boolean') {
-              out += ' else if (' + ($data) + ' === \'false\' || ' + ($data) + ' === 0 || ' + ($data) + ' === null) ' + ($coerced) + ' = false; else if (' + ($data) + ' === \'true\' || ' + ($data) + ' === 1) ' + ($coerced) + ' = true; ';
+              out += ' if (' + ($data) + ' === \'false\' || ' + ($data) + ' === 0 || ' + ($data) + ' === null) ' + ($coerced) + ' = false; else if (' + ($data) + ' === \'true\' || ' + ($data) + ' === 1) ' + ($coerced) + ' = true; ';
             } else if ($type == 'null') {
-              out += ' else if (' + ($data) + ' === \'\' || ' + ($data) + ' === 0 || ' + ($data) + ' === false) ' + ($coerced) + ' = null; ';
+              out += ' if (' + ($data) + ' === \'\' || ' + ($data) + ' === 0 || ' + ($data) + ' === false) ' + ($coerced) + ' = null; ';
             } else if (it.opts.coerceTypes == 'array' && $type == 'array') {
-              out += ' else if (' + ($dataType) + ' == \'string\' || ' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' == null) ' + ($coerced) + ' = [' + ($data) + ']; ';
+              out += ' if (' + ($dataType) + ' == \'string\' || ' + ($dataType) + ' == \'number\' || ' + ($dataType) + ' == \'boolean\' || ' + ($data) + ' == null) ' + ($coerced) + ' = [' + ($data) + ']; ';
             }
           }
         }
-        out += ' else {   ';
+        out += ' ' + ($bracesCoercion) + ' if (' + ($coerced) + ' === undefined) {   ';
         var $$outStack = $$outStack || [];
         $$outStack.push(out);
         out = ''; /* istanbul ignore else */
@@ -10131,7 +10091,7 @@ module.exports = function generate_validate(it, $keyword, $ruleType) {
         } else {
           out += ' var err = ' + (__err) + ';  if (vErrors === null) vErrors = [err]; else vErrors.push(err); errors++; ';
         }
-        out += ' } if (' + ($coerced) + ' !== undefined) {  ';
+        out += ' } else {  ';
         var $parentData = $dataLvl ? 'data' + (($dataLvl - 1) || '') : 'parentData',
           $parentDataProperty = $dataLvl ? it.dataPathArr[$dataLvl] : 'parentDataProperty';
         out += ' ' + ($data) + ' = ' + ($coerced) + '; ';
@@ -10884,37 +10844,6 @@ module.exports={
     "default": true
 }
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/available-typed-arrays/index.js":[function(require,module,exports){
-(function (global){(function (){
-'use strict';
-
-var possibleNames = [
-	'BigInt64Array',
-	'BigUint64Array',
-	'Float32Array',
-	'Float64Array',
-	'Int16Array',
-	'Int32Array',
-	'Int8Array',
-	'Uint16Array',
-	'Uint32Array',
-	'Uint8Array',
-	'Uint8ClampedArray'
-];
-
-var g = typeof globalThis === 'undefined' ? global : globalThis;
-
-module.exports = function availableTypedArrays() {
-	var out = [];
-	for (var i = 0; i < possibleNames.length; i++) {
-		if (typeof g[possibleNames[i]] === 'function') {
-			out[out.length] = possibleNames[i];
-		}
-	}
-	return out;
-};
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/base64-js/index.js":[function(require,module,exports){
 'use strict'
 
@@ -11043,7 +10972,9 @@ function fromByteArray (uint8) {
 
   // go through the array every three bytes, we'll deal with trailing stuff later
   for (var i = 0, len2 = len - extraBytes; i < len2; i += maxChunkLength) {
-    parts.push(encodeChunk(uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)))
+    parts.push(encodeChunk(
+      uint8, i, (i + maxChunkLength) > len2 ? len2 : (i + maxChunkLength)
+    ))
   }
 
   // pad the end with zeros, but make sure to not forget the extra bytes
@@ -11070,7 +11001,7 @@ function fromByteArray (uint8) {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js":[function(require,module,exports){
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js":[function(require,module,exports){
-(function (Buffer){(function (){
+(function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -12849,74 +12780,8 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-}).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":"/usr/local/lib/node_modules/idyll/node_modules/base64-js/index.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","ieee754":"/usr/local/lib/node_modules/idyll/node_modules/ieee754/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js":[function(require,module,exports){
-'use strict';
-
-var GetIntrinsic = require('get-intrinsic');
-
-var callBind = require('./');
-
-var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
-
-module.exports = function callBoundIntrinsic(name, allowMissing) {
-	var intrinsic = GetIntrinsic(name, !!allowMissing);
-	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.') > -1) {
-		return callBind(intrinsic);
-	}
-	return intrinsic;
-};
-
-},{"./":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js","get-intrinsic":"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js":[function(require,module,exports){
-'use strict';
-
-var bind = require('function-bind');
-var GetIntrinsic = require('get-intrinsic');
-
-var $apply = GetIntrinsic('%Function.prototype.apply%');
-var $call = GetIntrinsic('%Function.prototype.call%');
-var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
-
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%', true);
-var $defineProperty = GetIntrinsic('%Object.defineProperty%', true);
-var $max = GetIntrinsic('%Math.max%');
-
-if ($defineProperty) {
-	try {
-		$defineProperty({}, 'a', { value: 1 });
-	} catch (e) {
-		// IE 8 has a broken defineProperty
-		$defineProperty = null;
-	}
-}
-
-module.exports = function callBind(originalFunction) {
-	var func = $reflectApply(bind, $call, arguments);
-	if ($gOPD && $defineProperty) {
-		var desc = $gOPD(func, 'length');
-		if (desc.configurable) {
-			// original length, plus the receiver, minus any additional arguments (after the receiver)
-			$defineProperty(
-				func,
-				'length',
-				{ value: 1 + $max(0, originalFunction.length - (arguments.length - 1)) }
-			);
-		}
-	}
-	return func;
-};
-
-var applyBind = function applyBind() {
-	return $reflectApply(bind, $apply, arguments);
-};
-
-if ($defineProperty) {
-	$defineProperty(module.exports, 'apply', { value: applyBind });
-} else {
-	module.exports.apply = applyBind;
-}
-
-},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","get-intrinsic":"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/camel-case/camel-case.js":[function(require,module,exports){
+}).call(this,require("buffer").Buffer)
+},{"base64-js":"/usr/local/lib/node_modules/idyll/node_modules/base64-js/index.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","ieee754":"/usr/local/lib/node_modules/idyll/node_modules/ieee754/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/camel-case/camel-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 var noCase = require('no-case')
 
@@ -12978,8 +12843,119 @@ module.exports = function (value, locale) {
   return upperCase(snakeCase(value, locale), locale)
 }
 
-},{"snake-case":"/usr/local/lib/node_modules/idyll/node_modules/snake-case/snake-case.js","upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
-(function (Buffer){(function (){
+},{"snake-case":"/usr/local/lib/node_modules/idyll/node_modules/snake-case/snake-case.js","upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js":[function(require,module,exports){
+(function (Buffer){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+
+function isArray(arg) {
+  if (Array.isArray) {
+    return Array.isArray(arg);
+  }
+  return objectToString(arg) === '[object Array]';
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = Buffer.isBuffer;
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+}).call(this,{"isBuffer":require("../../insert-module-globals/node_modules/is-buffer/index.js")})
+},{"../../insert-module-globals/node_modules/is-buffer/index.js":"/usr/local/lib/node_modules/idyll/node_modules/insert-module-globals/node_modules/is-buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js":[function(require,module,exports){
+(function (Buffer){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -13002,35 +12978,15 @@ var ResizeableBuffer = /*#__PURE__*/function () {
   _createClass(ResizeableBuffer, [{
     key: "prepend",
     value: function prepend(val) {
-      if (Buffer.isBuffer(val)) {
-        var length = this.length + val.length;
+      var length = this.length++;
 
-        if (length >= this.size) {
-          this.resize();
-
-          if (length >= this.size) {
-            throw Error('INVALID_BUFFER_STATE');
-          }
-        }
-
-        var buf = this.buf;
-        this.buf = Buffer.alloc(this.size);
-        val.copy(this.buf, 0);
-        buf.copy(this.buf, val.length);
-        this.length += val.length;
-      } else {
-        var _length = this.length++;
-
-        if (_length === this.size) {
-          this.resize();
-        }
-
-        var _buf = this.clone();
-
-        this.buf[0] = val;
-
-        _buf.copy(this.buf, 1, 0, _length);
+      if (length === this.size) {
+        this.resize();
       }
+
+      var buf = this.clone();
+      this.buf[0] = val;
+      buf.copy(this.buf, 1, 0, length);
     }
   }, {
     key: "append",
@@ -13059,17 +13015,13 @@ var ResizeableBuffer = /*#__PURE__*/function () {
     }
   }, {
     key: "toString",
-    value: function toString(encoding) {
-      if (encoding) {
-        return this.buf.slice(0, this.length).toString(encoding);
-      } else {
-        return Uint8Array.prototype.slice.call(this.buf.slice(0, this.length));
-      }
+    value: function toString() {
+      return this.buf.slice(0, this.length).toString();
     }
   }, {
     key: "toJSON",
     value: function toJSON() {
-      return this.toString('utf8');
+      return this.toString();
     }
   }, {
     key: "reset",
@@ -13082,9 +13034,9 @@ var ResizeableBuffer = /*#__PURE__*/function () {
 }();
 
 module.exports = ResizeableBuffer;
-}).call(this)}).call(this,require("buffer").Buffer)
+}).call(this,require("buffer").Buffer)
 },{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/index.js":[function(require,module,exports){
-(function (Buffer,setImmediate){(function (){
+(function (Buffer,setImmediate){
 "use strict";
 
 function _wrapNativeSuper(Class) { var _cache = typeof Map === "function" ? new Map() : undefined; _wrapNativeSuper = function _wrapNativeSuper(Class) { if (Class === null || !_isNativeFunction(Class)) return Class; if (typeof Class !== "function") { throw new TypeError("Super expression must either be null or a function"); } if (typeof _cache !== "undefined") { if (_cache.has(Class)) return _cache.get(Class); _cache.set(Class, Wrapper); } function Wrapper() { return _construct(Class, arguments, _getPrototypeOf(this).constructor); } Wrapper.prototype = Object.create(Class.prototype, { constructor: { value: Wrapper, enumerable: false, writable: true, configurable: true } }); return _setPrototypeOf(Wrapper, Class); }; return _wrapNativeSuper(Class); }
@@ -13099,7 +13051,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -13109,13 +13061,13 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -13133,11 +13085,11 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
@@ -13150,30 +13102,14 @@ additional information.
 var _require = require('stream'),
     Transform = _require.Transform;
 
-var ResizeableBuffer = require('./ResizeableBuffer'); // white space characters
-// https://en.wikipedia.org/wiki/Whitespace_character
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Character_Classes#Types
-// \f\n\r\t\v\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff
-
+var ResizeableBuffer = require('./ResizeableBuffer');
 
 var tab = 9;
-var nl = 10; // \n, 0x0A in hexadecimal, 10 in decimal
-
+var nl = 10;
 var np = 12;
-var cr = 13; // \r, 0x0D in hexadécimal, 13 in decimal
-
+var cr = 13;
 var space = 32;
-var boms = {
-  // Note, the following are equals:
-  // Buffer.from("\ufeff")
-  // Buffer.from([239, 187, 191])
-  // Buffer.from('EFBBBF', 'hex')
-  'utf8': Buffer.from([239, 187, 191]),
-  // Note, the following are equals:
-  // Buffer.from "\ufeff", 'utf16le
-  // Buffer.from([255, 254])
-  'utf16le': Buffer.from([255, 254])
-};
+var bom_utf8 = Buffer.from([239, 187, 191]);
 
 var Parser = /*#__PURE__*/function (_Transform) {
   _inherits(Parser, _Transform);
@@ -13187,446 +13123,401 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
     _classCallCheck(this, Parser);
 
-    _this = _super.call(this, _objectSpread(_objectSpread(_objectSpread({}, {
+    _this = _super.call(this, _objectSpread(_objectSpread({}, {
       readableObjectMode: true
-    }), opts), {}, {
-      encoding: null
-    }));
-    _this.__originalOptions = opts;
+    }), opts));
+    var options = {}; // Merge with user options
 
-    _this.__normalizeOptions(opts);
+    for (var opt in opts) {
+      options[underscore(opt)] = opts[opt];
+    } // Normalize option `bom`
 
+
+    if (options.bom === undefined || options.bom === null || options.bom === false) {
+      options.bom = false;
+    } else if (options.bom !== true) {
+      throw new CsvError('CSV_INVALID_OPTION_BOM', ['Invalid option bom:', 'bom must be true,', "got ".concat(JSON.stringify(options.bom))]);
+    } // Normalize option `cast`
+
+
+    var fnCastField = null;
+
+    if (options.cast === undefined || options.cast === null || options.cast === false || options.cast === '') {
+      options.cast = undefined;
+    } else if (typeof options.cast === 'function') {
+      fnCastField = options.cast;
+      options.cast = true;
+    } else if (options.cast !== true) {
+      throw new CsvError('CSV_INVALID_OPTION_CAST', ['Invalid option cast:', 'cast must be true or a function,', "got ".concat(JSON.stringify(options.cast))]);
+    } // Normalize option `cast_date`
+
+
+    if (options.cast_date === undefined || options.cast_date === null || options.cast_date === false || options.cast_date === '') {
+      options.cast_date = false;
+    } else if (options.cast_date === true) {
+      options.cast_date = function (value) {
+        var date = Date.parse(value);
+        return !isNaN(date) ? new Date(date) : value;
+      };
+    } else if (typeof options.cast_date !== 'function') {
+      throw new CsvError('CSV_INVALID_OPTION_CAST_DATE', ['Invalid option cast_date:', 'cast_date must be true or a function,', "got ".concat(JSON.stringify(options.cast_date))]);
+    } // Normalize option `columns`
+
+
+    var fnFirstLineToHeaders = null;
+
+    if (options.columns === true) {
+      // Fields in the first line are converted as-is to columns
+      fnFirstLineToHeaders = undefined;
+    } else if (typeof options.columns === 'function') {
+      fnFirstLineToHeaders = options.columns;
+      options.columns = true;
+    } else if (Array.isArray(options.columns)) {
+      options.columns = normalizeColumnsArray(options.columns);
+    } else if (options.columns === undefined || options.columns === null || options.columns === false) {
+      options.columns = false;
+    } else {
+      throw new CsvError('CSV_INVALID_OPTION_COLUMNS', ['Invalid option columns:', 'expect an object, a function or true,', "got ".concat(JSON.stringify(options.columns))]);
+    } // Normalize option `columns_duplicates_to_array`
+
+
+    if (options.columns_duplicates_to_array === undefined || options.columns_duplicates_to_array === null || options.columns_duplicates_to_array === false) {
+      options.columns_duplicates_to_array = false;
+    } else if (options.columns_duplicates_to_array !== true) {
+      throw new CsvError('CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY', ['Invalid option columns_duplicates_to_array:', 'expect an boolean,', "got ".concat(JSON.stringify(options.columns_duplicates_to_array))]);
+    } // Normalize option `comment`
+
+
+    if (options.comment === undefined || options.comment === null || options.comment === false || options.comment === '') {
+      options.comment = null;
+    } else {
+      if (typeof options.comment === 'string') {
+        options.comment = Buffer.from(options.comment);
+      }
+
+      if (!Buffer.isBuffer(options.comment)) {
+        throw new CsvError('CSV_INVALID_OPTION_COMMENT', ['Invalid option comment:', 'comment must be a buffer or a string,', "got ".concat(JSON.stringify(options.comment))]);
+      }
+    } // Normalize option `delimiter`
+
+
+    var delimiter_json = JSON.stringify(options.delimiter);
+    if (!Array.isArray(options.delimiter)) options.delimiter = [options.delimiter];
+
+    if (options.delimiter.length === 0) {
+      throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)]);
+    }
+
+    options.delimiter = options.delimiter.map(function (delimiter) {
+      if (delimiter === undefined || delimiter === null || delimiter === false) {
+        return Buffer.from(',');
+      }
+
+      if (typeof delimiter === 'string') {
+        delimiter = Buffer.from(delimiter);
+      }
+
+      if (!Buffer.isBuffer(delimiter) || delimiter.length === 0) {
+        throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)]);
+      }
+
+      return delimiter;
+    }); // Normalize option `escape`
+
+    if (options.escape === undefined || options.escape === true) {
+      options.escape = Buffer.from('"');
+    } else if (typeof options.escape === 'string') {
+      options.escape = Buffer.from(options.escape);
+    } else if (options.escape === null || options.escape === false) {
+      options.escape = null;
+    }
+
+    if (options.escape !== null) {
+      if (!Buffer.isBuffer(options.escape)) {
+        throw new Error("Invalid Option: escape must be a buffer, a string or a boolean, got ".concat(JSON.stringify(options.escape)));
+      } else if (options.escape.length !== 1) {
+        throw new Error("Invalid Option Length: escape must be one character, got ".concat(options.escape.length));
+      } else {
+        options.escape = options.escape[0];
+      }
+    } // Normalize option `from`
+
+
+    if (options.from === undefined || options.from === null) {
+      options.from = 1;
+    } else {
+      if (typeof options.from === 'string' && /\d+/.test(options.from)) {
+        options.from = parseInt(options.from);
+      }
+
+      if (Number.isInteger(options.from)) {
+        if (options.from < 0) {
+          throw new Error("Invalid Option: from must be a positive integer, got ".concat(JSON.stringify(opts.from)));
+        }
+      } else {
+        throw new Error("Invalid Option: from must be an integer, got ".concat(JSON.stringify(options.from)));
+      }
+    } // Normalize option `from_line`
+
+
+    if (options.from_line === undefined || options.from_line === null) {
+      options.from_line = 1;
+    } else {
+      if (typeof options.from_line === 'string' && /\d+/.test(options.from_line)) {
+        options.from_line = parseInt(options.from_line);
+      }
+
+      if (Number.isInteger(options.from_line)) {
+        if (options.from_line <= 0) {
+          throw new Error("Invalid Option: from_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.from_line)));
+        }
+      } else {
+        throw new Error("Invalid Option: from_line must be an integer, got ".concat(JSON.stringify(opts.from_line)));
+      }
+    } // Normalize option `info`
+
+
+    if (options.info === undefined || options.info === null || options.info === false) {
+      options.info = false;
+    } else if (options.info !== true) {
+      throw new Error("Invalid Option: info must be true, got ".concat(JSON.stringify(options.info)));
+    } // Normalize option `max_record_size`
+
+
+    if (options.max_record_size === undefined || options.max_record_size === null || options.max_record_size === false) {
+      options.max_record_size = 0;
+    } else if (Number.isInteger(options.max_record_size) && options.max_record_size >= 0) {// Great, nothing to do
+    } else if (typeof options.max_record_size === 'string' && /\d+/.test(options.max_record_size)) {
+      options.max_record_size = parseInt(options.max_record_size);
+    } else {
+      throw new Error("Invalid Option: max_record_size must be a positive integer, got ".concat(JSON.stringify(options.max_record_size)));
+    } // Normalize option `objname`
+
+
+    if (options.objname === undefined || options.objname === null || options.objname === false) {
+      options.objname = undefined;
+    } else if (Buffer.isBuffer(options.objname)) {
+      if (options.objname.length === 0) {
+        throw new Error("Invalid Option: objname must be a non empty buffer");
+      }
+
+      options.objname = options.objname.toString();
+    } else if (typeof options.objname === 'string') {
+      if (options.objname.length === 0) {
+        throw new Error("Invalid Option: objname must be a non empty string");
+      } // Great, nothing to do
+
+    } else {
+      throw new Error("Invalid Option: objname must be a string or a buffer, got ".concat(options.objname));
+    } // Normalize option `on_record`
+
+
+    if (options.on_record === undefined || options.on_record === null) {
+      options.on_record = undefined;
+    } else if (typeof options.on_record !== 'function') {
+      throw new CsvError('CSV_INVALID_OPTION_ON_RECORD', ['Invalid option `on_record`:', 'expect a function,', "got ".concat(JSON.stringify(options.on_record))]);
+    } // Normalize option `quote`
+
+
+    if (options.quote === null || options.quote === false || options.quote === '') {
+      options.quote = null;
+    } else {
+      if (options.quote === undefined || options.quote === true) {
+        options.quote = Buffer.from('"');
+      } else if (typeof options.quote === 'string') {
+        options.quote = Buffer.from(options.quote);
+      }
+
+      if (!Buffer.isBuffer(options.quote)) {
+        throw new Error("Invalid Option: quote must be a buffer or a string, got ".concat(JSON.stringify(options.quote)));
+      } else if (options.quote.length !== 1) {
+        throw new Error("Invalid Option Length: quote must be one character, got ".concat(options.quote.length));
+      } else {
+        options.quote = options.quote[0];
+      }
+    } // Normalize option `raw`
+
+
+    if (options.raw === undefined || options.raw === null || options.raw === false) {
+      options.raw = false;
+    } else if (options.raw !== true) {
+      throw new Error("Invalid Option: raw must be true, got ".concat(JSON.stringify(options.raw)));
+    } // Normalize option `record_delimiter`
+
+
+    if (!options.record_delimiter) {
+      options.record_delimiter = [];
+    } else if (!Array.isArray(options.record_delimiter)) {
+      options.record_delimiter = [options.record_delimiter];
+    }
+
+    options.record_delimiter = options.record_delimiter.map(function (rd) {
+      if (typeof rd === 'string') {
+        rd = Buffer.from(rd);
+      }
+
+      return rd;
+    }); // Normalize option `relax`
+
+    if (typeof options.relax === 'boolean') {// Great, nothing to do
+    } else if (options.relax === undefined || options.relax === null) {
+      options.relax = false;
+    } else {
+      throw new Error("Invalid Option: relax must be a boolean, got ".concat(JSON.stringify(options.relax)));
+    } // Normalize option `relax_column_count`
+
+
+    if (typeof options.relax_column_count === 'boolean') {// Great, nothing to do
+    } else if (options.relax_column_count === undefined || options.relax_column_count === null) {
+      options.relax_column_count = false;
+    } else {
+      throw new Error("Invalid Option: relax_column_count must be a boolean, got ".concat(JSON.stringify(options.relax_column_count)));
+    }
+
+    if (typeof options.relax_column_count_less === 'boolean') {// Great, nothing to do
+    } else if (options.relax_column_count_less === undefined || options.relax_column_count_less === null) {
+      options.relax_column_count_less = false;
+    } else {
+      throw new Error("Invalid Option: relax_column_count_less must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_less)));
+    }
+
+    if (typeof options.relax_column_count_more === 'boolean') {// Great, nothing to do
+    } else if (options.relax_column_count_more === undefined || options.relax_column_count_more === null) {
+      options.relax_column_count_more = false;
+    } else {
+      throw new Error("Invalid Option: relax_column_count_more must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_more)));
+    } // Normalize option `skip_empty_lines`
+
+
+    if (typeof options.skip_empty_lines === 'boolean') {// Great, nothing to do
+    } else if (options.skip_empty_lines === undefined || options.skip_empty_lines === null) {
+      options.skip_empty_lines = false;
+    } else {
+      throw new Error("Invalid Option: skip_empty_lines must be a boolean, got ".concat(JSON.stringify(options.skip_empty_lines)));
+    } // Normalize option `skip_lines_with_empty_values`
+
+
+    if (typeof options.skip_lines_with_empty_values === 'boolean') {// Great, nothing to do
+    } else if (options.skip_lines_with_empty_values === undefined || options.skip_lines_with_empty_values === null) {
+      options.skip_lines_with_empty_values = false;
+    } else {
+      throw new Error("Invalid Option: skip_lines_with_empty_values must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_empty_values)));
+    } // Normalize option `skip_lines_with_error`
+
+
+    if (typeof options.skip_lines_with_error === 'boolean') {// Great, nothing to do
+    } else if (options.skip_lines_with_error === undefined || options.skip_lines_with_error === null) {
+      options.skip_lines_with_error = false;
+    } else {
+      throw new Error("Invalid Option: skip_lines_with_error must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_error)));
+    } // Normalize option `rtrim`
+
+
+    if (options.rtrim === undefined || options.rtrim === null || options.rtrim === false) {
+      options.rtrim = false;
+    } else if (options.rtrim !== true) {
+      throw new Error("Invalid Option: rtrim must be a boolean, got ".concat(JSON.stringify(options.rtrim)));
+    } // Normalize option `ltrim`
+
+
+    if (options.ltrim === undefined || options.ltrim === null || options.ltrim === false) {
+      options.ltrim = false;
+    } else if (options.ltrim !== true) {
+      throw new Error("Invalid Option: ltrim must be a boolean, got ".concat(JSON.stringify(options.ltrim)));
+    } // Normalize option `trim`
+
+
+    if (options.trim === undefined || options.trim === null || options.trim === false) {
+      options.trim = false;
+    } else if (options.trim !== true) {
+      throw new Error("Invalid Option: trim must be a boolean, got ".concat(JSON.stringify(options.trim)));
+    } // Normalize options `trim`, `ltrim` and `rtrim`
+
+
+    if (options.trim === true && opts.ltrim !== false) {
+      options.ltrim = true;
+    } else if (options.ltrim !== true) {
+      options.ltrim = false;
+    }
+
+    if (options.trim === true && opts.rtrim !== false) {
+      options.rtrim = true;
+    } else if (options.rtrim !== true) {
+      options.rtrim = false;
+    } // Normalize option `to`
+
+
+    if (options.to === undefined || options.to === null) {
+      options.to = -1;
+    } else {
+      if (typeof options.to === 'string' && /\d+/.test(options.to)) {
+        options.to = parseInt(options.to);
+      }
+
+      if (Number.isInteger(options.to)) {
+        if (options.to <= 0) {
+          throw new Error("Invalid Option: to must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to)));
+        }
+      } else {
+        throw new Error("Invalid Option: to must be an integer, got ".concat(JSON.stringify(opts.to)));
+      }
+    } // Normalize option `to_line`
+
+
+    if (options.to_line === undefined || options.to_line === null) {
+      options.to_line = -1;
+    } else {
+      if (typeof options.to_line === 'string' && /\d+/.test(options.to_line)) {
+        options.to_line = parseInt(options.to_line);
+      }
+
+      if (Number.isInteger(options.to_line)) {
+        if (options.to_line <= 0) {
+          throw new Error("Invalid Option: to_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to_line)));
+        }
+      } else {
+        throw new Error("Invalid Option: to_line must be an integer, got ".concat(JSON.stringify(opts.to_line)));
+      }
+    }
+
+    _this.info = {
+      comment_lines: 0,
+      empty_lines: 0,
+      invalid_field_length: 0,
+      lines: 1,
+      records: 0
+    };
+    _this.options = options;
+    _this.state = {
+      bomSkipped: false,
+      castField: fnCastField,
+      commenting: false,
+      enabled: options.from_line === 1,
+      escaping: false,
+      escapeIsQuote: options.escape === options.quote,
+      expectedRecordLength: options.columns === null ? 0 : options.columns.length,
+      field: new ResizeableBuffer(20),
+      firstLineToHeaders: fnFirstLineToHeaders,
+      info: Object.assign({}, _this.info),
+      previousBuf: undefined,
+      quoting: false,
+      stop: false,
+      rawBuffer: new ResizeableBuffer(100),
+      record: [],
+      recordHasError: false,
+      record_length: 0,
+      recordDelimiterMaxLength: options.record_delimiter.length === 0 ? 2 : Math.max.apply(Math, _toConsumableArray(options.record_delimiter.map(function (v) {
+        return v.length;
+      }))),
+      trimChars: [Buffer.from(' ')[0], Buffer.from('\t')[0]],
+      wasQuoting: false,
+      wasRowDelimiter: false
+    };
     return _this;
-  }
+  } // Implementation of `Transform._transform`
+
 
   _createClass(Parser, [{
-    key: "__normalizeOptions",
-    value: function __normalizeOptions(opts) {
-      var options = {}; // Merge with user options
-
-      for (var opt in opts) {
-        options[underscore(opt)] = opts[opt];
-      } // Normalize option `encoding`
-      // Note: defined first because other options depends on it
-      // to convert chars/strings into buffers.
-
-
-      if (options.encoding === undefined || options.encoding === true) {
-        options.encoding = 'utf8';
-      } else if (options.encoding === null || options.encoding === false) {
-        options.encoding = null;
-      } else if (typeof options.encoding !== 'string' && options.encoding !== null) {
-        throw new CsvError('CSV_INVALID_OPTION_ENCODING', ['Invalid option encoding:', 'encoding must be a string or null to return a buffer,', "got ".concat(JSON.stringify(options.encoding))], options);
-      } // Normalize option `bom`
-
-
-      if (options.bom === undefined || options.bom === null || options.bom === false) {
-        options.bom = false;
-      } else if (options.bom !== true) {
-        throw new CsvError('CSV_INVALID_OPTION_BOM', ['Invalid option bom:', 'bom must be true,', "got ".concat(JSON.stringify(options.bom))], options);
-      } // Normalize option `cast`
-
-
-      var fnCastField = null;
-
-      if (options.cast === undefined || options.cast === null || options.cast === false || options.cast === '') {
-        options.cast = undefined;
-      } else if (typeof options.cast === 'function') {
-        fnCastField = options.cast;
-        options.cast = true;
-      } else if (options.cast !== true) {
-        throw new CsvError('CSV_INVALID_OPTION_CAST', ['Invalid option cast:', 'cast must be true or a function,', "got ".concat(JSON.stringify(options.cast))], options);
-      } // Normalize option `cast_date`
-
-
-      if (options.cast_date === undefined || options.cast_date === null || options.cast_date === false || options.cast_date === '') {
-        options.cast_date = false;
-      } else if (options.cast_date === true) {
-        options.cast_date = function (value) {
-          var date = Date.parse(value);
-          return !isNaN(date) ? new Date(date) : value;
-        };
-      } else {
-        throw new CsvError('CSV_INVALID_OPTION_CAST_DATE', ['Invalid option cast_date:', 'cast_date must be true or a function,', "got ".concat(JSON.stringify(options.cast_date))], options);
-      } // Normalize option `columns`
-
-
-      var fnFirstLineToHeaders = null;
-
-      if (options.columns === true) {
-        // Fields in the first line are converted as-is to columns
-        fnFirstLineToHeaders = undefined;
-      } else if (typeof options.columns === 'function') {
-        fnFirstLineToHeaders = options.columns;
-        options.columns = true;
-      } else if (Array.isArray(options.columns)) {
-        options.columns = normalizeColumnsArray(options.columns);
-      } else if (options.columns === undefined || options.columns === null || options.columns === false) {
-        options.columns = false;
-      } else {
-        throw new CsvError('CSV_INVALID_OPTION_COLUMNS', ['Invalid option columns:', 'expect an array, a function or true,', "got ".concat(JSON.stringify(options.columns))], options);
-      } // Normalize option `columns_duplicates_to_array`
-
-
-      if (options.columns_duplicates_to_array === undefined || options.columns_duplicates_to_array === null || options.columns_duplicates_to_array === false) {
-        options.columns_duplicates_to_array = false;
-      } else if (options.columns_duplicates_to_array !== true) {
-        throw new CsvError('CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY', ['Invalid option columns_duplicates_to_array:', 'expect an boolean,', "got ".concat(JSON.stringify(options.columns_duplicates_to_array))], options);
-      } else if (options.columns === false) {
-        throw new CsvError('CSV_INVALID_OPTION_COLUMNS_DUPLICATES_TO_ARRAY', ['Invalid option columns_duplicates_to_array:', 'the `columns` mode must be activated.'], options);
-      } // Normalize option `comment`
-
-
-      if (options.comment === undefined || options.comment === null || options.comment === false || options.comment === '') {
-        options.comment = null;
-      } else {
-        if (typeof options.comment === 'string') {
-          options.comment = Buffer.from(options.comment, options.encoding);
-        }
-
-        if (!Buffer.isBuffer(options.comment)) {
-          throw new CsvError('CSV_INVALID_OPTION_COMMENT', ['Invalid option comment:', 'comment must be a buffer or a string,', "got ".concat(JSON.stringify(options.comment))], options);
-        }
-      } // Normalize option `delimiter`
-
-
-      var delimiter_json = JSON.stringify(options.delimiter);
-      if (!Array.isArray(options.delimiter)) options.delimiter = [options.delimiter];
-
-      if (options.delimiter.length === 0) {
-        throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)], options);
-      }
-
-      options.delimiter = options.delimiter.map(function (delimiter) {
-        if (delimiter === undefined || delimiter === null || delimiter === false) {
-          return Buffer.from(',', options.encoding);
-        }
-
-        if (typeof delimiter === 'string') {
-          delimiter = Buffer.from(delimiter, options.encoding);
-        }
-
-        if (!Buffer.isBuffer(delimiter) || delimiter.length === 0) {
-          throw new CsvError('CSV_INVALID_OPTION_DELIMITER', ['Invalid option delimiter:', 'delimiter must be a non empty string or buffer or array of string|buffer,', "got ".concat(delimiter_json)], options);
-        }
-
-        return delimiter;
-      }); // Normalize option `escape`
-
-      if (options.escape === undefined || options.escape === true) {
-        options.escape = Buffer.from('"', options.encoding);
-      } else if (typeof options.escape === 'string') {
-        options.escape = Buffer.from(options.escape, options.encoding);
-      } else if (options.escape === null || options.escape === false) {
-        options.escape = null;
-      }
-
-      if (options.escape !== null) {
-        if (!Buffer.isBuffer(options.escape)) {
-          throw new Error("Invalid Option: escape must be a buffer, a string or a boolean, got ".concat(JSON.stringify(options.escape)));
-        }
-      } // Normalize option `from`
-
-
-      if (options.from === undefined || options.from === null) {
-        options.from = 1;
-      } else {
-        if (typeof options.from === 'string' && /\d+/.test(options.from)) {
-          options.from = parseInt(options.from);
-        }
-
-        if (Number.isInteger(options.from)) {
-          if (options.from < 0) {
-            throw new Error("Invalid Option: from must be a positive integer, got ".concat(JSON.stringify(opts.from)));
-          }
-        } else {
-          throw new Error("Invalid Option: from must be an integer, got ".concat(JSON.stringify(options.from)));
-        }
-      } // Normalize option `from_line`
-
-
-      if (options.from_line === undefined || options.from_line === null) {
-        options.from_line = 1;
-      } else {
-        if (typeof options.from_line === 'string' && /\d+/.test(options.from_line)) {
-          options.from_line = parseInt(options.from_line);
-        }
-
-        if (Number.isInteger(options.from_line)) {
-          if (options.from_line <= 0) {
-            throw new Error("Invalid Option: from_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.from_line)));
-          }
-        } else {
-          throw new Error("Invalid Option: from_line must be an integer, got ".concat(JSON.stringify(opts.from_line)));
-        }
-      } // Normalize options `ignore_last_delimiters`
-
-
-      if (options.ignore_last_delimiters === undefined || options.ignore_last_delimiters === null) {
-        options.ignore_last_delimiters = false;
-      } else if (typeof options.ignore_last_delimiters === 'number') {
-        options.ignore_last_delimiters = Math.floor(options.ignore_last_delimiters);
-
-        if (options.ignore_last_delimiters === 0) {
-          options.ignore_last_delimiters = false;
-        }
-      } else if (typeof options.ignore_last_delimiters !== 'boolean') {
-        throw new CsvError('CSV_INVALID_OPTION_IGNORE_LAST_DELIMITERS', ['Invalid option `ignore_last_delimiters`:', 'the value must be a boolean value or an integer,', "got ".concat(JSON.stringify(options.ignore_last_delimiters))], options);
-      }
-
-      if (options.ignore_last_delimiters === true && options.columns === false) {
-        throw new CsvError('CSV_IGNORE_LAST_DELIMITERS_REQUIRES_COLUMNS', ['The option `ignore_last_delimiters`', 'requires the activation of the `columns` option'], options);
-      } // Normalize option `info`
-
-
-      if (options.info === undefined || options.info === null || options.info === false) {
-        options.info = false;
-      } else if (options.info !== true) {
-        throw new Error("Invalid Option: info must be true, got ".concat(JSON.stringify(options.info)));
-      } // Normalize option `max_record_size`
-
-
-      if (options.max_record_size === undefined || options.max_record_size === null || options.max_record_size === false) {
-        options.max_record_size = 0;
-      } else if (Number.isInteger(options.max_record_size) && options.max_record_size >= 0) {// Great, nothing to do
-      } else if (typeof options.max_record_size === 'string' && /\d+/.test(options.max_record_size)) {
-        options.max_record_size = parseInt(options.max_record_size);
-      } else {
-        throw new Error("Invalid Option: max_record_size must be a positive integer, got ".concat(JSON.stringify(options.max_record_size)));
-      } // Normalize option `objname`
-
-
-      if (options.objname === undefined || options.objname === null || options.objname === false) {
-        options.objname = undefined;
-      } else if (Buffer.isBuffer(options.objname)) {
-        if (options.objname.length === 0) {
-          throw new Error("Invalid Option: objname must be a non empty buffer");
-        }
-
-        if (options.encoding === null) {// Don't call `toString`, leave objname as a buffer
-        } else {
-          options.objname = options.objname.toString(options.encoding);
-        }
-      } else if (typeof options.objname === 'string') {
-        if (options.objname.length === 0) {
-          throw new Error("Invalid Option: objname must be a non empty string");
-        } // Great, nothing to do
-
-      } else {
-        throw new Error("Invalid Option: objname must be a string or a buffer, got ".concat(options.objname));
-      } // Normalize option `on_record`
-
-
-      if (options.on_record === undefined || options.on_record === null) {
-        options.on_record = undefined;
-      } else if (typeof options.on_record !== 'function') {
-        throw new CsvError('CSV_INVALID_OPTION_ON_RECORD', ['Invalid option `on_record`:', 'expect a function,', "got ".concat(JSON.stringify(options.on_record))], options);
-      } // Normalize option `quote`
-
-
-      if (options.quote === null || options.quote === false || options.quote === '') {
-        options.quote = null;
-      } else {
-        if (options.quote === undefined || options.quote === true) {
-          options.quote = Buffer.from('"', options.encoding);
-        } else if (typeof options.quote === 'string') {
-          options.quote = Buffer.from(options.quote, options.encoding);
-        }
-
-        if (!Buffer.isBuffer(options.quote)) {
-          throw new Error("Invalid Option: quote must be a buffer or a string, got ".concat(JSON.stringify(options.quote)));
-        }
-      } // Normalize option `raw`
-
-
-      if (options.raw === undefined || options.raw === null || options.raw === false) {
-        options.raw = false;
-      } else if (options.raw !== true) {
-        throw new Error("Invalid Option: raw must be true, got ".concat(JSON.stringify(options.raw)));
-      } // Normalize option `record_delimiter`
-
-
-      if (!options.record_delimiter) {
-        options.record_delimiter = [];
-      } else if (!Array.isArray(options.record_delimiter)) {
-        options.record_delimiter = [options.record_delimiter];
-      }
-
-      options.record_delimiter = options.record_delimiter.map(function (rd) {
-        if (typeof rd === 'string') {
-          rd = Buffer.from(rd, options.encoding);
-        }
-
-        return rd;
-      }); // Normalize option `relax`
-
-      if (typeof options.relax === 'boolean') {// Great, nothing to do
-      } else if (options.relax === undefined || options.relax === null) {
-        options.relax = false;
-      } else {
-        throw new Error("Invalid Option: relax must be a boolean, got ".concat(JSON.stringify(options.relax)));
-      } // Normalize option `relax_column_count`
-
-
-      if (typeof options.relax_column_count === 'boolean') {// Great, nothing to do
-      } else if (options.relax_column_count === undefined || options.relax_column_count === null) {
-        options.relax_column_count = false;
-      } else {
-        throw new Error("Invalid Option: relax_column_count must be a boolean, got ".concat(JSON.stringify(options.relax_column_count)));
-      }
-
-      if (typeof options.relax_column_count_less === 'boolean') {// Great, nothing to do
-      } else if (options.relax_column_count_less === undefined || options.relax_column_count_less === null) {
-        options.relax_column_count_less = false;
-      } else {
-        throw new Error("Invalid Option: relax_column_count_less must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_less)));
-      }
-
-      if (typeof options.relax_column_count_more === 'boolean') {// Great, nothing to do
-      } else if (options.relax_column_count_more === undefined || options.relax_column_count_more === null) {
-        options.relax_column_count_more = false;
-      } else {
-        throw new Error("Invalid Option: relax_column_count_more must be a boolean, got ".concat(JSON.stringify(options.relax_column_count_more)));
-      } // Normalize option `skip_empty_lines`
-
-
-      if (typeof options.skip_empty_lines === 'boolean') {// Great, nothing to do
-      } else if (options.skip_empty_lines === undefined || options.skip_empty_lines === null) {
-        options.skip_empty_lines = false;
-      } else {
-        throw new Error("Invalid Option: skip_empty_lines must be a boolean, got ".concat(JSON.stringify(options.skip_empty_lines)));
-      } // Normalize option `skip_lines_with_empty_values`
-
-
-      if (typeof options.skip_lines_with_empty_values === 'boolean') {// Great, nothing to do
-      } else if (options.skip_lines_with_empty_values === undefined || options.skip_lines_with_empty_values === null) {
-        options.skip_lines_with_empty_values = false;
-      } else {
-        throw new Error("Invalid Option: skip_lines_with_empty_values must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_empty_values)));
-      } // Normalize option `skip_lines_with_error`
-
-
-      if (typeof options.skip_lines_with_error === 'boolean') {// Great, nothing to do
-      } else if (options.skip_lines_with_error === undefined || options.skip_lines_with_error === null) {
-        options.skip_lines_with_error = false;
-      } else {
-        throw new Error("Invalid Option: skip_lines_with_error must be a boolean, got ".concat(JSON.stringify(options.skip_lines_with_error)));
-      } // Normalize option `rtrim`
-
-
-      if (options.rtrim === undefined || options.rtrim === null || options.rtrim === false) {
-        options.rtrim = false;
-      } else if (options.rtrim !== true) {
-        throw new Error("Invalid Option: rtrim must be a boolean, got ".concat(JSON.stringify(options.rtrim)));
-      } // Normalize option `ltrim`
-
-
-      if (options.ltrim === undefined || options.ltrim === null || options.ltrim === false) {
-        options.ltrim = false;
-      } else if (options.ltrim !== true) {
-        throw new Error("Invalid Option: ltrim must be a boolean, got ".concat(JSON.stringify(options.ltrim)));
-      } // Normalize option `trim`
-
-
-      if (options.trim === undefined || options.trim === null || options.trim === false) {
-        options.trim = false;
-      } else if (options.trim !== true) {
-        throw new Error("Invalid Option: trim must be a boolean, got ".concat(JSON.stringify(options.trim)));
-      } // Normalize options `trim`, `ltrim` and `rtrim`
-
-
-      if (options.trim === true && opts.ltrim !== false) {
-        options.ltrim = true;
-      } else if (options.ltrim !== true) {
-        options.ltrim = false;
-      }
-
-      if (options.trim === true && opts.rtrim !== false) {
-        options.rtrim = true;
-      } else if (options.rtrim !== true) {
-        options.rtrim = false;
-      } // Normalize option `to`
-
-
-      if (options.to === undefined || options.to === null) {
-        options.to = -1;
-      } else {
-        if (typeof options.to === 'string' && /\d+/.test(options.to)) {
-          options.to = parseInt(options.to);
-        }
-
-        if (Number.isInteger(options.to)) {
-          if (options.to <= 0) {
-            throw new Error("Invalid Option: to must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to)));
-          }
-        } else {
-          throw new Error("Invalid Option: to must be an integer, got ".concat(JSON.stringify(opts.to)));
-        }
-      } // Normalize option `to_line`
-
-
-      if (options.to_line === undefined || options.to_line === null) {
-        options.to_line = -1;
-      } else {
-        if (typeof options.to_line === 'string' && /\d+/.test(options.to_line)) {
-          options.to_line = parseInt(options.to_line);
-        }
-
-        if (Number.isInteger(options.to_line)) {
-          if (options.to_line <= 0) {
-            throw new Error("Invalid Option: to_line must be a positive integer greater than 0, got ".concat(JSON.stringify(opts.to_line)));
-          }
-        } else {
-          throw new Error("Invalid Option: to_line must be an integer, got ".concat(JSON.stringify(opts.to_line)));
-        }
-      }
-
-      this.info = {
-        bytes: 0,
-        comment_lines: 0,
-        empty_lines: 0,
-        invalid_field_length: 0,
-        lines: 1,
-        records: 0
-      };
-      this.options = options;
-      this.state = {
-        bomSkipped: false,
-        bufBytesStart: 0,
-        castField: fnCastField,
-        commenting: false,
-        // Current error encountered by a record
-        error: undefined,
-        enabled: options.from_line === 1,
-        escaping: false,
-        // escapeIsQuote: options.escape === options.quote,
-        escapeIsQuote: Buffer.isBuffer(options.escape) && Buffer.isBuffer(options.quote) && Buffer.compare(options.escape, options.quote) === 0,
-        // columns can be `false`, `true`, `Array`
-        expectedRecordLength: Array.isArray(options.columns) ? options.columns.length : undefined,
-        field: new ResizeableBuffer(20),
-        firstLineToHeaders: fnFirstLineToHeaders,
-        needMoreDataSize: Math.max.apply(Math, [// Skip if the remaining buffer smaller than comment
-        options.comment !== null ? options.comment.length : 0].concat(_toConsumableArray(options.delimiter.map(function (delimiter) {
-          return delimiter.length;
-        })), [// Skip if the remaining buffer can be escape sequence
-        options.quote !== null ? options.quote.length : 0])),
-        previousBuf: undefined,
-        quoting: false,
-        stop: false,
-        rawBuffer: new ResizeableBuffer(100),
-        record: [],
-        recordHasError: false,
-        record_length: 0,
-        recordDelimiterMaxLength: options.record_delimiter.length === 0 ? 2 : Math.max.apply(Math, _toConsumableArray(options.record_delimiter.map(function (v) {
-          return v.length;
-        }))),
-        trimChars: [Buffer.from(' ', options.encoding)[0], Buffer.from('\t', options.encoding)[0]],
-        wasQuoting: false,
-        wasRowDelimiter: false
-      };
-    } // Implementation of `Transform._transform`
-
-  }, {
     key: "_transform",
     value: function _transform(buf, encoding, callback) {
       if (this.state.stop === true) {
@@ -13662,6 +13553,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
           comment = _this$options.comment,
           escape = _this$options.escape,
           from_line = _this$options.from_line,
+          info = _this$options.info,
           ltrim = _this$options.ltrim,
           max_record_size = _this$options.max_record_size,
           quote = _this$options.quote,
@@ -13703,21 +13595,12 @@ var Parser = /*#__PURE__*/function (_Transform) {
             // Wait for more data
             this.state.previousBuf = buf;
             return;
-          }
+          } // skip BOM detect because data length < 3
+
         } else {
-          for (var encoding in boms) {
-            if (boms[encoding].compare(buf, 0, boms[encoding].length) === 0) {
-              // Skip BOM
-              var bomLength = boms[encoding].length;
-              this.state.bufBytesStart += bomLength;
-              buf = buf.slice(bomLength); // Renormalize original options with the new encoding
-
-              this.__normalizeOptions(_objectSpread(_objectSpread({}, this.__originalOptions), {}, {
-                encoding: encoding
-              }));
-
-              break;
-            }
+          if (bom_utf8.compare(buf, 0, 3) === 0) {
+            // Skip BOM
+            buf = buf.slice(3);
           }
 
           this.state.bomSkipped = true;
@@ -13736,6 +13619,11 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
         if (this.state.wasRowDelimiter === true) {
           this.info.lines++;
+
+          if (info === true && this.state.record.length === 0 && this.state.field.length === 0 && this.state.wasQuoting === false) {
+            this.state.info = Object.assign({}, this.info);
+          }
+
           this.state.wasRowDelimiter = false;
         }
 
@@ -13747,7 +13635,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
 
         if (this.state.quoting === false && record_delimiter.length === 0) {
-          var record_delimiterCount = this.__autoDiscoverRecordDelimiter(buf, pos);
+          var record_delimiterCount = this.__autoDiscoverRowDelimiter(buf, pos);
 
           if (record_delimiterCount) {
             record_delimiter = this.options.record_delimiter;
@@ -13771,58 +13659,56 @@ var Parser = /*#__PURE__*/function (_Transform) {
         } else {
           // Escape is only active inside quoted fields
           // We are quoting, the char is an escape chr and there is a chr to escape
-          // if(escape !== null && this.state.quoting === true && chr === escape && pos + 1 < bufLen){
-          if (escape !== null && this.state.quoting === true && this.__isEscape(buf, pos, chr) && pos + escape.length < bufLen) {
+          if (escape !== null && this.state.quoting === true && chr === escape && pos + 1 < bufLen) {
             if (escapeIsQuote) {
-              if (this.__isQuote(buf, pos + escape.length)) {
+              if (buf[pos + 1] === quote) {
                 this.state.escaping = true;
-                pos += escape.length - 1;
                 continue;
               }
             } else {
               this.state.escaping = true;
-              pos += escape.length - 1;
               continue;
             }
           } // Not currently escaping and chr is a quote
           // TODO: need to compare bytes instead of single char
 
 
-          if (this.state.commenting === false && this.__isQuote(buf, pos)) {
+          if (this.state.commenting === false && chr === quote) {
             if (this.state.quoting === true) {
-              var nextChr = buf[pos + quote.length];
+              var nextChr = buf[pos + 1];
 
-              var isNextChrTrimable = rtrim && this.__isCharTrimable(nextChr);
+              var isNextChrTrimable = rtrim && this.__isCharTrimable(nextChr); // const isNextChrComment = nextChr === comment
 
-              var isNextChrComment = comment !== null && this.__compareBytes(comment, buf, pos + quote.length, nextChr);
 
-              var isNextChrDelimiter = this.__isDelimiter(buf, pos + quote.length, nextChr);
+              var isNextChrComment = comment !== null && this.__compareBytes(comment, buf, pos + 1, nextChr);
 
-              var isNextChrRecordDelimiter = record_delimiter.length === 0 ? this.__autoDiscoverRecordDelimiter(buf, pos + quote.length) : this.__isRecordDelimiter(nextChr, buf, pos + quote.length); // Escape a quote
+              var isNextChrDelimiter = this.__isDelimiter(nextChr, buf, pos + 1);
+
+              var isNextChrRowDelimiter = record_delimiter.length === 0 ? this.__autoDiscoverRowDelimiter(buf, pos + 1) : this.__isRecordDelimiter(nextChr, buf, pos + 1); // Escape a quote
               // Treat next char as a regular character
+              // TODO: need to compare bytes instead of single char
 
-              if (escape !== null && this.__isEscape(buf, pos, chr) && this.__isQuote(buf, pos + escape.length)) {
-                pos += escape.length - 1;
-              } else if (!nextChr || isNextChrDelimiter || isNextChrRecordDelimiter || isNextChrComment || isNextChrTrimable) {
+              if (escape !== null && chr === escape && nextChr === quote) {
+                pos++;
+              } else if (!nextChr || isNextChrDelimiter || isNextChrRowDelimiter || isNextChrComment || isNextChrTrimable) {
                 this.state.quoting = false;
                 this.state.wasQuoting = true;
-                pos += quote.length - 1;
                 continue;
               } else if (relax === false) {
-                var err = this.__error(new CsvError('CSV_INVALID_CLOSING_QUOTE', ['Invalid Closing Quote:', "got \"".concat(String.fromCharCode(nextChr), "\""), "at line ".concat(this.info.lines), 'instead of delimiter, record delimiter, trimable character', '(if activated) or comment'], this.options, this.__infoField()));
+                var err = this.__error(new CsvError('CSV_INVALID_CLOSING_QUOTE', ['Invalid Closing Quote:', "got \"".concat(String.fromCharCode(nextChr), "\""), "at line ".concat(this.info.lines), 'instead of delimiter, row delimiter, trimable character', '(if activated) or comment'], this.__context()));
 
                 if (err !== undefined) return err;
               } else {
                 this.state.quoting = false;
-                this.state.wasQuoting = true;
+                this.state.wasQuoting = true; // continue
+
                 this.state.field.prepend(quote);
-                pos += quote.length - 1;
               }
             } else {
               if (this.state.field.length !== 0) {
                 // In relax mode, treat opening quote preceded by chrs as regular
                 if (relax === false) {
-                  var _err = this.__error(new CsvError('INVALID_OPENING_QUOTE', ['Invalid Opening Quote:', "a quote is found inside a field at line ".concat(this.info.lines)], this.options, this.__infoField(), {
+                  var _err = this.__error(new CsvError('INVALID_OPENING_QUOTE', ['Invalid Opening Quote:', "a quote is found inside a field at line ".concat(this.info.lines)], this.__context(), {
                     field: this.state.field
                   }));
 
@@ -13830,7 +13716,6 @@ var Parser = /*#__PURE__*/function (_Transform) {
                 }
               } else {
                 this.state.quoting = true;
-                pos += quote.length - 1;
                 continue;
               }
             }
@@ -13846,35 +13731,32 @@ var Parser = /*#__PURE__*/function (_Transform) {
               if (skipCommentLine) {
                 this.info.comment_lines++; // Skip full comment line
               } else {
-                // Activate records emition if above from_line
+                // Skip if line is empty and skip_empty_lines activated
+                if (skip_empty_lines === true && this.state.wasQuoting === false && this.state.record.length === 0 && this.state.field.length === 0) {
+                  this.info.empty_lines++;
+                  pos += recordDelimiterLength - 1;
+                  continue;
+                } // Activate records emition if above from_line
+
+
                 if (this.state.enabled === false && this.info.lines + (this.state.wasRowDelimiter === true ? 1 : 0) >= from_line) {
                   this.state.enabled = true;
 
                   this.__resetField();
 
-                  this.__resetRecord();
+                  this.__resetRow();
 
                   pos += recordDelimiterLength - 1;
                   continue;
-                } // Skip if line is empty and skip_empty_lines activated
+                } else {
+                  var errField = this.__onField();
 
+                  if (errField !== undefined) return errField;
 
-                if (skip_empty_lines === true && this.state.wasQuoting === false && this.state.record.length === 0 && this.state.field.length === 0) {
-                  this.info.empty_lines++;
-                  pos += recordDelimiterLength - 1;
-                  continue;
+                  var errRecord = this.__onRow();
+
+                  if (errRecord !== undefined) return errRecord;
                 }
-
-                this.info.bytes = this.state.bufBytesStart + pos;
-
-                var errField = this.__onField();
-
-                if (errField !== undefined) return errField;
-                this.info.bytes = this.state.bufBytesStart + pos + recordDelimiterLength;
-
-                var errRecord = this.__onRecord();
-
-                if (errRecord !== undefined) return errRecord;
 
                 if (to !== -1 && this.info.records >= to) {
                   this.state.stop = true;
@@ -13899,11 +13781,9 @@ var Parser = /*#__PURE__*/function (_Transform) {
               continue;
             }
 
-            var delimiterLength = this.__isDelimiter(buf, pos, chr);
+            var delimiterLength = this.__isDelimiter(chr, buf, pos);
 
             if (delimiterLength !== 0) {
-              this.info.bytes = this.state.bufBytesStart + pos;
-
               var _errField = this.__onField();
 
               if (_errField !== undefined) return _errField;
@@ -13915,7 +13795,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
 
         if (this.state.commenting === false) {
           if (max_record_size !== 0 && this.state.record_length + this.state.field.length > max_record_size) {
-            var _err2 = this.__error(new CsvError('CSV_MAX_RECORD_SIZE', ['Max Record Size:', 'record exceed the maximum number of tolerated bytes', "of ".concat(max_record_size), "at line ".concat(this.info.lines)], this.options, this.__infoField()));
+            var _err2 = this.__error(new CsvError('CSV_MAX_RECORD_SIZE', ['Max Record Size:', 'record exceed the maximum number of tolerated bytes', "of ".concat(max_record_size), "at line ".concat(this.info.lines)], this.__context()));
 
             if (_err2 !== undefined) return _err2;
           }
@@ -13928,7 +13808,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         if (lappend === true && rappend === true) {
           this.state.field.append(chr);
         } else if (rtrim === true && !this.__isCharTrimable(chr)) {
-          var _err3 = this.__error(new CsvError('CSV_NON_TRIMABLE_CHAR_AFTER_CLOSING_QUOTE', ['Invalid Closing Quote:', 'found non trimable byte after quote', "at line ".concat(this.info.lines)], this.options, this.__infoField()));
+          var _err3 = this.__error(new CsvError('CSV_NON_TRIMABLE_CHAR_AFTER_CLOSING_QUOTE', ['Invalid Closing Quote:', 'found non trimable byte after quote', "at line ".concat(this.info.lines)], this.__context()));
 
           if (_err3 !== undefined) return _err3;
         }
@@ -13937,19 +13817,17 @@ var Parser = /*#__PURE__*/function (_Transform) {
       if (end === true) {
         // Ensure we are not ending in a quoting state
         if (this.state.quoting === true) {
-          var _err4 = this.__error(new CsvError('CSV_QUOTE_NOT_CLOSED', ['Quote Not Closed:', "the parsing is finished with an opening quote at line ".concat(this.info.lines)], this.options, this.__infoField()));
+          var _err4 = this.__error(new CsvError('CSV_QUOTE_NOT_CLOSED', ['Quote Not Closed:', "the parsing is finished with an opening quote at line ".concat(this.info.lines)], this.__context()));
 
           if (_err4 !== undefined) return _err4;
         } else {
           // Skip last line if it has no characters
           if (this.state.wasQuoting === true || this.state.record.length !== 0 || this.state.field.length !== 0) {
-            this.info.bytes = this.state.bufBytesStart + pos;
-
             var _errField2 = this.__onField();
 
             if (_errField2 !== undefined) return _errField2;
 
-            var _errRecord = this.__onRecord();
+            var _errRecord = this.__onRow();
 
             if (_errRecord !== undefined) return _errRecord;
           } else if (this.state.wasRowDelimiter === true) {
@@ -13959,7 +13837,6 @@ var Parser = /*#__PURE__*/function (_Transform) {
           }
         }
       } else {
-        this.state.bufBytesStart += pos;
         this.state.previousBuf = buf.slice(pos);
       }
 
@@ -13967,14 +13844,19 @@ var Parser = /*#__PURE__*/function (_Transform) {
         this.info.lines++;
         this.state.wasRowDelimiter = false;
       }
+    } // Helper to test if a character is a space or a line delimiter
+
+  }, {
+    key: "__isCharTrimable",
+    value: function __isCharTrimable(chr) {
+      return chr === space || chr === tab || chr === cr || chr === nl || chr === np;
     }
   }, {
-    key: "__onRecord",
-    value: function __onRecord() {
+    key: "__onRow",
+    value: function __onRow() {
       var _this$options2 = this.options,
           columns = _this$options2.columns,
           columns_duplicates_to_array = _this$options2.columns_duplicates_to_array,
-          encoding = _this$options2.encoding,
           info = _this$options2.info,
           from = _this$options2.from,
           relax_column_count = _this$options2.relax_column_count,
@@ -13987,15 +13869,15 @@ var Parser = /*#__PURE__*/function (_Transform) {
           record = _this$state2.record;
 
       if (enabled === false) {
-        return this.__resetRecord();
+        return this.__resetRow();
       } // Convert the first line into column names
 
 
       var recordLength = record.length;
 
       if (columns === true) {
-        if (skip_lines_with_empty_values === true && isRecordEmpty(record)) {
-          this.__resetRecord();
+        if (isRecordEmpty(record)) {
+          this.__resetRow();
 
           return;
         }
@@ -14008,35 +13890,37 @@ var Parser = /*#__PURE__*/function (_Transform) {
       }
 
       if (recordLength !== this.state.expectedRecordLength) {
-        var err = columns === false ? // Todo: rename CSV_INCONSISTENT_RECORD_LENGTH to
-        // CSV_RECORD_INCONSISTENT_FIELDS_LENGTH
-        new CsvError('CSV_INCONSISTENT_RECORD_LENGTH', ['Invalid Record Length:', "expect ".concat(this.state.expectedRecordLength, ","), "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.options, this.__infoField(), {
-          record: record
-        }) : // Todo: rename CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH to
-        // CSV_RECORD_INCONSISTENT_COLUMNS
-        new CsvError('CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH', ['Invalid Record Length:', "columns length is ".concat(columns.length, ","), // rename columns
-        "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.options, this.__infoField(), {
-          record: record
-        });
-
         if (relax_column_count === true || relax_column_count_less === true && recordLength < this.state.expectedRecordLength || relax_column_count_more === true && recordLength > this.state.expectedRecordLength) {
           this.info.invalid_field_length++;
-          this.state.error = err; // Error is undefined with skip_lines_with_error
         } else {
-          var finalErr = this.__error(err);
+          if (columns === false) {
+            var err = this.__error(new CsvError('CSV_INCONSISTENT_RECORD_LENGTH', ['Invalid Record Length:', "expect ".concat(this.state.expectedRecordLength, ","), "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.__context(), {
+              record: record
+            }));
 
-          if (finalErr) return finalErr;
+            if (err !== undefined) return err;
+          } else {
+            var _err5 = this.__error( // CSV_INVALID_RECORD_LENGTH_DONT_MATCH_COLUMNS
+            new CsvError('CSV_RECORD_DONT_MATCH_COLUMNS_LENGTH', ['Invalid Record Length:', "columns length is ".concat(columns.length, ","), // rename columns
+            "got ".concat(recordLength, " on line ").concat(this.info.lines)], this.__context(), {
+              record: record
+            }));
+
+            if (_err5 !== undefined) return _err5;
+          }
         }
       }
 
-      if (skip_lines_with_empty_values === true && isRecordEmpty(record)) {
-        this.__resetRecord();
+      if (skip_lines_with_empty_values === true) {
+        if (isRecordEmpty(record)) {
+          this.__resetRow();
 
-        return;
+          return;
+        }
       }
 
       if (this.state.recordHasError === true) {
-        this.__resetRecord();
+        this.__resetRow();
 
         this.state.recordHasError = false;
         return;
@@ -14045,14 +13929,14 @@ var Parser = /*#__PURE__*/function (_Transform) {
       this.info.records++;
 
       if (from === 1 || this.info.records >= from) {
-        // With columns, records are object
         if (columns !== false) {
           var obj = {}; // Transform record array to an object
 
           for (var i = 0, l = record.length; i < l; i++) {
-            if (columns[i] === undefined || columns[i].disabled) continue; // Turn duplicate columns into an array
+            if (columns[i] === undefined || columns[i].disabled) continue; // obj[columns[i].name] = record[i]
+            // Turn duplicate columns into an array
 
-            if (columns_duplicates_to_array === true && obj[columns[i].name] !== undefined) {
+            if (columns_duplicates_to_array === true && obj[columns[i].name]) {
               if (Array.isArray(obj[columns[i].name])) {
                 obj[columns[i].name] = obj[columns[i].name].concat(record[i]);
               } else {
@@ -14063,75 +13947,73 @@ var Parser = /*#__PURE__*/function (_Transform) {
             }
           }
 
-          var objname = this.options.objname; // Without objname (default)
+          var objname = this.options.objname;
 
           if (objname === undefined) {
             if (raw === true || info === true) {
-              var _err5 = this.__push(Object.assign({
+              var _err6 = this.__push(Object.assign({
                 record: obj
               }, raw === true ? {
-                raw: this.state.rawBuffer.toString(encoding)
+                raw: this.state.rawBuffer.toString()
               } : {}, info === true ? {
-                info: this.__infoRecord()
+                info: this.state.info
               } : {}));
-
-              if (_err5) {
-                return _err5;
-              }
-            } else {
-              var _err6 = this.__push(obj);
 
               if (_err6) {
                 return _err6;
               }
-            } // With objname (default)
-
-          } else {
-            if (raw === true || info === true) {
-              var _err7 = this.__push(Object.assign({
-                record: [obj[objname], obj]
-              }, raw === true ? {
-                raw: this.state.rawBuffer.toString(encoding)
-              } : {}, info === true ? {
-                info: this.__infoRecord()
-              } : {}));
+            } else {
+              var _err7 = this.__push(obj);
 
               if (_err7) {
                 return _err7;
               }
-            } else {
-              var _err8 = this.__push([obj[objname], obj]);
+            }
+          } else {
+            if (raw === true || info === true) {
+              var _err8 = this.__push(Object.assign({
+                record: [obj[objname], obj]
+              }, raw === true ? {
+                raw: this.state.rawBuffer.toString()
+              } : {}, info === true ? {
+                info: this.state.info
+              } : {}));
 
               if (_err8) {
                 return _err8;
               }
-            }
-          } // Without columns, records are array
+            } else {
+              var _err9 = this.__push([obj[objname], obj]);
 
+              if (_err9) {
+                return _err9;
+              }
+            }
+          }
         } else {
           if (raw === true || info === true) {
-            var _err9 = this.__push(Object.assign({
+            var _err10 = this.__push(Object.assign({
               record: record
             }, raw === true ? {
-              raw: this.state.rawBuffer.toString(encoding)
+              raw: this.state.rawBuffer.toString()
             } : {}, info === true ? {
-              info: this.__infoRecord()
+              info: this.state.info
             } : {}));
-
-            if (_err9) {
-              return _err9;
-            }
-          } else {
-            var _err10 = this.__push(record);
 
             if (_err10) {
               return _err10;
+            }
+          } else {
+            var _err11 = this.__push(record);
+
+            if (_err11) {
+              return _err11;
             }
           }
         }
       }
 
-      this.__resetRecord();
+      this.__resetRow();
     }
   }, {
     key: "__firstLineToColumns",
@@ -14142,7 +14024,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         var headers = firstLineToHeaders === undefined ? record : firstLineToHeaders.call(null, record);
 
         if (!Array.isArray(headers)) {
-          return this.__error(new CsvError('CSV_INVALID_COLUMN_MAPPING', ['Invalid Column Mapping:', 'expect an array from column function,', "got ".concat(JSON.stringify(headers))], this.options, this.__infoField(), {
+          return this.__error(new CsvError('CSV_INVALID_COLUMN_MAPPING', ['Invalid Column Mapping:', 'expect an array from column function,', "got ".concat(JSON.stringify(headers))], this.__context(), {
             headers: headers
           }));
         }
@@ -14151,7 +14033,7 @@ var Parser = /*#__PURE__*/function (_Transform) {
         this.state.expectedRecordLength = normalizedHeaders.length;
         this.options.columns = normalizedHeaders;
 
-        this.__resetRecord();
+        this.__resetRow();
 
         return;
       } catch (err) {
@@ -14159,13 +14041,12 @@ var Parser = /*#__PURE__*/function (_Transform) {
       }
     }
   }, {
-    key: "__resetRecord",
-    value: function __resetRecord() {
+    key: "__resetRow",
+    value: function __resetRow() {
       if (this.options.raw === true) {
         this.state.rawBuffer.reset();
       }
 
-      this.state.error = undefined;
       this.state.record = [];
       this.state.record_length = 0;
     }
@@ -14174,7 +14055,6 @@ var Parser = /*#__PURE__*/function (_Transform) {
     value: function __onField() {
       var _this$options3 = this.options,
           cast = _this$options3.cast,
-          encoding = _this$options3.encoding,
           rtrim = _this$options3.rtrim,
           max_record_size = _this$options3.max_record_size;
       var _this$state3 = this.state,
@@ -14182,10 +14062,11 @@ var Parser = /*#__PURE__*/function (_Transform) {
           wasQuoting = _this$state3.wasQuoting; // Short circuit for the from_line options
 
       if (enabled === false) {
+        /* this.options.columns !== true && */
         return this.__resetField();
       }
 
-      var field = this.state.field.toString(encoding);
+      var field = this.state.field.toString();
 
       if (rtrim === true && wasQuoting === false) {
         field = field.trimRight();
@@ -14221,10 +14102,10 @@ var Parser = /*#__PURE__*/function (_Transform) {
       var on_record = this.options.on_record;
 
       if (on_record !== undefined) {
-        var info = this.__infoRecord();
+        var context = this.__context();
 
         try {
-          record = on_record.call(null, record, info);
+          record = on_record.call(null, record, context);
         } catch (err) {
           return err;
         }
@@ -14251,11 +14132,11 @@ var Parser = /*#__PURE__*/function (_Transform) {
         return [undefined, undefined];
       }
 
+      var context = this.__context();
+
       if (this.state.castField !== null) {
         try {
-          var info = this.__infoField();
-
-          return [undefined, this.state.castField.call(null, field, info)];
+          return [undefined, this.state.castField.call(null, field, context)];
         } catch (err) {
           return [err];
         }
@@ -14264,18 +14145,10 @@ var Parser = /*#__PURE__*/function (_Transform) {
       if (this.__isFloat(field)) {
         return [undefined, parseFloat(field)];
       } else if (this.options.cast_date !== false) {
-        var _info = this.__infoField();
-
-        return [undefined, this.options.cast_date.call(null, field, _info)];
+        return [undefined, this.options.cast_date.call(null, field, context)];
       }
 
       return [undefined, field];
-    } // Helper to test if a character is a space or a line delimiter
-
-  }, {
-    key: "__isCharTrimable",
-    value: function __isCharTrimable(chr) {
-      return chr === space || chr === tab || chr === cr || chr === nl || chr === np;
     } // Keep it in case we implement the `cast_int` option
     // __isInt(value){
     //   // return Number.isInteger(parseInt(value))
@@ -14290,12 +14163,12 @@ var Parser = /*#__PURE__*/function (_Transform) {
     }
   }, {
     key: "__compareBytes",
-    value: function __compareBytes(sourceBuf, targetBuf, targetPos, firstByte) {
-      if (sourceBuf[0] !== firstByte) return 0;
+    value: function __compareBytes(sourceBuf, targetBuf, pos, firtByte) {
+      if (sourceBuf[0] !== firtByte) return 0;
       var sourceLength = sourceBuf.length;
 
       for (var i = 1; i < sourceLength; i++) {
-        if (sourceBuf[i] !== targetBuf[targetPos + i]) return 0;
+        if (sourceBuf[i] !== targetBuf[pos + i]) return 0;
       }
 
       return sourceLength;
@@ -14303,31 +14176,31 @@ var Parser = /*#__PURE__*/function (_Transform) {
   }, {
     key: "__needMoreData",
     value: function __needMoreData(i, bufLen, end) {
-      if (end) return false;
-      var quote = this.options.quote;
+      if (end) {
+        return false;
+      }
+
+      var _this$options5 = this.options,
+          comment = _this$options5.comment,
+          delimiter = _this$options5.delimiter;
       var _this$state4 = this.state,
           quoting = _this$state4.quoting,
-          needMoreDataSize = _this$state4.needMoreDataSize,
           recordDelimiterMaxLength = _this$state4.recordDelimiterMaxLength;
       var numOfCharLeft = bufLen - i - 1;
-      var requiredLength = Math.max(needMoreDataSize, // Skip if the remaining buffer smaller than record delimiter
-      recordDelimiterMaxLength, // Skip if the remaining buffer can be record delimiter following the closing quote
+      var requiredLength = Math.max( // Skip if the remaining buffer smaller than comment
+      comment ? comment.length : 0, // Skip if the remaining buffer smaller than row delimiter
+      recordDelimiterMaxLength, // Skip if the remaining buffer can be row delimiter following the closing quote
       // 1 is for quote.length
-      quoting ? quote.length + recordDelimiterMaxLength : 0);
+      quoting ? 1 + recordDelimiterMaxLength : 0, // Skip if the remaining buffer can be delimiter
+      delimiter.length, // Skip if the remaining buffer can be escape sequence
+      // 1 is for escape.length
+      1);
       return numOfCharLeft < requiredLength;
     }
   }, {
     key: "__isDelimiter",
-    value: function __isDelimiter(buf, pos, chr) {
-      var _this$options5 = this.options,
-          delimiter = _this$options5.delimiter,
-          ignore_last_delimiters = _this$options5.ignore_last_delimiters;
-
-      if (ignore_last_delimiters === true && this.state.record.length === this.options.columns.length - 1) {
-        return 0;
-      } else if (ignore_last_delimiters !== false && typeof ignore_last_delimiters === 'number' && this.state.record.length === ignore_last_delimiters - 1) {
-        return 0;
-      }
+    value: function __isDelimiter(chr, buf, pos) {
+      var delimiter = this.options.delimiter;
 
       loop1: for (var i = 0; i < delimiter.length; i++) {
         var del = delimiter[i];
@@ -14369,57 +14242,22 @@ var Parser = /*#__PURE__*/function (_Transform) {
       return 0;
     }
   }, {
-    key: "__isEscape",
-    value: function __isEscape(buf, pos, chr) {
-      var escape = this.options.escape;
-      if (escape === null) return false;
-      var l = escape.length;
-
-      if (escape[0] === chr) {
-        for (var i = 0; i < l; i++) {
-          if (escape[i] !== buf[pos + i]) {
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      return false;
-    }
-  }, {
-    key: "__isQuote",
-    value: function __isQuote(buf, pos) {
-      var quote = this.options.quote;
-      if (quote === null) return false;
-      var l = quote.length;
-
-      for (var i = 0; i < l; i++) {
-        if (quote[i] !== buf[pos + i]) {
-          return false;
-        }
-      }
-
-      return true;
-    }
-  }, {
-    key: "__autoDiscoverRecordDelimiter",
-    value: function __autoDiscoverRecordDelimiter(buf, pos) {
-      var encoding = this.options.encoding;
+    key: "__autoDiscoverRowDelimiter",
+    value: function __autoDiscoverRowDelimiter(buf, pos) {
       var chr = buf[pos];
 
       if (chr === cr) {
         if (buf[pos + 1] === nl) {
-          this.options.record_delimiter.push(Buffer.from('\r\n', encoding));
+          this.options.record_delimiter.push(Buffer.from('\r\n'));
           this.state.recordDelimiterMaxLength = 2;
           return 2;
         } else {
-          this.options.record_delimiter.push(Buffer.from('\r', encoding));
+          this.options.record_delimiter.push(Buffer.from('\r'));
           this.state.recordDelimiterMaxLength = 1;
           return 1;
         }
       } else if (chr === nl) {
-        this.options.record_delimiter.push(Buffer.from('\n', encoding));
+        this.options.record_delimiter.push(Buffer.from('\n'));
         this.state.recordDelimiterMaxLength = 1;
         return 1;
       }
@@ -14441,31 +14279,20 @@ var Parser = /*#__PURE__*/function (_Transform) {
       }
     }
   }, {
-    key: "__infoDataSet",
-    value: function __infoDataSet() {
-      return _objectSpread(_objectSpread({}, this.info), {}, {
-        columns: this.options.columns
-      });
-    }
-  }, {
-    key: "__infoRecord",
-    value: function __infoRecord() {
-      var columns = this.options.columns;
-      return _objectSpread(_objectSpread({}, this.__infoDataSet()), {}, {
-        error: this.state.error,
-        header: columns === true,
-        index: this.state.record.length
-      });
-    }
-  }, {
-    key: "__infoField",
-    value: function __infoField() {
+    key: "__context",
+    value: function __context() {
       var columns = this.options.columns;
       var isColumns = Array.isArray(columns);
-      return _objectSpread(_objectSpread({}, this.__infoRecord()), {}, {
+      return {
         column: isColumns === true ? columns.length > this.state.record.length ? columns[this.state.record.length].name : null : this.state.record.length,
-        quoting: this.state.wasQuoting
-      });
+        empty_lines: this.info.empty_lines,
+        header: columns === true,
+        index: this.state.record.length,
+        invalid_field_length: this.info.invalid_field_length,
+        quoting: this.state.wasQuoting,
+        lines: this.info.lines,
+        records: this.info.records
+      };
     }
   }]);
 
@@ -14487,7 +14314,7 @@ var parse = function parse() {
     } else if (callback === undefined && type === 'function') {
       callback = argument;
     } else {
-      throw new CsvError('CSV_INVALID_ARGUMENT', ['Invalid argument:', "got ".concat(JSON.stringify(argument), " at index ").concat(i)], options || {});
+      throw new CsvError('CSV_INVALID_ARGUMENT', ['Invalid argument:', "got ".concat(JSON.stringify(argument), " at index ").concat(i)]);
     }
   }
 
@@ -14507,10 +14334,10 @@ var parse = function parse() {
       }
     });
     parser.on('error', function (err) {
-      callback(err, undefined, parser.__infoDataSet());
+      callback(err, undefined, parser.info);
     });
     parser.on('end', function () {
-      callback(undefined, records, parser.__infoDataSet());
+      callback(undefined, records, parser.info);
     });
   }
 
@@ -14535,7 +14362,7 @@ var CsvError = /*#__PURE__*/function (_Error) {
 
   var _super2 = _createSuper(CsvError);
 
-  function CsvError(code, message, options) {
+  function CsvError(code, message) {
     var _this2;
 
     _classCallCheck(this, CsvError);
@@ -14549,8 +14376,8 @@ var CsvError = /*#__PURE__*/function (_Error) {
 
     _this2.code = code;
 
-    for (var _len = arguments.length, contexts = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-      contexts[_key - 3] = arguments[_key];
+    for (var _len = arguments.length, contexts = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+      contexts[_key - 2] = arguments[_key];
     }
 
     for (var _i2 = 0, _contexts = contexts; _i2 < _contexts.length; _i2++) {
@@ -14558,7 +14385,7 @@ var CsvError = /*#__PURE__*/function (_Error) {
 
       for (var key in context) {
         var value = context[key];
-        _this2[key] = Buffer.isBuffer(value) ? value.toString(options.encoding) : value == null ? value : JSON.parse(JSON.stringify(value));
+        _this2[key] = Buffer.isBuffer(value) ? value.toString() : value == null ? value : JSON.parse(JSON.stringify(value));
       }
     }
 
@@ -14615,9 +14442,9 @@ var normalizeColumnsArray = function normalizeColumnsArray(columns) {
 
   return normalizedColumns;
 };
-}).call(this)}).call(this,require("buffer").Buffer,require("timers").setImmediate)
+}).call(this,require("buffer").Buffer,require("timers").setImmediate)
 },{"./ResizeableBuffer":"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/ResizeableBuffer.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","stream":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/index.js","timers":"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js"}],"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/sync.js":[function(require,module,exports){
-(function (Buffer){(function (){
+(function (Buffer){
 "use strict";
 
 var parse = require('.');
@@ -14651,25 +14478,19 @@ module.exports = function (data) {
   if (err2 !== undefined) throw err2;
   return records;
 };
-}).call(this)}).call(this,require("buffer").Buffer)
+}).call(this,require("buffer").Buffer)
 },{".":"/usr/local/lib/node_modules/idyll/node_modules/csv-parse/lib/es5/index.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/d3-format/dist/d3-format.js":[function(require,module,exports){
-// https://d3js.org/d3-format/ v1.4.5 Copyright 2020 Mike Bostock
+// https://d3js.org/d3-format/ v1.4.4 Copyright 2020 Mike Bostock
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
-(global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.d3 = global.d3 || {}));
-}(this, (function (exports) { 'use strict';
-
-function formatDecimal(x) {
-  return Math.abs(x = Math.round(x)) >= 1e21
-      ? x.toLocaleString("en").replace(/,/g, "")
-      : x.toString(10);
-}
+(global = global || self, factory(global.d3 = global.d3 || {}));
+}(this, function (exports) { 'use strict';
 
 // Computes the decimal coefficient and exponent of the specified number x with
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimalParts(1.23) returns ["123", 0].
-function formatDecimalParts(x, p) {
+// For example, formatDecimal(1.23) returns ["123", 0].
+function formatDecimal(x, p) {
   if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
   var i, coefficient = x.slice(0, i);
 
@@ -14682,7 +14503,7 @@ function formatDecimalParts(x, p) {
 }
 
 function exponent(x) {
-  return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
+  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
 }
 
 function formatGroup(grouping, thousands) {
@@ -14775,7 +14596,7 @@ function formatTrim(s) {
 var prefixExponent;
 
 function formatPrefixAuto(x, p) {
-  var d = formatDecimalParts(x, p);
+  var d = formatDecimal(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1],
@@ -14784,11 +14605,11 @@ function formatPrefixAuto(x, p) {
   return i === n ? coefficient
       : i > n ? coefficient + new Array(i - n + 1).join("0")
       : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i)
-      : "0." + new Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+      : "0." + new Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 }
 
 function formatRounded(x, p) {
-  var d = formatDecimalParts(x, p);
+  var d = formatDecimal(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1];
@@ -14801,7 +14622,7 @@ var formatTypes = {
   "%": function(x, p) { return (x * 100).toFixed(p); },
   "b": function(x) { return Math.round(x).toString(2); },
   "c": function(x) { return x + ""; },
-  "d": formatDecimal,
+  "d": function(x) { return Math.round(x).toString(10); },
   "e": function(x, p) { return x.toExponential(p); },
   "f": function(x, p) { return x.toFixed(p); },
   "g": function(x, p) { return x.toPrecision(p); },
@@ -14997,10 +14818,10 @@ exports.precisionRound = precisionRound;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/d3-selection/dist/d3-selection.js":[function(require,module,exports){
-// https://d3js.org/d3-selection/ v1.4.2 Copyright 2020 Mike Bostock
+// https://d3js.org/d3-selection/ v1.4.1 Copyright 2019 Mike Bostock
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -16064,7 +15885,7 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '.')
 }
 
-},{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2020/RequireObjectCoercible.js":[function(require,module,exports){
+},{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2019/RequireObjectCoercible.js":[function(require,module,exports){
 'use strict';
 
 module.exports = require('../5/CheckObjectCoercible');
@@ -16072,11 +15893,11 @@ module.exports = require('../5/CheckObjectCoercible');
 },{"../5/CheckObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/5/CheckObjectCoercible.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/5/CheckObjectCoercible.js":[function(require,module,exports){
 'use strict';
 
-var GetIntrinsic = require('get-intrinsic');
+var GetIntrinsic = require('../GetIntrinsic');
 
 var $TypeError = GetIntrinsic('%TypeError%');
 
-// http://262.ecma-international.org/5.1/#sec-9.10
+// http://www.ecma-international.org/ecma-262/5.1/#sec-9.10
 
 module.exports = function CheckObjectCoercible(value, optMessage) {
 	if (value == null) {
@@ -16085,24 +15906,263 @@ module.exports = function CheckObjectCoercible(value, optMessage) {
 	return value;
 };
 
-},{"get-intrinsic":"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/getOwnPropertyDescriptor.js":[function(require,module,exports){
+},{"../GetIntrinsic":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js":[function(require,module,exports){
 'use strict';
 
-var GetIntrinsic = require('get-intrinsic');
+/* globals
+	Atomics,
+	SharedArrayBuffer,
+*/
 
-var $gOPD = GetIntrinsic('%Object.getOwnPropertyDescriptor%');
+var undefined;
+
+var $TypeError = TypeError;
+
+var $gOPD = Object.getOwnPropertyDescriptor;
 if ($gOPD) {
 	try {
-		$gOPD([], 'length');
+		$gOPD({}, '');
 	} catch (e) {
-		// IE 8 has a broken gOPD
-		$gOPD = null;
+		$gOPD = null; // this is IE 8, which has a broken gOPD
 	}
 }
 
-module.exports = $gOPD;
+var throwTypeError = function () { throw new $TypeError(); };
+var ThrowTypeError = $gOPD
+	? (function () {
+		try {
+			// eslint-disable-next-line no-unused-expressions, no-caller, no-restricted-properties
+			arguments.callee; // IE 8 does not throw here
+			return throwTypeError;
+		} catch (calleeThrows) {
+			try {
+				// IE 8 throws on Object.getOwnPropertyDescriptor(arguments, '')
+				return $gOPD(arguments, 'callee').get;
+			} catch (gOPDthrows) {
+				return throwTypeError;
+			}
+		}
+	}())
+	: throwTypeError;
 
-},{"get-intrinsic":"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/events/events.js":[function(require,module,exports){
+var hasSymbols = require('has-symbols')();
+
+var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
+
+var generator; // = function * () {};
+var generatorFunction = generator ? getProto(generator) : undefined;
+var asyncFn; // async function() {};
+var asyncFunction = asyncFn ? asyncFn.constructor : undefined;
+var asyncGen; // async function * () {};
+var asyncGenFunction = asyncGen ? getProto(asyncGen) : undefined;
+var asyncGenIterator = asyncGen ? asyncGen() : undefined;
+
+var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
+
+var INTRINSICS = {
+	'%Array%': Array,
+	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
+	'%ArrayBufferPrototype%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer.prototype,
+	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
+	'%ArrayPrototype%': Array.prototype,
+	'%ArrayProto_entries%': Array.prototype.entries,
+	'%ArrayProto_forEach%': Array.prototype.forEach,
+	'%ArrayProto_keys%': Array.prototype.keys,
+	'%ArrayProto_values%': Array.prototype.values,
+	'%AsyncFromSyncIteratorPrototype%': undefined,
+	'%AsyncFunction%': asyncFunction,
+	'%AsyncFunctionPrototype%': asyncFunction ? asyncFunction.prototype : undefined,
+	'%AsyncGenerator%': asyncGen ? getProto(asyncGenIterator) : undefined,
+	'%AsyncGeneratorFunction%': asyncGenFunction,
+	'%AsyncGeneratorPrototype%': asyncGenFunction ? asyncGenFunction.prototype : undefined,
+	'%AsyncIteratorPrototype%': asyncGenIterator && hasSymbols && Symbol.asyncIterator ? asyncGenIterator[Symbol.asyncIterator]() : undefined,
+	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
+	'%Boolean%': Boolean,
+	'%BooleanPrototype%': Boolean.prototype,
+	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
+	'%DataViewPrototype%': typeof DataView === 'undefined' ? undefined : DataView.prototype,
+	'%Date%': Date,
+	'%DatePrototype%': Date.prototype,
+	'%decodeURI%': decodeURI,
+	'%decodeURIComponent%': decodeURIComponent,
+	'%encodeURI%': encodeURI,
+	'%encodeURIComponent%': encodeURIComponent,
+	'%Error%': Error,
+	'%ErrorPrototype%': Error.prototype,
+	'%eval%': eval, // eslint-disable-line no-eval
+	'%EvalError%': EvalError,
+	'%EvalErrorPrototype%': EvalError.prototype,
+	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
+	'%Float32ArrayPrototype%': typeof Float32Array === 'undefined' ? undefined : Float32Array.prototype,
+	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
+	'%Float64ArrayPrototype%': typeof Float64Array === 'undefined' ? undefined : Float64Array.prototype,
+	'%Function%': Function,
+	'%FunctionPrototype%': Function.prototype,
+	'%Generator%': generator ? getProto(generator()) : undefined,
+	'%GeneratorFunction%': generatorFunction,
+	'%GeneratorPrototype%': generatorFunction ? generatorFunction.prototype : undefined,
+	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined : Int8Array,
+	'%Int8ArrayPrototype%': typeof Int8Array === 'undefined' ? undefined : Int8Array.prototype,
+	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined : Int16Array,
+	'%Int16ArrayPrototype%': typeof Int16Array === 'undefined' ? undefined : Int8Array.prototype,
+	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
+	'%Int32ArrayPrototype%': typeof Int32Array === 'undefined' ? undefined : Int32Array.prototype,
+	'%isFinite%': isFinite,
+	'%isNaN%': isNaN,
+	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
+	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
+	'%JSONParse%': typeof JSON === 'object' ? JSON.parse : undefined,
+	'%Map%': typeof Map === 'undefined' ? undefined : Map,
+	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
+	'%MapPrototype%': typeof Map === 'undefined' ? undefined : Map.prototype,
+	'%Math%': Math,
+	'%Number%': Number,
+	'%NumberPrototype%': Number.prototype,
+	'%Object%': Object,
+	'%ObjectPrototype%': Object.prototype,
+	'%ObjProto_toString%': Object.prototype.toString,
+	'%ObjProto_valueOf%': Object.prototype.valueOf,
+	'%parseFloat%': parseFloat,
+	'%parseInt%': parseInt,
+	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
+	'%PromisePrototype%': typeof Promise === 'undefined' ? undefined : Promise.prototype,
+	'%PromiseProto_then%': typeof Promise === 'undefined' ? undefined : Promise.prototype.then,
+	'%Promise_all%': typeof Promise === 'undefined' ? undefined : Promise.all,
+	'%Promise_reject%': typeof Promise === 'undefined' ? undefined : Promise.reject,
+	'%Promise_resolve%': typeof Promise === 'undefined' ? undefined : Promise.resolve,
+	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
+	'%RangeError%': RangeError,
+	'%RangeErrorPrototype%': RangeError.prototype,
+	'%ReferenceError%': ReferenceError,
+	'%ReferenceErrorPrototype%': ReferenceError.prototype,
+	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
+	'%RegExp%': RegExp,
+	'%RegExpPrototype%': RegExp.prototype,
+	'%Set%': typeof Set === 'undefined' ? undefined : Set,
+	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
+	'%SetPrototype%': typeof Set === 'undefined' ? undefined : Set.prototype,
+	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
+	'%SharedArrayBufferPrototype%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer.prototype,
+	'%String%': String,
+	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
+	'%StringPrototype%': String.prototype,
+	'%Symbol%': hasSymbols ? Symbol : undefined,
+	'%SymbolPrototype%': hasSymbols ? Symbol.prototype : undefined,
+	'%SyntaxError%': SyntaxError,
+	'%SyntaxErrorPrototype%': SyntaxError.prototype,
+	'%ThrowTypeError%': ThrowTypeError,
+	'%TypedArray%': TypedArray,
+	'%TypedArrayPrototype%': TypedArray ? TypedArray.prototype : undefined,
+	'%TypeError%': $TypeError,
+	'%TypeErrorPrototype%': $TypeError.prototype,
+	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array,
+	'%Uint8ArrayPrototype%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array.prototype,
+	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
+	'%Uint8ClampedArrayPrototype%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray.prototype,
+	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
+	'%Uint16ArrayPrototype%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array.prototype,
+	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
+	'%Uint32ArrayPrototype%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array.prototype,
+	'%URIError%': URIError,
+	'%URIErrorPrototype%': URIError.prototype,
+	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
+	'%WeakMapPrototype%': typeof WeakMap === 'undefined' ? undefined : WeakMap.prototype,
+	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet,
+	'%WeakSetPrototype%': typeof WeakSet === 'undefined' ? undefined : WeakSet.prototype
+};
+
+var bind = require('function-bind');
+var $replace = bind.call(Function.call, String.prototype.replace);
+
+/* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
+var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
+var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
+var stringToPath = function stringToPath(string) {
+	var result = [];
+	$replace(string, rePropName, function (match, number, quote, subString) {
+		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : (number || match);
+	});
+	return result;
+};
+/* end adaptation */
+
+var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
+	if (!(name in INTRINSICS)) {
+		throw new SyntaxError('intrinsic ' + name + ' does not exist!');
+	}
+
+	// istanbul ignore if // hopefully this is impossible to test :-)
+	if (typeof INTRINSICS[name] === 'undefined' && !allowMissing) {
+		throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
+	}
+
+	return INTRINSICS[name];
+};
+
+module.exports = function GetIntrinsic(name, allowMissing) {
+	if (typeof name !== 'string' || name.length === 0) {
+		throw new TypeError('intrinsic name must be a non-empty string');
+	}
+	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
+		throw new TypeError('"allowMissing" argument must be a boolean');
+	}
+
+	var parts = stringToPath(name);
+
+	var value = getBaseIntrinsic('%' + (parts.length > 0 ? parts[0] : '') + '%', allowMissing);
+	for (var i = 1; i < parts.length; i += 1) {
+		if (value != null) {
+			if ($gOPD && (i + 1) >= parts.length) {
+				var desc = $gOPD(value, parts[i]);
+				if (!allowMissing && !(parts[i] in value)) {
+					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
+				}
+				value = desc ? (desc.get || desc.value) : value[parts[i]];
+			} else {
+				value = value[parts[i]];
+			}
+		}
+	}
+	return value;
+};
+
+},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","has-symbols":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBind.js":[function(require,module,exports){
+'use strict';
+
+var bind = require('function-bind');
+
+var GetIntrinsic = require('../GetIntrinsic');
+
+var $apply = GetIntrinsic('%Function.prototype.apply%');
+var $call = GetIntrinsic('%Function.prototype.call%');
+var $reflectApply = GetIntrinsic('%Reflect.apply%', true) || bind.call($call, $apply);
+
+module.exports = function callBind() {
+	return $reflectApply(bind, $call, arguments);
+};
+
+module.exports.apply = function applyBind() {
+	return $reflectApply(bind, $apply, arguments);
+};
+
+},{"../GetIntrinsic":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js","function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js":[function(require,module,exports){
+'use strict';
+
+var GetIntrinsic = require('../GetIntrinsic');
+
+var callBind = require('./callBind');
+
+var $indexOf = callBind(GetIntrinsic('String.prototype.indexOf'));
+
+module.exports = function callBoundIntrinsic(name, allowMissing) {
+	var intrinsic = GetIntrinsic(name, !!allowMissing);
+	if (typeof intrinsic === 'function' && $indexOf(name, '.prototype.')) {
+		return callBind(intrinsic);
+	}
+	return intrinsic;
+};
+
+},{"../GetIntrinsic":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/GetIntrinsic.js","./callBind":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBind.js"}],"/usr/local/lib/node_modules/idyll/node_modules/events/events.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16124,143 +16184,182 @@ module.exports = $gOPD;
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-'use strict';
-
-var R = typeof Reflect === 'object' ? Reflect : null
-var ReflectApply = R && typeof R.apply === 'function'
-  ? R.apply
-  : function ReflectApply(target, receiver, args) {
-    return Function.prototype.apply.call(target, receiver, args);
-  }
-
-var ReflectOwnKeys
-if (R && typeof R.ownKeys === 'function') {
-  ReflectOwnKeys = R.ownKeys
-} else if (Object.getOwnPropertySymbols) {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target)
-      .concat(Object.getOwnPropertySymbols(target));
-  };
-} else {
-  ReflectOwnKeys = function ReflectOwnKeys(target) {
-    return Object.getOwnPropertyNames(target);
-  };
-}
-
-function ProcessEmitWarning(warning) {
-  if (console && console.warn) console.warn(warning);
-}
-
-var NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {
-  return value !== value;
-}
+var objectCreate = Object.create || objectCreatePolyfill
+var objectKeys = Object.keys || objectKeysPolyfill
+var bind = Function.prototype.bind || functionBindPolyfill
 
 function EventEmitter() {
-  EventEmitter.init.call(this);
+  if (!this._events || !Object.prototype.hasOwnProperty.call(this, '_events')) {
+    this._events = objectCreate(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
 }
 module.exports = EventEmitter;
-module.exports.once = once;
 
 // Backwards-compat with node 0.10.x
 EventEmitter.EventEmitter = EventEmitter;
 
 EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._eventsCount = 0;
 EventEmitter.prototype._maxListeners = undefined;
 
 // By default EventEmitters will print a warning if more than 10 listeners are
 // added to it. This is a useful default which helps finding memory leaks.
 var defaultMaxListeners = 10;
 
-function checkListener(listener) {
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
-}
-
-Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
-  enumerable: true,
-  get: function() {
-    return defaultMaxListeners;
-  },
-  set: function(arg) {
-    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {
-      throw new RangeError('The value of "defaultMaxListeners" is out of range. It must be a non-negative number. Received ' + arg + '.');
+var hasDefineProperty;
+try {
+  var o = {};
+  if (Object.defineProperty) Object.defineProperty(o, 'x', { value: 0 });
+  hasDefineProperty = o.x === 0;
+} catch (err) { hasDefineProperty = false }
+if (hasDefineProperty) {
+  Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+    enumerable: true,
+    get: function() {
+      return defaultMaxListeners;
+    },
+    set: function(arg) {
+      // check whether the input is a positive number (whose value is zero or
+      // greater and not a NaN).
+      if (typeof arg !== 'number' || arg < 0 || arg !== arg)
+        throw new TypeError('"defaultMaxListeners" must be a positive number');
+      defaultMaxListeners = arg;
     }
-    defaultMaxListeners = arg;
-  }
-});
-
-EventEmitter.init = function() {
-
-  if (this._events === undefined ||
-      this._events === Object.getPrototypeOf(this)._events) {
-    this._events = Object.create(null);
-    this._eventsCount = 0;
-  }
-
-  this._maxListeners = this._maxListeners || undefined;
-};
+  });
+} else {
+  EventEmitter.defaultMaxListeners = defaultMaxListeners;
+}
 
 // Obviously not all Emitters should be limited to 10. This function allows
 // that to be increased. Set to zero for unlimited.
 EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
-  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {
-    throw new RangeError('The value of "n" is out of range. It must be a non-negative number. Received ' + n + '.');
-  }
+  if (typeof n !== 'number' || n < 0 || isNaN(n))
+    throw new TypeError('"n" argument must be a positive number');
   this._maxListeners = n;
   return this;
 };
 
-function _getMaxListeners(that) {
+function $getMaxListeners(that) {
   if (that._maxListeners === undefined)
     return EventEmitter.defaultMaxListeners;
   return that._maxListeners;
 }
 
 EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return _getMaxListeners(this);
+  return $getMaxListeners(this);
 };
 
+// These standalone emit* functions are used to optimize calling of event
+// handlers for fast cases because emit() itself often has a variable number of
+// arguments and can be deoptimized because of that. These functions always have
+// the same number of arguments and thus do not get deoptimized, so the code
+// inside them can execute faster.
+function emitNone(handler, isFn, self) {
+  if (isFn)
+    handler.call(self);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self);
+  }
+}
+function emitOne(handler, isFn, self, arg1) {
+  if (isFn)
+    handler.call(self, arg1);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1);
+  }
+}
+function emitTwo(handler, isFn, self, arg1, arg2) {
+  if (isFn)
+    handler.call(self, arg1, arg2);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1, arg2);
+  }
+}
+function emitThree(handler, isFn, self, arg1, arg2, arg3) {
+  if (isFn)
+    handler.call(self, arg1, arg2, arg3);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1, arg2, arg3);
+  }
+}
+
+function emitMany(handler, isFn, self, args) {
+  if (isFn)
+    handler.apply(self, args);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].apply(self, args);
+  }
+}
+
 EventEmitter.prototype.emit = function emit(type) {
-  var args = [];
-  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+  var er, handler, len, args, i, events;
   var doError = (type === 'error');
 
-  var events = this._events;
-  if (events !== undefined)
-    doError = (doError && events.error === undefined);
+  events = this._events;
+  if (events)
+    doError = (doError && events.error == null);
   else if (!doError)
     return false;
 
   // If there is no 'error' event listener then throw.
   if (doError) {
-    var er;
-    if (args.length > 0)
-      er = args[0];
+    if (arguments.length > 1)
+      er = arguments[1];
     if (er instanceof Error) {
-      // Note: The comments on the `throw` lines are intentional, they show
-      // up in Node's output if this results in an unhandled exception.
       throw er; // Unhandled 'error' event
+    } else {
+      // At least give some kind of context to the user
+      var err = new Error('Unhandled "error" event. (' + er + ')');
+      err.context = er;
+      throw err;
     }
-    // At least give some kind of context to the user
-    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));
-    err.context = er;
-    throw err; // Unhandled 'error' event
+    return false;
   }
 
-  var handler = events[type];
+  handler = events[type];
 
-  if (handler === undefined)
+  if (!handler)
     return false;
 
-  if (typeof handler === 'function') {
-    ReflectApply(handler, this, args);
-  } else {
-    var len = handler.length;
-    var listeners = arrayClone(handler, len);
-    for (var i = 0; i < len; ++i)
-      ReflectApply(listeners[i], this, args);
+  var isFn = typeof handler === 'function';
+  len = arguments.length;
+  switch (len) {
+      // fast cases
+    case 1:
+      emitNone(handler, isFn, this);
+      break;
+    case 2:
+      emitOne(handler, isFn, this, arguments[1]);
+      break;
+    case 3:
+      emitTwo(handler, isFn, this, arguments[1], arguments[2]);
+      break;
+    case 4:
+      emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
+      break;
+      // slower
+    default:
+      args = new Array(len - 1);
+      for (i = 1; i < len; i++)
+        args[i - 1] = arguments[i];
+      emitMany(handler, isFn, this, args);
   }
 
   return true;
@@ -16271,18 +16370,19 @@ function _addListener(target, type, listener, prepend) {
   var events;
   var existing;
 
-  checkListener(listener);
+  if (typeof listener !== 'function')
+    throw new TypeError('"listener" argument must be a function');
 
   events = target._events;
-  if (events === undefined) {
-    events = target._events = Object.create(null);
+  if (!events) {
+    events = target._events = objectCreate(null);
     target._eventsCount = 0;
   } else {
     // To avoid recursion in the case that type === "newListener"! Before
     // adding it to the listeners, first emit "newListener".
-    if (events.newListener !== undefined) {
+    if (events.newListener) {
       target.emit('newListener', type,
-                  listener.listener ? listener.listener : listener);
+          listener.listener ? listener.listener : listener);
 
       // Re-assign `events` because a newListener handler could have caused the
       // this._events to be assigned to a new object
@@ -16291,7 +16391,7 @@ function _addListener(target, type, listener, prepend) {
     existing = events[type];
   }
 
-  if (existing === undefined) {
+  if (!existing) {
     // Optimize the case of one listener. Don't need the extra array object.
     existing = events[type] = listener;
     ++target._eventsCount;
@@ -16299,29 +16399,33 @@ function _addListener(target, type, listener, prepend) {
     if (typeof existing === 'function') {
       // Adding the second element, need to change to array.
       existing = events[type] =
-        prepend ? [listener, existing] : [existing, listener];
-      // If we've already got an array, just append.
-    } else if (prepend) {
-      existing.unshift(listener);
+          prepend ? [listener, existing] : [existing, listener];
     } else {
-      existing.push(listener);
+      // If we've already got an array, just append.
+      if (prepend) {
+        existing.unshift(listener);
+      } else {
+        existing.push(listener);
+      }
     }
 
     // Check for listener leak
-    m = _getMaxListeners(target);
-    if (m > 0 && existing.length > m && !existing.warned) {
-      existing.warned = true;
-      // No error code for this since it is a Warning
-      // eslint-disable-next-line no-restricted-syntax
-      var w = new Error('Possible EventEmitter memory leak detected. ' +
-                          existing.length + ' ' + String(type) + ' listeners ' +
-                          'added. Use emitter.setMaxListeners() to ' +
-                          'increase limit');
-      w.name = 'MaxListenersExceededWarning';
-      w.emitter = target;
-      w.type = type;
-      w.count = existing.length;
-      ProcessEmitWarning(w);
+    if (!existing.warned) {
+      m = $getMaxListeners(target);
+      if (m && m > 0 && existing.length > m) {
+        existing.warned = true;
+        var w = new Error('Possible EventEmitter memory leak detected. ' +
+            existing.length + ' "' + String(type) + '" listeners ' +
+            'added. Use emitter.setMaxListeners() to ' +
+            'increase limit.');
+        w.name = 'MaxListenersExceededWarning';
+        w.emitter = target;
+        w.type = type;
+        w.count = existing.length;
+        if (typeof console === 'object' && console.warn) {
+          console.warn('%s: %s', w.name, w.message);
+        }
+      }
     }
   }
 
@@ -16343,29 +16447,44 @@ function onceWrapper() {
   if (!this.fired) {
     this.target.removeListener(this.type, this.wrapFn);
     this.fired = true;
-    if (arguments.length === 0)
-      return this.listener.call(this.target);
-    return this.listener.apply(this.target, arguments);
+    switch (arguments.length) {
+      case 0:
+        return this.listener.call(this.target);
+      case 1:
+        return this.listener.call(this.target, arguments[0]);
+      case 2:
+        return this.listener.call(this.target, arguments[0], arguments[1]);
+      case 3:
+        return this.listener.call(this.target, arguments[0], arguments[1],
+            arguments[2]);
+      default:
+        var args = new Array(arguments.length);
+        for (var i = 0; i < args.length; ++i)
+          args[i] = arguments[i];
+        this.listener.apply(this.target, args);
+    }
   }
 }
 
 function _onceWrap(target, type, listener) {
   var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
-  var wrapped = onceWrapper.bind(state);
+  var wrapped = bind.call(onceWrapper, state);
   wrapped.listener = listener;
   state.wrapFn = wrapped;
   return wrapped;
 }
 
 EventEmitter.prototype.once = function once(type, listener) {
-  checkListener(listener);
+  if (typeof listener !== 'function')
+    throw new TypeError('"listener" argument must be a function');
   this.on(type, _onceWrap(this, type, listener));
   return this;
 };
 
 EventEmitter.prototype.prependOnceListener =
     function prependOnceListener(type, listener) {
-      checkListener(listener);
+      if (typeof listener !== 'function')
+        throw new TypeError('"listener" argument must be a function');
       this.prependListener(type, _onceWrap(this, type, listener));
       return this;
     };
@@ -16375,19 +16494,20 @@ EventEmitter.prototype.removeListener =
     function removeListener(type, listener) {
       var list, events, position, i, originalListener;
 
-      checkListener(listener);
+      if (typeof listener !== 'function')
+        throw new TypeError('"listener" argument must be a function');
 
       events = this._events;
-      if (events === undefined)
+      if (!events)
         return this;
 
       list = events[type];
-      if (list === undefined)
+      if (!list)
         return this;
 
       if (list === listener || list.listener === listener) {
         if (--this._eventsCount === 0)
-          this._events = Object.create(null);
+          this._events = objectCreate(null);
         else {
           delete events[type];
           if (events.removeListener)
@@ -16409,38 +16529,35 @@ EventEmitter.prototype.removeListener =
 
         if (position === 0)
           list.shift();
-        else {
+        else
           spliceOne(list, position);
-        }
 
         if (list.length === 1)
           events[type] = list[0];
 
-        if (events.removeListener !== undefined)
+        if (events.removeListener)
           this.emit('removeListener', type, originalListener || listener);
       }
 
       return this;
     };
 
-EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-
 EventEmitter.prototype.removeAllListeners =
     function removeAllListeners(type) {
       var listeners, events, i;
 
       events = this._events;
-      if (events === undefined)
+      if (!events)
         return this;
 
       // not listening for removeListener, no need to emit
-      if (events.removeListener === undefined) {
+      if (!events.removeListener) {
         if (arguments.length === 0) {
-          this._events = Object.create(null);
+          this._events = objectCreate(null);
           this._eventsCount = 0;
-        } else if (events[type] !== undefined) {
+        } else if (events[type]) {
           if (--this._eventsCount === 0)
-            this._events = Object.create(null);
+            this._events = objectCreate(null);
           else
             delete events[type];
         }
@@ -16449,7 +16566,7 @@ EventEmitter.prototype.removeAllListeners =
 
       // emit removeListener for all listeners on all events
       if (arguments.length === 0) {
-        var keys = Object.keys(events);
+        var keys = objectKeys(events);
         var key;
         for (i = 0; i < keys.length; ++i) {
           key = keys[i];
@@ -16457,7 +16574,7 @@ EventEmitter.prototype.removeAllListeners =
           this.removeAllListeners(key);
         }
         this.removeAllListeners('removeListener');
-        this._events = Object.create(null);
+        this._events = objectCreate(null);
         this._eventsCount = 0;
         return this;
       }
@@ -16466,7 +16583,7 @@ EventEmitter.prototype.removeAllListeners =
 
       if (typeof listeners === 'function') {
         this.removeListener(type, listeners);
-      } else if (listeners !== undefined) {
+      } else if (listeners) {
         // LIFO order
         for (i = listeners.length - 1; i >= 0; i--) {
           this.removeListener(type, listeners[i]);
@@ -16479,18 +16596,17 @@ EventEmitter.prototype.removeAllListeners =
 function _listeners(target, type, unwrap) {
   var events = target._events;
 
-  if (events === undefined)
+  if (!events)
     return [];
 
   var evlistener = events[type];
-  if (evlistener === undefined)
+  if (!evlistener)
     return [];
 
   if (typeof evlistener === 'function')
     return unwrap ? [evlistener.listener || evlistener] : [evlistener];
 
-  return unwrap ?
-    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
+  return unwrap ? unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);
 }
 
 EventEmitter.prototype.listeners = function listeners(type) {
@@ -16513,12 +16629,12 @@ EventEmitter.prototype.listenerCount = listenerCount;
 function listenerCount(type) {
   var events = this._events;
 
-  if (events !== undefined) {
+  if (events) {
     var evlistener = events[type];
 
     if (typeof evlistener === 'function') {
       return 1;
-    } else if (evlistener !== undefined) {
+    } else if (evlistener) {
       return evlistener.length;
     }
   }
@@ -16527,20 +16643,21 @@ function listenerCount(type) {
 }
 
 EventEmitter.prototype.eventNames = function eventNames() {
-  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];
+  return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
 };
+
+// About 1.5x faster than the two-arg version of Array#splice().
+function spliceOne(list, index) {
+  for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
+    list[i] = list[k];
+  list.pop();
+}
 
 function arrayClone(arr, n) {
   var copy = new Array(n);
   for (var i = 0; i < n; ++i)
     copy[i] = arr[i];
   return copy;
-}
-
-function spliceOne(list, index) {
-  for (; index + 1 < list.length; index++)
-    list[index] = list[index + 1];
-  list.pop();
 }
 
 function unwrapListeners(arr) {
@@ -16551,54 +16668,23 @@ function unwrapListeners(arr) {
   return ret;
 }
 
-function once(emitter, name) {
-  return new Promise(function (resolve, reject) {
-    function errorListener(err) {
-      emitter.removeListener(name, resolver);
-      reject(err);
-    }
-
-    function resolver() {
-      if (typeof emitter.removeListener === 'function') {
-        emitter.removeListener('error', errorListener);
-      }
-      resolve([].slice.call(arguments));
-    };
-
-    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });
-    if (name !== 'error') {
-      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });
-    }
-  });
+function objectCreatePolyfill(proto) {
+  var F = function() {};
+  F.prototype = proto;
+  return new F;
 }
-
-function addErrorHandlerIfEventEmitter(emitter, handler, flags) {
-  if (typeof emitter.on === 'function') {
-    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);
+function objectKeysPolyfill(obj) {
+  var keys = [];
+  for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) {
+    keys.push(k);
   }
+  return k;
 }
-
-function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
-  if (typeof emitter.on === 'function') {
-    if (flags.once) {
-      emitter.once(name, listener);
-    } else {
-      emitter.on(name, listener);
-    }
-  } else if (typeof emitter.addEventListener === 'function') {
-    // EventTarget does not have `error` event semantics like Node
-    // EventEmitters, we do not listen for `error` events here.
-    emitter.addEventListener(name, function wrapListener(arg) {
-      // IE does not have builtin `{ once: true }` support so we
-      // have to do it manually.
-      if (flags.once) {
-        emitter.removeEventListener(name, wrapListener);
-      }
-      listener(arg);
-    });
-  } else {
-    throw new TypeError('The "emitter" argument must be of type EventEmitter. Received type ' + typeof emitter);
-  }
+function functionBindPolyfill(context) {
+  var fn = this;
+  return function () {
+    return fn.apply(context, arguments);
+  };
 }
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/extend-shallow/index.js":[function(require,module,exports){
@@ -16922,339 +17008,7 @@ var implementation = require('./implementation');
 
 module.exports = Function.prototype.bind || implementation;
 
-},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/implementation.js"}],"/usr/local/lib/node_modules/idyll/node_modules/get-intrinsic/index.js":[function(require,module,exports){
-'use strict';
-
-var undefined;
-
-var $SyntaxError = SyntaxError;
-var $Function = Function;
-var $TypeError = TypeError;
-
-// eslint-disable-next-line consistent-return
-var getEvalledConstructor = function (expressionSyntax) {
-	try {
-		return $Function('"use strict"; return (' + expressionSyntax + ').constructor;')();
-	} catch (e) {}
-};
-
-var $gOPD = Object.getOwnPropertyDescriptor;
-if ($gOPD) {
-	try {
-		$gOPD({}, '');
-	} catch (e) {
-		$gOPD = null; // this is IE 8, which has a broken gOPD
-	}
-}
-
-var throwTypeError = function () {
-	throw new $TypeError();
-};
-var ThrowTypeError = $gOPD
-	? (function () {
-		try {
-			// eslint-disable-next-line no-unused-expressions, no-caller, no-restricted-properties
-			arguments.callee; // IE 8 does not throw here
-			return throwTypeError;
-		} catch (calleeThrows) {
-			try {
-				// IE 8 throws on Object.getOwnPropertyDescriptor(arguments, '')
-				return $gOPD(arguments, 'callee').get;
-			} catch (gOPDthrows) {
-				return throwTypeError;
-			}
-		}
-	}())
-	: throwTypeError;
-
-var hasSymbols = require('has-symbols')();
-
-var getProto = Object.getPrototypeOf || function (x) { return x.__proto__; }; // eslint-disable-line no-proto
-
-var needsEval = {};
-
-var TypedArray = typeof Uint8Array === 'undefined' ? undefined : getProto(Uint8Array);
-
-var INTRINSICS = {
-	'%AggregateError%': typeof AggregateError === 'undefined' ? undefined : AggregateError,
-	'%Array%': Array,
-	'%ArrayBuffer%': typeof ArrayBuffer === 'undefined' ? undefined : ArrayBuffer,
-	'%ArrayIteratorPrototype%': hasSymbols ? getProto([][Symbol.iterator]()) : undefined,
-	'%AsyncFromSyncIteratorPrototype%': undefined,
-	'%AsyncFunction%': needsEval,
-	'%AsyncGenerator%': needsEval,
-	'%AsyncGeneratorFunction%': needsEval,
-	'%AsyncIteratorPrototype%': needsEval,
-	'%Atomics%': typeof Atomics === 'undefined' ? undefined : Atomics,
-	'%BigInt%': typeof BigInt === 'undefined' ? undefined : BigInt,
-	'%Boolean%': Boolean,
-	'%DataView%': typeof DataView === 'undefined' ? undefined : DataView,
-	'%Date%': Date,
-	'%decodeURI%': decodeURI,
-	'%decodeURIComponent%': decodeURIComponent,
-	'%encodeURI%': encodeURI,
-	'%encodeURIComponent%': encodeURIComponent,
-	'%Error%': Error,
-	'%eval%': eval, // eslint-disable-line no-eval
-	'%EvalError%': EvalError,
-	'%Float32Array%': typeof Float32Array === 'undefined' ? undefined : Float32Array,
-	'%Float64Array%': typeof Float64Array === 'undefined' ? undefined : Float64Array,
-	'%FinalizationRegistry%': typeof FinalizationRegistry === 'undefined' ? undefined : FinalizationRegistry,
-	'%Function%': $Function,
-	'%GeneratorFunction%': needsEval,
-	'%Int8Array%': typeof Int8Array === 'undefined' ? undefined : Int8Array,
-	'%Int16Array%': typeof Int16Array === 'undefined' ? undefined : Int16Array,
-	'%Int32Array%': typeof Int32Array === 'undefined' ? undefined : Int32Array,
-	'%isFinite%': isFinite,
-	'%isNaN%': isNaN,
-	'%IteratorPrototype%': hasSymbols ? getProto(getProto([][Symbol.iterator]())) : undefined,
-	'%JSON%': typeof JSON === 'object' ? JSON : undefined,
-	'%Map%': typeof Map === 'undefined' ? undefined : Map,
-	'%MapIteratorPrototype%': typeof Map === 'undefined' || !hasSymbols ? undefined : getProto(new Map()[Symbol.iterator]()),
-	'%Math%': Math,
-	'%Number%': Number,
-	'%Object%': Object,
-	'%parseFloat%': parseFloat,
-	'%parseInt%': parseInt,
-	'%Promise%': typeof Promise === 'undefined' ? undefined : Promise,
-	'%Proxy%': typeof Proxy === 'undefined' ? undefined : Proxy,
-	'%RangeError%': RangeError,
-	'%ReferenceError%': ReferenceError,
-	'%Reflect%': typeof Reflect === 'undefined' ? undefined : Reflect,
-	'%RegExp%': RegExp,
-	'%Set%': typeof Set === 'undefined' ? undefined : Set,
-	'%SetIteratorPrototype%': typeof Set === 'undefined' || !hasSymbols ? undefined : getProto(new Set()[Symbol.iterator]()),
-	'%SharedArrayBuffer%': typeof SharedArrayBuffer === 'undefined' ? undefined : SharedArrayBuffer,
-	'%String%': String,
-	'%StringIteratorPrototype%': hasSymbols ? getProto(''[Symbol.iterator]()) : undefined,
-	'%Symbol%': hasSymbols ? Symbol : undefined,
-	'%SyntaxError%': $SyntaxError,
-	'%ThrowTypeError%': ThrowTypeError,
-	'%TypedArray%': TypedArray,
-	'%TypeError%': $TypeError,
-	'%Uint8Array%': typeof Uint8Array === 'undefined' ? undefined : Uint8Array,
-	'%Uint8ClampedArray%': typeof Uint8ClampedArray === 'undefined' ? undefined : Uint8ClampedArray,
-	'%Uint16Array%': typeof Uint16Array === 'undefined' ? undefined : Uint16Array,
-	'%Uint32Array%': typeof Uint32Array === 'undefined' ? undefined : Uint32Array,
-	'%URIError%': URIError,
-	'%WeakMap%': typeof WeakMap === 'undefined' ? undefined : WeakMap,
-	'%WeakRef%': typeof WeakRef === 'undefined' ? undefined : WeakRef,
-	'%WeakSet%': typeof WeakSet === 'undefined' ? undefined : WeakSet
-};
-
-var doEval = function doEval(name) {
-	var value;
-	if (name === '%AsyncFunction%') {
-		value = getEvalledConstructor('async function () {}');
-	} else if (name === '%GeneratorFunction%') {
-		value = getEvalledConstructor('function* () {}');
-	} else if (name === '%AsyncGeneratorFunction%') {
-		value = getEvalledConstructor('async function* () {}');
-	} else if (name === '%AsyncGenerator%') {
-		var fn = doEval('%AsyncGeneratorFunction%');
-		if (fn) {
-			value = fn.prototype;
-		}
-	} else if (name === '%AsyncIteratorPrototype%') {
-		var gen = doEval('%AsyncGenerator%');
-		if (gen) {
-			value = getProto(gen.prototype);
-		}
-	}
-
-	INTRINSICS[name] = value;
-
-	return value;
-};
-
-var LEGACY_ALIASES = {
-	'%ArrayBufferPrototype%': ['ArrayBuffer', 'prototype'],
-	'%ArrayPrototype%': ['Array', 'prototype'],
-	'%ArrayProto_entries%': ['Array', 'prototype', 'entries'],
-	'%ArrayProto_forEach%': ['Array', 'prototype', 'forEach'],
-	'%ArrayProto_keys%': ['Array', 'prototype', 'keys'],
-	'%ArrayProto_values%': ['Array', 'prototype', 'values'],
-	'%AsyncFunctionPrototype%': ['AsyncFunction', 'prototype'],
-	'%AsyncGenerator%': ['AsyncGeneratorFunction', 'prototype'],
-	'%AsyncGeneratorPrototype%': ['AsyncGeneratorFunction', 'prototype', 'prototype'],
-	'%BooleanPrototype%': ['Boolean', 'prototype'],
-	'%DataViewPrototype%': ['DataView', 'prototype'],
-	'%DatePrototype%': ['Date', 'prototype'],
-	'%ErrorPrototype%': ['Error', 'prototype'],
-	'%EvalErrorPrototype%': ['EvalError', 'prototype'],
-	'%Float32ArrayPrototype%': ['Float32Array', 'prototype'],
-	'%Float64ArrayPrototype%': ['Float64Array', 'prototype'],
-	'%FunctionPrototype%': ['Function', 'prototype'],
-	'%Generator%': ['GeneratorFunction', 'prototype'],
-	'%GeneratorPrototype%': ['GeneratorFunction', 'prototype', 'prototype'],
-	'%Int8ArrayPrototype%': ['Int8Array', 'prototype'],
-	'%Int16ArrayPrototype%': ['Int16Array', 'prototype'],
-	'%Int32ArrayPrototype%': ['Int32Array', 'prototype'],
-	'%JSONParse%': ['JSON', 'parse'],
-	'%JSONStringify%': ['JSON', 'stringify'],
-	'%MapPrototype%': ['Map', 'prototype'],
-	'%NumberPrototype%': ['Number', 'prototype'],
-	'%ObjectPrototype%': ['Object', 'prototype'],
-	'%ObjProto_toString%': ['Object', 'prototype', 'toString'],
-	'%ObjProto_valueOf%': ['Object', 'prototype', 'valueOf'],
-	'%PromisePrototype%': ['Promise', 'prototype'],
-	'%PromiseProto_then%': ['Promise', 'prototype', 'then'],
-	'%Promise_all%': ['Promise', 'all'],
-	'%Promise_reject%': ['Promise', 'reject'],
-	'%Promise_resolve%': ['Promise', 'resolve'],
-	'%RangeErrorPrototype%': ['RangeError', 'prototype'],
-	'%ReferenceErrorPrototype%': ['ReferenceError', 'prototype'],
-	'%RegExpPrototype%': ['RegExp', 'prototype'],
-	'%SetPrototype%': ['Set', 'prototype'],
-	'%SharedArrayBufferPrototype%': ['SharedArrayBuffer', 'prototype'],
-	'%StringPrototype%': ['String', 'prototype'],
-	'%SymbolPrototype%': ['Symbol', 'prototype'],
-	'%SyntaxErrorPrototype%': ['SyntaxError', 'prototype'],
-	'%TypedArrayPrototype%': ['TypedArray', 'prototype'],
-	'%TypeErrorPrototype%': ['TypeError', 'prototype'],
-	'%Uint8ArrayPrototype%': ['Uint8Array', 'prototype'],
-	'%Uint8ClampedArrayPrototype%': ['Uint8ClampedArray', 'prototype'],
-	'%Uint16ArrayPrototype%': ['Uint16Array', 'prototype'],
-	'%Uint32ArrayPrototype%': ['Uint32Array', 'prototype'],
-	'%URIErrorPrototype%': ['URIError', 'prototype'],
-	'%WeakMapPrototype%': ['WeakMap', 'prototype'],
-	'%WeakSetPrototype%': ['WeakSet', 'prototype']
-};
-
-var bind = require('function-bind');
-var hasOwn = require('has');
-var $concat = bind.call(Function.call, Array.prototype.concat);
-var $spliceApply = bind.call(Function.apply, Array.prototype.splice);
-var $replace = bind.call(Function.call, String.prototype.replace);
-var $strSlice = bind.call(Function.call, String.prototype.slice);
-
-/* adapted from https://github.com/lodash/lodash/blob/4.17.15/dist/lodash.js#L6735-L6744 */
-var rePropName = /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
-var reEscapeChar = /\\(\\)?/g; /** Used to match backslashes in property paths. */
-var stringToPath = function stringToPath(string) {
-	var first = $strSlice(string, 0, 1);
-	var last = $strSlice(string, -1);
-	if (first === '%' && last !== '%') {
-		throw new $SyntaxError('invalid intrinsic syntax, expected closing `%`');
-	} else if (last === '%' && first !== '%') {
-		throw new $SyntaxError('invalid intrinsic syntax, expected opening `%`');
-	}
-	var result = [];
-	$replace(string, rePropName, function (match, number, quote, subString) {
-		result[result.length] = quote ? $replace(subString, reEscapeChar, '$1') : number || match;
-	});
-	return result;
-};
-/* end adaptation */
-
-var getBaseIntrinsic = function getBaseIntrinsic(name, allowMissing) {
-	var intrinsicName = name;
-	var alias;
-	if (hasOwn(LEGACY_ALIASES, intrinsicName)) {
-		alias = LEGACY_ALIASES[intrinsicName];
-		intrinsicName = '%' + alias[0] + '%';
-	}
-
-	if (hasOwn(INTRINSICS, intrinsicName)) {
-		var value = INTRINSICS[intrinsicName];
-		if (value === needsEval) {
-			value = doEval(intrinsicName);
-		}
-		if (typeof value === 'undefined' && !allowMissing) {
-			throw new $TypeError('intrinsic ' + name + ' exists, but is not available. Please file an issue!');
-		}
-
-		return {
-			alias: alias,
-			name: intrinsicName,
-			value: value
-		};
-	}
-
-	throw new $SyntaxError('intrinsic ' + name + ' does not exist!');
-};
-
-module.exports = function GetIntrinsic(name, allowMissing) {
-	if (typeof name !== 'string' || name.length === 0) {
-		throw new $TypeError('intrinsic name must be a non-empty string');
-	}
-	if (arguments.length > 1 && typeof allowMissing !== 'boolean') {
-		throw new $TypeError('"allowMissing" argument must be a boolean');
-	}
-
-	var parts = stringToPath(name);
-	var intrinsicBaseName = parts.length > 0 ? parts[0] : '';
-
-	var intrinsic = getBaseIntrinsic('%' + intrinsicBaseName + '%', allowMissing);
-	var intrinsicRealName = intrinsic.name;
-	var value = intrinsic.value;
-	var skipFurtherCaching = false;
-
-	var alias = intrinsic.alias;
-	if (alias) {
-		intrinsicBaseName = alias[0];
-		$spliceApply(parts, $concat([0, 1], alias));
-	}
-
-	for (var i = 1, isOwn = true; i < parts.length; i += 1) {
-		var part = parts[i];
-		var first = $strSlice(part, 0, 1);
-		var last = $strSlice(part, -1);
-		if (
-			(
-				(first === '"' || first === "'" || first === '`')
-				|| (last === '"' || last === "'" || last === '`')
-			)
-			&& first !== last
-		) {
-			throw new $SyntaxError('property names with quotes must have matching quotes');
-		}
-		if (part === 'constructor' || !isOwn) {
-			skipFurtherCaching = true;
-		}
-
-		intrinsicBaseName += '.' + part;
-		intrinsicRealName = '%' + intrinsicBaseName + '%';
-
-		if (hasOwn(INTRINSICS, intrinsicRealName)) {
-			value = INTRINSICS[intrinsicRealName];
-		} else if (value != null) {
-			if (!(part in value)) {
-				if (!allowMissing) {
-					throw new $TypeError('base intrinsic for ' + name + ' exists, but the property is not available.');
-				}
-				return void undefined;
-			}
-			if ($gOPD && (i + 1) >= parts.length) {
-				var desc = $gOPD(value, part);
-				isOwn = !!desc;
-
-				// By convention, when a data property is converted to an accessor
-				// property to emulate a data property that does not suffer from
-				// the override mistake, that accessor's getter is marked with
-				// an `originalValue` property. Here, when we detect this, we
-				// uphold the illusion by pretending to see that original data
-				// property, i.e., returning the value rather than the getter
-				// itself.
-				if (isOwn && 'get' in desc && !('originalValue' in desc.get)) {
-					value = desc.get;
-				} else {
-					value = value[part];
-				}
-			} else {
-				isOwn = hasOwn(value, part);
-				value = value[part];
-			}
-
-			if (isOwn && !skipFurtherCaching) {
-				INTRINSICS[intrinsicRealName] = value;
-			}
-		}
-	}
-	return value;
-};
-
-},{"function-bind":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/index.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js","has-symbols":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/index.js":[function(require,module,exports){
+},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/function-bind/implementation.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/index.js":[function(require,module,exports){
 'use strict';
 
 var fs = require('fs');
@@ -17749,7 +17503,7 @@ module.exports = function(file) {
 };
 
 },{"./stringify":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/stringify.js","./utils":"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/gray-matter/lib/utils.js":[function(require,module,exports){
-(function (Buffer){(function (){
+(function (Buffer){
 'use strict';
 
 var stripBom = require('strip-bom-string');
@@ -17813,11 +17567,12 @@ exports.startsWith = function(str, substr, len) {
   return str.slice(0, len) === substr;
 };
 
-}).call(this)}).call(this,require("buffer").Buffer)
+}).call(this,require("buffer").Buffer)
 },{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","kind-of":"/usr/local/lib/node_modules/idyll/node_modules/kind-of/index.js","strip-bom-string":"/usr/local/lib/node_modules/idyll/node_modules/strip-bom-string/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/index.js":[function(require,module,exports){
+(function (global){
 'use strict';
 
-var origSymbol = typeof Symbol !== 'undefined' && Symbol;
+var origSymbol = global.Symbol;
 var hasSymbolSham = require('./shams');
 
 module.exports = function hasNativeSymbols() {
@@ -17829,6 +17584,7 @@ module.exports = function hasNativeSymbols() {
 	return hasSymbolSham();
 };
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./shams":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/shams.js"}],"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/shams.js":[function(require,module,exports){
 'use strict';
 
@@ -17855,7 +17611,7 @@ module.exports = function hasSymbols() {
 
 	var symVal = 42;
 	obj[sym] = symVal;
-	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax, no-unreachable-loop
+	for (sym in obj) { return false; } // eslint-disable-line no-restricted-syntax
 	if (typeof Object.keys === 'function' && Object.keys(obj).length !== 0) { return false; }
 
 	if (typeof Object.getOwnPropertyNames === 'function' && Object.getOwnPropertyNames(obj).length !== 0) { return false; }
@@ -17873,16 +17629,7 @@ module.exports = function hasSymbols() {
 	return true;
 };
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/has-tostringtag/shams.js":[function(require,module,exports){
-'use strict';
-
-var hasSymbols = require('has-symbols/shams');
-
-module.exports = function hasToStringTagShams() {
-	return hasSymbols() && !!Symbol.toStringTag;
-};
-
-},{"has-symbols/shams":"/usr/local/lib/node_modules/idyll/node_modules/has-symbols/shams.js"}],"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js":[function(require,module,exports){
 'use strict';
 
 var bind = require('function-bind');
@@ -18274,8 +18021,6 @@ exports.MalformedAstError = function (_ExtendableError2) {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /**
@@ -18294,7 +18039,6 @@ var schema = require('./ast.schema.json');
 var validator = ajv.compile(schema);
 var validatorProps = ajv.compile(schema.properties.properties);
 var converters = require('./converters');
-var htmlTags = require('html-tags');
 
 /**
  * @name appendNode
@@ -19165,97 +18909,36 @@ function propertyToString(property) {
   }
 }
 
-function propertiesToString(node, depth, insertFullWidth) {
-  var props = _extends({}, node.properties);
-  if (insertFullWidth && node.type === 'component' && node.name.toLowerCase() !== 'textcontainer') {
-    props.fullWidth = { type: 'value', value: true };
-  }
-  var flatString = Object.keys(props || {}).reduce(function (memo, key) {
-    return memo + (' ' + key + ':' + propertyToString(props[key]));
-  }, '');
-
-  if (flatString.length < 60) {
-    return flatString;
-  }
-
-  return Object.keys(props || {}).reduce(function (memo, key) {
-    return memo + ('\n' + '  '.repeat(depth + 1) + key + ':' + propertyToString(props[key]));
-  }, '');
+function propertiesToString(node) {
+  return Object.keys(node.properties || {}).reduce(function (memo, key) {
+    return memo + (' ' + key + ':' + propertyToString(node.properties[key]));
+  }, '').trim();
 }
 
 function childrenToMarkup(node, depth) {
-  var separator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '\n';
-  var insertFullWidth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
   return (node.children || []).reduce(function (memo, child) {
-    return memo + ('' + separator + nodeToMarkup(child, depth, insertFullWidth, separator));
-  }, '').replace(/\n\n+/g, '\n\n');
+    return memo + ('\n' + nodeToMarkup(child, depth));
+  }, '');
 }
 
-function nodeToMarkup(node, depth, insertFullWidth) {
-  var separator = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '\n';
-
-  if (node.name && node.name.toLowerCase() === 'IdyllEditorDropTarget'.toLowerCase()) {
-    return '';
-  }
-
-  var markupNodes = ['strong', 'em', 'i', 'b', 'code', 'h1', 'h2', 'h3', 'h4', 'h5', 'a'];
-
-  // normalize component names
-  if (node.name && !htmlTags.includes(node.name.toLowerCase())) {
-    node.name = node.name.split('-').map(function (s) {
-      return s.charAt(0).toUpperCase() + s.slice(1);
-    }).join('');
-  }
-
+function nodeToMarkup(node, depth) {
   switch (node.type) {
     case 'textnode':
-      return '' + '  '.repeat(depth) + node.value.trim();
+      return '' + '  '.repeat(depth) + node.value;
     case 'component':
       if (node.name.toLowerCase() === 'textcontainer') {
-        return '\n' + childrenToMarkup(node, depth, '\n', false);
-      } else if (node.name.toLowerCase() === 'p' && depth < 1) {
-        return '\n' + childrenToMarkup(node, depth, '\n', false).trim() + '\n';
-      } else if (markupNodes.includes(node.name.toLowerCase())) {
-        switch (node.name.toLowerCase()) {
-          case 'strong':
-          case 'b':
-            return '**' + childrenToMarkup(node, 0, ' ', false).trim() + '**';
-          case 'em':
-          case 'i':
-            return '*' + childrenToMarkup(node, 0, ' ', false).trim() + '*';
-          case 'code':
-            return '`' + childrenToMarkup(node, 0, ' ', false).trim() + '`';
-          case 'h1':
-          case 'h2':
-          case 'h3':
-          case 'h4':
-          case 'h5':
-            if (node.children && node.children.length === 1 && node.children[0].type === 'textnode') {
-              return '#'.repeat(+node.name[1]) + ' ' + childrenToMarkup(node, 0, ' ', false).trim();
-            }
-        }
+        return '\n' + childrenToMarkup(node, depth) + '\n';
       }
-
-      if (node.name.toLowerCase() === 'pre' && node.children && node.children.length === 1 && node.children[0].name && node.children[0].name.toLowerCase() === 'code') {
-        return '\n```\n' + childrenToMarkup(node.children[0], 0, ' ', false).trim() + '\n```\n        ';
-      } else if (node.name.toLowerCase() === 'pre' && node.children && node.children.length === 1 && node.children[0].type === 'textnode') {
-        return '\n```\n' + childrenToMarkup(node, 0, ' ', false).trim() + '\n```';
-      }
-
-      var propString = propertiesToString(node, depth, insertFullWidth);
+      var propString = propertiesToString(node);
       if (hasChildren(node)) {
-        if (node.name === 'a') {
-          return '  '.repeat(depth) + '[' + node.name + (propString ? '' + propString : '') + ']' + childrenToMarkup(node, depth + 1, ' ', false).trim() + '[/' + node.name + ']';
-        }
-        return '  '.repeat(depth) + '[' + node.name + (propString ? '' + propString : '') + ']' + childrenToMarkup(node, depth + 1, separator, false) + '\n' + '  '.repeat(depth) + '[/' + node.name + ']';
+        return '  '.repeat(depth) + '[' + node.name + (propString ? ' ' + propString : '') + ']' + childrenToMarkup(node, depth + 1) + '\n' + '  '.repeat(depth) + '[/' + node.name + ']';
       }
-      return '  '.repeat(depth) + '[' + node.name + (propString ? '' + propString : '') + ' /]';
+      return '  '.repeat(depth) + '[' + node.name + (propString ? ' ' + propString : '') + ' /]';
     case 'var':
     case 'derived':
     case 'data':
     case 'meta':
-      return '  '.repeat(depth) + '[' + node.type + propertiesToString(node, depth, insertFullWidth) + ' /]';
+      return '  '.repeat(depth) + '[' + node.type + ' ' + propertiesToString(node) + ' /]';
   }
 }
 
@@ -19267,13 +18950,7 @@ function nodeToMarkup(node, depth, insertFullWidth) {
  * @return {string} Markup string
  */
 function toMarkup(ast) {
-  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { insertFullWidth: false };
-
-  var markup = childrenToMarkup(ast, 0, ast.name === 'p' ? ' ' : '\n', options.insertFullWidth || false).trim();
-
-  var cleanedMarkup = markup.replace(/([\]\*\_]) ([,\.\!\?\:\[])/g, '$1$2');
-
-  return cleanedMarkup;
+  return childrenToMarkup(ast, 0).trim();
 }
 
 module.exports = {
@@ -19310,132 +18987,7 @@ module.exports = {
   walkNodesBreadthFirst: walkNodesBreadthFirst,
   toMarkup: toMarkup
 };
-},{"./ast.schema.json":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/ast.schema.json","./converters":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/converters/index.js","./error":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/error.js","ajv":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/ajv.js","ajv/lib/refs/json-schema-draft-06.json":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/refs/json-schema-draft-06.json","html-tags":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/node_modules/html-tags/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/node_modules/html-tags/html-tags.json":[function(require,module,exports){
-module.exports=[
-	"a",
-	"abbr",
-	"address",
-	"area",
-	"article",
-	"aside",
-	"audio",
-	"b",
-	"base",
-	"bdi",
-	"bdo",
-	"blockquote",
-	"body",
-	"br",
-	"button",
-	"canvas",
-	"caption",
-	"cite",
-	"code",
-	"col",
-	"colgroup",
-	"data",
-	"datalist",
-	"dd",
-	"del",
-	"details",
-	"dfn",
-	"dialog",
-	"div",
-	"dl",
-	"dt",
-	"em",
-	"embed",
-	"fieldset",
-	"figcaption",
-	"figure",
-	"footer",
-	"form",
-	"h1",
-	"h2",
-	"h3",
-	"h4",
-	"h5",
-	"h6",
-	"head",
-	"header",
-	"hgroup",
-	"hr",
-	"html",
-	"i",
-	"iframe",
-	"img",
-	"input",
-	"ins",
-	"kbd",
-	"label",
-	"legend",
-	"li",
-	"link",
-	"main",
-	"map",
-	"mark",
-	"math",
-	"menu",
-	"menuitem",
-	"meta",
-	"meter",
-	"nav",
-	"noscript",
-	"object",
-	"ol",
-	"optgroup",
-	"option",
-	"output",
-	"p",
-	"param",
-	"picture",
-	"pre",
-	"progress",
-	"q",
-	"rb",
-	"rp",
-	"rt",
-	"rtc",
-	"ruby",
-	"s",
-	"samp",
-	"script",
-	"section",
-	"select",
-	"slot",
-	"small",
-	"source",
-	"span",
-	"strong",
-	"style",
-	"sub",
-	"summary",
-	"sup",
-	"svg",
-	"table",
-	"tbody",
-	"td",
-	"template",
-	"textarea",
-	"tfoot",
-	"th",
-	"thead",
-	"time",
-	"title",
-	"tr",
-	"track",
-	"u",
-	"ul",
-	"var",
-	"video",
-	"wbr"
-]
-
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/node_modules/html-tags/index.js":[function(require,module,exports){
-'use strict';
-module.exports = require('./html-tags.json');
-
-},{"./html-tags.json":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/node_modules/html-tags/html-tags.json"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/v1/dist/cjs/index.js":[function(require,module,exports){
+},{"./ast.schema.json":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/ast.schema.json","./converters":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/converters/index.js","./error":"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/dist/cjs/error.js","ajv":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/ajv.js","ajv/lib/refs/json-schema-draft-06.json":"/usr/local/lib/node_modules/idyll/node_modules/ajv/lib/refs/json-schema-draft-06.json"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-ast/v1/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
 
 /**
@@ -19745,7 +19297,7 @@ module.exports = {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-compiler/dist/cjs/grammar.js":[function(require,module,exports){
 "use strict";
 
-// Generated automatically by nearley, version 2.19.7
+// Generated automatically by nearley, version 2.16.0
 // http://github.com/Hardmath123/nearley
 (function () {
   function id(x) {
@@ -20113,13 +19665,9 @@ module.exports = function (input, options, alias, callback) {
     output = parse(content, lexResults.tokens.join(' '), lexResults.positions, options);
   } catch (err) {
     console.warn('\nError parsing Idyll markup:\n' + err.message);
-    if (options.async) {
-      return new Promise(function (resolve, reject) {
-        return reject(err);
-      });
-    } else {
-      throw err;
-    }
+    return new Promise(function (resolve, reject) {
+      return reject(err);
+    });
   }
 
   var astTransform = Processor(output, options).pipe(hoistVariables).pipe(flattenChildren).pipe(makeFullWidth).pipe(wrapText).pipe(cleanResults).pipe(autoLinkify).end();
@@ -21234,14 +20782,9 @@ var Equation = function (_React$PureComponent) {
 
 Equation._idyll = {
   name: 'Equation',
-  tagType: 'closed',
+  tagType: 'open',
+  children: 'y = x^2',
   props: [{
-    name: 'latex',
-    type: 'expression',
-    example: '`"x = " + x`',
-    defaultValue: '"x"',
-    description: 'Set the latex to be shown. Can be driven by an expression to allow for dynamically updated equations.'
-  }, {
     name: 'display',
     type: 'boolean',
     example: 'true',
@@ -21333,12 +20876,6 @@ var H1 = function (_React$PureComponent) {
   return H1;
 }(_react2.default.PureComponent);
 
-H1._idyll = {
-  name: 'H1',
-  tagType: 'open',
-  children: ['My Header Size 1']
-};
-
 exports.default = H1;
 },{"./generateHeaders":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h2.js":[function(require,module,exports){
 'use strict';
@@ -21378,12 +20915,6 @@ var H2 = function (_React$PureComponent) {
 
   return H2;
 }(_react2.default.PureComponent);
-
-H2._idyll = {
-  name: 'H2',
-  tagType: 'open',
-  children: ['My Header Size 2']
-};
 
 exports.default = H2;
 },{"./generateHeaders":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h3.js":[function(require,module,exports){
@@ -21425,12 +20956,6 @@ var H3 = function (_React$PureComponent) {
   return H3;
 }(_react2.default.PureComponent);
 
-H3._idyll = {
-  name: 'H3',
-  tagType: 'open',
-  children: ['My Header Size 3']
-};
-
 exports.default = H3;
 },{"./generateHeaders":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/h4.js":[function(require,module,exports){
 'use strict';
@@ -21471,12 +20996,6 @@ var H4 = function (_React$PureComponent) {
   return H4;
 }(_react2.default.PureComponent);
 
-H4._idyll = {
-  name: 'H4',
-  tagType: 'open',
-  children: ['My Header Size 4']
-};
-
 exports.default = H4;
 },{"./generateHeaders":"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/generateHeaders.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
 'use strict';
@@ -21509,11 +21028,10 @@ var additionalTextByIndex = function additionalTextByIndex(authors, suffix, join
 
 var AuthorLink = function AuthorLink(_ref) {
   var name = _ref.name,
-      link = _ref.link,
-      color = _ref.color;
+      link = _ref.link;
   return _react2.default.createElement(
     'a',
-    { target: '_blank', href: link, style: { color: color } },
+    { href: link },
     name
   );
 };
@@ -21522,8 +21040,7 @@ var ByLineMultipleAuthors = function ByLineMultipleAuthors(_ref2) {
   var authors = _ref2.authors,
       prefix = _ref2.prefix,
       joint = _ref2.joint,
-      suffix = _ref2.suffix,
-      color = _ref2.color;
+      suffix = _ref2.suffix;
   return _react2.default.createElement(
     'div',
     { className: 'byline' },
@@ -21534,7 +21051,7 @@ var ByLineMultipleAuthors = function ByLineMultipleAuthors(_ref2) {
       return _react2.default.createElement(
         'span',
         { key: authorDisplay },
-        typeof author.link === 'string' ? _react2.default.createElement(AuthorLink, _extends({}, author, { color: color })) : authorDisplay,
+        typeof author.link === 'string' ? _react2.default.createElement(AuthorLink, author) : authorDisplay,
         additionalTextByIndex(authors, suffix, joint, i)
       );
     })
@@ -21554,27 +21071,16 @@ var Header = function (_React$PureComponent) {
     var _props = this.props,
         background = _props.background,
         color = _props.color,
-        byLineTemplate = _props.byLineTemplate,
-        idyll = _props.idyll;
+        byLineTemplate = _props.byLineTemplate;
 
     var _byLineDefault$byLine = _extends({}, byLineDefault, byLineTemplate),
         joint = _byLineDefault$byLine.joint,
         prefix = _byLineDefault$byLine.prefix,
         suffix = _byLineDefault$byLine.suffix;
 
-    var _background = background || (idyll && idyll.theme ? idyll.theme.headerBackground : undefined);
-
-    var _color = color || (idyll && idyll.theme ? idyll.theme.headerColor : undefined);
-
     return _react2.default.createElement(
       'div',
-      {
-        className: 'article-header',
-        style: _extends({
-          background: _background,
-          color: _color
-        }, this.props.style)
-      },
+      { className: 'article-header', style: { background: background, color: color } },
       _react2.default.createElement(
         'h1',
         { className: 'hed' },
@@ -21591,11 +21097,7 @@ var Header = function (_React$PureComponent) {
         prefix.trim() + ' ',
         _react2.default.createElement(
           'a',
-          {
-            target: '_blank',
-            href: this.props.authorLink,
-            style: { color: _color }
-          },
+          { href: this.props.authorLink },
           this.props.author
         )
       ),
@@ -21603,8 +21105,7 @@ var Header = function (_React$PureComponent) {
         authors: this.props.authors,
         prefix: prefix.trim(),
         joint: joint.trim(),
-        suffix: suffix.trim(),
-        color: _color
+        suffix: suffix.trim()
       }),
       this.props.date && _react2.default.createElement(
         'div',
@@ -21630,10 +21131,12 @@ Header._idyll = {
     example: '"Article subtitle."'
   }, {
     name: 'author',
-    type: 'string'
+    type: 'string',
+    example: '"Author Name"'
   }, {
     name: 'authorLink',
-    type: 'string'
+    type: 'string',
+    example: '"author.website"'
   }, {
     name: 'authors',
     type: 'array',
@@ -21647,17 +21150,19 @@ Header._idyll = {
   }, {
     name: 'background',
     type: 'string',
-    example: '"#999"',
+    example: '"blue"',
+    defaultValue: '"#222"',
     description: 'The background of the header. Can pass a color or a url().'
   }, {
     name: 'byLineTemplate',
     type: 'object',
-    example: "`{ prefix: 'Made by', joint: ' ', suffix: '&' }`",
+    example: "{ prefix: 'Made by', joint: ' ', suffix: '&' }",
     description: 'Optional template to use in by line.'
   }, {
     name: 'color',
     type: 'string',
     example: '"#000"',
+    defaultValue: '"#fff"',
     description: 'The text color of the header.'
   }]
 };
@@ -21712,7 +21217,7 @@ var Switch = function (_React$Component) {
 
       return React.createElement(
         'div',
-        { style: props.style },
+        null,
         matchedCase.length ? matchedCase : defaultCase
       );
     }
@@ -21725,11 +21230,11 @@ var Switch = function (_React$Component) {
 Switch._idyll = {
   name: 'Switch',
   tagType: 'open',
-  children: ['\n    [Case test:0]Case 0[/Case]\n    [Case test:1]Case 1[/Case]\n    [Default]Default case[/Default]\n  '],
+  children: ['Case components'],
   props: [{
     name: 'value',
     type: 'variable',
-    example: 'x',
+    example: '1',
     description: 'Value of the child prop to render.'
   }]
 };
@@ -21794,11 +21299,9 @@ var TextContainer = function (_React$PureComponent) {
 }(_react2.default.PureComponent);
 
 TextContainer._idyll = {
-  name: 'TextContainer',
-  tagType: 'open',
-  children: ['This is my text.']
+  name: "TextContainer",
+  tagType: "open"
 };
-
 exports.default = TextContainer;
 },{"react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-document/dist/cjs/components/author-tool.js":[function(require,module,exports){
 'use strict';
@@ -22180,9 +21683,6 @@ var getTheme = function getTheme(theme) {
   return themes[theme.trim()] || {};
 };
 
-var layoutNode = void 0;
-var themeNode = void 0;
-
 var defaultAST = {
   id: 0,
   type: 'component',
@@ -22236,18 +21736,10 @@ var IdyllDocument = function (_React$Component) {
     }
 
     if (this.props.injectThemeCSS) {
-      if (themeNode) {
-        themeNode.innerHTML = getTheme(this.props.theme).styles;
-      } else {
-        themeNode = this.createStyleNode(getTheme(this.props.theme).styles);
-      }
+      this._themeNode = this.createStyleNode(getTheme(this.props.theme).styles);
     }
     if (this.props.injectLayoutCSS) {
-      if (layoutNode) {
-        layoutNode.innerHTML = getLayout(this.props.layout).styles;
-      } else {
-        layoutNode = this.createStyleNode(getLayout(this.props.layout).styles);
-      }
+      this._layoutNode = this.createStyleNode(getLayout(this.props.layout).styles);
     }
   };
 
@@ -22260,17 +21752,17 @@ var IdyllDocument = function (_React$Component) {
     var _this3 = this;
 
     if (newProps.theme !== this.props.theme && newProps.injectThemeCSS) {
-      if (themeNode) {
-        themeNode.innerHTML = getTheme(newProps.theme).styles;
+      if (this._themeNode) {
+        this._themeNode.innerHTML = getTheme(newProps.theme).styles;
       } else {
-        themeNode = this.createStyleNode(getTheme(newProps.theme).styles);
+        this._themeNode = this.createStyleNode(getTheme(newProps.theme).styles);
       }
     }
     if (newProps.layout !== this.props.layout && newProps.injectLayoutCSS) {
-      if (layoutNode) {
-        layoutNode.innerHTML = getLayout(newProps.layout).styles;
+      if (this._layoutNode) {
+        this._layoutNode.innerHTML = getLayout(newProps.layout).styles;
       } else {
-        layoutNode = this.createStyleNode(getLayout(newProps.layout).styles);
+        this._layoutNode = this.createStyleNode(getLayout(newProps.layout).styles);
       }
     }
 
@@ -22433,10 +21925,7 @@ var createWrapper = function createWrapper(_ref) {
   var theme = _ref.theme,
       layout = _ref.layout,
       authorView = _ref.authorView,
-      textEditComponent = _ref.textEditComponent,
-      userViewComponent = _ref.userViewComponent,
-      userInlineViewComponent = _ref.userInlineViewComponent,
-      wrapTextComponents = _ref.wrapTextComponents;
+      userViewComponent = _ref.userViewComponent;
 
   return function (_React$PureComponent) {
     _inherits(Wrapper, _React$PureComponent);
@@ -22455,7 +21944,7 @@ var createWrapper = function createWrapper(_ref) {
       var exps = (0, _object4.default)(props.__expr__);
 
       _this.usesRefs = exps.some(function (v) {
-        return v && v.includes('refs.');
+        return v.includes('refs.');
       });
 
       _this.state = { hasError: false, error: null };
@@ -22546,6 +22035,14 @@ var createWrapper = function createWrapper(_ref) {
     Wrapper.prototype.render = function render() {
       var _this2 = this;
 
+      if (this.state.hasError) {
+        return _react2.default.createElement(
+          'div',
+          { style: { border: 'solid red 1px', padding: 10 } },
+          this.state.error.message
+        );
+      }
+
       var state = (0, _utils.filterIdyllProps)(this.state, this.props.isHTMLNode);
 
       var _filterIdyllProps = (0, _utils.filterIdyllProps)(this.props, this.props.isHTMLNode),
@@ -22565,36 +22062,12 @@ var createWrapper = function createWrapper(_ref) {
           }
         }, state, passThruProps));
       });
-      if (this.state.hasError) {
-        returnComponent = _react2.default.createElement(
-          'div',
-          { style: { border: 'solid red 1px', padding: 10 } },
-          this.state.error.message
-        );
-      }
       var metaData = childComponent.type._idyll;
-      if (authorView) {
+      if (authorView && metaData && metaData.props) {
         // ensure inline elements do not have this overlay
-        if (metaData && metaData.name === 'TextContainer' || ['TextContainer', 'DragDropContainer'].includes(childComponent.type.name)) {
-          return returnComponent;
-        } else if (textEditComponent && metaData && wrapTextComponents.includes(metaData.name.toLowerCase())) {
-          var ViewComponent = textEditComponent;
-          return _react2.default.createElement(
-            ViewComponent,
-            { idyllASTNode: this.props.idyllASTNode },
-            childComponent
-          );
-        } else if (!metaData || metaData.displayType === undefined || metaData.displayType !== 'inline') {
-          var _ViewComponent = userViewComponent || _authorTool2.default;
-          return _react2.default.createElement(_ViewComponent, {
-            idyllASTNode: this.props.idyllASTNode,
-            component: returnComponent,
-            authorComponent: childComponent,
-            uniqueKey: uniqueKey
-          });
-        } else if (metaData.displayType === 'inline') {
-          var InlineViewComponent = userInlineViewComponent || userViewComponent || _authorTool2.default;
-          return _react2.default.createElement(InlineViewComponent, {
+        if (metaData.displayType === undefined || metaData.displayType !== 'inline') {
+          var ViewComponent = userViewComponent || _authorTool2.default;
+          return _react2.default.createElement(ViewComponent, {
             idyllASTNode: this.props.idyllASTNode,
             component: returnComponent,
             authorComponent: childComponent,
@@ -22640,34 +22113,12 @@ var IdyllRuntime = function (_React$PureComponent2) {
       theme: props.theme,
       layout: props.layout,
       authorView: props.authorView,
-      textEditComponent: props.textEditComponent,
-      userViewComponent: props.userViewComponent,
-      userInlineViewComponent: props.userInlineViewComponent,
-      wrapTextComponents: props.wrapTextComponents
+      userViewComponent: props.userViewComponent
     });
 
     var hasInitialized = false;
     var initialContext = {};
     // Initialize a custom context
-    var _initializeCallbacks = [];
-    var _mountCallbacks = [];
-    var _updateCallbacks = [];
-
-    _this3._onInitializeState = function () {
-      _initializeCallbacks.forEach(function (cb) {
-        cb();
-      });
-    };
-    _this3._onMount = function () {
-      _mountCallbacks.forEach(function (cb) {
-        cb();
-      });
-    };
-    _this3._onUpdateState = function (newData) {
-      _updateCallbacks.forEach(function (cb) {
-        cb(newData);
-      });
-    };
     if (typeof props.context === 'function') {
       props.context({
         update: function update(newState) {
@@ -22681,13 +22132,13 @@ var IdyllRuntime = function (_React$PureComponent2) {
           return _this3.state;
         },
         onInitialize: function onInitialize(cb) {
-          _initializeCallbacks.push(cb);
+          _this3._onInitializeState = cb;
         },
         onMount: function onMount(cb) {
-          _mountCallbacks.push(cb);
+          _this3._onMount = cb;
         },
         onUpdate: function onUpdate(cb) {
-          _updateCallbacks.push(cb);
+          _this3._onUpdateState = cb;
         }
       });
     }
@@ -22771,7 +22222,7 @@ var IdyllRuntime = function (_React$PureComponent2) {
     var schema = (0, _utils.translate)(ast);
     var wrapTargets = (0, _utils.findWrapTargets)(schema, _this3.state, props.components);
     var refCounter = 0;
-    var transformedSchema = (0, _utils.mapTree)(schema, function (node, depth) {
+    var transformedSchema = (0, _utils.mapTree)(schema, function (node) {
       // console.log('mapoing ', node.component || node.type);
       if (!node.component) {
         if (node.type && node.type === 'textnode') return node.value;
@@ -22798,6 +22249,8 @@ var IdyllRuntime = function (_React$PureComponent2) {
       }
       //Inspect for isHTMLNode  props and to check for dynamic components.
       if (!wrapTargets.includes(node)) {
+        // console.log('node not wrapped', node);
+
         if (_this3.props.wrapTextComponents.indexOf(node.component) > -1 && _this3.props.textEditComponent) {
           var _idyllASTNode2 = node.idyllASTNode,
               _rest = _objectWithoutProperties(node, ['idyllASTNode']);
@@ -22958,7 +22411,7 @@ IdyllRuntime.defaultProps = {
   theme: 'github',
   authorView: false,
   insertStyles: false,
-  wrapTextComponents: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'pre', 'CodeHighlight']
+  wrapTextComponents: ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'CodeHighlight']
 };
 
 exports.default = IdyllRuntime;
@@ -23062,6 +22515,7 @@ var evalExpression = exports.evalExpression = function evalExpression(acc, expr,
         return eval('(' + evalString + ')');
       } catch (err) {
         console.warn('Error occurred in Idyll expression');
+        console.error(err);
       }
     }.call(Object.assign({}, acc), e);
   } catch (err) {}
@@ -23172,13 +22626,7 @@ var getData = exports.getData = function getData(arr) {
           }
           if (sourceValue.endsWith('.csv')) {
             return res.text().then(function (resString) {
-              return parse(resString, {
-                cast: true,
-                columns: true,
-                skip_empty_lines: true,
-                ltrim: true,
-                rtrim: true
-              });
+              return parse(resString, { cast: true, columns: true });
             }).catch(function (e) {
               console.error('Error while parsing csv: ' + e);
             });
@@ -23303,25 +22751,22 @@ var mapTree = exports.mapTree = function mapTree(tree, mapFn) {
   var filterFn = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {
     return true;
   };
-  var depth = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
-  var walkFn = function walkFn(depth) {
-    return function (acc, node) {
-      //To check for textnodes
-      if (node.component) {
-        //To check for childrens
-        if (node.children) {
-          node.children = node.children.reduce(walkFn(depth + 1), []);
-        }
+  var walkFn = function walkFn(acc, node) {
+    //To check for textnodes
+    if (node.component) {
+      //To check for childrens
+      if (node.children) {
+        node.children = node.children.reduce(walkFn, []);
       }
+    }
 
-      if (filterFn(node)) {
-        acc.push(mapFn(node, depth));
-      }
-      return acc;
-    };
+    if (filterFn(node)) {
+      acc.push(mapFn(node));
+    }
+    return acc;
   };
-  var value = tree.reduce(walkFn(depth), []);
+  var value = tree.reduce(walkFn, []);
   return value;
 };
 
@@ -23634,7 +23079,7 @@ exports.__esModule = true;
 
 exports.default = function (_ref) {
   var maxWidth = _ref.maxWidth;
-  return "\n\nbody {\n  margin: 0;\n}\n\n.idyll-root {\n  box-sizing: border-box;\n  margin: 0 auto;\n  padding: 60px 0;\n  margin-bottom: 60px;\n}\n\n.idyll-text-container {\n  max-width: 600px;\n  margin-top: 0;\n  margin-right: 0;\n  margin-bottom: 0;\n  margin-left: 50px;\n}\n\n.section {\n  padding: 0 10px;\n  margin: 0 auto;\n}\n\n.article-header {\n  text-align: left;\n  padding-left: 50px;\n  margin-bottom: 45px;\n}\n\n.inset {\n  max-width: 400px;\n  margin: 0 auto;\n}\n\ninput {\n  cursor: pointer;\n}\n\n.relative {\n  position: relative;\n}\n.aside-container {\n  position: relative;\n  display: block;\n}\n.aside {\n  display: block;\n  position: absolute;\n  width: 300px;\n  right: calc((10vw + 600px + 150px) / -2);\n}\n\n.fixed {\n  position: fixed;\n  display: flex;\n  align-self: center;\n  flex-direction: column;\n  align-items: center;\n  right: 25px;\n  top: 0;\n  bottom: 0;\n  width: calc((80vw - 600px) - 50px);\n  justify-content: center;\n}\n\n.fixed div {\n  width: 100%;\n}\n\n.idyll-scroll-graphic {\n  position: -webkit-sticky;\n  position: sticky;\n}\n\n.idyll-scroll-graphic img {\n  max-height: 100vh;\n}\n\n.component-debug-view {\n  position: relative;\n  transition: background-color 0.3s ease-in;\n}\n\n.author-view-button {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  opacity: .38;\n  background-color: #E7E3D0;\n  background-image: url('https://idyll-lang.org/static/images/quill-icon.png');\n  background-repeat: no-repeat;\n  background-size: contain;\n  width: 24px;\n  height: 24px;\n  margin-right: 10px;\n  box-sizing: border-box;\n  border-radius: 12px;\n  cursor: pointer;\n}\n\n.author-view-button:focus {\n  outline: none;\n}\n\n.component-debug-view:hover > .author-view-button {\n  opacity: 0.87;\n  transition: opacity 600ms linear;\n}\n\n.author-component-view {\n  display: flex;\n  flex-direction: column;\n  overflow-x: scroll;\n}\n\n.author-component-view h2, .author-component-view h3 {\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.props-table {\n  width: 90%;\n  min-width: 500px;\n  display: table;\n  border: 1px solid #A4A2A2;\n  border-radius: 20px;\n  margin: 0 auto;\n}\n\n.props-table-type {\n  font-family: 'Courier-New';\n}\n\n.props-table-row {\n  text-align: center;\n}\n\n.debug-collapse {\n  overflow: hidden;\n  overflow-y: scroll;\n  transition: height 0.3s ease-in;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.icon-links {\n  margin-top: 13px;\n  text-align: center;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.icon-link {\n  color: inherit;\n}\n\n.icon-link:hover {\n  text-decoration: none;\n}\n\n.icon-link-image {\n  cursor: pointer;\n}\n\n.button-tooltip {\n  background-color: black !important;\n  padding: 0 5px;\n}\n\n.button-tooltip.place-top:after {\n  border-top-color: black !important;\n}\n\n.button-tooltip.place-right:after {\n  border-right-color: black !important;\n}\n\n.button-tooltip.place-bottom:after {\n  border-bottom-color: black !important;\n}\n\n.button-tooltip.place-left:after {\n  border-left-color: black !important;\n}\n\n.tooltip-header {\n  line-height: 1;\n  margin: 6px 0;\n  font-size: 18px;\n}\n\n.tooltip-subtitle {\n  font-style: italic;\n}\n\n@media all and (max-width: 1600px) {\n  .fixed {\n    width: calc((85vw - 600px) - 50px);\n  }\n}\n\n@media all and (max-width: 1000px) {\n  /* put your css styles in here */\n  .desktop {\n    display: none;\n  }\n  .relative {\n    position: static;\n  }\n  .aside {\n    position: static;\n    width: 100%;\n    right: 0;\n  }\n  .idyll-text-container {\n    max-width: calc(100% - 2em);\n    margin-top: 0;\n    margin-right: 1em;\n    margin-bottom: 0;\n    margin-left: 1em;\n  }\n  .hed {\n    width: 100%;\n  }\n\n  .idyll-root {\n    padding: 15px 0;\n  }\n\n  .idyll-root {\n    margin: 0 auto;\n    padding-bottom: 80vh;\n  }\n  .article-header {\n    margin: 0 auto;\n    padding-left: 1em;\n  }\n  .fixed {\n    position: fixed;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    width: 100vw;\n    top: initial;\n    background: white;\n    padding: 20px 0;\n    border-top: solid 2px black;\n  }\n}\n";
+  return "\n\nbody {\n  margin: 0;\n}\n\n.idyll-root {\n  box-sizing: border-box;\n  margin: 0 auto;\n  padding: 60px 0;\n  margin-bottom: 60px;\n}\n\n.idyll-text-container {\n  max-width: 600px;\n  margin-top: 0;\n  margin-right: 0;\n  margin-bottom: 0;\n  margin-left: 50px;\n}\n\n.section {\n  padding: 0 10px;\n  margin: 0 auto;\n}\n\n.article-header {\n  text-align: left;\n  padding-left: 50px;\n  margin-bottom: 45px;\n}\n\n.inset {\n  max-width: 400px;\n  margin: 0 auto;\n}\n\ninput {\n  cursor: pointer;\n}\n\n.relative {\n  position: relative;\n}\n.aside-container {\n  position: relative;\n  display: block;\n}\n.aside {\n  display: block;\n  position: absolute;\n  width: 300px;\n  right: calc((10vw + 600px + 150px) / -2);\n}\n\n.fixed {\n  position: fixed;\n  display: flex;\n  align-self: center;\n  flex-direction: column;\n  align-items: center;\n  right: 25px;\n  top: 0;\n  bottom: 0;\n  width: calc((80vw - 600px) - 50px);\n  justify-content: center;\n}\n\n.fixed div {\n  width: 100%;\n}\n\n.idyll-scroll-graphic {\n  position: -webkit-sticky;\n  position: sticky;\n}\n\n.idyll-scroll-graphic img {\n  max-height: 100vh;\n}\n\n.component-debug-view {\n  position: relative;\n  transition: background-color 0.3s ease-in;\n  box-shadow: 5px 5px 10px 1px lightGray;\n}\n\n.author-view-button {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  opacity: .38;\n  background-color: #E7E3D0;\n  background-image: url('https://idyll-lang.org/static/images/quill-icon.png');\n  background-repeat: no-repeat;\n  background-size: contain;\n  width: 24px;\n  height: 24px;\n  margin-right: 10px;\n  box-sizing: border-box;\n  border-radius: 12px;\n  cursor: pointer;\n}\n\n.author-view-button:focus {\n  outline: none;\n}\n\n.component-debug-view:hover > .author-view-button {\n  opacity: 0.87;\n  transition: opacity 600ms linear;\n}\n\n.author-component-view {\n  display: flex;\n  flex-direction: column;\n  overflow-x: scroll;\n}\n\n.author-component-view h2, .author-component-view h3 {\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.props-table {\n  width: 90%;\n  min-width: 500px;\n  display: table;\n  border: 1px solid #A4A2A2;\n  border-radius: 20px;\n  margin: 0 auto;\n}\n\n.props-table-type {\n  font-family: 'Courier-New';\n}\n\n.props-table-row {\n  text-align: center;\n}\n\n.debug-collapse {\n  overflow: hidden;\n  overflow-y: scroll;\n  transition: height 0.3s ease-in;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.icon-links {\n  margin-top: 13px;\n  text-align: center;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.icon-link {\n  color: inherit;\n}\n\n.icon-link:hover {\n  text-decoration: none;\n}\n\n.icon-link-image {\n  cursor: pointer;\n}\n\n.button-tooltip {\n  background-color: black !important;\n  padding: 0 5px;\n}\n\n.button-tooltip.place-top:after {\n  border-top-color: black !important;\n}\n\n.button-tooltip.place-right:after {\n  border-right-color: black !important;\n}\n\n.button-tooltip.place-bottom:after {\n  border-bottom-color: black !important;\n}\n\n.button-tooltip.place-left:after {\n  border-left-color: black !important;\n}\n\n.tooltip-header {\n  line-height: 1;\n  margin: 6px 0;\n  font-size: 18px;\n}\n\n.tooltip-subtitle {\n  font-style: italic;\n}\n\n@media all and (max-width: 1600px) {\n  .fixed {\n    width: calc((85vw - 600px) - 50px);\n  }\n}\n\n@media all and (max-width: 1000px) {\n  /* put your css styles in here */\n  .desktop {\n    display: none;\n  }\n  .relative {\n    position: static;\n  }\n  .aside {\n    position: static;\n    width: 100%;\n    right: 0;\n  }\n  .idyll-text-container {\n    max-width: calc(100% - 2em);\n    margin-top: 0;\n    margin-right: 1em;\n    margin-bottom: 0;\n    margin-left: 1em;\n  }\n  .hed {\n    width: 100%;\n  }\n\n  .idyll-root {\n    padding: 15px 0;\n  }\n\n  .idyll-root {\n    margin: 0 auto;\n    padding-bottom: 80vh;\n  }\n  .article-header {\n    margin: 0 auto;\n    padding-left: 1em;\n  }\n  .fixed {\n    position: fixed;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    width: 100vw;\n    top: initial;\n    background: white;\n    padding: 20px 0;\n    border-top: solid 2px black;\n  }\n}\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-layouts/dist/cjs/centered/index.js":[function(require,module,exports){
 'use strict';
@@ -23666,7 +23111,7 @@ exports.default = _extends({}, config, {
 exports.__esModule = true;
 
 exports.default = function () {
-  return "\nbody {\n  margin: 0;\n}\n\n.idyll-root {\n  box-sizing: border-box;\n  padding: 60px 0;\n  margin-bottom: 60px;\n}\n\n.idyll-text-container {\n  max-width: 600px;\n  margin: 0 auto;\n}\n.article-header {\n  margin-bottom: 45px;\n  text-align: center;\n}\n\n.inset {\n  max-width: 400px;\n  margin: 0 auto;\n}\n\ninput {\n  cursor: pointer;\n}\n\n.relative {\n  position: relative;\n}\n\n.aside-container {\n  position: relative;\n  display: block;\n}\n.aside {\n  display: block;\n  position: absolute;\n  width: 300px;\n  right: calc((10vw + 350px + 150px) / -2);\n}\n\n.idyll-scroll-graphic {\n  position: -webkit-sticky;\n  position: sticky;\n  overflow: hidden;\n}\n\n.idyll-scroll-graphic img {\n  max-height: 100vh;\n}\n\n.idyll-scroll-graphic > * {\n  display: block;\n}\n\n.component-debug-view {\n  position: relative;\n  transition: background-color 0.3s ease-in;\n}\n\n.author-view-button {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  opacity: .38;\n  background-color: #E7E3D0;\n  background-image: url('https://idyll-lang.org/static/images/quill-icon.png');\n  background-repeat: no-repeat;\n  background-size: contain;\n  width: 24px;\n  height: 24px;\n  margin-right: 10px;\n  box-sizing: border-box;\n  border-radius: 12px;\n  cursor: pointer;\n}\n\n.author-view-button:focus {\n  outline: none;\n}\n\n.component-debug-view:hover > .author-view-button {\n  opacity: 0.87;\n  transition: opacity 600ms linear;\n}\n\n.author-component-view {\n  display: flex;\n  flex-direction: column;\n  overflow-x: scroll;\n}\n\n.author-component-view h2, .author-component-view h3 {\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.props-table {\n  width: 90%;\n  min-width: 500px;\n  display: table;\n  border: 1px solid #A4A2A2;\n  border-radius: 20px;\n  margin: 0 auto;\n}\n\n.props-table-type {\n  font-family: 'Courier-New';\n}\n\n.props-table-row {\n  text-align: center;\n}\n\n.debug-collapse {\n  overflow: hidden;\n  overflow-y: scroll;\n  transition: height 0.3s ease-in;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.icon-links {\n  margin-top: 13px;\n  text-align: center;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.icon-link {\n  color: inherit;\n}\n\n.icon-link:hover {\n  text-decoration: none;\n}\n\n.icon-link-image {\n  cursor: pointer;\n}\n\n.button-tooltip {\n  background-color: black !important;\n  padding: 0 5px;\n}\n\n.button-tooltip.place-top:after {\n  border-top-color: black !important;\n}\n\n.button-tooltip.place-right:after {\n  border-right-color: black !important;\n}\n\n.button-tooltip.place-bottom:after {\n  border-bottom-color: black !important;\n}\n\n.button-tooltip.place-left:after {\n  border-left-color: black !important;\n}\n\n.tooltip-header {\n  line-height: 1;\n  margin: 6px 0;\n  font-size: 18px;\n}\n\n.tooltip-subtitle {\n  font-style: italic;\n}\n\n@media all and (max-width: 1000px) {\n\n  .idyll-root {\n    margin: 0 auto;\n    padding: 60px 20px;\n    margin-bottom: 60px;\n    width: 100%;\n  }\n  .idyll-text-container {\n    max-width: calc(100% - 2em);\n    margin: 0 1em;\n  }\n  .desktop {\n    display: none;\n  }\n  .relative {\n    position: static;\n  }\n  .aside {\n    position: static;\n    width: 100%;\n    right: 0;\n  }\n\n}\n\n";
+  return "\nbody {\n  margin: 0;\n}\n\n.idyll-root {\n  box-sizing: border-box;\n  padding: 60px 0;\n  margin-bottom: 60px;\n}\n\n.idyll-text-container {\n  max-width: 600px;\n  margin: 0 auto;\n}\n.article-header {\n  margin-bottom: 45px;\n  text-align: center;\n}\n\n.inset {\n  max-width: 400px;\n  margin: 0 auto;\n}\n\ninput {\n  cursor: pointer;\n}\n\n.relative {\n  position: relative;\n}\n\n.aside-container {\n  position: relative;\n  display: block;\n}\n.aside {\n  display: block;\n  position: absolute;\n  width: 300px;\n  right: calc((10vw + 350px + 150px) / -2);\n}\n\n.idyll-scroll-graphic {\n  position: -webkit-sticky;\n  position: sticky;\n  overflow: hidden;\n}\n\n.idyll-scroll-graphic img {\n  max-height: 100vh;\n}\n\n.idyll-scroll-graphic > * {\n  display: block;\n}\n\n.component-debug-view {\n  position: relative;\n  transition: background-color 0.3s ease-in;\n}\n\n.author-view-button {\n  position: absolute;\n  top: 3px;\n  right: 0;\n  opacity: .38;\n  background-color: #E7E3D0;\n  background-image: url('https://idyll-lang.org/static/images/quill-icon.png');\n  background-repeat: no-repeat;\n  background-size: contain;\n  width: 24px;\n  height: 24px;\n  margin-right: 10px;\n  box-sizing: border-box;\n  border-radius: 12px;\n  cursor: pointer;\n}\n\n.author-view-button:focus {\n  outline: none;\n}\n\n.component-debug-view:hover > .author-view-button {\n  opacity: 0.87;\n  transition: opacity 600ms linear;\n}\n\n.author-component-view {\n  display: flex;\n  flex-direction: column;\n  overflow-x: scroll;\n}\n\n.author-component-view h2, .author-component-view h3 {\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.props-table {\n  width: 90%;\n  min-width: 500px;\n  display: table;\n  border: 1px solid #A4A2A2;\n  border-radius: 20px;\n  margin: 0 auto;\n}\n\n.props-table-type {\n  font-family: 'Courier-New';\n}\n\n.props-table-row {\n  text-align: center;\n}\n\n.debug-collapse {\n  overflow: hidden;\n  overflow-y: scroll;\n  transition: height 0.3s ease-in;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.icon-links {\n  margin-top: 13px;\n  text-align: center;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.icon-link {\n  color: inherit;\n}\n\n.icon-link:hover {\n  text-decoration: none;\n}\n\n.icon-link-image {\n  cursor: pointer;\n}\n\n.button-tooltip {\n  background-color: black !important;\n  padding: 0 5px;\n}\n\n.button-tooltip.place-top:after {\n  border-top-color: black !important;\n}\n\n.button-tooltip.place-right:after {\n  border-right-color: black !important;\n}\n\n.button-tooltip.place-bottom:after {\n  border-bottom-color: black !important;\n}\n\n.button-tooltip.place-left:after {\n  border-left-color: black !important;\n}\n\n.tooltip-header {\n  line-height: 1;\n  margin: 6px 0;\n  font-size: 18px;\n}\n\n.tooltip-subtitle {\n  font-style: italic;\n}\n\n@media all and (max-width: 1000px) {\n\n  .idyll-root {\n    max-width: 600px;\n    margin: 0 auto;\n    padding: 60px 20px;\n    margin-bottom: 60px;\n    width: 100%;\n  }\n  .idyll-text-container {\n    max-width: calc(100% - 2em);\n    margin: 0 1em;\n  }\n  .desktop {\n    display: none;\n  }\n  .relative {\n    position: static;\n  }\n  .aside {\n    position: static;\n    width: 100%;\n    right: 0;\n  }\n\n}\n\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-layouts/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
@@ -23742,10 +23187,7 @@ var _styles2 = _interopRequireDefault(_styles);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var config = {
-  headerColor: '#ffffff',
-  headerBackground: '#222222'
-};
+var config = {};
 
 exports.default = _extends({}, config, {
   styles: (0, _styles2.default)(config)
@@ -23756,7 +23198,7 @@ exports.default = _extends({}, config, {
 exports.__esModule = true;
 
 exports.default = function () {
-  return "\n@font-face {\n  font-family: octicons-link;\n  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n\n* {\n  box-sizing: border-box;\n}\nbody {\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%;\n  line-height: 1.5;\n  color: #24292e;\n  font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n  font-size: 16px;\n  line-height: 1.5;\n  word-wrap: break-word;\n}\n\n.pl-c {\n  color: #969896;\n}\n\n.pl-c1,\n.pl-s .pl-v {\n  color: #0086b3;\n}\n\n.pl-e,\n.pl-en {\n  color: #795da3;\n}\n\n.pl-smi,\n.pl-s .pl-s1 {\n  color: #333;\n}\n\n.pl-ent {\n  color: #63a35c;\n}\n\n.pl-k {\n  color: #a71d5d;\n}\n\n.pl-s,\n.pl-pds,\n.pl-s .pl-pse .pl-s1,\n.pl-sr,\n.pl-sr .pl-cce,\n.pl-sr .pl-sre,\n.pl-sr .pl-sra {\n  color: #183691;\n}\n\n.pl-v,\n.pl-smw {\n  color: #ed6a43;\n}\n\n.pl-bu {\n  color: #b52a1d;\n}\n\n.pl-ii {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2 {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2::before {\n  content: \"\\000d\";\n}\n\n.pl-sr .pl-cce {\n  font-weight: bold;\n  color: #63a35c;\n}\n\n.pl-ml {\n  color: #693a17;\n}\n\n.pl-mh,\n.pl-mh .pl-en,\n.pl-ms {\n  font-weight: bold;\n  color: #1d3e81;\n}\n\n.pl-mq {\n  color: #008080;\n}\n\n.pl-mi {\n  font-style: italic;\n  color: #333;\n}\n\n.pl-mb {\n  font-weight: bold;\n  color: #333;\n}\n\n.pl-md {\n  color: #bd2c00;\n  background-color: #ffecec;\n}\n\n.pl-mi1 {\n  color: #55a532;\n  background-color: #eaffea;\n}\n\n.pl-mc {\n  color: #ef9700;\n  background-color: #ffe3b4;\n}\n\n.pl-mi2 {\n  color: #d8d8d8;\n  background-color: #808080;\n}\n\n.pl-mdr {\n  font-weight: bold;\n  color: #795da3;\n}\n\n.pl-mo {\n  color: #1d3e81;\n}\n\n.pl-ba {\n  color: #595e62;\n}\n\n.pl-sg {\n  color: #c0c0c0;\n}\n\n.pl-corl {\n  text-decoration: underline;\n  color: #183691;\n}\n\n.octicon {\n  display: inline-block;\n  vertical-align: text-top;\n  fill: currentColor;\n}\n\na {\n  background-color: transparent;\n  -webkit-text-decoration-skip: objects;\n}\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\nstrong {\n  font-weight: inherit;\n}\n\nstrong {\n  font-weight: bolder;\n}\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\nimg {\n  border-style: none;\n}\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\ncode,\nkbd,\npre {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\ninput {\n  font: inherit;\n  margin: 10px 10px 20px 0;\n}\n\ninput {\n  overflow: visible;\n}\n\n[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\n\ninput {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\n\n/* Buttons\n\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 */\n.button,\nbutton,\ninput[type=\"submit\"],\ninput[type=\"reset\"],\ninput[type=\"button\"] {\n  display: inline-block;\n  height: 38px;\n  padding: 0 30px;\n  color: #333;\n  text-align: center;\n  font-size: 11px;\n  font-weight: 600;\n  line-height: 38px;\n  text-decoration: none;\n  white-space: nowrap;\n  background-color: transparent;\n  border-radius: 4px;\n  border: 1px solid #bbb;\n  cursor: pointer;\n  box-sizing: border-box; }\n.button:hover,\nbutton:hover,\ninput[type=\"submit\"]:hover,\ninput[type=\"reset\"]:hover,\ninput[type=\"button\"]:hover,\n.button:focus,\nbutton:focus,\ninput[type=\"submit\"]:focus,\ninput[type=\"reset\"]:focus,\ninput[type=\"button\"]:focus {\n  color: #333;\n  border-color: #888;\n  outline: 0; }\n.button.button-primary,\nbutton.button-primary,\ninput[type=\"submit\"].button-primary,\ninput[type=\"reset\"].button-primary,\ninput[type=\"button\"].button-primary {\n  color: #FFF;\n  background-color: #33C3F0;\n  border-color: #33C3F0; }\n.button.button-primary:hover,\nbutton.button-primary:hover,\ninput[type=\"submit\"].button-primary:hover,\ninput[type=\"reset\"].button-primary:hover,\ninput[type=\"button\"].button-primary:hover,\n.button.button-primary:focus,\nbutton.button-primary:focus,\ninput[type=\"submit\"].button-primary:focus,\ninput[type=\"reset\"].button-primary:focus,\ninput[type=\"button\"].button-primary:focus {\n  color: #FFF;\n  background-color: #1EAEDB;\n  border-color: #1EAEDB; }\n\n\n/* Forms\n\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013\u2013 */\ninput[type=\"email\"],\ninput[type=\"number\"],\ninput[type=\"search\"],\ninput[type=\"text\"],\ninput[type=\"tel\"],\ninput[type=\"url\"],\ninput[type=\"password\"],\ntextarea,\nselect {\n  height: 38px;\n  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */\n  background-color: #fff;\n  border: 1px solid #D1D1D1;\n  border-radius: 4px;\n  box-shadow: none;\n  box-sizing: border-box; }\n/* Removes awkward default styles on some inputs for iOS */\ninput[type=\"email\"],\ninput[type=\"number\"],\ninput[type=\"search\"],\ninput[type=\"text\"],\ninput[type=\"tel\"],\ninput[type=\"url\"],\ninput[type=\"password\"],\ntextarea {\n  -webkit-appearance: none;\n     -moz-appearance: none;\n          appearance: none; }\ntextarea {\n  min-height: 65px;\n  padding-top: 6px;\n  padding-bottom: 6px; }\ninput[type=\"email\"]:focus,\ninput[type=\"number\"]:focus,\ninput[type=\"search\"]:focus,\ninput[type=\"text\"]:focus,\ninput[type=\"tel\"]:focus,\ninput[type=\"url\"]:focus,\ninput[type=\"password\"]:focus,\ntextarea:focus,\nselect:focus {\n  border: 1px solid #666;\n  outline: 0; }\nlabel,\nlegend {\n  display: block;\n  margin-bottom: .5rem;\n  font-weight: 600; }\nfieldset {\n  padding: 0;\n  border-width: 0; }\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  display: inline; }\nlabel > .label-body {\n  display: inline-block;\n  margin-left: .5rem;\n  font-weight: normal; }\n\na {\n  color: #0366d6;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\nstrong {\n  font-weight: 600;\n}\n\nhr {\n  height: 0;\n  margin: 15px 0;\n  overflow: hidden;\n  background: transparent;\n  border: 0;\n  border-bottom: 1px solid #dfe2e5;\n}\n\nhr::before {\n  display: table;\n  content: \"\";\n}\n\nhr::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\n\ntd,\nth {\n  padding: 0;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nh1 {\n  font-size: 32px;\n  font-weight: 600;\n}\n\nh2 {\n  font-size: 24px;\n  font-weight: 600;\n}\n\nh3 {\n  font-size: 20px;\n  font-weight: 600;\n}\n\nh4 {\n  font-size: 16px;\n  font-weight: 600;\n}\n\nh5 {\n  font-size: 14px;\n  font-weight: 600;\n}\n\nh6 {\n  font-size: 12px;\n  font-weight: 600;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\n\nblockquote {\n  margin: 0;\n}\n\nul,\nol {\n  padding-left: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nol ol,\nul ol {\n  list-style-type: lower-roman;\n}\n\nul ul ol,\nul ol ol,\nol ul ol,\nol ol ol {\n  list-style-type: lower-alpha;\n}\n\ndd {\n  margin-left: 0;\n}\n\ncode {\n  font-family: \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  font-size: 12px;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 0;\n  font: 12px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n}\n\n.octicon {\n  vertical-align: text-bottom;\n}\n\n.pl-0 {\n  padding-left: 0 !important;\n}\n\n.pl-1 {\n  padding-left: 4px !important;\n}\n\n.pl-2 {\n  padding-left: 8px !important;\n}\n\n.pl-3 {\n  padding-left: 16px !important;\n}\n\n.pl-4 {\n  padding-left: 24px !important;\n}\n\n.pl-5 {\n  padding-left: 32px !important;\n}\n\n.pl-6 {\n  padding-left: 40px !important;\n}\n\n.idyll-root::before {\n  display: table;\n  content: \"\";\n}\n\n.idyll-root::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\n.idyll-root>*:first-child {\n  margin-top: 0 !important;\n}\n\n.idyll-root>*:last-child {\n  margin-bottom: 0 !important;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\n.anchor {\n  float: left;\n  padding-right: 4px;\n  margin-left: -20px;\n  line-height: 1;\n}\n\n.anchor:focus {\n  outline: none;\n}\n\np,\nblockquote,\nul,\nol,\ndl,\ntable,\npre {\n  margin-top: 0;\n  margin-bottom: 16px;\n}\n\nhr {\n  height: 0.25em;\n  padding: 0;\n  margin: 24px 0;\n  background-color: #e1e4e8;\n  border: 0;\n}\n\nblockquote {\n  padding: 0 1em;\n  color: #6a737d;\n  border-left: 0.25em solid #dfe2e5;\n}\n\nblockquote>:first-child {\n  margin-top: 0;\n}\n\nblockquote>:last-child {\n  margin-bottom: 0;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font-size: 11px;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fafbfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25;\n}\n\nh1 .octicon-link,\nh2 .octicon-link,\nh3 .octicon-link,\nh4 .octicon-link,\nh5 .octicon-link,\nh6 .octicon-link {\n  color: #1b1f23;\n  vertical-align: middle;\n  visibility: hidden;\n}\n\nh1:hover .anchor,\nh2:hover .anchor,\nh3:hover .anchor,\nh4:hover .anchor,\nh5:hover .anchor,\nh6:hover .anchor {\n  text-decoration: none;\n}\n\nh1:hover .anchor .octicon-link,\nh2:hover .anchor .octicon-link,\nh3:hover .anchor .octicon-link,\nh4:hover .anchor .octicon-link,\nh5:hover .anchor .octicon-link,\nh6:hover .anchor .octicon-link {\n  visibility: visible;\n}\n\nh1 {\n  padding-bottom: 0.3em;\n  font-size: 2em;\n}\n\nh2 {\n  padding-bottom: 0.3em;\n  font-size: 1.5em;\n}\n\nh3 {\n  font-size: 1.25em;\n}\n\nh4 {\n  font-size: 1em;\n}\n\nh5 {\n  font-size: 0.875em;\n}\n\nh6 {\n  font-size: 0.85em;\n  color: #6a737d;\n}\n\nh1.hed,\nh2.dek {\n  border-bottom: none;\n  padding-bottom: 0;\n  margin-top: 12px;\n}\n\nul,\nol {\n  padding-left: 2em;\n}\n\nul ul,\nul ol,\nol ol,\nol ul {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nli>p {\n  margin-top: 16px;\n}\n\nli+li {\n  margin-top: 0.25em;\n}\n\ndl {\n  padding: 0;\n}\n\ndl dt {\n  padding: 0;\n  margin-top: 16px;\n  font-size: 1em;\n  font-style: italic;\n  font-weight: 600;\n}\n\ndl dd {\n  padding: 0 16px;\n  margin-bottom: 16px;\n}\n\ntable {\n  display: block;\n  width: 100%;\n  overflow: auto;\n}\n\ntable th {\n  font-weight: 600;\n}\n\n:not(.gist) table th,\n:not(.gist) table td {\n  padding: 6px 13px;\n  border: 1px solid #dfe2e5;\n}\n\n:not(.gist) table tr {\n  background-color: #fff;\n  border-top: 1px solid #c6cbd1;\n}\n\n:not(.gist) table tr:nth-child(2n) {\n  background-color: #f6f8fa;\n}\n\n.vega-embed {\n  width: 100%;\n}\n\nimg {\n  max-width: 100%;\n  box-sizing: content-box;\n  background-color: #fff;\n}\n\ncode {\n  padding: 0;\n  padding-top: 0.2em;\n  padding-bottom: 0.2em;\n  margin: 0;\n  font-size: 85%;\n  background-color: rgba(27,31,35,0.05);\n  border-radius: 3px;\n}\n\ncode::before,\ncode::after {\n  letter-spacing: -0.2em;\n  content: \"\\00a0\";\n}\n\npre {\n  word-wrap: normal;\n}\n\npre>code {\n  padding: 0;\n  margin: 0;\n  font-size: 100%;\n  word-break: normal;\n  white-space: pre;\n  background: transparent;\n  border: 0;\n}\n\n.highlight {\n  margin-bottom: 16px;\n}\n\n.highlight pre {\n  margin-bottom: 0;\n  word-break: normal;\n}\n\n.highlight pre,\npre {\n  padding: 16px;\n  overflow: auto;\n  font-size: 85%;\n  line-height: 1.45;\n  background-color: #f6f8fa;\n  border-radius: 3px;\n}\n\npre code {\n  display: inline;\n  max-width: auto;\n  padding: 0;\n  margin: 0;\n  overflow: visible;\n  line-height: inherit;\n  word-wrap: normal;\n  background-color: transparent;\n  border: 0;\n}\n\npre code::before,\npre code::after {\n  content: normal;\n}\n\n.full-commit .btn-outline:not(:disabled):hover {\n  color: #005cc5;\n  border-color: #005cc5;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font: 11px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fcfcfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\n:checked+.radio-label {\n  position: relative;\n  z-index: 1;\n  border-color: #0366d6;\n}\n\n.task-list-item {\n  list-style-type: none;\n}\n\n.task-list-item+.task-list-item {\n  margin-top: 3px;\n}\n\n.task-list-item input {\n  margin: 0 0.2em 0.25em -1.6em;\n  vertical-align: middle;\n}\n\nhr {\n  border-bottom-color: #eee;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\ninput[type='text'].idyll-input-error {\n  border-color: red;\n}\n\nspan.idyll-input-error{\n  display: block;\n  margin: 0 auto;\n  padding: 10px 5px;\n  color: red;\n  width: 100%;\n}\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 0 0 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 0 0 90vh 0;\n  padding: 50px;\n  background: white;\n  border: solid 1px #333;\n  box-shadow: #ddd 2px 2px 3px;\n}\n\n.idyll-root {\n  padding-top: 0;\n}\n\nbutton {\n  display: block;\n  margin: 1em auto;\n}\n\nh1, h2, h3, h4, h5 {\n  border-bottom: none;\n}\n\npre {\n  max-width: 960px;\n  margin: 2em auto;\n}\n\nh1.hed {\n  font-size: 4em;\n  margin-top: 0;\n}\nh2.dek {\n  font-size: 2em;\n  margin: 0.5em auto;\n  font-weight: lighter;\n}\n.article-header {\n  background: #222;\n  color: white;\n  padding-top: 8em;\n  padding-bottom: 4em;\n  margin-bottom: 4em;\n}\n.article-header a {\n  color: white;\n  text-decoration: underline;\n}\n.idyll-dynamic {\n  cursor: ew-resize;\n  font-family: monospace;\n}\n.idyll-display {\n  font-family: monospace;\n}\nimg {\n  display: block;\n  margin: 0 auto;\n}\n\n@media all and (max-width: 1000px) {\n  .idyll-root {\n    max-width: none;\n    padding: 0;\n  }\n\n  h1.hed {\n    font-size: 2em;\n  }\n  h2.dek {\n    font-size: 1em;\n  }\n}\n\n\n/* annotated-text container */\n.annotated-text {\n  position: relative;\n  display: inline-block;\n  cursor: help;\n}\n\n.annotated-text,\n.annotated-text:visited {\n  background: #efefef;\n  padding: 0 2.5px;\n  transition: background 0.25s ease-out;\n}\n\n.annotated-text:hover {\n  background: #ccc;\n}\n\n/* annotated-text CSS */\n.annotated-text .annotation-text {\n  visibility: hidden;\n  border: solid 0.5px #666;\n  box-shadow: 0 0 5px #ccc;\n  background: #fff;\n  text-align: left;\n  padding: 5px;\n  /* border-radius: 4px; */\n  position: absolute;\n  z-index: 1;\n  font-size: 0.9em;\n  line-height: 1.2;\n}\n\n.annotated-text .annotation-text {\n  width: 250px;\n  bottom: 120%;\n  left: 50%;\n  margin-left: -125px; /* Use half of the width (120/2 = 60), to center the annotated-text */\n  opacity: 0;\n  font-weight: initial;\n}\n\n.annotated-text:hover .annotation-text {\n  opacity: 1;\n  visibility: visible;\n  transition: opacity 0.25s ease-out;\n}\n\n.annotated-text .annotation-text img {\n  display: block;\n  max-width: 100%;\n}\n\n.annotated-text p {\n  margin: 0;\n}\n\n@media all and (max-width: 800px) {\n  .annotated-text .annotation-text {\n    width: 50vh;\n  }\n}\n\n@media all and (max-width: 600px) {\n  .annotated-text .annotation-text {\n    width: 50vw;\n    position: fixed;\n    left: 50%;\n    bottom: 20%;\n  }\n}\n\n\n";
+  return "\n@font-face {\n  font-family: octicons-link;\n  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n\n* {\n  box-sizing: border-box;\n}\nbody {\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%;\n  line-height: 1.5;\n  color: #24292e;\n  font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n  font-size: 16px;\n  line-height: 1.5;\n  word-wrap: break-word;\n}\n\n.pl-c {\n  color: #969896;\n}\n\n.pl-c1,\n.pl-s .pl-v {\n  color: #0086b3;\n}\n\n.pl-e,\n.pl-en {\n  color: #795da3;\n}\n\n.pl-smi,\n.pl-s .pl-s1 {\n  color: #333;\n}\n\n.pl-ent {\n  color: #63a35c;\n}\n\n.pl-k {\n  color: #a71d5d;\n}\n\n.pl-s,\n.pl-pds,\n.pl-s .pl-pse .pl-s1,\n.pl-sr,\n.pl-sr .pl-cce,\n.pl-sr .pl-sre,\n.pl-sr .pl-sra {\n  color: #183691;\n}\n\n.pl-v,\n.pl-smw {\n  color: #ed6a43;\n}\n\n.pl-bu {\n  color: #b52a1d;\n}\n\n.pl-ii {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2 {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2::before {\n  content: \"\\000d\";\n}\n\n.pl-sr .pl-cce {\n  font-weight: bold;\n  color: #63a35c;\n}\n\n.pl-ml {\n  color: #693a17;\n}\n\n.pl-mh,\n.pl-mh .pl-en,\n.pl-ms {\n  font-weight: bold;\n  color: #1d3e81;\n}\n\n.pl-mq {\n  color: #008080;\n}\n\n.pl-mi {\n  font-style: italic;\n  color: #333;\n}\n\n.pl-mb {\n  font-weight: bold;\n  color: #333;\n}\n\n.pl-md {\n  color: #bd2c00;\n  background-color: #ffecec;\n}\n\n.pl-mi1 {\n  color: #55a532;\n  background-color: #eaffea;\n}\n\n.pl-mc {\n  color: #ef9700;\n  background-color: #ffe3b4;\n}\n\n.pl-mi2 {\n  color: #d8d8d8;\n  background-color: #808080;\n}\n\n.pl-mdr {\n  font-weight: bold;\n  color: #795da3;\n}\n\n.pl-mo {\n  color: #1d3e81;\n}\n\n.pl-ba {\n  color: #595e62;\n}\n\n.pl-sg {\n  color: #c0c0c0;\n}\n\n.pl-corl {\n  text-decoration: underline;\n  color: #183691;\n}\n\n.octicon {\n  display: inline-block;\n  vertical-align: text-top;\n  fill: currentColor;\n}\n\na {\n  background-color: transparent;\n  -webkit-text-decoration-skip: objects;\n}\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\nstrong {\n  font-weight: inherit;\n}\n\nstrong {\n  font-weight: bolder;\n}\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\nimg {\n  border-style: none;\n}\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\ncode,\nkbd,\npre {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\ninput {\n  font: inherit;\n  margin: 10px 10px 20px 0;\n}\n\ninput {\n  overflow: visible;\n}\n\n[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\n\ninput {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\na {\n  color: #0366d6;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\nstrong {\n  font-weight: 600;\n}\n\nhr {\n  height: 0;\n  margin: 15px 0;\n  overflow: hidden;\n  background: transparent;\n  border: 0;\n  border-bottom: 1px solid #dfe2e5;\n}\n\nhr::before {\n  display: table;\n  content: \"\";\n}\n\nhr::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\n\ntd,\nth {\n  padding: 0;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nh1 {\n  font-size: 32px;\n  font-weight: 600;\n}\n\nh2 {\n  font-size: 24px;\n  font-weight: 600;\n}\n\nh3 {\n  font-size: 20px;\n  font-weight: 600;\n}\n\nh4 {\n  font-size: 16px;\n  font-weight: 600;\n}\n\nh5 {\n  font-size: 14px;\n  font-weight: 600;\n}\n\nh6 {\n  font-size: 12px;\n  font-weight: 600;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\n\nblockquote {\n  margin: 0;\n}\n\nul,\nol {\n  padding-left: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nol ol,\nul ol {\n  list-style-type: lower-roman;\n}\n\nul ul ol,\nul ol ol,\nol ul ol,\nol ol ol {\n  list-style-type: lower-alpha;\n}\n\ndd {\n  margin-left: 0;\n}\n\ncode {\n  font-family: \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  font-size: 12px;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 0;\n  font: 12px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n}\n\n.octicon {\n  vertical-align: text-bottom;\n}\n\n.pl-0 {\n  padding-left: 0 !important;\n}\n\n.pl-1 {\n  padding-left: 4px !important;\n}\n\n.pl-2 {\n  padding-left: 8px !important;\n}\n\n.pl-3 {\n  padding-left: 16px !important;\n}\n\n.pl-4 {\n  padding-left: 24px !important;\n}\n\n.pl-5 {\n  padding-left: 32px !important;\n}\n\n.pl-6 {\n  padding-left: 40px !important;\n}\n\n.idyll-root::before {\n  display: table;\n  content: \"\";\n}\n\n.idyll-root::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\n.idyll-root>*:first-child {\n  margin-top: 0 !important;\n}\n\n.idyll-root>*:last-child {\n  margin-bottom: 0 !important;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\n.anchor {\n  float: left;\n  padding-right: 4px;\n  margin-left: -20px;\n  line-height: 1;\n}\n\n.anchor:focus {\n  outline: none;\n}\n\np,\nblockquote,\nul,\nol,\ndl,\ntable,\npre {\n  margin-top: 0;\n  margin-bottom: 16px;\n}\n\nhr {\n  height: 0.25em;\n  padding: 0;\n  margin: 24px 0;\n  background-color: #e1e4e8;\n  border: 0;\n}\n\nblockquote {\n  padding: 0 1em;\n  color: #6a737d;\n  border-left: 0.25em solid #dfe2e5;\n}\n\nblockquote>:first-child {\n  margin-top: 0;\n}\n\nblockquote>:last-child {\n  margin-bottom: 0;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font-size: 11px;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fafbfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25;\n}\n\nh1 .octicon-link,\nh2 .octicon-link,\nh3 .octicon-link,\nh4 .octicon-link,\nh5 .octicon-link,\nh6 .octicon-link {\n  color: #1b1f23;\n  vertical-align: middle;\n  visibility: hidden;\n}\n\nh1:hover .anchor,\nh2:hover .anchor,\nh3:hover .anchor,\nh4:hover .anchor,\nh5:hover .anchor,\nh6:hover .anchor {\n  text-decoration: none;\n}\n\nh1:hover .anchor .octicon-link,\nh2:hover .anchor .octicon-link,\nh3:hover .anchor .octicon-link,\nh4:hover .anchor .octicon-link,\nh5:hover .anchor .octicon-link,\nh6:hover .anchor .octicon-link {\n  visibility: visible;\n}\n\nh1 {\n  padding-bottom: 0.3em;\n  font-size: 2em;\n}\n\nh2 {\n  padding-bottom: 0.3em;\n  font-size: 1.5em;\n}\n\nh3 {\n  font-size: 1.25em;\n}\n\nh4 {\n  font-size: 1em;\n}\n\nh5 {\n  font-size: 0.875em;\n}\n\nh6 {\n  font-size: 0.85em;\n  color: #6a737d;\n}\n\nh1.hed,\nh2.dek {\n  border-bottom: none;\n  padding-bottom: 0;\n  margin-top: 12px;\n}\n\nul,\nol {\n  padding-left: 2em;\n}\n\nul ul,\nul ol,\nol ol,\nol ul {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nli>p {\n  margin-top: 16px;\n}\n\nli+li {\n  margin-top: 0.25em;\n}\n\ndl {\n  padding: 0;\n}\n\ndl dt {\n  padding: 0;\n  margin-top: 16px;\n  font-size: 1em;\n  font-style: italic;\n  font-weight: 600;\n}\n\ndl dd {\n  padding: 0 16px;\n  margin-bottom: 16px;\n}\n\ntable {\n  display: block;\n  width: 100%;\n  overflow: auto;\n}\n\ntable th {\n  font-weight: 600;\n}\n\ntable th,\ntable td {\n  padding: 6px 13px;\n  border: 1px solid #dfe2e5;\n}\n\ntable tr {\n  background-color: #fff;\n  border-top: 1px solid #c6cbd1;\n}\n\ntable tr:nth-child(2n) {\n  background-color: #f6f8fa;\n}\n\nimg {\n  max-width: 100%;\n  box-sizing: content-box;\n  background-color: #fff;\n}\n\ncode {\n  padding: 0;\n  padding-top: 0.2em;\n  padding-bottom: 0.2em;\n  margin: 0;\n  font-size: 85%;\n  background-color: rgba(27,31,35,0.05);\n  border-radius: 3px;\n}\n\ncode::before,\ncode::after {\n  letter-spacing: -0.2em;\n  content: \"\\00a0\";\n}\n\npre {\n  word-wrap: normal;\n}\n\npre>code {\n  padding: 0;\n  margin: 0;\n  font-size: 100%;\n  word-break: normal;\n  white-space: pre;\n  background: transparent;\n  border: 0;\n}\n\n.highlight {\n  margin-bottom: 16px;\n}\n\n.highlight pre {\n  margin-bottom: 0;\n  word-break: normal;\n}\n\n.highlight pre,\npre {\n  padding: 16px;\n  overflow: auto;\n  font-size: 85%;\n  line-height: 1.45;\n  background-color: #f6f8fa;\n  border-radius: 3px;\n}\n\npre code {\n  display: inline;\n  max-width: auto;\n  padding: 0;\n  margin: 0;\n  overflow: visible;\n  line-height: inherit;\n  word-wrap: normal;\n  background-color: transparent;\n  border: 0;\n}\n\npre code::before,\npre code::after {\n  content: normal;\n}\n\n.full-commit .btn-outline:not(:disabled):hover {\n  color: #005cc5;\n  border-color: #005cc5;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font: 11px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fcfcfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\n:checked+.radio-label {\n  position: relative;\n  z-index: 1;\n  border-color: #0366d6;\n}\n\n.task-list-item {\n  list-style-type: none;\n}\n\n.task-list-item+.task-list-item {\n  margin-top: 3px;\n}\n\n.task-list-item input {\n  margin: 0 0.2em 0.25em -1.6em;\n  vertical-align: middle;\n}\n\nhr {\n  border-bottom-color: #eee;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: white;\n  border: solid 1px #333;\n  box-shadow: #ddd 2px 2px 3px;\n}\n\n.idyll-root {\n  padding-top: 0;\n}\n\nbutton {\n  display: block;\n  margin: 1em auto;\n}\n\nh1, h2, h3, h4, h5 {\n  border-bottom: none;\n}\n\npre {\n  max-width: 960px;\n  margin: 2em auto;\n}\n\nh1.hed {\n  font-size: 4em;\n  margin-top: 0;\n}\nh2.dek {\n  font-size: 2em;\n  margin: 0.5em auto;\n  font-weight: lighter;\n}\n.article-header {\n  background: #222;\n  color: white;\n  padding-top: 8em;\n  padding-bottom: 4em;\n  margin-bottom: 4em;\n}\n.article-header a {\n  color: white;\n  text-decoration: underline;\n}\n.idyll-dynamic {\n  cursor: ew-resize;\n  font-family: monospace;\n}\n.idyll-display {\n  font-family: monospace;\n}\nimg {\n  display: block;\n  margin: 0 auto;\n}\n\n@media all and (max-width: 1000px) {\n  .idyll-root {\n    max-width: none;\n    padding: 0;\n  }\n\n  h1.hed {\n    font-size: 2em;\n  }\n  h2.dek {\n    font-size: 1em;\n  }\n}\n\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/github/index.js":[function(require,module,exports){
 arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
@@ -23766,7 +23208,7 @@ arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/c
 exports.__esModule = true;
 
 exports.default = function () {
-  return "\n@font-face {\n  font-family: octicons-link;\n  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%;\n  line-height: 1.5;\n  color: #24292e;\n  font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n  font-size: 16px;\n  line-height: 1.5;\n  word-wrap: break-word;\n}\n\n.pl-c {\n  color: #969896;\n}\n\n.pl-c1,\n.pl-s .pl-v {\n  color: #0086b3;\n}\n\n.pl-e,\n.pl-en {\n  color: #795da3;\n}\n\n.pl-smi,\n.pl-s .pl-s1 {\n  color: #333;\n}\n\n.pl-ent {\n  color: #63a35c;\n}\n\n.pl-k {\n  color: #a71d5d;\n}\n\n.pl-s,\n.pl-pds,\n.pl-s .pl-pse .pl-s1,\n.pl-sr,\n.pl-sr .pl-cce,\n.pl-sr .pl-sre,\n.pl-sr .pl-sra {\n  color: #183691;\n}\n\n.pl-v,\n.pl-smw {\n  color: #ed6a43;\n}\n\n.pl-bu {\n  color: #b52a1d;\n}\n\n.pl-ii {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2 {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2::before {\n  content: \"\\000d\";\n}\n\n.pl-sr .pl-cce {\n  font-weight: bold;\n  color: #63a35c;\n}\n\n.pl-ml {\n  color: #693a17;\n}\n\n.pl-mh,\n.pl-mh .pl-en,\n.pl-ms {\n  font-weight: bold;\n  color: #1d3e81;\n}\n\n.pl-mq {\n  color: #008080;\n}\n\n.pl-mi {\n  font-style: italic;\n  color: #333;\n}\n\n.pl-mb {\n  font-weight: bold;\n  color: #333;\n}\n\n.pl-md {\n  color: #bd2c00;\n  background-color: #ffecec;\n}\n\n.pl-mi1 {\n  color: #55a532;\n  background-color: #eaffea;\n}\n\n.pl-mc {\n  color: #ef9700;\n  background-color: #ffe3b4;\n}\n\n.pl-mi2 {\n  color: #d8d8d8;\n  background-color: #808080;\n}\n\n.pl-mdr {\n  font-weight: bold;\n  color: #795da3;\n}\n\n.pl-mo {\n  color: #1d3e81;\n}\n\n.pl-ba {\n  color: #595e62;\n}\n\n.pl-sg {\n  color: #c0c0c0;\n}\n\n.pl-corl {\n  text-decoration: underline;\n  color: #183691;\n}\n\n.octicon {\n  display: inline-block;\n  vertical-align: text-top;\n  fill: currentColor;\n}\n\na {\n  background-color: transparent;\n  -webkit-text-decoration-skip: objects;\n}\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\nstrong {\n  font-weight: inherit;\n}\n\nstrong {\n  font-weight: bolder;\n}\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\nimg {\n  border-style: none;\n}\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\ncode,\nkbd,\npre {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\ninput {\n  font: inherit;\n  margin: 10px 10px 20px 0;\n}\n\ninput {\n  overflow: visible;\n}\n\n[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\n\ninput {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\na {\n  color: #0366d6;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\nstrong {\n  font-weight: 600;\n}\n\nhr {\n  height: 0;\n  margin: 15px 0;\n  overflow: hidden;\n  background: transparent;\n  border: 0;\n  border-bottom: 1px solid #dfe2e5;\n}\n\nhr::before {\n  display: table;\n  content: \"\";\n}\n\nhr::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\n\ntd,\nth {\n  padding: 0;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nh1 {\n  font-size: 32px;\n  font-weight: 600;\n}\n\nh2 {\n  font-size: 24px;\n  font-weight: 600;\n}\n\nh3 {\n  font-size: 20px;\n  font-weight: 600;\n}\n\nh4 {\n  font-size: 16px;\n  font-weight: 600;\n}\n\nh5 {\n  font-size: 14px;\n  font-weight: 600;\n}\n\nh6 {\n  font-size: 12px;\n  font-weight: 600;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\n\nblockquote {\n  margin: 0;\n}\n\nul,\nol {\n  padding-left: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nol ol,\nul ol {\n  list-style-type: lower-roman;\n}\n\nul ul ol,\nul ol ol,\nol ul ol,\nol ol ol {\n  list-style-type: lower-alpha;\n}\n\ndd {\n  margin-left: 0;\n}\n\ncode {\n  font-family: \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  font-size: 12px;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 0;\n  font: 12px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n}\n\n.octicon {\n  vertical-align: text-bottom;\n}\n\n.pl-0 {\n  padding-left: 0 !important;\n}\n\n.pl-1 {\n  padding-left: 4px !important;\n}\n\n.pl-2 {\n  padding-left: 8px !important;\n}\n\n.pl-3 {\n  padding-left: 16px !important;\n}\n\n.pl-4 {\n  padding-left: 24px !important;\n}\n\n.pl-5 {\n  padding-left: 32px !important;\n}\n\n.pl-6 {\n  padding-left: 40px !important;\n}\n\n.idyll-root::before {\n  display: table;\n  content: \"\";\n}\n\n.idyll-root::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\n.idyll-root>*:first-child {\n  margin-top: 0 !important;\n}\n\n.idyll-root>*:last-child {\n  margin-bottom: 0 !important;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\n.anchor {\n  float: left;\n  padding-right: 4px;\n  margin-left: -20px;\n  line-height: 1;\n}\n\n.anchor:focus {\n  outline: none;\n}\n\np,\nblockquote,\nul,\nol,\ndl,\ntable,\npre {\n  margin-top: 0;\n  margin-bottom: 16px;\n}\n\nhr {\n  height: 0.25em;\n  padding: 0;\n  margin: 24px 0;\n  background-color: #e1e4e8;\n  border: 0;\n}\n\nblockquote {\n  padding: 0 1em;\n  color: #6a737d;\n  border-left: 0.25em solid #dfe2e5;\n}\n\nblockquote>:first-child {\n  margin-top: 0;\n}\n\nblockquote>:last-child {\n  margin-bottom: 0;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font-size: 11px;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fafbfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25;\n}\n\nh1 .octicon-link,\nh2 .octicon-link,\nh3 .octicon-link,\nh4 .octicon-link,\nh5 .octicon-link,\nh6 .octicon-link {\n  color: #1b1f23;\n  vertical-align: middle;\n  visibility: hidden;\n}\n\nh1:hover .anchor,\nh2:hover .anchor,\nh3:hover .anchor,\nh4:hover .anchor,\nh5:hover .anchor,\nh6:hover .anchor {\n  text-decoration: none;\n}\n\nh1:hover .anchor .octicon-link,\nh2:hover .anchor .octicon-link,\nh3:hover .anchor .octicon-link,\nh4:hover .anchor .octicon-link,\nh5:hover .anchor .octicon-link,\nh6:hover .anchor .octicon-link {\n  visibility: visible;\n}\n\nh1 {\n  padding-bottom: 0.3em;\n  font-size: 2em;\n  border-bottom: 1px solid #eaecef;\n}\n\nh2 {\n  padding-bottom: 0.3em;\n  font-size: 1.5em;\n  border-bottom: 1px solid #eaecef;\n}\n\nh3 {\n  font-size: 1.25em;\n}\n\nh4 {\n  font-size: 1em;\n}\n\nh5 {\n  font-size: 0.875em;\n}\n\nh6 {\n  font-size: 0.85em;\n  color: #6a737d;\n}\n\nh1.hed,\nh2.dek {\n  border-bottom: none;\n  padding-bottom: 0;\n  margin-top: 12px;\n}\n\nul,\nol {\n  padding-left: 2em;\n}\n\nul ul,\nul ol,\nol ol,\nol ul {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nli>p {\n  margin-top: 16px;\n}\n\nli+li {\n  margin-top: 0.25em;\n}\n\ndl {\n  padding: 0;\n}\n\ndl dt {\n  padding: 0;\n  margin-top: 16px;\n  font-size: 1em;\n  font-style: italic;\n  font-weight: 600;\n}\n\ndl dd {\n  padding: 0 16px;\n  margin-bottom: 16px;\n}\n\ntable {\n  display: block;\n  width: 100%;\n  overflow: auto;\n}\n\ntable th {\n  font-weight: 600;\n}\n\n:not(.gist) table th,\n:not(.gist) table td {\n  padding: 6px 13px;\n  border: 1px solid #dfe2e5;\n}\n\n:not(.gist) table tr {\n  background-color: #fff;\n  border-top: 1px solid #c6cbd1;\n}\n\n:not(.gist) table tr:nth-child(2n) {\n  background-color: #f6f8fa;\n}\n\nimg {\n  max-width: 100%;\n  box-sizing: content-box;\n  background-color: #fff;\n}\n\n.vega-embed {\n  width: 100%;\n}\n\ncode {\n  padding: 0;\n  padding-top: 0.2em;\n  padding-bottom: 0.2em;\n  margin: 0;\n  font-size: 85%;\n  background-color: rgba(27,31,35,0.05);\n  border-radius: 3px;\n}\n\ncode::before,\ncode::after {\n  letter-spacing: -0.2em;\n  content: \"\\00a0\";\n}\n\npre {\n  word-wrap: normal;\n}\n\npre>code {\n  padding: 0;\n  margin: 0;\n  font-size: 100%;\n  word-break: normal;\n  white-space: pre;\n  background: transparent;\n  border: 0;\n}\n\n.highlight {\n  margin-bottom: 16px;\n}\n\n.highlight pre {\n  margin-bottom: 0;\n  word-break: normal;\n}\n\n.highlight pre,\npre {\n  padding: 16px;\n  overflow: auto;\n  font-size: 85%;\n  line-height: 1.45;\n  background-color: #f6f8fa;\n  border-radius: 3px;\n}\n\npre code {\n  display: inline;\n  max-width: auto;\n  padding: 0;\n  margin: 0;\n  overflow: visible;\n  line-height: inherit;\n  word-wrap: normal;\n  background-color: transparent;\n  border: 0;\n}\n\npre code::before,\npre code::after {\n  content: normal;\n}\n\n.full-commit .btn-outline:not(:disabled):hover {\n  color: #005cc5;\n  border-color: #005cc5;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font: 11px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fcfcfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\n:checked+.radio-label {\n  position: relative;\n  z-index: 1;\n  border-color: #0366d6;\n}\n\n.task-list-item {\n  list-style-type: none;\n}\n\n.task-list-item+.task-list-item {\n  margin-top: 3px;\n}\n\n.task-list-item input {\n  margin: 0 0.2em 0.25em -1.6em;\n  vertical-align: middle;\n}\n\nhr {\n  border-bottom-color: #eee;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\ninput[type='text'].idyll-input-error {\n  border-color: red;\n}\n\nspan.idyll-input-error{\n  display: block;\n  margin: 0 auto;\n  padding: 10px 5px;\n  color: red;\n  width: 100%;\n}\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 0 0 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 0 0 90vh 0;\n  padding: 50px;\n  background: white;\n}\n\n\n/* annotated-text container */\n.annotated-text {\n  position: relative;\n  display: inline-block;\n  cursor: help;\n}\n\n.annotated-text,\n.annotated-text:visited {\n  background: #efefef;\n  padding: 0 2.5px;\n  transition: background 0.25s ease-out;\n}\n\n.annotated-text:hover {\n  background: #ccc;\n}\n\n/* annotated-text CSS */\n.annotated-text .annotation-text {\n  visibility: hidden;\n  border: solid 0.5px #666;\n  box-shadow: 0 0 5px #ccc;\n  background: #fff;\n  text-align: left;\n  padding: 5px;\n  /* border-radius: 4px; */\n  position: absolute;\n  z-index: 1;\n  font-size: 0.9em;\n  line-height: 1.2;\n}\n\n.annotated-text .annotation-text {\n  width: 250px;\n  bottom: 120%;\n  left: 50%;\n  margin-left: -125px; /* Use half of the width (120/2 = 60), to center the annotated-text */\n  opacity: 0;\n  font-weight: initial;\n}\n\n.annotated-text .annotation-text img {\n  display: block;\n  max-width: 100%;\n}\n\n.annotated-text p {\n  margin: 0;\n}\n\n.annotated-text:hover .annotation-text {\n  opacity: 1;\n  visibility: visible;\n  transition: opacity 0.25s ease-out;\n}\n\n@media all and (max-width: 800px) {\n  .annotated-text .annotation-text {\n    width: 50vh;\n  }\n}\n\n@media all and (max-width: 600px) {\n  .annotated-text .annotation-text {\n    width: 50vw;\n    position: fixed;\n    left: 50%;\n    bottom: 20%;\n  }\n}\n\n\n";
+  return "\n@font-face {\n  font-family: octicons-link;\n  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n* {\n  box-sizing: border-box;\n}\nbody {\n  -ms-text-size-adjust: 100%;\n  -webkit-text-size-adjust: 100%;\n  line-height: 1.5;\n  color: #24292e;\n  font-family: -apple-system, system-ui, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\";\n  font-size: 16px;\n  line-height: 1.5;\n  word-wrap: break-word;\n}\n\n.pl-c {\n  color: #969896;\n}\n\n.pl-c1,\n.pl-s .pl-v {\n  color: #0086b3;\n}\n\n.pl-e,\n.pl-en {\n  color: #795da3;\n}\n\n.pl-smi,\n.pl-s .pl-s1 {\n  color: #333;\n}\n\n.pl-ent {\n  color: #63a35c;\n}\n\n.pl-k {\n  color: #a71d5d;\n}\n\n.pl-s,\n.pl-pds,\n.pl-s .pl-pse .pl-s1,\n.pl-sr,\n.pl-sr .pl-cce,\n.pl-sr .pl-sre,\n.pl-sr .pl-sra {\n  color: #183691;\n}\n\n.pl-v,\n.pl-smw {\n  color: #ed6a43;\n}\n\n.pl-bu {\n  color: #b52a1d;\n}\n\n.pl-ii {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2 {\n  color: #f8f8f8;\n  background-color: #b52a1d;\n}\n\n.pl-c2::before {\n  content: \"\\000d\";\n}\n\n.pl-sr .pl-cce {\n  font-weight: bold;\n  color: #63a35c;\n}\n\n.pl-ml {\n  color: #693a17;\n}\n\n.pl-mh,\n.pl-mh .pl-en,\n.pl-ms {\n  font-weight: bold;\n  color: #1d3e81;\n}\n\n.pl-mq {\n  color: #008080;\n}\n\n.pl-mi {\n  font-style: italic;\n  color: #333;\n}\n\n.pl-mb {\n  font-weight: bold;\n  color: #333;\n}\n\n.pl-md {\n  color: #bd2c00;\n  background-color: #ffecec;\n}\n\n.pl-mi1 {\n  color: #55a532;\n  background-color: #eaffea;\n}\n\n.pl-mc {\n  color: #ef9700;\n  background-color: #ffe3b4;\n}\n\n.pl-mi2 {\n  color: #d8d8d8;\n  background-color: #808080;\n}\n\n.pl-mdr {\n  font-weight: bold;\n  color: #795da3;\n}\n\n.pl-mo {\n  color: #1d3e81;\n}\n\n.pl-ba {\n  color: #595e62;\n}\n\n.pl-sg {\n  color: #c0c0c0;\n}\n\n.pl-corl {\n  text-decoration: underline;\n  color: #183691;\n}\n\n.octicon {\n  display: inline-block;\n  vertical-align: text-top;\n  fill: currentColor;\n}\n\na {\n  background-color: transparent;\n  -webkit-text-decoration-skip: objects;\n}\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\nstrong {\n  font-weight: inherit;\n}\n\nstrong {\n  font-weight: bolder;\n}\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\nimg {\n  border-style: none;\n}\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\ncode,\nkbd,\npre {\n  font-family: monospace, monospace;\n  font-size: 1em;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\ninput {\n  font: inherit;\n  margin: 10px 10px 20px 0;\n}\n\ninput {\n  overflow: visible;\n}\n\n[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\n\ninput {\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\na {\n  color: #0366d6;\n  text-decoration: none;\n}\n\na:hover {\n  text-decoration: underline;\n}\n\nstrong {\n  font-weight: 600;\n}\n\nhr {\n  height: 0;\n  margin: 15px 0;\n  overflow: hidden;\n  background: transparent;\n  border: 0;\n  border-bottom: 1px solid #dfe2e5;\n}\n\nhr::before {\n  display: table;\n  content: \"\";\n}\n\nhr::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\ntable {\n  border-spacing: 0;\n  border-collapse: collapse;\n}\n\ntd,\nth {\n  padding: 0;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nh1 {\n  font-size: 32px;\n  font-weight: 600;\n}\n\nh2 {\n  font-size: 24px;\n  font-weight: 600;\n}\n\nh3 {\n  font-size: 20px;\n  font-weight: 600;\n}\n\nh4 {\n  font-size: 16px;\n  font-weight: 600;\n}\n\nh5 {\n  font-size: 14px;\n  font-weight: 600;\n}\n\nh6 {\n  font-size: 12px;\n  font-weight: 600;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 10px;\n}\n\nblockquote {\n  margin: 0;\n}\n\nul,\nol {\n  padding-left: 0;\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nol ol,\nul ol {\n  list-style-type: lower-roman;\n}\n\nul ul ol,\nul ol ol,\nol ul ol,\nol ol ol {\n  list-style-type: lower-alpha;\n}\n\ndd {\n  margin-left: 0;\n}\n\ncode {\n  font-family: \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  font-size: 12px;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 0;\n  font: 12px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n}\n\n.octicon {\n  vertical-align: text-bottom;\n}\n\n.pl-0 {\n  padding-left: 0 !important;\n}\n\n.pl-1 {\n  padding-left: 4px !important;\n}\n\n.pl-2 {\n  padding-left: 8px !important;\n}\n\n.pl-3 {\n  padding-left: 16px !important;\n}\n\n.pl-4 {\n  padding-left: 24px !important;\n}\n\n.pl-5 {\n  padding-left: 32px !important;\n}\n\n.pl-6 {\n  padding-left: 40px !important;\n}\n\n.idyll-root::before {\n  display: table;\n  content: \"\";\n}\n\n.idyll-root::after {\n  display: table;\n  clear: both;\n  content: \"\";\n}\n\n.idyll-root>*:first-child {\n  margin-top: 0 !important;\n}\n\n.idyll-root>*:last-child {\n  margin-bottom: 0 !important;\n}\n\na:not([href]) {\n  color: inherit;\n  text-decoration: none;\n}\n\n.anchor {\n  float: left;\n  padding-right: 4px;\n  margin-left: -20px;\n  line-height: 1;\n}\n\n.anchor:focus {\n  outline: none;\n}\n\np,\nblockquote,\nul,\nol,\ndl,\ntable,\npre {\n  margin-top: 0;\n  margin-bottom: 16px;\n}\n\nhr {\n  height: 0.25em;\n  padding: 0;\n  margin: 24px 0;\n  background-color: #e1e4e8;\n  border: 0;\n}\n\nblockquote {\n  padding: 0 1em;\n  color: #6a737d;\n  border-left: 0.25em solid #dfe2e5;\n}\n\nblockquote>:first-child {\n  margin-top: 0;\n}\n\nblockquote>:last-child {\n  margin-bottom: 0;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font-size: 11px;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fafbfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  margin-top: 24px;\n  margin-bottom: 16px;\n  font-weight: 600;\n  line-height: 1.25;\n}\n\nh1 .octicon-link,\nh2 .octicon-link,\nh3 .octicon-link,\nh4 .octicon-link,\nh5 .octicon-link,\nh6 .octicon-link {\n  color: #1b1f23;\n  vertical-align: middle;\n  visibility: hidden;\n}\n\nh1:hover .anchor,\nh2:hover .anchor,\nh3:hover .anchor,\nh4:hover .anchor,\nh5:hover .anchor,\nh6:hover .anchor {\n  text-decoration: none;\n}\n\nh1:hover .anchor .octicon-link,\nh2:hover .anchor .octicon-link,\nh3:hover .anchor .octicon-link,\nh4:hover .anchor .octicon-link,\nh5:hover .anchor .octicon-link,\nh6:hover .anchor .octicon-link {\n  visibility: visible;\n}\n\nh1 {\n  padding-bottom: 0.3em;\n  font-size: 2em;\n  border-bottom: 1px solid #eaecef;\n}\n\nh2 {\n  padding-bottom: 0.3em;\n  font-size: 1.5em;\n  border-bottom: 1px solid #eaecef;\n}\n\nh3 {\n  font-size: 1.25em;\n}\n\nh4 {\n  font-size: 1em;\n}\n\nh5 {\n  font-size: 0.875em;\n}\n\nh6 {\n  font-size: 0.85em;\n  color: #6a737d;\n}\n\nh1.hed,\nh2.dek {\n  border-bottom: none;\n  padding-bottom: 0;\n  margin-top: 12px;\n}\n\nul,\nol {\n  padding-left: 2em;\n}\n\nul ul,\nul ol,\nol ol,\nol ul {\n  margin-top: 0;\n  margin-bottom: 0;\n}\n\nli>p {\n  margin-top: 16px;\n}\n\nli+li {\n  margin-top: 0.25em;\n}\n\ndl {\n  padding: 0;\n}\n\ndl dt {\n  padding: 0;\n  margin-top: 16px;\n  font-size: 1em;\n  font-style: italic;\n  font-weight: 600;\n}\n\ndl dd {\n  padding: 0 16px;\n  margin-bottom: 16px;\n}\n\ntable {\n  display: block;\n  width: 100%;\n  overflow: auto;\n}\n\ntable th {\n  font-weight: 600;\n}\n\ntable th,\ntable td {\n  padding: 6px 13px;\n  border: 1px solid #dfe2e5;\n}\n\ntable tr {\n  background-color: #fff;\n  border-top: 1px solid #c6cbd1;\n}\n\ntable tr:nth-child(2n) {\n  background-color: #f6f8fa;\n}\n\nimg {\n  max-width: 100%;\n  box-sizing: content-box;\n  background-color: #fff;\n}\n\ncode {\n  padding: 0;\n  padding-top: 0.2em;\n  padding-bottom: 0.2em;\n  margin: 0;\n  font-size: 85%;\n  background-color: rgba(27,31,35,0.05);\n  border-radius: 3px;\n}\n\ncode::before,\ncode::after {\n  letter-spacing: -0.2em;\n  content: \"\\00a0\";\n}\n\npre {\n  word-wrap: normal;\n}\n\npre>code {\n  padding: 0;\n  margin: 0;\n  font-size: 100%;\n  word-break: normal;\n  white-space: pre;\n  background: transparent;\n  border: 0;\n}\n\n.highlight {\n  margin-bottom: 16px;\n}\n\n.highlight pre {\n  margin-bottom: 0;\n  word-break: normal;\n}\n\n.highlight pre,\npre {\n  padding: 16px;\n  overflow: auto;\n  font-size: 85%;\n  line-height: 1.45;\n  background-color: #f6f8fa;\n  border-radius: 3px;\n}\n\npre code {\n  display: inline;\n  max-width: auto;\n  padding: 0;\n  margin: 0;\n  overflow: visible;\n  line-height: inherit;\n  word-wrap: normal;\n  background-color: transparent;\n  border: 0;\n}\n\npre code::before,\npre code::after {\n  content: normal;\n}\n\n.full-commit .btn-outline:not(:disabled):hover {\n  color: #005cc5;\n  border-color: #005cc5;\n}\n\nkbd {\n  display: inline-block;\n  padding: 3px 5px;\n  font: 11px \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n  line-height: 10px;\n  color: #444d56;\n  vertical-align: middle;\n  background-color: #fcfcfc;\n  border: solid 1px #c6cbd1;\n  border-bottom-color: #959da5;\n  border-radius: 3px;\n  box-shadow: inset 0 -1px 0 #959da5;\n}\n\n:checked+.radio-label {\n  position: relative;\n  z-index: 1;\n  border-color: #0366d6;\n}\n\n.task-list-item {\n  list-style-type: none;\n}\n\n.task-list-item+.task-list-item {\n  margin-top: 3px;\n}\n\n.task-list-item input {\n  margin: 0 0.2em 0.25em -1.6em;\n  vertical-align: middle;\n}\n\nhr {\n  border-bottom-color: #eee;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: white;\n}\n\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/idyll/index.js":[function(require,module,exports){
 arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
@@ -23776,7 +23218,7 @@ arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/c
 exports.__esModule = true;
 
 exports.default = function () {
-  return "\n* {\n  box-sizing: border-box;\n}\n\nhtml {\n  margin: 0;\n  padding: 0;\n}\n\nimg {\n  display: block;\n  width: 100%;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n}\n\nh1,h2,h3,h4,h5,h6{\n  margin: 40px 0 20px 0;\n  font-weight: bold;\n}\n\n\nbody {\n  color: black;\n}\n\np, .article-body {\n  font-size: 1.15rem;\n  line-height: 1.75rem;\n}\n\n.byline a {\n  color: black;\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n.hed {\n  font-size: 3rem;\n  line-height: 3rem;\n  margin: 20px 0 20px;\n  font-weight: bold;\n  width: 150%;\n  max-width: 90vw;\n}\n\n.dek {\n  margin: 0;\n  display: block;\n  font-size: 1.5rem;\n  line-height: 2.2rem;\n  color: black;\n  margin-top: 1rem;\n  max-width: 90vw;\n}\n\n.byline {\n  font-size: .95rem;\n  line-height: 1rem;\n  color: black;\n  margin-top: 1rem;\n}\n\na, a:visited, a:hover {\n  color: black;\n  cursor: pointer;\n  text-decoration: none;\n  /*border-bottom: 1px solid #EAE7D6;*/\n  box-shadow: inset 0 -4px 0 #EAE7D6;\n  transition: box-shadow 0.25s ease-out;\n}\n\na:hover {\n  color: black;\n  /*background: #EAE7D6;*/\n  box-shadow: inset 0 -20px 0 #EAE7D6;\n}\n\npre {\n  margin-top: 25px;\n  margin-bottom: 25px;\n}\n\npre code {\n  background: #F2F3F2;\n  color: black;\n  padding: 20px 15px;\n  width: 100%;\n  display: block;\n  overflow-x: auto;\n  font-size: 12px;\n  text-align: initial;\n  font-style: normal;\n}\ncode {\n  background: #F2F3F2;\n  color: black;\n  padding: 1px 5px;\n}\n\n\n\nspan.action {\n  border-color: #5601FF;\n  border-width: 2px;\n  border-style: none none solid none;\n  color: #5601FF;\n  /*font-size: 0.9em;*/\n  padding: -4px 5px;\n  margin: 0 5px;\n  cursor: pointer;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\ninput[type='text'].idyll-input-error {\n  border-color: red;\n}\n\nspan.idyll-input-error{\n  display: block;\n  margin: 0 auto;\n  padding: 10px 5px;\n  color: red;\n  width: 100%;\n}\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 0 0 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 0 0 90vh 0;\n  padding: 50px;\n  background: white;\n}\n\n\n/* annotated-text container */\n.annotated-text {\n  position: relative;\n  display: inline-block;\n  cursor: help;\n}\n\n.annotated-text .annotation-text img {\n  display: block;\n  max-width: 100%;\n}\n\n.annotated-text p {\n  margin: 0;\n}\n\n.annotated-text,\n.annotated-text:visited {\n  background: #efefef;\n  padding: 0 2.5px;\n  transition: background 0.25s ease-out;\n}\n\n.annotated-text:hover {\n  background: #ccc;\n}\n\n/* annotated-text CSS */\n.annotated-text .annotation-text {\n  visibility: hidden;\n  border: solid 0.5px #666;\n  box-shadow: 0 0 5px #ccc;\n  background: #fff;\n  text-align: left;\n  padding: 5px;\n  /* border-radius: 4px; */\n  position: absolute;\n  z-index: 1;\n  font-size: 0.9em;\n  line-height: 1.2;\n}\n\n.annotated-text .annotation-text {\n  width: 250px;\n  bottom: 120%;\n  left: 50%;\n  margin-left: -125px; /* Use half of the width (120/2 = 60), to center the annotated-text */\n  opacity: 0;\n  font-weight: initial;\n}\n\n.annotated-text:hover .annotation-text {\n  opacity: 1;\n  visibility: visible;\n  transition: opacity 0.25s ease-out;\n}\n\n@media all and (max-width: 800px) {\n  .annotated-text .annotation-text {\n    width: 50vh;\n  }\n}\n\n@media all and (max-width: 600px) {\n  .annotated-text .annotation-text {\n    width: 50vw;\n    position: fixed;\n    left: 50%;\n    bottom: 20%;\n  }\n}\n\n\n\n";
+  return "\n* {\n  box-sizing: border-box;\n}\n\nhtml {\n  margin: 0;\n  padding: 0;\n}\n\nimg {\n  display: block;\n  width: 100%;\n}\n\nbody {\n  margin: 0;\n  padding: 0;\n}\n\nh1,h2,h3,h4,h5,h6{\n  margin: 40px 0 20px 0;\n  font-weight: bold;\n}\n\n\nbody {\n  color: black;\n}\n\np, .article-body {\n  font-size: 1.15rem;\n  line-height: 1.75rem;\n}\n\n.byline a {\n  color: black;\n}\n\n.ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n\n.ReactTable .-pagination .-btn {\n  margin: 0;\n}\n.hed {\n  font-size: 3rem;\n  line-height: 3rem;\n  margin: 20px 0 20px;\n  font-weight: bold;\n  width: 150%;\n  max-width: 90vw;\n}\n\n.dek {\n  margin: 0;\n  display: block;\n  font-size: 1.5rem;\n  line-height: 2.2rem;\n  color: black;\n  margin-top: 1rem;\n  max-width: 90vw;\n}\n\n.byline {\n  font-size: .95rem;\n  line-height: 1rem;\n  color: black;\n  margin-top: 1rem;\n}\n\na, a:visited, a:hover {\n  color: black;\n  cursor: pointer;\n  text-decoration: none;\n  /*border-bottom: 1px solid #EAE7D6;*/\n  box-shadow: inset 0 -4px 0 #EAE7D6;\n  transition: box-shadow 0.25s ease-out;\n}\n\na:hover {\n  color: black;\n  /*background: #EAE7D6;*/\n  box-shadow: inset 0 -20px 0 #EAE7D6;\n}\n\npre {\n  margin-top: 25px;\n  margin-bottom: 25px;\n}\n\npre code {\n  background: #F2F3F2;\n  color: black;\n  padding: 20px 15px;\n  width: 100%;\n  display: block;\n  overflow-x: auto;\n  font-size: 12px;\n  text-align: initial;\n  font-style: normal;\n}\ncode {\n  background: #F2F3F2;\n  color: black;\n  padding: 1px 5px;\n}\n\n\n\nspan.action {\n  border-color: #5601FF;\n  border-width: 2px;\n  border-style: none none solid none;\n  color: #5601FF;\n  /*font-size: 0.9em;*/\n  padding: -4px 5px;\n  margin: 0 5px;\n  cursor: pointer;\n}\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: white;\n}\n\n\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/index.js":[function(require,module,exports){
 'use strict';
@@ -23830,56 +23272,20 @@ Object.defineProperty(exports, 'tufte', {
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 },{"./default":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js","./github":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/github/index.js","./idyll":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/idyll/index.js","./none":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/index.js","./tufte":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/index.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _styles = require('./styles');
-
-var _styles2 = _interopRequireDefault(_styles);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var config = {};
-
-exports.default = _extends({}, config, {
-  styles: (0, _styles2.default)(config)
-});
+arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
 },{"./styles":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/styles.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/none/styles.js":[function(require,module,exports){
 arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-layouts/dist/cjs/none/styles.js"][0].apply(exports,arguments)
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/index.js":[function(require,module,exports){
-'use strict';
-
-exports.__esModule = true;
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _styles = require('./styles');
-
-var _styles2 = _interopRequireDefault(_styles);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var config = {
-  headerColor: '#111',
-  headerBackground: '#fffff8'
-};
-
-exports.default = _extends({}, config, {
-  styles: (0, _styles2.default)(config)
-});
+arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/default/index.js"][0].apply(exports,arguments)
 },{"./styles":"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/styles.js"}],"/usr/local/lib/node_modules/idyll/node_modules/idyll-themes/dist/cjs/tufte/styles.js":[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
 
 exports.default = function () {
-  return "\n@charset \"UTF-8\";\n\n/* Import ET Book styles\n   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: italic; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: bold;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book-roman-old-style\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n\n             .ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n             ReactTable .-pagination .-btn {\n              margin: 0;\n            }\n/* Tufte CSS styles */\n\nhtml {\n  font-size: 15px;\n}\n\nbody {\n  background-color: #fffff8;\n}\n\nbody { font-family: et-book, Palatino, \"Palatino Linotype\", \"Palatino LT STD\", \"Book Antiqua\", Georgia, serif;\n       background-color: #fffff8;\n       color: #111;\n       counter-reset: sidenote-counter; }\n\n\n.idyll-root { position: relative;\n          padding: 5rem 0rem;\n          margin-left: 0;\n          width: auto;\n          margin: auto; }\n\nh1, .hed { font-weight: 400;\n     margin-top: 4rem;\n     margin-bottom: 1.5rem;\n     font-size: 3.2rem;\n     line-height: 1; }\n\nh2 { font-style: italic;\n     font-weight: 400;\n     margin-top: 2.1rem;\n     margin-bottom: 0;\n     font-size: 2.2rem;\n     line-height: 1; }\n\nh3 { font-style: italic;\n     font-weight: 400;\n     font-size: 1.7rem;\n     margin-top: 2rem;\n     margin-bottom: 0;\n     line-height: 1; }\n\nhr { display: block;\n     height: 1px;\n     width: 55%;\n     border: 0;\n     border-top: 1px solid #ccc;\n     margin: 1em 0;\n     padding: 0; }\n\np.subtitle,\n.dek { font-style: italic;\n             margin-top: 1rem;\n             margin-bottom: 1rem;\n             font-size: 1.8rem;\n             display: block;\n             line-height: 1; }\n\n.numeral { font-family: et-book-roman-old-style; }\n\n.danger { color: red; }\n\nsection { padding-top: 1rem;\n          padding-bottom: 1rem; }\n\np, ol, ul { font-size: 1.4rem; }\n\np { line-height: 2rem;\n    margin-top: 1.4rem;\n    margin-bottom: 1.4rem;\n    padding-right: 0;\n    vertical-align: baseline; }\n\n/* Chapter Epigraphs */\ndiv.epigraph { margin: 5em 0; }\n\ndiv.epigraph > blockquote { margin-top: 3em;\n                            margin-bottom: 3em; }\n\ndiv.epigraph > blockquote, div.epigraph > blockquote > p { font-style: italic; }\n\ndiv.epigraph > blockquote > footer { font-style: normal; }\n\ndiv.epigraph > blockquote > footer > cite { font-style: italic; }\n/* end chapter epigraphs styles */\n\nblockquote { font-size: 1.4rem; }\n\nblockquote p { width: 55%;\n               margin-right: 40px; }\n\nblockquote footer { width: 55%;\n                    font-size: 1.1rem;\n                    text-align: right; }\n\nsection>ol, section>ul { width: 45%;\n                         -webkit-padding-start: 5%;\n                         -webkit-padding-end: 5%; }\n\nli { padding: 0.5rem 0; }\n\nfigure { padding: 0;\n         border: 0;\n         font-size: 100%;\n         font: inherit;\n         vertical-align: baseline;\n         max-width: 55%;\n         -webkit-margin-start: 0;\n         -webkit-margin-end: 0;\n         margin: 0 0 3em 0; }\n\nfigcaption { float: right;\n             clear: right;\n             margin-top: 0;\n             margin-bottom: 0;\n             font-size: 1.1rem;\n             line-height: 1.6;\n             vertical-align: baseline;\n             position: relative;\n             max-width: 40%; }\n\nfigure.fullwidth figcaption { margin-right: 24%; }\n\n/* Links: replicate underline that clears descenders */\na:link, a:visited { color: inherit; }\n\n@media screen and (-webkit-min-device-pixel-ratio: 0) { a:link { background-position-y: 87%, 87%, 87%; } }\n\n\na:link::-moz-selection { text-shadow: 0.03em 0 #b4d5fe, -0.03em 0 #b4d5fe, 0 0.03em #b4d5fe, 0 -0.03em #b4d5fe, 0.06em 0 #b4d5fe, -0.06em 0 #b4d5fe, 0.09em 0 #b4d5fe, -0.09em 0 #b4d5fe, 0.12em 0 #b4d5fe, -0.12em 0 #b4d5fe, 0.15em 0 #b4d5fe, -0.15em 0 #b4d5fe;\n                         background: #b4d5fe; }\n\n/* Sidenotes, margin notes, figures, captions */\nimg { max-width: 100%; }\n\n.aside, .sidenote, .marginnote { float: right;\n                         clear: right;\n                         margin-right: -60%;\n                         width: 50%;\n                         margin-top: 0;\n                         margin-bottom: 0;\n                         font-size: 1.1rem;\n                         line-height: 1.3;\n                         vertical-align: baseline;\n                         position: relative; }\n\n.sidenote-number { counter-increment: sidenote-counter; }\n\n.sidenote-number:after, .sidenote:before { content: counter(sidenote-counter) \" \";\n                                           font-family: et-book-roman-old-style;\n                                           position: relative;\n                                           vertical-align: baseline; }\n\n.sidenote-number:after { content: counter(sidenote-counter);\n                         font-size: 1rem;\n                         top: -0.5rem;\n                         left: 0.1rem; }\n\n.sidenote:before { content: counter(sidenote-counter) \" \";\n                   top: -0.5rem; }\n\nblockquote .sidenote, blockquote .marginnote, blockquote .aside { margin-right: -82%;\n                                               min-width: 59%;\n                                               text-align: left; }\n\n.aside-container {\n  position: static;\n  width: 55%;\n}\ndiv.fullwidth, table.fullwidth { width: 100%; }\n\ndiv.table-wrapper { overflow-x: auto;\n                    font-family: \"Trebuchet MS\", \"Gill Sans\", \"Gill Sans MT\", sans-serif; }\n\n.sans { font-family: \"Gill Sans\", \"Gill Sans MT\", Calibri, sans-serif;\n        letter-spacing: .03em; }\n\ncode { font-family: Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n       font-size: 1.0rem;\n       line-height: 1.42; }\n\n.sans > code { font-size: 1.2rem; }\n\nh1 > code, h2 > code, h3 > code { font-size: 0.80em; }\n\n.marginnote > code, .sidenote > code { font-size: 1rem; }\n\npre.code { font-size: 0.9rem;\n           width: 52.5%;\n           margin-left: 2.5%;\n           overflow-x: auto; }\n\npre.code.fullwidth { width: 90%; }\n\n.fullwidth { max-width: 90%;\n             clear:both; }\n\nspan.newthought { font-variant: small-caps;\n                  font-size: 1.2em; }\n\ninput.margin-toggle { display: none; }\n\nlabel.sidenote-number { display: inline; }\n\nlabel.margin-toggle:not(.sidenote-number) { display: none; }\n\n@media (max-width: 760px) { p, footer { width: 100%; }\n                            pre.code { width: 97%; }\n                            ul { width: 85%; }\n                            figure { max-width: 90%; }\n                            figcaption, figure.fullwidth figcaption { margin-right: 0%;\n                                                                      max-width: none; }\n                            blockquote { margin-left: 1.5em;\n                                         margin-right: 0em; }\n                            blockquote p, blockquote footer { width: 100%; }\n                            label.margin-toggle:not(.sidenote-number) { display: inline; }\n                            .sidenote, .marginnote { display: none; }\n                            .margin-toggle:checked + .sidenote,\n                            .margin-toggle:checked + .marginnote { display: block;\n                                                                   float: left;\n                                                                   left: 1rem;\n                                                                   clear: both;\n                                                                   width: 95%;\n                                                                   margin: 1rem 2.5%;\n                                                                   vertical-align: baseline;\n                                                                   position: relative; }\n                            label { cursor: pointer; }\n                            div.table-wrapper, table { width: 85%; }\n                            img { width: 100%; } }\n\n\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n  cursor: pointer;\n}\n\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\ninput[type='text'].idyll-input-error {\n  border-color: red;\n}\n\nspan.idyll-input-error{\n  display: block;\n  margin: 0 auto;\n  padding: 10px 5px;\n  color: red;\n  width: 100%;\n}\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 0 0 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 0 0 90vh 0;\n  padding: 50px;\n  background: #fff;\n  border: solid 1px #111;\n}\n\n.idyll-scroll-text .idyll-step h2 {\n  margin-top: 0;\n}\n\npre {\n  background: #f3f3f3;\n  padding: 15px;\n  overflow-x: auto;\n}\n\n\n/* annotated-text container */\n.annotated-text {\n  position: relative;\n  display: inline-block;\n  cursor: help;\n}\n\n.annotated-text,\n.annotated-text:visited {\n  background: #efefef;\n  padding: 0 2.5px;\n  transition: background 0.25s ease-out;\n}\n\n.annotated-text:hover {\n  background: #ccc;\n}\n\n/* annotated-text CSS */\n.annotated-text .annotation-text {\n  visibility: hidden;\n  border: solid 0.5px #666;\n  box-shadow: 0 0 5px #ccc;\n  background: #fff;\n  text-align: left;\n  padding: 5px;\n  /* border-radius: 4px; */\n  position: absolute;\n  z-index: 1;\n  font-size: 0.9em;\n  line-height: 1.2;\n}\n\n.annotated-text .annotation-text img {\n  display: block;\n  max-width: 100%;\n}\n\n.annotated-text p {\n  margin: 0;\n}\n\n.annotated-text .annotation-text {\n  width: 250px;\n  bottom: 120%;\n  left: 50%;\n  margin-left: -125px; /* Use half of the width (120/2 = 60), to center the annotated-text */\n  opacity: 0;\n  font-weight: initial;\n}\n\n.annotated-text:hover .annotation-text {\n  opacity: 1;\n  visibility: visible;\n  transition: opacity 0.25s ease-out;\n}\n\n@media all and (max-width: 800px) {\n  .annotated-text .annotation-text {\n    width: 50vh;\n  }\n}\n\n@media all and (max-width: 600px) {\n  .annotated-text .annotation-text {\n    width: 50vw;\n    position: fixed;\n    left: 50%;\n    bottom: 20%;\n  }\n}\n\n\n\n";
+  return "\n@charset \"UTF-8\";\n\n/* Import ET Book styles\n   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: italic; }\n\n@font-face { font-family: \"et-book\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: bold;\n             font-style: normal; }\n\n@font-face { font-family: \"et-book-roman-old-style\";\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot\");\n             src: url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix\") format(\"embedded-opentype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff\") format(\"woff\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf\") format(\"truetype\"), url(\"https://cdn.rawgit.com/edwardtufte/tufte-css/gh-pages/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf\") format(\"svg\");\n             font-weight: normal;\n             font-style: normal; }\n\n\n             .ReactTable{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;border:1px solid rgba(0,0,0,0.1);}.ReactTable *{box-sizing:border-box}.ReactTable .rt-table{-webkit-box-flex:1;-ms-flex:1;flex:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;width:100%;border-collapse:collapse;overflow:auto}.ReactTable .rt-thead{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}.ReactTable .rt-thead.-headerGroups{background:rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.05)}.ReactTable .rt-thead.-filters{border-bottom:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-thead.-filters .rt-th{border-right:1px solid rgba(0,0,0,0.02)}.ReactTable .rt-thead.-header{box-shadow:0 2px 15px 0 rgba(0,0,0,0.15)}.ReactTable .rt-thead .rt-tr{text-align:center}.ReactTable .rt-thead .rt-th,.ReactTable .rt-thead .rt-td{padding:5px 5px;line-height:normal;position:relative;border-right:1px solid rgba(0,0,0,0.05);-webkit-transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);transition:box-shadow .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:inset 0 0 0 0 transparent;}.ReactTable .rt-thead .rt-th.-sort-asc,.ReactTable .rt-thead .rt-td.-sort-asc{box-shadow:inset 0 3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-sort-desc,.ReactTable .rt-thead .rt-td.-sort-desc{box-shadow:inset 0 -3px 0 0 rgba(0,0,0,0.6)}.ReactTable .rt-thead .rt-th.-cursor-pointer,.ReactTable .rt-thead .rt-td.-cursor-pointer{cursor:pointer}.ReactTable .rt-thead .rt-th:last-child,.ReactTable .rt-thead .rt-td:last-child{border-right:0}.ReactTable .rt-thead .rt-resizable-header{overflow:visible;}.ReactTable .rt-thead .rt-resizable-header:last-child{overflow:hidden}.ReactTable .rt-thead .rt-resizable-header-content{overflow:hidden;text-overflow:ellipsis}.ReactTable .rt-thead .rt-header-pivot{border-right-color:#f7f7f7}.ReactTable .rt-thead .rt-header-pivot:after,.ReactTable .rt-thead .rt-header-pivot:before{left:100%;top:50%;border:solid transparent;content:\" \";height:0;width:0;position:absolute;pointer-events:none}.ReactTable .rt-thead .rt-header-pivot:after{border-color:rgba(255,255,255,0);border-left-color:#fff;border-width:8px;margin-top:-8px}.ReactTable .rt-thead .rt-header-pivot:before{border-color:rgba(102,102,102,0);border-left-color:#f7f7f7;border-width:10px;margin-top:-10px}.ReactTable .rt-tbody{-webkit-box-flex:99999;-ms-flex:99999 1 auto;flex:99999 1 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;overflow:auto;}.ReactTable .rt-tbody .rt-tr-group{border-bottom:solid 1px rgba(0,0,0,0.05);}.ReactTable .rt-tbody .rt-tr-group:last-child{border-bottom:0}.ReactTable .rt-tbody .rt-td{border-right:1px solid rgba(0,0,0,0.02);}.ReactTable .rt-tbody .rt-td:last-child{border-right:0}.ReactTable .rt-tbody .rt-expandable{cursor:pointer}.ReactTable .rt-tr-group{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}.ReactTable .rt-tr{-webkit-box-flex:1;-ms-flex:1 0 auto;flex:1 0 auto;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex}.ReactTable .rt-th,.ReactTable .rt-td{-webkit-box-flex:1;-ms-flex:1 0 0px;flex:1 0 0;white-space:nowrap;text-overflow:ellipsis;padding:7px 5px;overflow:hidden;-webkit-transition:.3s ease;transition:.3s ease;-webkit-transition-property:width,min-width,padding,opacity;transition-property:width,min-width,padding,opacity;}.ReactTable .rt-th.-hidden,.ReactTable .rt-td.-hidden{width:0 !important;min-width:0 !important;padding:0 !important;border:0 !important;opacity:0 !important}.ReactTable .rt-expander{display:inline-block;position:relative;margin:0;color:transparent;margin:0 10px;}.ReactTable .rt-expander:after{content:'';position:absolute;width:0;height:0;top:50%;left:50%;-webkit-transform:translate(-50%,-50%) rotate(-90deg);transform:translate(-50%,-50%) rotate(-90deg);border-left:5.04px solid transparent;border-right:5.04px solid transparent;border-top:7px solid rgba(0,0,0,0.8);-webkit-transition:all .3s cubic-bezier(.175,.885,.32,1.275);transition:all .3s cubic-bezier(.175,.885,.32,1.275);cursor:pointer}.ReactTable .rt-expander.-open:after{-webkit-transform:translate(-50%,-50%) rotate(0);transform:translate(-50%,-50%) rotate(0)}.ReactTable .rt-resizer{display:inline-block;position:absolute;width:36px;top:0;bottom:0;right:-18px;cursor:col-resize;z-index:10}.ReactTable .rt-tfoot{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;box-shadow:0 0 15px 0 rgba(0,0,0,0.15);}.ReactTable .rt-tfoot .rt-td{border-right:1px solid rgba(0,0,0,0.05);}.ReactTable .rt-tfoot .rt-td:last-child{border-right:0}.ReactTable.-striped .rt-tr.-odd{background:rgba(0,0,0,0.03)}.ReactTable.-highlight .rt-tbody .rt-tr:not(.-padRow):hover{background:rgba(0,0,0,0.05)}.ReactTable .-pagination{z-index:1;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-ms-flex-wrap:wrap;flex-wrap:wrap;padding:3px;box-shadow:0 0 15px 0 rgba(0,0,0,0.1);border-top:2px solid rgba(0,0,0,0.1);}.ReactTable .-pagination .-btn{-webkit-appearance:none;-moz-appearance:none;appearance:none;display:block;width:100%;height:100%;border:0;border-radius:3px;padding:6px;font-size:1em;color:rgba(0,0,0,0.6);background:rgba(0,0,0,0.1);-webkit-transition:all .1s ease;transition:all .1s ease;cursor:pointer;outline:none;}.ReactTable .-pagination .-btn[disabled]{opacity:.5;cursor:default}.ReactTable .-pagination .-btn:not([disabled]):hover{background:rgba(0,0,0,0.3);color:#fff}.ReactTable .-pagination .-previous,.ReactTable .-pagination .-next{-webkit-box-flex:1;-ms-flex:1;flex:1;text-align:center}.ReactTable .-pagination .-center{-webkit-box-flex:1.5;-ms-flex:1.5;flex:1.5;text-align:center;margin-bottom:0;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-ms-flex-pack:distribute;justify-content:space-around}.ReactTable .-pagination .-pageInfo{display:inline-block;margin:3px 10px;white-space:nowrap}.ReactTable .-pagination .-pageJump{display:inline-block;}.ReactTable .-pagination .-pageJump input{width:70px;text-align:center}.ReactTable .-pagination .-pageSizeOptions{margin:3px 10px}.ReactTable .rt-noData{display:block;position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:1;pointer-events:none;padding:20px;color:rgba(0,0,0,0.5)}.ReactTable .-loading{display:block;position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(255,255,255,0.8);-webkit-transition:all .3s ease;transition:all .3s ease;z-index:-1;opacity:0;pointer-events:none;}.ReactTable .-loading > div{position:absolute;display:block;text-align:center;width:100%;top:50%;left:0;font-size:15px;color:rgba(0,0,0,0.6);-webkit-transform:translateY(-52%);transform:translateY(-52%);-webkit-transition:all .3s cubic-bezier(.25,.46,.45,.94);transition:all .3s cubic-bezier(.25,.46,.45,.94)}.ReactTable .-loading.-active{opacity:1;z-index:2;pointer-events:all;}.ReactTable .-loading.-active > div{-webkit-transform:translateY(50%);transform:translateY(50%)}.ReactTable input,.ReactTable select{border:1px solid rgba(0,0,0,0.1);background:#fff;padding:5px 7px;font-size:inherit;border-radius:3px;font-weight:normal;outline:none}.ReactTable .rt-resizing .rt-th,.ReactTable .rt-resizing .rt-td{-webkit-transition:none !important;transition:none !important;cursor:col-resize;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}\n             ReactTable .-pagination .-btn {\n              margin: 0;\n            }\n/* Tufte CSS styles */\n\nhtml {\n  font-size: 15px;\n}\n\nbody {\n  background-color: #fffff8;\n}\n\nbody { font-family: et-book, Palatino, \"Palatino Linotype\", \"Palatino LT STD\", \"Book Antiqua\", Georgia, serif;\n       background-color: #fffff8;\n       color: #111;\n       counter-reset: sidenote-counter; }\n\n\n.idyll-root { position: relative;\n          padding: 5rem 0rem;\n          margin-left: 0;\n          width: auto;\n          margin: auto; }\n\nh1, .hed { font-weight: 400;\n     margin-top: 4rem;\n     margin-bottom: 1.5rem;\n     font-size: 3.2rem;\n     line-height: 1; }\n\nh2 { font-style: italic;\n     font-weight: 400;\n     margin-top: 2.1rem;\n     margin-bottom: 0;\n     font-size: 2.2rem;\n     line-height: 1; }\n\nh3 { font-style: italic;\n     font-weight: 400;\n     font-size: 1.7rem;\n     margin-top: 2rem;\n     margin-bottom: 0;\n     line-height: 1; }\n\nhr { display: block;\n     height: 1px;\n     width: 55%;\n     border: 0;\n     border-top: 1px solid #ccc;\n     margin: 1em 0;\n     padding: 0; }\n\np.subtitle,\n.dek { font-style: italic;\n             margin-top: 1rem;\n             margin-bottom: 1rem;\n             font-size: 1.8rem;\n             display: block;\n             line-height: 1; }\n\n.numeral { font-family: et-book-roman-old-style; }\n\n.danger { color: red; }\n\nsection { padding-top: 1rem;\n          padding-bottom: 1rem; }\n\np, ol, ul { font-size: 1.4rem; }\n\np { line-height: 2rem;\n    margin-top: 1.4rem;\n    margin-bottom: 1.4rem;\n    padding-right: 0;\n    vertical-align: baseline; }\n\n/* Chapter Epigraphs */\ndiv.epigraph { margin: 5em 0; }\n\ndiv.epigraph > blockquote { margin-top: 3em;\n                            margin-bottom: 3em; }\n\ndiv.epigraph > blockquote, div.epigraph > blockquote > p { font-style: italic; }\n\ndiv.epigraph > blockquote > footer { font-style: normal; }\n\ndiv.epigraph > blockquote > footer > cite { font-style: italic; }\n/* end chapter epigraphs styles */\n\nblockquote { font-size: 1.4rem; }\n\nblockquote p { width: 55%;\n               margin-right: 40px; }\n\nblockquote footer { width: 55%;\n                    font-size: 1.1rem;\n                    text-align: right; }\n\nsection>ol, section>ul { width: 45%;\n                         -webkit-padding-start: 5%;\n                         -webkit-padding-end: 5%; }\n\nli { padding: 0.5rem 0; }\n\nfigure { padding: 0;\n         border: 0;\n         font-size: 100%;\n         font: inherit;\n         vertical-align: baseline;\n         max-width: 55%;\n         -webkit-margin-start: 0;\n         -webkit-margin-end: 0;\n         margin: 0 0 3em 0; }\n\nfigcaption { float: right;\n             clear: right;\n             margin-top: 0;\n             margin-bottom: 0;\n             font-size: 1.1rem;\n             line-height: 1.6;\n             vertical-align: baseline;\n             position: relative;\n             max-width: 40%; }\n\nfigure.fullwidth figcaption { margin-right: 24%; }\n\n/* Links: replicate underline that clears descenders */\na:link, a:visited { color: inherit; }\n\n@media screen and (-webkit-min-device-pixel-ratio: 0) { a:link { background-position-y: 87%, 87%, 87%; } }\n\n\na:link::-moz-selection { text-shadow: 0.03em 0 #b4d5fe, -0.03em 0 #b4d5fe, 0 0.03em #b4d5fe, 0 -0.03em #b4d5fe, 0.06em 0 #b4d5fe, -0.06em 0 #b4d5fe, 0.09em 0 #b4d5fe, -0.09em 0 #b4d5fe, 0.12em 0 #b4d5fe, -0.12em 0 #b4d5fe, 0.15em 0 #b4d5fe, -0.15em 0 #b4d5fe;\n                         background: #b4d5fe; }\n\n/* Sidenotes, margin notes, figures, captions */\nimg { max-width: 100%; }\n\n.aside, .sidenote, .marginnote { float: right;\n                         clear: right;\n                         margin-right: -60%;\n                         width: 50%;\n                         margin-top: 0;\n                         margin-bottom: 0;\n                         font-size: 1.1rem;\n                         line-height: 1.3;\n                         vertical-align: baseline;\n                         position: relative; }\n\n.sidenote-number { counter-increment: sidenote-counter; }\n\n.sidenote-number:after, .sidenote:before { content: counter(sidenote-counter) \" \";\n                                           font-family: et-book-roman-old-style;\n                                           position: relative;\n                                           vertical-align: baseline; }\n\n.sidenote-number:after { content: counter(sidenote-counter);\n                         font-size: 1rem;\n                         top: -0.5rem;\n                         left: 0.1rem; }\n\n.sidenote:before { content: counter(sidenote-counter) \" \";\n                   top: -0.5rem; }\n\nblockquote .sidenote, blockquote .marginnote, blockquote .aside { margin-right: -82%;\n                                               min-width: 59%;\n                                               text-align: left; }\n\n.aside-container {\n  position: static;\n  width: 55%;\n}\ndiv.fullwidth, table.fullwidth { width: 100%; }\n\ndiv.table-wrapper { overflow-x: auto;\n                    font-family: \"Trebuchet MS\", \"Gill Sans\", \"Gill Sans MT\", sans-serif; }\n\n.sans { font-family: \"Gill Sans\", \"Gill Sans MT\", Calibri, sans-serif;\n        letter-spacing: .03em; }\n\ncode { font-family: Consolas, \"Liberation Mono\", Menlo, Courier, monospace;\n       font-size: 1.0rem;\n       line-height: 1.42; }\n\n.sans > code { font-size: 1.2rem; }\n\nh1 > code, h2 > code, h3 > code { font-size: 0.80em; }\n\n.marginnote > code, .sidenote > code { font-size: 1rem; }\n\npre.code { font-size: 0.9rem;\n           width: 52.5%;\n           margin-left: 2.5%;\n           overflow-x: auto; }\n\npre.code.fullwidth { width: 90%; }\n\n.fullwidth { max-width: 90%;\n             clear:both; }\n\nspan.newthought { font-variant: small-caps;\n                  font-size: 1.2em; }\n\ninput.margin-toggle { display: none; }\n\nlabel.sidenote-number { display: inline; }\n\nlabel.margin-toggle:not(.sidenote-number) { display: none; }\n\n@media (max-width: 760px) { p, footer { width: 100%; }\n                            pre.code { width: 97%; }\n                            ul { width: 85%; }\n                            figure { max-width: 90%; }\n                            figcaption, figure.fullwidth figcaption { margin-right: 0%;\n                                                                      max-width: none; }\n                            blockquote { margin-left: 1.5em;\n                                         margin-right: 0em; }\n                            blockquote p, blockquote footer { width: 100%; }\n                            label.margin-toggle:not(.sidenote-number) { display: inline; }\n                            .sidenote, .marginnote { display: none; }\n                            .margin-toggle:checked + .sidenote,\n                            .margin-toggle:checked + .marginnote { display: block;\n                                                                   float: left;\n                                                                   left: 1rem;\n                                                                   clear: both;\n                                                                   width: 95%;\n                                                                   margin: 1rem 2.5%;\n                                                                   vertical-align: baseline;\n                                                                   position: relative; }\n                            label { cursor: pointer; }\n                            div.table-wrapper, table { width: 85%; }\n                            img { width: 100%; } }\n\n\n\n.idyll-dynamic {\n  text-decoration: underline;\n  text-decoration-style: dotted;\n}\n\n.idyll-action {\n  text-decoration: underline;\n}\n\n\n.idyll-document-error {\n  color: red;\n  font-family: monospace;\n}\n\n\n.idyll-step-graphic {\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  height: 100%;\n  overflow: hidden;\n  margin: 0 auto;\n  text-align: center;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  background: black;\n}\n\n.idyll-scroll-graphic {\n\n  text-align: center;\n  width: 100%;\n}\n\n.idyll-step-graphic img {\n  flex-shrink: 0;\n  min-width: 100%;\n  min-height: 100%\n}\n\n.idyll-step-content {\n  left: 0;\n  right: 0;\n  bottom: 0;\n  position: absolute;\n  color: white;\n  padding: 10px;\n  background: rgba(0, 0, 0, 0.8);\n}\n\n.idyll-stepper-control {\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  width: 100%;\n}\n\n.idyll-stepper-control-button {\n  background: rgba(0, 0, 0, 0.7);\n  color: white;\n  font-weight: bold;\n  padding: 15px 10px;\n  cursor: pointer;\n}\n\n.idyll-stepper-control-button-previous {\n  position: absolute;\n  left: 10px;\n}\n\n.idyll-stepper-control-button-next {\n  position: absolute;\n  right: 10px;\n}\n\n.idyll-stepper {\n  margin: 60px 0;\n}\n\n.idyll-scroll {\n  margin-top: 25vh;\n}\n\n.idyll-scroll-text {\n  padding: 50vh 0;\n}\n\n.idyll-scroll-text .idyll-step {\n  margin: 75vh 0 75vh 0;\n  padding: 50px;\n  background: #fff;\n  border: solid 1px #111;\n}\n\n.idyll-scroll-text .idyll-step h2 {\n  margin-top: 0;\n}\n\npre {\n  background: #f3f3f3;\n  padding: 15px;\n  overflow-x: auto;\n}\n\n";
 };
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/ieee754/index.js":[function(require,module,exports){
-/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -23994,42 +23400,30 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/is-arguments/index.js":[function(require,module,exports){
-'use strict';
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/insert-module-globals/node_modules/is-buffer/index.js":[function(require,module,exports){
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
 
-var hasToStringTag = require('has-tostringtag/shams')();
-var callBound = require('call-bind/callBound');
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+module.exports = function (obj) {
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
+}
 
-var $toString = callBound('Object.prototype.toString');
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
 
-var isStandardArguments = function isArguments(value) {
-	if (hasToStringTag && value && typeof value === 'object' && Symbol.toStringTag in value) {
-		return false;
-	}
-	return $toString(value) === '[object Arguments]';
-};
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+}
 
-var isLegacyArguments = function isArguments(value) {
-	if (isStandardArguments(value)) {
-		return true;
-	}
-	return value !== null &&
-		typeof value === 'object' &&
-		typeof value.length === 'number' &&
-		value.length >= 0 &&
-		$toString(value) !== '[object Array]' &&
-		$toString(value.callee) === '[object Function]';
-};
-
-var supportsStandardArguments = (function () {
-	return isStandardArguments(arguments);
-}());
-
-isStandardArguments.isLegacyArguments = isLegacyArguments; // for tests
-
-module.exports = supportsStandardArguments ? isStandardArguments : isLegacyArguments;
-
-},{"call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","has-tostringtag/shams":"/usr/local/lib/node_modules/idyll/node_modules/has-tostringtag/shams.js"}],"/usr/local/lib/node_modules/idyll/node_modules/is-extendable/index.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/is-extendable/index.js":[function(require,module,exports){
 /*!
  * is-extendable <https://github.com/jonschlinkert/is-extendable>
  *
@@ -24044,47 +23438,7 @@ module.exports = function isExtendable(val) {
     && (typeof val === 'object' || typeof val === 'function');
 };
 
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/is-generator-function/index.js":[function(require,module,exports){
-'use strict';
-
-var toStr = Object.prototype.toString;
-var fnToStr = Function.prototype.toString;
-var isFnRegex = /^\s*(?:function)?\*/;
-var hasToStringTag = require('has-tostringtag/shams')();
-var getProto = Object.getPrototypeOf;
-var getGeneratorFunc = function () { // eslint-disable-line consistent-return
-	if (!hasToStringTag) {
-		return false;
-	}
-	try {
-		return Function('return function*() {}')();
-	} catch (e) {
-	}
-};
-var GeneratorFunction;
-
-module.exports = function isGeneratorFunction(fn) {
-	if (typeof fn !== 'function') {
-		return false;
-	}
-	if (isFnRegex.test(fnToStr.call(fn))) {
-		return true;
-	}
-	if (!hasToStringTag) {
-		var str = toStr.call(fn);
-		return str === '[object GeneratorFunction]';
-	}
-	if (!getProto) {
-		return false;
-	}
-	if (typeof GeneratorFunction === 'undefined') {
-		var generatorFunc = getGeneratorFunc();
-		GeneratorFunction = generatorFunc ? getProto(generatorFunc) : false;
-	}
-	return getProto(fn) === GeneratorFunction;
-};
-
-},{"has-tostringtag/shams":"/usr/local/lib/node_modules/idyll/node_modules/has-tostringtag/shams.js"}],"/usr/local/lib/node_modules/idyll/node_modules/is-lower-case/is-lower-case.js":[function(require,module,exports){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/is-lower-case/is-lower-case.js":[function(require,module,exports){
 var lowerCase = require('lower-case')
 
 /**
@@ -24098,71 +23452,7 @@ module.exports = function (string, locale) {
   return lowerCase(string, locale) === string
 }
 
-},{"lower-case":"/usr/local/lib/node_modules/idyll/node_modules/lower-case/lower-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/is-typed-array/index.js":[function(require,module,exports){
-(function (global){(function (){
-'use strict';
-
-var forEach = require('foreach');
-var availableTypedArrays = require('available-typed-arrays');
-var callBound = require('call-bind/callBound');
-
-var $toString = callBound('Object.prototype.toString');
-var hasToStringTag = require('has-tostringtag/shams')();
-
-var g = typeof globalThis === 'undefined' ? global : globalThis;
-var typedArrays = availableTypedArrays();
-
-var $indexOf = callBound('Array.prototype.indexOf', true) || function indexOf(array, value) {
-	for (var i = 0; i < array.length; i += 1) {
-		if (array[i] === value) {
-			return i;
-		}
-	}
-	return -1;
-};
-var $slice = callBound('String.prototype.slice');
-var toStrTags = {};
-var gOPD = require('es-abstract/helpers/getOwnPropertyDescriptor');
-var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
-if (hasToStringTag && gOPD && getPrototypeOf) {
-	forEach(typedArrays, function (typedArray) {
-		var arr = new g[typedArray]();
-		if (Symbol.toStringTag in arr) {
-			var proto = getPrototypeOf(arr);
-			var descriptor = gOPD(proto, Symbol.toStringTag);
-			if (!descriptor) {
-				var superProto = getPrototypeOf(proto);
-				descriptor = gOPD(superProto, Symbol.toStringTag);
-			}
-			toStrTags[typedArray] = descriptor.get;
-		}
-	});
-}
-
-var tryTypedArrays = function tryAllTypedArrays(value) {
-	var anyTrue = false;
-	forEach(toStrTags, function (getter, typedArray) {
-		if (!anyTrue) {
-			try {
-				anyTrue = getter.call(value) === typedArray;
-			} catch (e) { /**/ }
-		}
-	});
-	return anyTrue;
-};
-
-module.exports = function isTypedArray(value) {
-	if (!value || typeof value !== 'object') { return false; }
-	if (!hasToStringTag || !(Symbol.toStringTag in value)) {
-		var tag = $slice($toString(value), 8, -1);
-		return $indexOf(typedArrays, tag) > -1;
-	}
-	if (!gOPD) { return false; }
-	return tryTypedArrays(value);
-};
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"available-typed-arrays":"/usr/local/lib/node_modules/idyll/node_modules/available-typed-arrays/index.js","call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","es-abstract/helpers/getOwnPropertyDescriptor":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/getOwnPropertyDescriptor.js","foreach":"/usr/local/lib/node_modules/idyll/node_modules/foreach/index.js","has-tostringtag/shams":"/usr/local/lib/node_modules/idyll/node_modules/has-tostringtag/shams.js"}],"/usr/local/lib/node_modules/idyll/node_modules/is-upper-case/is-upper-case.js":[function(require,module,exports){
+},{"lower-case":"/usr/local/lib/node_modules/idyll/node_modules/lower-case/lower-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/is-upper-case/is-upper-case.js":[function(require,module,exports){
 var upperCase = require('upper-case')
 
 /**
@@ -24176,7 +23466,9 @@ module.exports = function (string, locale) {
   return upperCase(string, locale) === string
 }
 
-},{"upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/js-yaml/index.js":[function(require,module,exports){
+},{"upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/isarray/index.js":[function(require,module,exports){
+arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/falafel/node_modules/isarray/index.js"][0].apply(exports,arguments)
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/js-yaml/index.js":[function(require,module,exports){
 'use strict';
 
 
@@ -26459,7 +25751,7 @@ function readAlias(state) {
 
   alias = state.input.slice(_position, state.position);
 
-  if (!_hasOwnProperty.call(state.anchorMap, alias)) {
+  if (!state.anchorMap.hasOwnProperty(alias)) {
     throwError(state, 'unidentified alias "' + alias + '"');
   }
 
@@ -45662,26 +44954,27 @@ module.exports = function isArguments(value) {
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/implementation.js":[function(require,module,exports){
 'use strict';
 
-var RequireObjectCoercible = require('es-abstract/2020/RequireObjectCoercible');
-var callBound = require('call-bind/callBound');
+var RequireObjectCoercible = require('es-abstract/2019/RequireObjectCoercible');
+var has = require('has');
+var callBound = require('es-abstract/helpers/callBound');
 var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
 
 module.exports = function entries(O) {
 	var obj = RequireObjectCoercible(O);
 	var entrys = [];
 	for (var key in obj) {
-		if ($isEnumerable(obj, key)) { // checks own-ness as well
+		if (has(obj, key) && $isEnumerable(obj, key)) {
 			entrys.push([key, obj[key]]);
 		}
 	}
 	return entrys;
 };
 
-},{"call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","es-abstract/2020/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2020/RequireObjectCoercible.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/index.js":[function(require,module,exports){
+},{"es-abstract/2019/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/index.js":[function(require,module,exports){
 'use strict';
 
 var define = require('define-properties');
-var callBind = require('call-bind');
+var callBind = require('es-abstract/helpers/callBind');
 
 var implementation = require('./implementation');
 var getPolyfill = require('./polyfill');
@@ -45697,7 +44990,7 @@ define(polyfill, {
 
 module.exports = polyfill;
 
-},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/shim.js","call-bind":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js":[function(require,module,exports){
+},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/shim.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js","es-abstract/helpers/callBind":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBind.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -45725,8 +45018,9 @@ module.exports = function shimEntries() {
 },{"./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.entries/polyfill.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/implementation.js":[function(require,module,exports){
 'use strict';
 
-var RequireObjectCoercible = require('es-abstract/2020/RequireObjectCoercible');
-var callBound = require('call-bind/callBound');
+var has = require('has');
+var RequireObjectCoercible = require('es-abstract/2019/RequireObjectCoercible');
+var callBound = require('es-abstract/helpers/callBound');
 
 var $isEnumerable = callBound('Object.prototype.propertyIsEnumerable');
 
@@ -45734,16 +45028,33 @@ module.exports = function values(O) {
 	var obj = RequireObjectCoercible(O);
 	var vals = [];
 	for (var key in obj) {
-		if ($isEnumerable(obj, key)) { // checks own-ness as well
+		if (has(obj, key) && $isEnumerable(obj, key)) {
 			vals.push(obj[key]);
 		}
 	}
 	return vals;
 };
 
-},{"call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","es-abstract/2020/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2020/RequireObjectCoercible.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/index.js":[function(require,module,exports){
-arguments[4]["/usr/local/lib/node_modules/idyll/node_modules/object.entries/index.js"][0].apply(exports,arguments)
-},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.values/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.values/shim.js","call-bind":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/index.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js":[function(require,module,exports){
+},{"es-abstract/2019/RequireObjectCoercible":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/2019/RequireObjectCoercible.js","es-abstract/helpers/callBound":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/callBound.js","has":"/usr/local/lib/node_modules/idyll/node_modules/has/src/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/index.js":[function(require,module,exports){
+'use strict';
+
+var define = require('define-properties');
+
+var implementation = require('./implementation');
+var getPolyfill = require('./polyfill');
+var shim = require('./shim');
+
+var polyfill = getPolyfill();
+
+define(polyfill, {
+	getPolyfill: getPolyfill,
+	implementation: implementation,
+	shim: shim
+});
+
+module.exports = polyfill;
+
+},{"./implementation":"/usr/local/lib/node_modules/idyll/node_modules/object.values/implementation.js","./polyfill":"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js","./shim":"/usr/local/lib/node_modules/idyll/node_modules/object.values/shim.js","define-properties":"/usr/local/lib/node_modules/idyll/node_modules/define-properties/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/object.values/polyfill.js":[function(require,module,exports){
 'use strict';
 
 var implementation = require('./implementation');
@@ -45812,7 +45123,56 @@ module.exports = function (value, locale) {
   return noCase(value, locale, '/')
 }
 
-},{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js":[function(require,module,exports){
+},{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js":[function(require,module,exports){
+(function (process){
+'use strict';
+
+if (typeof process === 'undefined' ||
+    !process.version ||
+    process.version.indexOf('v0.') === 0 ||
+    process.version.indexOf('v1.') === 0 && process.version.indexOf('v1.8.') !== 0) {
+  module.exports = { nextTick: nextTick };
+} else {
+  module.exports = process
+}
+
+function nextTick(fn, arg1, arg2, arg3) {
+  if (typeof fn !== 'function') {
+    throw new TypeError('"callback" argument must be a function');
+  }
+  var len = arguments.length;
+  var args, i;
+  switch (len) {
+  case 0:
+  case 1:
+    return process.nextTick(fn);
+  case 2:
+    return process.nextTick(function afterTickOne() {
+      fn.call(null, arg1);
+    });
+  case 3:
+    return process.nextTick(function afterTickTwo() {
+      fn.call(null, arg1, arg2);
+    });
+  case 4:
+    return process.nextTick(function afterTickThree() {
+      fn.call(null, arg1, arg2, arg3);
+    });
+  default:
+    args = new Array(len - 1);
+    i = 0;
+    while (i < args.length) {
+      args[i++] = arguments[i];
+    }
+    return process.nextTick(function afterTick() {
+      fn.apply(null, args);
+    });
+  }
+}
+
+
+}).call(this,require('_process'))
+},{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js":[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -46797,7 +46157,7 @@ var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
 module.exports = ReactPropTypesSecret;
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/react-dom-factories/index.js":[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 'use strict';
 
 /**
@@ -46994,9 +46354,9 @@ module.exports = ReactPropTypesSecret;
 });
 
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/react-dom/cjs/react-dom.development.js":[function(require,module,exports){
-/** @license React v16.14.0
+/** @license React v16.13.1
  * react-dom.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -71566,7 +70926,7 @@ function injectIntoDevTools(devToolsConfig) {
     // Enables DevTools to append owner stacks to error messages in DEV mode.
     getCurrentFiber:  function () {
       return current;
-    }
+    } 
   }));
 }
 var IsSomeRendererActing$1 = ReactSharedInternals.IsSomeRendererActing;
@@ -71918,7 +71278,7 @@ implementation) {
   };
 }
 
-var ReactVersion = '16.14.0';
+var ReactVersion = '16.13.1';
 
 setAttemptUserBlockingHydration(attemptUserBlockingHydration$1);
 setAttemptContinuousHydration(attemptContinuousHydration$1);
@@ -72010,7 +71370,7 @@ exports.version = ReactVersion;
 }
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/checkPropTypes.js","react":"react","scheduler":"/usr/local/lib/node_modules/idyll/node_modules/scheduler/index.js","scheduler/tracing":"/usr/local/lib/node_modules/idyll/node_modules/scheduler/tracing.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-dom/cjs/react-dom.production.min.js":[function(require,module,exports){
-/** @license React v16.14.0
+/** @license React v16.13.1
  * react-dom.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -72297,14 +71657,14 @@ function ik(a,b,c,d,e){var f=c._reactRootContainer;if(f){var g=f._internalRoot;i
 wc=function(a){if(13===a.tag){var b=hg(Gg(),150,100);Ig(a,b);ek(a,b)}};xc=function(a){13===a.tag&&(Ig(a,3),ek(a,3))};yc=function(a){if(13===a.tag){var b=Gg();b=Hg(b,a,null);Ig(a,b);ek(a,b)}};
 za=function(a,b,c){switch(b){case "input":Cb(a,c);b=c.name;if("radio"===c.type&&null!=b){for(c=a;c.parentNode;)c=c.parentNode;c=c.querySelectorAll("input[name="+JSON.stringify(""+b)+'][type="radio"]');for(b=0;b<c.length;b++){var d=c[b];if(d!==a&&d.form===a.form){var e=Qd(d);if(!e)throw Error(u(90));yb(d);Cb(d,e)}}}break;case "textarea":Kb(a,c);break;case "select":b=c.value,null!=b&&Hb(a,!!c.multiple,b,!1)}};Fa=Mj;
 Ga=function(a,b,c,d,e){var f=W;W|=4;try{return cg(98,a.bind(null,b,c,d,e))}finally{W=f,W===V&&gg()}};Ha=function(){(W&(1|fj|gj))===V&&(Lj(),Dj())};Ia=function(a,b){var c=W;W|=2;try{return a(b)}finally{W=c,W===V&&gg()}};function kk(a,b){var c=2<arguments.length&&void 0!==arguments[2]?arguments[2]:null;if(!gk(b))throw Error(u(200));return jk(a,b,null,c)}var lk={Events:[Nc,Pd,Qd,xa,ta,Xd,function(a){jc(a,Wd)},Da,Ea,id,mc,Dj,{current:!1}]};
-(function(a){var b=a.findFiberByHostInstance;return Yj(n({},a,{overrideHookState:null,overrideProps:null,setSuspenseHandler:null,scheduleUpdate:null,currentDispatcherRef:Wa.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hc(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null},findHostInstancesForRefresh:null,scheduleRefresh:null,scheduleRoot:null,setRefreshHandler:null,getCurrentFiber:null}))})({findFiberByHostInstance:tc,bundleType:0,version:"16.14.0",
+(function(a){var b=a.findFiberByHostInstance;return Yj(n({},a,{overrideHookState:null,overrideProps:null,setSuspenseHandler:null,scheduleUpdate:null,currentDispatcherRef:Wa.ReactCurrentDispatcher,findHostInstanceByFiber:function(a){a=hc(a);return null===a?null:a.stateNode},findFiberByHostInstance:function(a){return b?b(a):null},findHostInstancesForRefresh:null,scheduleRefresh:null,scheduleRoot:null,setRefreshHandler:null,getCurrentFiber:null}))})({findFiberByHostInstance:tc,bundleType:0,version:"16.13.1",
 rendererPackageName:"react-dom"});exports.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED=lk;exports.createPortal=kk;exports.findDOMNode=function(a){if(null==a)return null;if(1===a.nodeType)return a;var b=a._reactInternalFiber;if(void 0===b){if("function"===typeof a.render)throw Error(u(188));throw Error(u(268,Object.keys(a)));}a=hc(b);a=null===a?null:a.stateNode;return a};
 exports.flushSync=function(a,b){if((W&(fj|gj))!==V)throw Error(u(187));var c=W;W|=1;try{return cg(99,a.bind(null,b))}finally{W=c,gg()}};exports.hydrate=function(a,b,c){if(!gk(b))throw Error(u(200));return ik(null,a,b,!0,c)};exports.render=function(a,b,c){if(!gk(b))throw Error(u(200));return ik(null,a,b,!1,c)};
 exports.unmountComponentAtNode=function(a){if(!gk(a))throw Error(u(40));return a._reactRootContainer?(Nj(function(){ik(null,null,a,!1,function(){a._reactRootContainer=null;a[Od]=null})}),!0):!1};exports.unstable_batchedUpdates=Mj;exports.unstable_createPortal=function(a,b){return kk(a,b,2<arguments.length&&void 0!==arguments[2]?arguments[2]:null)};
-exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.14.0";
+exports.unstable_renderSubtreeIntoContainer=function(a,b,c,d){if(!gk(c))throw Error(u(200));if(null==a||void 0===a._reactInternalFiber)throw Error(u(38));return ik(a,b,c,!1,d)};exports.version="16.13.1";
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js","react":"react","scheduler":"/usr/local/lib/node_modules/idyll/node_modules/scheduler/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.development.js":[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 /** @license React v16.13.1
  * react-is.development.js
  *
@@ -72487,7 +71847,7 @@ exports.typeOf = typeOf;
   })();
 }
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.production.min.js":[function(require,module,exports){
 /** @license React v16.13.1
  * react-is.production.min.js
@@ -72506,7 +71866,7 @@ exports.isMemo=function(a){return z(a)===r};exports.isPortal=function(a){return 
 exports.isValidElementType=function(a){return"string"===typeof a||"function"===typeof a||a===e||a===m||a===g||a===f||a===p||a===q||"object"===typeof a&&null!==a&&(a.$$typeof===t||a.$$typeof===r||a.$$typeof===h||a.$$typeof===k||a.$$typeof===n||a.$$typeof===w||a.$$typeof===x||a.$$typeof===y||a.$$typeof===v)};exports.typeOf=z;
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/react-is/index.js":[function(require,module,exports){
-(function (process){(function (){
+(function (process){
 'use strict';
 
 if (process.env.NODE_ENV === 'production') {
@@ -72515,7 +71875,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = require('./cjs/react-is.development.js');
 }
 
-}).call(this)}).call(this,require('_process'))
+}).call(this,require('_process'))
 },{"./cjs/react-is.development.js":"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.development.js","./cjs/react-is.production.min.js":"/usr/local/lib/node_modules/idyll/node_modules/react-is/cjs/react-is.production.min.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react-latex-patched/build/latex.js":[function(require,module,exports){
 "use strict";
 
@@ -72655,13 +72015,30 @@ if (module && module.exports) {
 }
 
 },{"katex":"/usr/local/lib/node_modules/idyll/node_modules/katex/dist/katex.js","prop-types":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/index.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/react-tooltip/dist/index.js":[function(require,module,exports){
+(function (process){
 'use strict';
+
+
+
+function ___$insertStyle(css) {
+  if (!css) {
+    return;
+  }
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  var style = document.createElement('style');
+
+  style.setAttribute('type', 'text/css');
+  style.innerHTML = css;
+  document.head.appendChild(style);
+  return css;
+}
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var React = _interopDefault(require('react'));
-var PropTypes = _interopDefault(require('prop-types'));
-var uuid = require('uuid');
 
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -72799,11 +72176,905 @@ function _possibleConstructorReturn(self, call) {
   return _assertThisInitialized(self);
 }
 
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * 
+ */
+
+function makeEmptyFunction(arg) {
+  return function () {
+    return arg;
+  };
+}
+
+/**
+ * This function accepts and discards inputs; it has no side effects. This is
+ * primarily useful idiomatically for overridable function endpoints which
+ * always need to be callable, since JS lacks a null-call idiom ala Cocoa.
+ */
+var emptyFunction = function emptyFunction() {};
+
+emptyFunction.thatReturns = makeEmptyFunction;
+emptyFunction.thatReturnsFalse = makeEmptyFunction(false);
+emptyFunction.thatReturnsTrue = makeEmptyFunction(true);
+emptyFunction.thatReturnsNull = makeEmptyFunction(null);
+emptyFunction.thatReturnsThis = function () {
+  return this;
+};
+emptyFunction.thatReturnsArgument = function (arg) {
+  return arg;
+};
+
+var emptyFunction_1 = emptyFunction;
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
+
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var validateFormat = function validateFormat(format) {};
+
+if (process.env.NODE_ENV !== 'production') {
+  validateFormat = function validateFormat(format) {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  };
+}
+
+function invariant(condition, format, a, b, c, d, e, f) {
+  validateFormat(format);
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    } else {
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error(format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
+      error.name = 'Invariant Violation';
+    }
+
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
+}
+
+var invariant_1 = invariant;
+
+/**
+ * Similar to invariant but only logs a warning if the condition is not met.
+ * This can be used to log issues in development environments in critical
+ * paths. Removing the logging code for production environments will keep the
+ * same logic and follow the same code paths.
+ */
+
+var warning = emptyFunction_1;
+
+if (process.env.NODE_ENV !== 'production') {
+  var printWarning = function printWarning(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    var argIndex = 0;
+    var message = 'Warning: ' + format.replace(/%s/g, function () {
+      return args[argIndex++];
+    });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  };
+
+  warning = function warning(condition, format) {
+    if (format === undefined) {
+      throw new Error('`warning(condition, format, ...args)` requires a warning ' + 'message argument');
+    }
+
+    if (format.indexOf('Failed Composite propType: ') === 0) {
+      return; // Ignore CompositeComponent proptype check.
+    }
+
+    if (!condition) {
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      printWarning.apply(undefined, [format].concat(args));
+    }
+  };
+}
+
+var warning_1 = warning;
+
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+var objectAssign = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+var ReactPropTypesSecret = 'SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED';
+
+var ReactPropTypesSecret_1 = ReactPropTypesSecret;
+
+if (process.env.NODE_ENV !== 'production') {
+  var invariant$1 = invariant_1;
+  var warning$1 = warning_1;
+  var ReactPropTypesSecret$1 = ReactPropTypesSecret_1;
+  var loggedTypeFailures = {};
+}
+
+/**
+ * Assert that the values match with the type specs.
+ * Error messages are memorized and will only be shown once.
+ *
+ * @param {object} typeSpecs Map of name to a ReactPropType
+ * @param {object} values Runtime values that need to be type-checked
+ * @param {string} location e.g. "prop", "context", "child context"
+ * @param {string} componentName Name of the component for error messages.
+ * @param {?Function} getStack Returns the component stack.
+ * @private
+ */
+function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
+  if (process.env.NODE_ENV !== 'production') {
+    for (var typeSpecName in typeSpecs) {
+      if (typeSpecs.hasOwnProperty(typeSpecName)) {
+        var error;
+        // Prop type validation may throw. In case they do, we don't want to
+        // fail the render phase where it didn't fail before. So we log it.
+        // After these have been cleaned up, we'll let them throw.
+        try {
+          // This is intentionally an invariant that gets caught. It's the same
+          // behavior as without this statement except with a better message.
+          invariant$1(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
+          error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret$1);
+        } catch (ex) {
+          error = ex;
+        }
+        warning$1(!error || error instanceof Error, '%s: type specification of %s `%s` is invalid; the type checker ' + 'function must return `null` or an `Error` but returned a %s. ' + 'You may have forgotten to pass an argument to the type checker ' + 'creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and ' + 'shape all require an argument).', componentName || 'React class', location, typeSpecName, typeof error);
+        if (error instanceof Error && !(error.message in loggedTypeFailures)) {
+          // Only monitor this failure once because there tends to be a lot of the
+          // same error.
+          loggedTypeFailures[error.message] = true;
+
+          var stack = getStack ? getStack() : '';
+
+          warning$1(false, 'Failed %s type: %s%s', location, error.message, stack != null ? stack : '');
+        }
+      }
+    }
+  }
+}
+
+var checkPropTypes_1 = checkPropTypes;
+
+var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
+  /* global Symbol */
+  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+  /**
+   * Returns the iterator method function contained on the iterable object.
+   *
+   * Be sure to invoke the function with the iterable as context:
+   *
+   *     var iteratorFn = getIteratorFn(myIterable);
+   *     if (iteratorFn) {
+   *       var iterator = iteratorFn.call(myIterable);
+   *       ...
+   *     }
+   *
+   * @param {?object} maybeIterable
+   * @return {?function}
+   */
+  function getIteratorFn(maybeIterable) {
+    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+    if (typeof iteratorFn === 'function') {
+      return iteratorFn;
+    }
+  }
+
+  /**
+   * Collection of methods that allow declaration and validation of props that are
+   * supplied to React components. Example usage:
+   *
+   *   var Props = require('ReactPropTypes');
+   *   var MyArticle = React.createClass({
+   *     propTypes: {
+   *       // An optional string prop named "description".
+   *       description: Props.string,
+   *
+   *       // A required enum prop named "category".
+   *       category: Props.oneOf(['News','Photos']).isRequired,
+   *
+   *       // A prop named "dialog" that requires an instance of Dialog.
+   *       dialog: Props.instanceOf(Dialog).isRequired
+   *     },
+   *     render: function() { ... }
+   *   });
+   *
+   * A more formal specification of how these methods are used:
+   *
+   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+   *   decl := ReactPropTypes.{type}(.isRequired)?
+   *
+   * Each and every declaration produces a function with the same signature. This
+   * allows the creation of custom validation functions. For example:
+   *
+   *  var MyLink = React.createClass({
+   *    propTypes: {
+   *      // An optional string or URI prop named "href".
+   *      href: function(props, propName, componentName) {
+   *        var propValue = props[propName];
+   *        if (propValue != null && typeof propValue !== 'string' &&
+   *            !(propValue instanceof URI)) {
+   *          return new Error(
+   *            'Expected a string or an URI for ' + propName + ' in ' +
+   *            componentName
+   *          );
+   *        }
+   *      }
+   *    },
+   *    render: function() {...}
+   *  });
+   *
+   * @internal
+   */
+
+  var ANONYMOUS = '<<anonymous>>';
+
+  // Important!
+  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+  var ReactPropTypes = {
+    array: createPrimitiveTypeChecker('array'),
+    bool: createPrimitiveTypeChecker('boolean'),
+    func: createPrimitiveTypeChecker('function'),
+    number: createPrimitiveTypeChecker('number'),
+    object: createPrimitiveTypeChecker('object'),
+    string: createPrimitiveTypeChecker('string'),
+    symbol: createPrimitiveTypeChecker('symbol'),
+
+    any: createAnyTypeChecker(),
+    arrayOf: createArrayOfTypeChecker,
+    element: createElementTypeChecker(),
+    instanceOf: createInstanceTypeChecker,
+    node: createNodeChecker(),
+    objectOf: createObjectOfTypeChecker,
+    oneOf: createEnumTypeChecker,
+    oneOfType: createUnionTypeChecker,
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
+  };
+
+  /**
+   * inlined Object.is polyfill to avoid requiring consumers ship their own
+   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+   */
+  /*eslint-disable no-self-compare*/
+  function is(x, y) {
+    // SameValue algorithm
+    if (x === y) {
+      // Steps 1-5, 7-10
+      // Steps 6.b-6.e: +0 != -0
+      return x !== 0 || 1 / x === 1 / y;
+    } else {
+      // Step 6.a: NaN == NaN
+      return x !== x && y !== y;
+    }
+  }
+  /*eslint-enable no-self-compare*/
+
+  /**
+   * We use an Error-like object for backward compatibility as people may call
+   * PropTypes directly and inspect their output. However, we don't use real
+   * Errors anymore. We don't inspect their stack anyway, and creating them
+   * is prohibitively expensive if they are created too often, such as what
+   * happens in oneOfType() for any type before the one that matched.
+   */
+  function PropTypeError(message) {
+    this.message = message;
+    this.stack = '';
+  }
+  // Make `instanceof Error` still work for returned errors.
+  PropTypeError.prototype = Error.prototype;
+
+  function createChainableTypeChecker(validate) {
+    if (process.env.NODE_ENV !== 'production') {
+      var manualPropTypeCallCache = {};
+      var manualPropTypeWarningCount = 0;
+    }
+    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+      componentName = componentName || ANONYMOUS;
+      propFullName = propFullName || propName;
+
+      if (secret !== ReactPropTypesSecret_1) {
+        if (throwOnDirectAccess) {
+          // New behavior only for users of `prop-types` package
+          invariant_1(
+            false,
+            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+            'Use `PropTypes.checkPropTypes()` to call them. ' +
+            'Read more at http://fb.me/use-check-prop-types'
+          );
+        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+          // Old behavior for people using React.PropTypes
+          var cacheKey = componentName + ':' + propName;
+          if (
+            !manualPropTypeCallCache[cacheKey] &&
+            // Avoid spamming the console because they are often not actionable except for lib authors
+            manualPropTypeWarningCount < 3
+          ) {
+            warning_1(
+              false,
+              'You are manually calling a React.PropTypes validation ' +
+              'function for the `%s` prop on `%s`. This is deprecated ' +
+              'and will throw in the standalone `prop-types` package. ' +
+              'You may be seeing this warning due to a third-party PropTypes ' +
+              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.',
+              propFullName,
+              componentName
+            );
+            manualPropTypeCallCache[cacheKey] = true;
+            manualPropTypeWarningCount++;
+          }
+        }
+      }
+      if (props[propName] == null) {
+        if (isRequired) {
+          if (props[propName] === null) {
+            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+          }
+          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+        }
+        return null;
+      } else {
+        return validate(props, propName, componentName, location, propFullName);
+      }
+    }
+
+    var chainedCheckType = checkType.bind(null, false);
+    chainedCheckType.isRequired = checkType.bind(null, true);
+
+    return chainedCheckType;
+  }
+
+  function createPrimitiveTypeChecker(expectedType) {
+    function validate(props, propName, componentName, location, propFullName, secret) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== expectedType) {
+        // `propValue` being instance of, say, date/regexp, pass the 'object'
+        // check, but we can offer a more precise error message here rather than
+        // 'of type `object`'.
+        var preciseType = getPreciseType(propValue);
+
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createAnyTypeChecker() {
+    return createChainableTypeChecker(emptyFunction_1.thatReturnsNull);
+  }
+
+  function createArrayOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+      }
+      var propValue = props[propName];
+      if (!Array.isArray(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+      }
+      for (var i = 0; i < propValue.length; i++) {
+        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret_1);
+        if (error instanceof Error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createElementTypeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      if (!isValidElement(propValue)) {
+        var propType = getPropType(propValue);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createInstanceTypeChecker(expectedClass) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!(props[propName] instanceof expectedClass)) {
+        var expectedClassName = expectedClass.name || ANONYMOUS;
+        var actualClassName = getClassName(props[propName]);
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createEnumTypeChecker(expectedValues) {
+    if (!Array.isArray(expectedValues)) {
+      process.env.NODE_ENV !== 'production' ? warning_1(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
+      return emptyFunction_1.thatReturnsNull;
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      for (var i = 0; i < expectedValues.length; i++) {
+        if (is(propValue, expectedValues[i])) {
+          return null;
+        }
+      }
+
+      var valuesString = JSON.stringify(expectedValues);
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + propValue + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createObjectOfTypeChecker(typeChecker) {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (typeof typeChecker !== 'function') {
+        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+      }
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+      }
+      for (var key in propValue) {
+        if (propValue.hasOwnProperty(key)) {
+          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+          if (error instanceof Error) {
+            return error;
+          }
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createUnionTypeChecker(arrayOfTypeCheckers) {
+    if (!Array.isArray(arrayOfTypeCheckers)) {
+      process.env.NODE_ENV !== 'production' ? warning_1(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      return emptyFunction_1.thatReturnsNull;
+    }
+
+    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+      var checker = arrayOfTypeCheckers[i];
+      if (typeof checker !== 'function') {
+        warning_1(
+          false,
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+          'received %s at index %s.',
+          getPostfixForTypeWarning(checker),
+          i
+        );
+        return emptyFunction_1.thatReturnsNull;
+      }
+    }
+
+    function validate(props, propName, componentName, location, propFullName) {
+      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+        var checker = arrayOfTypeCheckers[i];
+        if (checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret_1) == null) {
+          return null;
+        }
+      }
+
+      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`.'));
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createNodeChecker() {
+    function validate(props, propName, componentName, location, propFullName) {
+      if (!isNode(props[propName])) {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      for (var key in shapeTypes) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          continue;
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = objectAssign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret_1);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
+    return createChainableTypeChecker(validate);
+  }
+
+  function isNode(propValue) {
+    switch (typeof propValue) {
+      case 'number':
+      case 'string':
+      case 'undefined':
+        return true;
+      case 'boolean':
+        return !propValue;
+      case 'object':
+        if (Array.isArray(propValue)) {
+          return propValue.every(isNode);
+        }
+        if (propValue === null || isValidElement(propValue)) {
+          return true;
+        }
+
+        var iteratorFn = getIteratorFn(propValue);
+        if (iteratorFn) {
+          var iterator = iteratorFn.call(propValue);
+          var step;
+          if (iteratorFn !== propValue.entries) {
+            while (!(step = iterator.next()).done) {
+              if (!isNode(step.value)) {
+                return false;
+              }
+            }
+          } else {
+            // Iterator will provide entry [k,v] tuples rather than values.
+            while (!(step = iterator.next()).done) {
+              var entry = step.value;
+              if (entry) {
+                if (!isNode(entry[1])) {
+                  return false;
+                }
+              }
+            }
+          }
+        } else {
+          return false;
+        }
+
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  function isSymbol(propType, propValue) {
+    // Native Symbol.
+    if (propType === 'symbol') {
+      return true;
+    }
+
+    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+    if (propValue['@@toStringTag'] === 'Symbol') {
+      return true;
+    }
+
+    // Fallback for non-spec compliant Symbols which are polyfilled.
+    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Equivalent of `typeof` but with special handling for array and regexp.
+  function getPropType(propValue) {
+    var propType = typeof propValue;
+    if (Array.isArray(propValue)) {
+      return 'array';
+    }
+    if (propValue instanceof RegExp) {
+      // Old webkits (at least until Android 4.0) return 'function' rather than
+      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+      // passes PropTypes.object.
+      return 'object';
+    }
+    if (isSymbol(propType, propValue)) {
+      return 'symbol';
+    }
+    return propType;
+  }
+
+  // This handles more types than `getPropType`. Only used for error messages.
+  // See `createPrimitiveTypeChecker`.
+  function getPreciseType(propValue) {
+    if (typeof propValue === 'undefined' || propValue === null) {
+      return '' + propValue;
+    }
+    var propType = getPropType(propValue);
+    if (propType === 'object') {
+      if (propValue instanceof Date) {
+        return 'date';
+      } else if (propValue instanceof RegExp) {
+        return 'regexp';
+      }
+    }
+    return propType;
+  }
+
+  // Returns a string that is postfixed to a warning about an invalid type.
+  // For example, "undefined" or "of type array"
+  function getPostfixForTypeWarning(value) {
+    var type = getPreciseType(value);
+    switch (type) {
+      case 'array':
+      case 'object':
+        return 'an ' + type;
+      case 'boolean':
+      case 'date':
+      case 'regexp':
+        return 'a ' + type;
+      default:
+        return type;
+    }
+  }
+
+  // Returns class name of the object, if any.
+  function getClassName(propValue) {
+    if (!propValue.constructor || !propValue.constructor.name) {
+      return ANONYMOUS;
+    }
+    return propValue.constructor.name;
+  }
+
+  ReactPropTypes.checkPropTypes = checkPropTypes_1;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+var factoryWithThrowingShims = function() {
+  function shim(props, propName, componentName, location, propFullName, secret) {
+    if (secret === ReactPropTypesSecret_1) {
+      // It is still safe when called from React.
+      return;
+    }
+    invariant_1(
+      false,
+      'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+      'Use PropTypes.checkPropTypes() to call them. ' +
+      'Read more at http://fb.me/use-check-prop-types'
+    );
+  }  shim.isRequired = shim;
+  function getShim() {
+    return shim;
+  }  // Important!
+  // Keep this list in sync with production version in `./factoryWithTypeCheckers.js`.
+  var ReactPropTypes = {
+    array: shim,
+    bool: shim,
+    func: shim,
+    number: shim,
+    object: shim,
+    string: shim,
+    symbol: shim,
+
+    any: shim,
+    arrayOf: getShim,
+    element: shim,
+    instanceOf: getShim,
+    node: shim,
+    objectOf: getShim,
+    oneOf: getShim,
+    oneOfType: getShim,
+    shape: getShim,
+    exact: getShim
+  };
+
+  ReactPropTypes.checkPropTypes = emptyFunction_1;
+  ReactPropTypes.PropTypes = ReactPropTypes;
+
+  return ReactPropTypes;
+};
+
+var propTypes = createCommonjsModule(function (module) {
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+if (process.env.NODE_ENV !== 'production') {
+  var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
+    Symbol.for &&
+    Symbol.for('react.element')) ||
+    0xeac7;
+
+  var isValidElement = function(object) {
+    return typeof object === 'object' &&
+      object !== null &&
+      object.$$typeof === REACT_ELEMENT_TYPE;
+  };
+
+  // By explicitly using `prop-types` you are opting into new development behavior.
+  // http://fb.me/prop-types-in-prod
+  var throwOnDirectAccess = true;
+  module.exports = factoryWithTypeCheckers(isValidElement, throwOnDirectAccess);
+} else {
+  // By explicitly using `prop-types` you are opting into new production behavior.
+  // http://fb.me/prop-types-in-prod
+  module.exports = factoryWithThrowingShims();
+}
+});
+
 var CONSTANT = {
   GLOBAL: {
-    HIDE: '__react_tooltip_hide_event',
-    REBUILD: '__react_tooltip_rebuild_event',
-    SHOW: '__react_tooltip_show_event'
+    HIDE: "__react_tooltip_hide_event",
+    REBUILD: "__react_tooltip_rebuild_event",
+    SHOW: "__react_tooltip_show_event"
   }
 };
 
@@ -72814,16 +73085,16 @@ var CONSTANT = {
 var dispatchGlobalEvent = function dispatchGlobalEvent(eventName, opts) {
   // Compatible with IE
   // @see http://stackoverflow.com/questions/26596123/internet-explorer-9-10-11-event-constructor-doesnt-work
-  // @see https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
   var event;
 
-  if (typeof window.CustomEvent === 'function') {
+  if (typeof window.CustomEvent === "function") {
     event = new window.CustomEvent(eventName, {
       detail: opts
     });
   } else {
-    event = document.createEvent('Event');
-    event.initEvent(eventName, false, true, opts);
+    event = document.createEvent("Event");
+    event.initEvent(eventName, false, true);
+    event.detail = opts;
   }
 
   window.dispatchEvent(event);
@@ -72869,12 +73140,12 @@ function staticMethods (target) {
 
   target.prototype.globalShow = function (event) {
     if (this.mount) {
-      var hasTarget = event && event.detail && event.detail.target && true || false; // Create a fake event, specific show will limit the type to `solid`
+      // Create a fake event, specific show will limit the type to `solid`
       // only `float` type cares e.clientX e.clientY
-
-      this.showTooltip({
-        currentTarget: hasTarget && event.detail.target
-      }, true);
+      var e = {
+        currentTarget: event.detail.target
+      };
+      this.showTooltip(e, true);
     }
   };
 
@@ -72904,8 +73175,8 @@ function windowListener (target) {
     window.addEventListener(CONSTANT.GLOBAL.SHOW, this.globalShow, false); // Resize
 
     if (resizeHide) {
-      window.removeEventListener('resize', this.onWindowResize);
-      window.addEventListener('resize', this.onWindowResize, false);
+      window.removeEventListener("resize", this.onWindowResize);
+      window.addEventListener("resize", this.onWindowResize, false);
     }
   };
 
@@ -72913,7 +73184,7 @@ function windowListener (target) {
     window.removeEventListener(CONSTANT.GLOBAL.HIDE, this.globalHide);
     window.removeEventListener(CONSTANT.GLOBAL.REBUILD, this.globalRebuild);
     window.removeEventListener(CONSTANT.GLOBAL.SHOW, this.globalShow);
-    window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener("resize", this.onWindowResize);
   };
   /**
    * invoked by resize event of window
@@ -72937,13 +73208,13 @@ var checkStatus = function checkStatus(dataEventOff, e) {
   var show = this.state.show;
   var id = this.props.id;
   var isCapture = this.isCapture(e.currentTarget);
-  var currentItem = e.currentTarget.getAttribute('currentItem');
+  var currentItem = e.currentTarget.getAttribute("currentItem");
   if (!isCapture) e.stopPropagation();
 
-  if (show && currentItem === 'true') {
+  if (show && currentItem === "true") {
     if (!dataEventOff) this.hideTooltip(e);
   } else {
-    e.currentTarget.setAttribute('currentItem', 'true');
+    e.currentTarget.setAttribute("currentItem", "true");
     setUntargetItems(e.currentTarget, this.getTargetArray(id));
     this.showTooltip(e);
   }
@@ -72952,15 +73223,15 @@ var checkStatus = function checkStatus(dataEventOff, e) {
 var setUntargetItems = function setUntargetItems(currentTarget, targetArray) {
   for (var i = 0; i < targetArray.length; i++) {
     if (currentTarget !== targetArray[i]) {
-      targetArray[i].setAttribute('currentItem', 'false');
+      targetArray[i].setAttribute("currentItem", "false");
     } else {
-      targetArray[i].setAttribute('currentItem', 'true');
+      targetArray[i].setAttribute("currentItem", "true");
     }
   }
 };
 
 var customListeners = {
-  id: '9b69f92e-d3fe-498b-b1b4-c5e63a51b0cf',
+  id: "9b69f92e-d3fe-498b-b1b4-c5e63a51b0cf",
   set: function set(target, event, listener) {
     if (this.id in target) {
       var map = target[this.id];
@@ -72984,7 +73255,7 @@ var customListeners = {
 function customEvent (target) {
   target.prototype.isCustomEvent = function (ele) {
     var event = this.state.event;
-    return event || !!ele.getAttribute('data-event');
+    return event || !!ele.getAttribute("data-event");
   };
   /* Bind listener for custom event */
 
@@ -72995,9 +73266,9 @@ function customEvent (target) {
     var _this$state = this.state,
         event = _this$state.event,
         eventOff = _this$state.eventOff;
-    var dataEvent = ele.getAttribute('data-event') || event;
-    var dataEventOff = ele.getAttribute('data-event-off') || eventOff;
-    dataEvent.split(' ').forEach(function (event) {
+    var dataEvent = ele.getAttribute("data-event") || event;
+    var dataEventOff = ele.getAttribute("data-event-off") || eventOff;
+    dataEvent.split(" ").forEach(function (event) {
       ele.removeEventListener(event, customListeners.get(ele, event));
       var customListener = checkStatus.bind(_this, dataEventOff);
       customListeners.set(ele, event, customListener);
@@ -73005,7 +73276,7 @@ function customEvent (target) {
     });
 
     if (dataEventOff) {
-      dataEventOff.split(' ').forEach(function (event) {
+      dataEventOff.split(" ").forEach(function (event) {
         ele.removeEventListener(event, _this.hideTooltip);
         ele.addEventListener(event, _this.hideTooltip, false);
       });
@@ -73018,8 +73289,8 @@ function customEvent (target) {
     var _this$state2 = this.state,
         event = _this$state2.event,
         eventOff = _this$state2.eventOff;
-    var dataEvent = event || ele.getAttribute('data-event');
-    var dataEventOff = eventOff || ele.getAttribute('data-event-off');
+    var dataEvent = event || ele.getAttribute("data-event");
+    var dataEventOff = eventOff || ele.getAttribute("data-event-off");
     ele.removeEventListener(dataEvent, customListeners.get(ele, event));
     if (dataEventOff) ele.removeEventListener(dataEventOff, this.hideTooltip);
   };
@@ -73030,7 +73301,7 @@ function customEvent (target) {
  */
 function isCapture (target) {
   target.prototype.isCapture = function (currentTarget) {
-    return currentTarget && currentTarget.getAttribute('data-iscapture') === 'true' || this.props.isCapture || false;
+    return currentTarget && currentTarget.getAttribute("data-iscapture") === "true" || this.props.isCapture || false;
   };
 }
 
@@ -73039,8 +73310,8 @@ function isCapture (target) {
  */
 function getEffect (target) {
   target.prototype.getEffect = function (currentTarget) {
-    var dataEffect = currentTarget.getAttribute('data-effect');
-    return dataEffect || this.props.effect || 'float';
+    var dataEffect = currentTarget.getAttribute("data-effect");
+    return dataEffect || this.props.effect || "float";
   };
 }
 
@@ -73052,7 +73323,7 @@ var makeProxy = function makeProxy(e) {
   var proxy = {};
 
   for (var key in e) {
-    if (typeof e[key] === 'function') {
+    if (typeof e[key] === "function") {
       proxy[key] = e[key].bind(e);
     } else {
       proxy[key] = e[key];
@@ -73068,8 +73339,8 @@ var bodyListener = function bodyListener(callback, options, e) {
       _options$customEvent = options.customEvent,
       customEvent = _options$customEvent === void 0 ? false : _options$customEvent;
   var id = this.props.id;
-  var tip = e.target.getAttribute('data-tip') || null;
-  var forId = e.target.getAttribute('data-for') || null;
+  var tip = e.target.getAttribute("data-tip") || null;
+  var forId = e.target.getAttribute("data-for") || null;
   var target = e.target;
 
   if (this.isCustomEvent(target) && !customEvent) {
@@ -73078,7 +73349,7 @@ var bodyListener = function bodyListener(callback, options, e) {
 
   var isTargetBelongsToTooltip = id == null && forId == null || forId === id;
 
-  if (tip != null && (!respectEffect || this.getEffect(target) === 'float') && isTargetBelongsToTooltip) {
+  if (tip != null && (!respectEffect || this.getEffect(target) === "float") && isTargetBelongsToTooltip) {
     var proxy = makeProxy(e);
     proxy.currentTarget = target;
     callback(proxy);
@@ -73089,7 +73360,7 @@ var findCustomEvents = function findCustomEvents(targetArray, dataAttribute) {
   var events = {};
   targetArray.forEach(function (target) {
     var event = target.getAttribute(dataAttribute);
-    if (event) event.split(' ').forEach(function (event) {
+    if (event) event.split(" ").forEach(function (event) {
       return events[event] = true;
     });
   });
@@ -73097,7 +73368,7 @@ var findCustomEvents = function findCustomEvents(targetArray, dataAttribute) {
 };
 
 var getBody = function getBody() {
-  return document.getElementsByTagName('body')[0];
+  return document.getElementsByTagName("body")[0];
 };
 
 function bodyMode (target) {
@@ -73114,14 +73385,14 @@ function bodyMode (target) {
         possibleCustomEvents = _this$state.possibleCustomEvents,
         possibleCustomEventsOff = _this$state.possibleCustomEventsOff;
     var body = getBody();
-    var customEvents = findCustomEvents(targetArray, 'data-event');
-    var customEventsOff = findCustomEvents(targetArray, 'data-event-off');
+    var customEvents = findCustomEvents(targetArray, "data-event");
+    var customEventsOff = findCustomEvents(targetArray, "data-event-off");
     if (event != null) customEvents[event] = true;
     if (eventOff != null) customEventsOff[eventOff] = true;
-    possibleCustomEvents.split(' ').forEach(function (event) {
+    possibleCustomEvents.split(" ").forEach(function (event) {
       return customEvents[event] = true;
     });
-    possibleCustomEventsOff.split(' ').forEach(function (event) {
+    possibleCustomEventsOff.split(" ").forEach(function (event) {
       return customEventsOff[event] = true;
     });
     this.unbindBodyListener(body);
@@ -73137,7 +73408,7 @@ function bodyMode (target) {
 
     for (var _event in customEvents) {
       listeners[_event] = bodyListener.bind(this, function (e) {
-        var targetEventOff = e.currentTarget.getAttribute('data-event-off') || eventOff;
+        var targetEventOff = e.currentTarget.getAttribute("data-event-off") || eventOff;
         checkStatus.call(_this, targetEventOff, e);
       }, {
         customEvent: true
@@ -73246,8 +73517,8 @@ function getPosition (e, target, node, place, desiredPlace, effect, offset) {
   var defaultOffset = getDefaultPosition(effect, targetWidth, targetHeight, tipWidth, tipHeight);
 
   var _calculateOffset = calculateOffset(offset),
-      extraOffsetX = _calculateOffset.extraOffsetX,
-      extraOffsetY = _calculateOffset.extraOffsetY;
+      extraOffset_X = _calculateOffset.extraOffset_X,
+      extraOffset_Y = _calculateOffset.extraOffset_Y;
 
   var windowWidth = window.innerWidth;
   var windowHeight = window.innerHeight;
@@ -73258,23 +73529,23 @@ function getPosition (e, target, node, place, desiredPlace, effect, offset) {
 
 
   var getTipOffsetLeft = function getTipOffsetLeft(place) {
-    var offsetX = defaultOffset[place].l;
-    return mouseX + offsetX + extraOffsetX;
+    var offset_X = defaultOffset[place].l;
+    return mouseX + offset_X + extraOffset_X;
   };
 
   var getTipOffsetRight = function getTipOffsetRight(place) {
-    var offsetX = defaultOffset[place].r;
-    return mouseX + offsetX + extraOffsetX;
+    var offset_X = defaultOffset[place].r;
+    return mouseX + offset_X + extraOffset_X;
   };
 
   var getTipOffsetTop = function getTipOffsetTop(place) {
-    var offsetY = defaultOffset[place].t;
-    return mouseY + offsetY + extraOffsetY;
+    var offset_Y = defaultOffset[place].t;
+    return mouseY + offset_Y + extraOffset_Y;
   };
 
   var getTipOffsetBottom = function getTipOffsetBottom(place) {
-    var offsetY = defaultOffset[place].b;
-    return mouseY + offsetY + extraOffsetY;
+    var offset_Y = defaultOffset[place].b;
+    return mouseY + offset_Y + extraOffset_Y;
   }; //
   // Functions to test whether the tooltip's sides are inside
   // the client window for a given orientation p
@@ -73316,7 +73587,7 @@ function getPosition (e, target, node, place, desiredPlace, effect, offset) {
     return !outside(p);
   };
 
-  var placesList = ['top', 'bottom', 'left', 'right'];
+  var placesList = ["top", "bottom", "left", "right"];
   var insideList = [];
 
   for (var i = 0; i < 4; i++) {
@@ -73334,7 +73605,7 @@ function getPosition (e, target, node, place, desiredPlace, effect, offset) {
   if (inside(desiredPlace) && shouldUpdatePlace) {
     isNewState = true;
     newPlace = desiredPlace;
-  } else if (insideList.length > 0 && outside(desiredPlace) && outside(place)) {
+  } else if (insideList.length > 0 && shouldUpdatePlace && outside(desiredPlace) && outside(place)) {
     isNewState = true;
     newPlace = insideList[0];
   }
@@ -73378,7 +73649,7 @@ var getCurrentOffset = function getCurrentOffset(e, currentTarget, effect) {
       targetWidth = _getDimensions3.width,
       targetHeight = _getDimensions3.height;
 
-  if (effect === 'float') {
+  if (effect === "float") {
     return {
       mouseX: e.clientX,
       mouseY: e.clientY
@@ -73402,7 +73673,7 @@ var getDefaultPosition = function getDefaultPosition(effect, targetWidth, target
   var triangleHeight = 2;
   var cursorHeight = 12; // Optimize for float bottom only, cause the cursor will hide the tooltip
 
-  if (effect === 'float') {
+  if (effect === "float") {
     top = {
       l: -(tipWidth / 2),
       r: tipWidth / 2,
@@ -73427,7 +73698,7 @@ var getDefaultPosition = function getDefaultPosition(effect, targetWidth, target
       t: -(tipHeight / 2),
       b: tipHeight / 2
     };
-  } else if (effect === 'solid') {
+  } else if (effect === "solid") {
     top = {
       l: -(tipWidth / 2),
       r: tipWidth / 2,
@@ -73464,28 +73735,28 @@ var getDefaultPosition = function getDefaultPosition(effect, targetWidth, target
 
 
 var calculateOffset = function calculateOffset(offset) {
-  var extraOffsetX = 0;
-  var extraOffsetY = 0;
+  var extraOffset_X = 0;
+  var extraOffset_Y = 0;
 
-  if (Object.prototype.toString.apply(offset) === '[object String]') {
-    offset = JSON.parse(offset.toString().replace(/'/g, '"'));
+  if (Object.prototype.toString.apply(offset) === "[object String]") {
+    offset = JSON.parse(offset.toString().replace(/\'/g, '"'));
   }
 
   for (var key in offset) {
-    if (key === 'top') {
-      extraOffsetY -= parseInt(offset[key], 10);
-    } else if (key === 'bottom') {
-      extraOffsetY += parseInt(offset[key], 10);
-    } else if (key === 'left') {
-      extraOffsetX -= parseInt(offset[key], 10);
-    } else if (key === 'right') {
-      extraOffsetX += parseInt(offset[key], 10);
+    if (key === "top") {
+      extraOffset_Y -= parseInt(offset[key], 10);
+    } else if (key === "bottom") {
+      extraOffset_Y += parseInt(offset[key], 10);
+    } else if (key === "left") {
+      extraOffset_X -= parseInt(offset[key], 10);
+    } else if (key === "right") {
+      extraOffset_X += parseInt(offset[key], 10);
     }
   }
 
   return {
-    extraOffsetX: extraOffsetX,
-    extraOffsetY: extraOffsetY
+    extraOffset_X: extraOffset_X,
+    extraOffset_Y: extraOffset_Y
   };
 }; // Get the offset of the parent elements
 
@@ -73494,10 +73765,7 @@ var getParent = function getParent(currentTarget) {
   var currentParent = currentTarget;
 
   while (currentParent) {
-    var computedStyle = window.getComputedStyle(currentParent); // transform and will-change: transform change the containing block
-    // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_Block
-
-    if (computedStyle.getPropertyValue('transform') !== 'none' || computedStyle.getPropertyValue('will-change') === 'transform') break;
+    if (window.getComputedStyle(currentParent).getPropertyValue("transform") !== "none") break;
     currentParent = currentParent.parentElement;
   }
 
@@ -73530,7 +73798,7 @@ function getTipContent (tip, children, getContent, multiline) {
 
   var regexp = /<br\s*\/?>/;
 
-  if (!multiline || multiline === 'false' || !regexp.test(tip)) {
+  if (!multiline || multiline === "false" || !regexp.test(tip)) {
     // No trim(), so that user can keep their input
     return tip;
   } // Multiline tooltip content
@@ -73578,105 +73846,7 @@ function nodeListToArray (nodeList) {
   });
 }
 
-function generateUUID() {
-  return 't' + uuid.v4();
-}
-
-var baseCss = ".__react_component_tooltip {\n  border-radius: 3px;\n  display: inline-block;\n  font-size: 13px;\n  left: -999em;\n  opacity: 0;\n  padding: 8px 21px;\n  position: fixed;\n  pointer-events: none;\n  transition: opacity 0.3s ease-out;\n  top: -999em;\n  visibility: hidden;\n  z-index: 999;\n}\n.__react_component_tooltip.allow_hover, .__react_component_tooltip.allow_click {\n  pointer-events: auto;\n}\n.__react_component_tooltip::before, .__react_component_tooltip::after {\n  content: \"\";\n  width: 0;\n  height: 0;\n  position: absolute;\n}\n.__react_component_tooltip.show {\n  opacity: 0.9;\n  margin-top: 0;\n  margin-left: 0;\n  visibility: visible;\n}\n.__react_component_tooltip.place-top::before {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  bottom: -8px;\n  left: 50%;\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-bottom::before {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  top: -8px;\n  left: 50%;\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-left::before {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  right: -8px;\n  top: 50%;\n  margin-top: -5px;\n}\n.__react_component_tooltip.place-right::before {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  left: -8px;\n  top: 50%;\n  margin-top: -5px;\n}\n.__react_component_tooltip .multi-line {\n  display: block;\n  padding: 2px 0;\n  text-align: center;\n}";
-
-/**
- * Default pop-up style values (text color, background color).
- */
-var defaultColors = {
-  dark: {
-    text: '#fff',
-    background: '#222',
-    border: 'transparent',
-    arrow: '#222'
-  },
-  success: {
-    text: '#fff',
-    background: '#8DC572',
-    border: 'transparent',
-    arrow: '#8DC572'
-  },
-  warning: {
-    text: '#fff',
-    background: '#F0AD4E',
-    border: 'transparent',
-    arrow: '#F0AD4E'
-  },
-  error: {
-    text: '#fff',
-    background: '#BE6464',
-    border: 'transparent',
-    arrow: '#BE6464'
-  },
-  info: {
-    text: '#fff',
-    background: '#337AB7',
-    border: 'transparent',
-    arrow: '#337AB7'
-  },
-  light: {
-    text: '#222',
-    background: '#fff',
-    border: 'transparent',
-    arrow: '#fff'
-  }
-};
-function getDefaultPopupColors(type) {
-  return defaultColors[type] ? _objectSpread2({}, defaultColors[type]) : undefined;
-}
-
-/**
- * Generates the specific tooltip style for use on render.
- */
-
-function generateTooltipStyle(uuid, customColors, type, hasBorder) {
-  return generateStyle(uuid, getPopupColors(customColors, type, hasBorder));
-}
-/**
- * Generates the tooltip style rules based on the element-specified "data-type" property.
- */
-
-function generateStyle(uuid, colors) {
-  var textColor = colors.text;
-  var backgroundColor = colors.background;
-  var borderColor = colors.border;
-  var arrowColor = colors.arrow;
-  return "\n  \t.".concat(uuid, " {\n\t    color: ").concat(textColor, ";\n\t    background: ").concat(backgroundColor, ";\n\t    border: 1px solid ").concat(borderColor, ";\n  \t}\n\n  \t.").concat(uuid, ".place-top {\n        margin-top: -10px;\n    }\n    .").concat(uuid, ".place-top::before {\n        border-top: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-top::after {\n        border-left: 8px solid transparent;\n        border-right: 8px solid transparent;\n        bottom: -6px;\n        left: 50%;\n        margin-left: -8px;\n        border-top-color: ").concat(arrowColor, ";\n        border-top-style: solid;\n        border-top-width: 6px;\n    }\n\n    .").concat(uuid, ".place-bottom {\n        margin-top: 10px;\n    }\n    .").concat(uuid, ".place-bottom::before {\n        border-bottom: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-bottom::after {\n        border-left: 8px solid transparent;\n        border-right: 8px solid transparent;\n        top: -6px;\n        left: 50%;\n        margin-left: -8px;\n        border-bottom-color: ").concat(arrowColor, ";\n        border-bottom-style: solid;\n        border-bottom-width: 6px;\n    }\n\n    .").concat(uuid, ".place-left {\n        margin-left: -10px;\n    }\n    .").concat(uuid, ".place-left::before {\n        border-left: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-left::after {\n        border-top: 5px solid transparent;\n        border-bottom: 5px solid transparent;\n        right: -6px;\n        top: 50%;\n        margin-top: -4px;\n        border-left-color: ").concat(arrowColor, ";\n        border-left-style: solid;\n        border-left-width: 6px;\n    }\n\n    .").concat(uuid, ".place-right {\n        margin-left: 10px;\n    }\n    .").concat(uuid, ".place-right::before {\n        border-right: 8px solid ").concat(borderColor, ";\n    }\n    .").concat(uuid, ".place-right::after {\n        border-top: 5px solid transparent;\n        border-bottom: 5px solid transparent;\n        left: -6px;\n        top: 50%;\n        margin-top: -4px;\n        border-right-color: ").concat(arrowColor, ";\n        border-right-style: solid;\n        border-right-width: 6px;\n    }\n  ");
-}
-
-function getPopupColors(customColors, type, hasBorder) {
-  var textColor = customColors.text;
-  var backgroundColor = customColors.background;
-  var borderColor = customColors.border;
-  var arrowColor = customColors.arrow ? customColors.arrow : customColors.background;
-  var colors = getDefaultPopupColors(type);
-
-  if (textColor) {
-    colors.text = textColor;
-  }
-
-  if (backgroundColor) {
-    colors.background = backgroundColor;
-  }
-
-  if (hasBorder) {
-    if (borderColor) {
-      colors.border = borderColor;
-    } else {
-      colors.border = type === 'light' ? 'black' : 'white';
-    }
-  }
-
-  if (arrowColor) {
-    colors.arrow = arrowColor;
-  }
-
-  return colors;
-}
+___$insertStyle(".__react_component_tooltip {\n  border-radius: 3px;\n  display: inline-block;\n  font-size: 13px;\n  left: -999em;\n  opacity: 0;\n  padding: 8px 21px;\n  position: fixed;\n  pointer-events: none;\n  transition: opacity 0.3s ease-out;\n  top: -999em;\n  visibility: hidden;\n  z-index: 999;\n}\n.__react_component_tooltip.allow_hover, .__react_component_tooltip.allow_click {\n  pointer-events: auto;\n}\n.__react_component_tooltip:before, .__react_component_tooltip:after {\n  content: \"\";\n  width: 0;\n  height: 0;\n  position: absolute;\n}\n.__react_component_tooltip.show {\n  opacity: 0.9;\n  margin-top: 0px;\n  margin-left: 0px;\n  visibility: visible;\n}\n.__react_component_tooltip.type-dark {\n  color: #fff;\n  background-color: #222;\n}\n.__react_component_tooltip.type-dark.place-top:after {\n  border-top-color: #222;\n  border-top-style: solid;\n  border-top-width: 6px;\n}\n.__react_component_tooltip.type-dark.place-bottom:after {\n  border-bottom-color: #222;\n  border-bottom-style: solid;\n  border-bottom-width: 6px;\n}\n.__react_component_tooltip.type-dark.place-left:after {\n  border-left-color: #222;\n  border-left-style: solid;\n  border-left-width: 6px;\n}\n.__react_component_tooltip.type-dark.place-right:after {\n  border-right-color: #222;\n  border-right-style: solid;\n  border-right-width: 6px;\n}\n.__react_component_tooltip.type-dark.border {\n  border: 1px solid #fff;\n}\n.__react_component_tooltip.type-dark.border.place-top:before {\n  border-top: 8px solid #fff;\n}\n.__react_component_tooltip.type-dark.border.place-bottom:before {\n  border-bottom: 8px solid #fff;\n}\n.__react_component_tooltip.type-dark.border.place-left:before {\n  border-left: 8px solid #fff;\n}\n.__react_component_tooltip.type-dark.border.place-right:before {\n  border-right: 8px solid #fff;\n}\n.__react_component_tooltip.type-success {\n  color: #fff;\n  background-color: #8DC572;\n}\n.__react_component_tooltip.type-success.place-top:after {\n  border-top-color: #8DC572;\n  border-top-style: solid;\n  border-top-width: 6px;\n}\n.__react_component_tooltip.type-success.place-bottom:after {\n  border-bottom-color: #8DC572;\n  border-bottom-style: solid;\n  border-bottom-width: 6px;\n}\n.__react_component_tooltip.type-success.place-left:after {\n  border-left-color: #8DC572;\n  border-left-style: solid;\n  border-left-width: 6px;\n}\n.__react_component_tooltip.type-success.place-right:after {\n  border-right-color: #8DC572;\n  border-right-style: solid;\n  border-right-width: 6px;\n}\n.__react_component_tooltip.type-success.border {\n  border: 1px solid #fff;\n}\n.__react_component_tooltip.type-success.border.place-top:before {\n  border-top: 8px solid #fff;\n}\n.__react_component_tooltip.type-success.border.place-bottom:before {\n  border-bottom: 8px solid #fff;\n}\n.__react_component_tooltip.type-success.border.place-left:before {\n  border-left: 8px solid #fff;\n}\n.__react_component_tooltip.type-success.border.place-right:before {\n  border-right: 8px solid #fff;\n}\n.__react_component_tooltip.type-warning {\n  color: #fff;\n  background-color: #F0AD4E;\n}\n.__react_component_tooltip.type-warning.place-top:after {\n  border-top-color: #F0AD4E;\n  border-top-style: solid;\n  border-top-width: 6px;\n}\n.__react_component_tooltip.type-warning.place-bottom:after {\n  border-bottom-color: #F0AD4E;\n  border-bottom-style: solid;\n  border-bottom-width: 6px;\n}\n.__react_component_tooltip.type-warning.place-left:after {\n  border-left-color: #F0AD4E;\n  border-left-style: solid;\n  border-left-width: 6px;\n}\n.__react_component_tooltip.type-warning.place-right:after {\n  border-right-color: #F0AD4E;\n  border-right-style: solid;\n  border-right-width: 6px;\n}\n.__react_component_tooltip.type-warning.border {\n  border: 1px solid #fff;\n}\n.__react_component_tooltip.type-warning.border.place-top:before {\n  border-top: 8px solid #fff;\n}\n.__react_component_tooltip.type-warning.border.place-bottom:before {\n  border-bottom: 8px solid #fff;\n}\n.__react_component_tooltip.type-warning.border.place-left:before {\n  border-left: 8px solid #fff;\n}\n.__react_component_tooltip.type-warning.border.place-right:before {\n  border-right: 8px solid #fff;\n}\n.__react_component_tooltip.type-error {\n  color: #fff;\n  background-color: #BE6464;\n}\n.__react_component_tooltip.type-error.place-top:after {\n  border-top-color: #BE6464;\n  border-top-style: solid;\n  border-top-width: 6px;\n}\n.__react_component_tooltip.type-error.place-bottom:after {\n  border-bottom-color: #BE6464;\n  border-bottom-style: solid;\n  border-bottom-width: 6px;\n}\n.__react_component_tooltip.type-error.place-left:after {\n  border-left-color: #BE6464;\n  border-left-style: solid;\n  border-left-width: 6px;\n}\n.__react_component_tooltip.type-error.place-right:after {\n  border-right-color: #BE6464;\n  border-right-style: solid;\n  border-right-width: 6px;\n}\n.__react_component_tooltip.type-error.border {\n  border: 1px solid #fff;\n}\n.__react_component_tooltip.type-error.border.place-top:before {\n  border-top: 8px solid #fff;\n}\n.__react_component_tooltip.type-error.border.place-bottom:before {\n  border-bottom: 8px solid #fff;\n}\n.__react_component_tooltip.type-error.border.place-left:before {\n  border-left: 8px solid #fff;\n}\n.__react_component_tooltip.type-error.border.place-right:before {\n  border-right: 8px solid #fff;\n}\n.__react_component_tooltip.type-info {\n  color: #fff;\n  background-color: #337AB7;\n}\n.__react_component_tooltip.type-info.place-top:after {\n  border-top-color: #337AB7;\n  border-top-style: solid;\n  border-top-width: 6px;\n}\n.__react_component_tooltip.type-info.place-bottom:after {\n  border-bottom-color: #337AB7;\n  border-bottom-style: solid;\n  border-bottom-width: 6px;\n}\n.__react_component_tooltip.type-info.place-left:after {\n  border-left-color: #337AB7;\n  border-left-style: solid;\n  border-left-width: 6px;\n}\n.__react_component_tooltip.type-info.place-right:after {\n  border-right-color: #337AB7;\n  border-right-style: solid;\n  border-right-width: 6px;\n}\n.__react_component_tooltip.type-info.border {\n  border: 1px solid #fff;\n}\n.__react_component_tooltip.type-info.border.place-top:before {\n  border-top: 8px solid #fff;\n}\n.__react_component_tooltip.type-info.border.place-bottom:before {\n  border-bottom: 8px solid #fff;\n}\n.__react_component_tooltip.type-info.border.place-left:before {\n  border-left: 8px solid #fff;\n}\n.__react_component_tooltip.type-info.border.place-right:before {\n  border-right: 8px solid #fff;\n}\n.__react_component_tooltip.type-light {\n  color: #222;\n  background-color: #fff;\n}\n.__react_component_tooltip.type-light.place-top:after {\n  border-top-color: #fff;\n  border-top-style: solid;\n  border-top-width: 6px;\n}\n.__react_component_tooltip.type-light.place-bottom:after {\n  border-bottom-color: #fff;\n  border-bottom-style: solid;\n  border-bottom-width: 6px;\n}\n.__react_component_tooltip.type-light.place-left:after {\n  border-left-color: #fff;\n  border-left-style: solid;\n  border-left-width: 6px;\n}\n.__react_component_tooltip.type-light.place-right:after {\n  border-right-color: #fff;\n  border-right-style: solid;\n  border-right-width: 6px;\n}\n.__react_component_tooltip.type-light.border {\n  border: 1px solid #222;\n}\n.__react_component_tooltip.type-light.border.place-top:before {\n  border-top: 8px solid #222;\n}\n.__react_component_tooltip.type-light.border.place-bottom:before {\n  border-bottom: 8px solid #222;\n}\n.__react_component_tooltip.type-light.border.place-left:before {\n  border-left: 8px solid #222;\n}\n.__react_component_tooltip.type-light.border.place-right:before {\n  border-right: 8px solid #222;\n}\n.__react_component_tooltip.place-top {\n  margin-top: -10px;\n}\n.__react_component_tooltip.place-top:before {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  bottom: -8px;\n  left: 50%;\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-top:after {\n  border-left: 8px solid transparent;\n  border-right: 8px solid transparent;\n  bottom: -6px;\n  left: 50%;\n  margin-left: -8px;\n}\n.__react_component_tooltip.place-bottom {\n  margin-top: 10px;\n}\n.__react_component_tooltip.place-bottom:before {\n  border-left: 10px solid transparent;\n  border-right: 10px solid transparent;\n  top: -8px;\n  left: 50%;\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-bottom:after {\n  border-left: 8px solid transparent;\n  border-right: 8px solid transparent;\n  top: -6px;\n  left: 50%;\n  margin-left: -8px;\n}\n.__react_component_tooltip.place-left {\n  margin-left: -10px;\n}\n.__react_component_tooltip.place-left:before {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  right: -8px;\n  top: 50%;\n  margin-top: -5px;\n}\n.__react_component_tooltip.place-left:after {\n  border-top: 5px solid transparent;\n  border-bottom: 5px solid transparent;\n  right: -6px;\n  top: 50%;\n  margin-top: -4px;\n}\n.__react_component_tooltip.place-right {\n  margin-left: 10px;\n}\n.__react_component_tooltip.place-right:before {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  left: -8px;\n  top: 50%;\n  margin-top: -5px;\n}\n.__react_component_tooltip.place-right:after {\n  border-top: 5px solid transparent;\n  border-bottom: 5px solid transparent;\n  left: -6px;\n  top: 50%;\n  margin-top: -4px;\n}\n.__react_component_tooltip .multi-line {\n  display: block;\n  padding: 2px 0px;\n  text-align: center;\n}");
 
 var _class, _class2, _temp;
 
@@ -73685,50 +73855,6 @@ var ReactTooltip = staticMethods(_class = windowListener(_class = customEvent(_c
 function (_React$Component) {
   _inherits(ReactTooltip, _React$Component);
 
-  _createClass(ReactTooltip, null, [{
-    key: "propTypes",
-    get: function get() {
-      return {
-        uuid: PropTypes.string,
-        children: PropTypes.any,
-        place: PropTypes.string,
-        type: PropTypes.string,
-        effect: PropTypes.string,
-        offset: PropTypes.object,
-        multiline: PropTypes.bool,
-        border: PropTypes.bool,
-        textColor: PropTypes.string,
-        backgroundColor: PropTypes.string,
-        borderColor: PropTypes.string,
-        arrowColor: PropTypes.string,
-        insecure: PropTypes.bool,
-        "class": PropTypes.string,
-        className: PropTypes.string,
-        id: PropTypes.string,
-        html: PropTypes.bool,
-        delayHide: PropTypes.number,
-        delayUpdate: PropTypes.number,
-        delayShow: PropTypes.number,
-        event: PropTypes.string,
-        eventOff: PropTypes.string,
-        isCapture: PropTypes.bool,
-        globalEventOff: PropTypes.string,
-        getContent: PropTypes.any,
-        afterShow: PropTypes.func,
-        afterHide: PropTypes.func,
-        overridePosition: PropTypes.func,
-        disable: PropTypes.bool,
-        scrollHide: PropTypes.bool,
-        resizeHide: PropTypes.bool,
-        wrapper: PropTypes.string,
-        bodyMode: PropTypes.bool,
-        possibleCustomEvents: PropTypes.string,
-        possibleCustomEventsOff: PropTypes.string,
-        clickable: PropTypes.bool
-      };
-    }
-  }]);
-
   function ReactTooltip(props) {
     var _this;
 
@@ -73736,19 +73862,17 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ReactTooltip).call(this, props));
     _this.state = {
-      uuid: props.uuid || generateUUID(),
-      place: props.place || 'top',
+      place: props.place || "top",
       // Direction of tooltip
-      desiredPlace: props.place || 'top',
-      type: 'dark',
+      desiredPlace: props.place || "top",
+      type: "dark",
       // Color theme of tooltip
-      effect: 'float',
+      effect: "float",
       // float or fixed
       show: false,
       border: false,
-      customColors: {},
       offset: {},
-      extraClass: '',
+      extraClass: "",
       html: false,
       delayHide: 0,
       delayShow: 0,
@@ -73762,13 +73886,13 @@ function (_React$Component) {
       // aria- and role attributes
       isEmptyTip: false,
       disable: false,
-      possibleCustomEvents: props.possibleCustomEvents || '',
-      possibleCustomEventsOff: props.possibleCustomEventsOff || '',
+      possibleCustomEvents: props.possibleCustomEvents || "",
+      possibleCustomEventsOff: props.possibleCustomEventsOff || "",
       originTooltip: null,
       isMultiline: false
     };
 
-    _this.bind(['showTooltip', 'updateTooltip', 'hideTooltip', 'hideTooltipOnScroll', 'getTooltipContent', 'globalRebuild', 'globalShow', 'globalHide', 'onWindowResize', 'mouseOnToolTip']);
+    _this.bind(["showTooltip", "updateTooltip", "hideTooltip", "hideTooltipOnScroll", "getTooltipContent", "globalRebuild", "globalShow", "globalHide", "onWindowResize", "mouseOnToolTip"]);
 
     _this.mount = true;
     _this.delayShowLoop = null;
@@ -73797,11 +73921,10 @@ function (_React$Component) {
       var _this$props = this.props,
           insecure = _this$props.insecure,
           resizeHide = _this$props.resizeHide;
+
       this.bindListener(); // Bind listener for tooltip
 
       this.bindWindowEvents(resizeHide); // Bind global event for static method
-
-      this.injectStyles(); // Inject styles for each DOM root having tooltip.
     }
   }, {
     key: "componentWillUnmount",
@@ -73809,46 +73932,8 @@ function (_React$Component) {
       this.mount = false;
       this.clearTimer();
       this.unbindListener();
-      this.removeScrollListener(this.state.currentTarget);
+      this.removeScrollListener();
       this.unbindWindowEvents();
-    }
-    /* Look for the closest DOM root having tooltip and inject styles. */
-
-  }, {
-    key: "injectStyles",
-    value: function injectStyles() {
-      var tooltipRef = this.tooltipRef;
-
-      if (!tooltipRef) {
-        return;
-      }
-
-      var parentNode = tooltipRef.parentNode;
-
-      while (parentNode.parentNode) {
-        parentNode = parentNode.parentNode;
-      }
-
-      var domRoot;
-
-      switch (parentNode.constructor.name) {
-        case 'HTMLDocument':
-          domRoot = parentNode.head;
-          break;
-
-        case 'ShadowRoot':
-        default:
-          domRoot = parentNode;
-          break;
-      } // Prevent styles duplication.
-
-
-      if (!domRoot.querySelector('style[data-react-tooltip]')) {
-        var style = document.createElement('style');
-        style.textContent = baseCss;
-        style.setAttribute('data-react-tooltip', 'true');
-        domRoot.appendChild(style);
-      }
     }
     /**
      * Return if the mouse is on the tooltip.
@@ -73872,7 +73957,7 @@ function (_React$Component) {
           }
         }
 
-        return this.tooltipRef.matches(':hover');
+        return this.tooltipRef.matches(":hover");
       }
 
       return false;
@@ -73884,23 +73969,17 @@ function (_React$Component) {
   }, {
     key: "getTargetArray",
     value: function getTargetArray(id) {
-      var targetArray = [];
-      var selector;
+      var targetArray;
 
       if (!id) {
-        selector = '[data-tip]:not([data-for])';
+        targetArray = document.querySelectorAll("[data-tip]:not([data-for])");
       } else {
-        var escaped = id.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-        selector = "[data-tip][data-for=\"".concat(escaped, "\"]");
-      } // Scan document for shadow DOM elements
+        var escaped = id.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+        targetArray = document.querySelectorAll("[data-tip][data-for=\"".concat(escaped, "\"]"));
+      } // targetArray is a NodeList, convert it to a real array
 
 
-      nodeListToArray(document.getElementsByTagName('*')).filter(function (element) {
-        return element.shadowRoot;
-      }).forEach(function (element) {
-        targetArray = targetArray.concat(nodeListToArray(element.shadowRoot.querySelectorAll(selector)));
-      });
-      return targetArray.concat(nodeListToArray(document.querySelectorAll(selector)));
+      return nodeListToArray(targetArray);
     }
     /**
      * Bind listener to the target elements
@@ -73918,8 +73997,8 @@ function (_React$Component) {
           isCapture = _this$props2.isCapture;
       var targetArray = this.getTargetArray(id);
       targetArray.forEach(function (target) {
-        if (target.getAttribute('currentItem') === null) {
-          target.setAttribute('currentItem', 'false');
+        if (target.getAttribute("currentItem") === null) {
+          target.setAttribute("currentItem", "false");
         }
 
         _this3.unbindBasicListener(target);
@@ -73943,13 +74022,13 @@ function (_React$Component) {
             return;
           }
 
-          target.addEventListener('mouseenter', _this3.showTooltip, isCaptureMode);
+          target.addEventListener("mouseenter", _this3.showTooltip, isCaptureMode);
 
-          if (effect === 'float') {
-            target.addEventListener('mousemove', _this3.updateTooltip, isCaptureMode);
+          if (effect === "float") {
+            target.addEventListener("mousemove", _this3.updateTooltip, isCaptureMode);
           }
 
-          target.addEventListener('mouseleave', _this3.hideTooltip, isCaptureMode);
+          target.addEventListener("mouseleave", _this3.hideTooltip, isCaptureMode);
         });
       } // Global event to hide tooltip
 
@@ -73999,9 +74078,9 @@ function (_React$Component) {
     key: "unbindBasicListener",
     value: function unbindBasicListener(target) {
       var isCaptureMode = this.isCapture(target);
-      target.removeEventListener('mouseenter', this.showTooltip, isCaptureMode);
-      target.removeEventListener('mousemove', this.updateTooltip, isCaptureMode);
-      target.removeEventListener('mouseleave', this.hideTooltip, isCaptureMode);
+      target.removeEventListener("mouseenter", this.showTooltip, isCaptureMode);
+      target.removeEventListener("mousemove", this.updateTooltip, isCaptureMode);
+      target.removeEventListener("mouseleave", this.hideTooltip, isCaptureMode);
     }
   }, {
     key: "getTooltipContent",
@@ -74025,7 +74104,7 @@ function (_React$Component) {
   }, {
     key: "isEmptyTip",
     value: function isEmptyTip(placeholder) {
-      return typeof placeholder === 'string' && placeholder === '' || placeholder === null;
+      return typeof placeholder === "string" && placeholder === "" || placeholder === null;
     }
     /**
      * When mouse enter, show the tooltip
@@ -74034,10 +74113,6 @@ function (_React$Component) {
   }, {
     key: "showTooltip",
     value: function showTooltip(e, isGlobalCall) {
-      if (!this.tooltipRef) {
-        return;
-      }
-
       if (isGlobalCall) {
         // Don't trigger other elements belongs to other ReactTooltip
         var targetArray = this.getTargetArray(this.props.id);
@@ -74052,34 +74127,34 @@ function (_React$Component) {
       var _this$props5 = this.props,
           multiline = _this$props5.multiline,
           getContent = _this$props5.getContent;
-      var originTooltip = e.currentTarget.getAttribute('data-tip');
-      var isMultiline = e.currentTarget.getAttribute('data-multiline') || multiline || false; // If it is focus event or called by ReactTooltip.show, switch to `solid` effect
+      var originTooltip = e.currentTarget.getAttribute("data-tip");
+      var isMultiline = e.currentTarget.getAttribute("data-multiline") || multiline || false; // If it is focus event or called by ReactTooltip.show, switch to `solid` effect
 
       var switchToSolid = e instanceof window.FocusEvent || isGlobalCall; // if it needs to skip adding hide listener to scroll
 
       var scrollHide = true;
 
-      if (e.currentTarget.getAttribute('data-scroll-hide')) {
-        scrollHide = e.currentTarget.getAttribute('data-scroll-hide') === 'true';
+      if (e.currentTarget.getAttribute("data-scroll-hide")) {
+        scrollHide = e.currentTarget.getAttribute("data-scroll-hide") === "true";
       } else if (this.props.scrollHide != null) {
         scrollHide = this.props.scrollHide;
       } // Make sure the correct place is set
 
 
-      var desiredPlace = e.currentTarget.getAttribute('data-place') || this.props.place || 'top';
-      var effect = switchToSolid && 'solid' || this.getEffect(e.currentTarget);
-      var offset = e.currentTarget.getAttribute('data-offset') || this.props.offset || {};
+      var desiredPlace = e.currentTarget.getAttribute("data-place") || this.props.place || "top";
+      var effect = switchToSolid && "solid" || this.getEffect(e.currentTarget);
+      var offset = e.currentTarget.getAttribute("data-offset") || this.props.offset || {};
       var result = getPosition(e, e.currentTarget, this.tooltipRef, desiredPlace, desiredPlace, effect, offset);
 
       if (result.position && this.props.overridePosition) {
-        result.position = this.props.overridePosition(result.position, e, e.currentTarget, this.tooltipRef, desiredPlace, desiredPlace, effect, offset);
+        result.position = this.props.overridePosition(result.position, e.currentTarget, this.tooltipRef, desiredPlace, desiredPlace, effect, offset);
       }
 
       var place = result.isNewState ? result.newState.place : desiredPlace; // To prevent previously created timers from triggering
 
       this.clearTimer();
       var target = e.currentTarget;
-      var reshowDelay = this.state.show ? target.getAttribute('data-delay-update') || this.props.delayUpdate : 0;
+      var reshowDelay = this.state.show ? target.getAttribute("data-delay-update") || this.props.delayUpdate : 0;
       var self = this;
 
       var updateState = function updateState() {
@@ -74088,35 +74163,26 @@ function (_React$Component) {
           isMultiline: isMultiline,
           desiredPlace: desiredPlace,
           place: place,
-          type: target.getAttribute('data-type') || self.props.type || 'dark',
-          customColors: {
-            text: target.getAttribute('data-text-color') || self.props.textColor || null,
-            background: target.getAttribute('data-background-color') || self.props.backgroundColor || null,
-            border: target.getAttribute('data-border-color') || self.props.borderColor || null,
-            arrow: target.getAttribute('data-arrow-color') || self.props.arrowColor || null
-          },
+          type: target.getAttribute("data-type") || self.props.type || "dark",
           effect: effect,
           offset: offset,
-          html: (target.getAttribute('data-html') ? target.getAttribute('data-html') === 'true' : self.props.html) || false,
-          delayShow: target.getAttribute('data-delay-show') || self.props.delayShow || 0,
-          delayHide: target.getAttribute('data-delay-hide') || self.props.delayHide || 0,
-          delayUpdate: target.getAttribute('data-delay-update') || self.props.delayUpdate || 0,
-          border: (target.getAttribute('data-border') ? target.getAttribute('data-border') === 'true' : self.props.border) || false,
-          extraClass: target.getAttribute('data-class') || self.props["class"] || self.props.className || '',
-          disable: (target.getAttribute('data-tip-disable') ? target.getAttribute('data-tip-disable') === 'true' : self.props.disable) || false,
+          html: target.getAttribute("data-html") ? target.getAttribute("data-html") === "true" : self.props.html || false,
+          delayShow: target.getAttribute("data-delay-show") || self.props.delayShow || 0,
+          delayHide: target.getAttribute("data-delay-hide") || self.props.delayHide || 0,
+          delayUpdate: target.getAttribute("data-delay-update") || self.props.delayUpdate || 0,
+          border: target.getAttribute("data-border") ? target.getAttribute("data-border") === "true" : self.props.border || false,
+          extraClass: target.getAttribute("data-class") || self.props["class"] || self.props.className || "",
+          disable: target.getAttribute("data-tip-disable") ? target.getAttribute("data-tip-disable") === "true" : self.props.disable || false,
           currentTarget: target
         }, function () {
-          if (scrollHide) {
-            self.addScrollListener(self.state.currentTarget);
-          }
-
+          if (scrollHide) self.addScrollListener(self.state.currentTarget);
           self.updateTooltip(e);
 
           if (getContent && Array.isArray(getContent)) {
             self.intervalUpdateContent = setInterval(function () {
               if (self.mount) {
                 var _getContent = self.props.getContent;
-                var placeholder = getTipContent(originTooltip, '', _getContent[0](), isMultiline);
+                var placeholder = getTipContent(originTooltip, "", _getContent[0](), isMultiline);
                 var isEmptyTip = self.isEmptyTip(placeholder);
                 self.setState({
                   isEmptyTip: isEmptyTip
@@ -74149,18 +74215,14 @@ function (_React$Component) {
           disable = _this$state.disable;
       var afterShow = this.props.afterShow;
       var placeholder = this.getTooltipContent();
+      var delayTime = parseInt(delayShow, 10);
       var eventTarget = e.currentTarget || e.target; // Check if the mouse is actually over the tooltip, if so don't hide the tooltip
 
       if (this.mouseOnToolTip()) {
         return;
-      } // if the tooltip is empty, disable the tooltip
-
-
-      if (this.isEmptyTip(placeholder) || disable) {
-        return;
       }
 
-      var delayTime = !this.state.show ? parseInt(delayShow, 10) : 0;
+      if (this.isEmptyTip(placeholder) || disable) return; // if the tooltip is empty, disable the tooltip
 
       var updateState = function updateState() {
         if (Array.isArray(placeholder) && placeholder.length > 0 || placeholder) {
@@ -74173,16 +74235,14 @@ function (_React$Component) {
           }, function () {
             _this5.updatePosition();
 
-            if (isInvisible && afterShow) {
-              afterShow(e);
-            }
+            if (isInvisible && afterShow) afterShow(e);
           });
         }
       };
 
       clearTimeout(this.delayShowLoop);
 
-      if (delayTime) {
+      if (delayShow) {
         this.delayShowLoop = setTimeout(updateState, delayTime);
       } else {
         updateState();
@@ -74198,7 +74258,7 @@ function (_React$Component) {
       var show = this.state.show;
 
       if (show && this.tooltipRef) {
-        this.tooltipRef.addEventListener('mouseleave', this.hideTooltip);
+        this.tooltipRef.addEventListener("mouseleave", this.hideTooltip);
       }
     }
   }, {
@@ -74207,7 +74267,7 @@ function (_React$Component) {
       var show = this.state.show;
 
       if (show && this.tooltipRef) {
-        this.tooltipRef.removeEventListener('mouseleave', this.hideTooltip);
+        this.tooltipRef.removeEventListener("mouseleave", this.hideTooltip);
       }
     }
     /**
@@ -74253,11 +74313,9 @@ function (_React$Component) {
         _this6.setState({
           show: false
         }, function () {
-          _this6.removeScrollListener(_this6.state.currentTarget);
+          _this6.removeScrollListener();
 
-          if (isVisible && afterHide) {
-            afterHide(e);
-          }
+          if (isVisible && afterHide) afterHide(e);
         });
       };
 
@@ -74289,13 +74347,12 @@ function (_React$Component) {
     key: "addScrollListener",
     value: function addScrollListener(currentTarget) {
       var isCaptureMode = this.isCapture(currentTarget);
-      window.addEventListener('scroll', this.hideTooltipOnScroll, isCaptureMode);
+      window.addEventListener("scroll", this.hideTooltipOnScroll, isCaptureMode);
     }
   }, {
     key: "removeScrollListener",
-    value: function removeScrollListener(currentTarget) {
-      var isCaptureMode = this.isCapture(currentTarget);
-      window.removeEventListener('scroll', this.hideTooltipOnScroll, isCaptureMode);
+    value: function removeScrollListener() {
+      window.removeEventListener("scroll", this.hideTooltipOnScroll);
     } // Calculation the position
 
   }, {
@@ -74325,9 +74382,33 @@ function (_React$Component) {
       } // Set tooltip position
 
 
-      node.style.left = result.position.left + 'px';
-      node.style.top = result.position.top + 'px';
+      node.style.left = result.position.left + "px";
+      node.style.top = result.position.top + "px";
     }
+    /**
+     * Set style tag in header
+     * in this way we can insert default css
+     */
+
+    /* setStyleHeader() {
+      const head = document.getElementsByTagName("head")[0];
+      if (!head.querySelector('style[id="react-tooltip"]')) {
+        const tag = document.createElement("style");
+        tag.id = "react-tooltip";
+        tag.innerHTML = cssStyle; */
+
+    /* eslint-disable */
+
+    /*      if (typeof __webpack_nonce__ !== 'undefined' && __webpack_nonce__) {
+            tag.setAttribute('nonce', __webpack_nonce__)
+          }*/
+
+    /* eslint-enable */
+
+    /*    head.insertBefore(tag, head.firstChild);
+      }
+    } */
+
     /**
      * CLear all kinds of timeout of interval
      */
@@ -74341,66 +74422,51 @@ function (_React$Component) {
       clearInterval(this.intervalUpdateContent);
     }
   }, {
-    key: "hasCustomColors",
-    value: function hasCustomColors() {
-      var _this8 = this;
-
-      return Boolean(Object.keys(this.state.customColors).find(function (color) {
-        return color !== 'border' && _this8.state.customColors[color];
-      }) || this.state.border && this.state.customColors['border']);
-    }
-  }, {
     key: "render",
     value: function render() {
-      var _this9 = this;
+      var _this8 = this;
 
       var _this$state3 = this.state,
           extraClass = _this$state3.extraClass,
           html = _this$state3.html,
           ariaProps = _this$state3.ariaProps,
           disable = _this$state3.disable;
-      var content = this.getTooltipContent();
-      var isEmptyTip = this.isEmptyTip(content);
-      var style = generateTooltipStyle(this.state.uuid, this.state.customColors, this.state.type, this.state.border);
-      var tooltipClass = '__react_component_tooltip' + " ".concat(this.state.uuid) + (this.state.show && !disable && !isEmptyTip ? ' show' : '') + (this.state.border ? ' border' : '') + " place-".concat(this.state.place) + // top, bottom, left, right
-      " type-".concat(this.hasCustomColors() ? 'custom' : this.state.type) + ( // dark, success, warning, error, info, light, custom
-      this.props.delayUpdate ? ' allow_hover' : '') + (this.props.clickable ? ' allow_click' : '');
+      var placeholder = this.getTooltipContent();
+      var isEmptyTip = this.isEmptyTip(placeholder);
+      var tooltipClass = "__react_component_tooltip" + (this.state.show && !disable && !isEmptyTip ? " show" : "") + (this.state.border ? " border" : "") + " place-".concat(this.state.place) + // top, bottom, left, right
+      " type-".concat(this.state.type) + ( // dark, success, warning, error, info, light
+      this.props.delayUpdate ? " allow_hover" : "") + (this.props.clickable ? " allow_click" : "");
       var Wrapper = this.props.wrapper;
 
       if (ReactTooltip.supportedWrappers.indexOf(Wrapper) < 0) {
         Wrapper = ReactTooltip.defaultProps.wrapper;
       }
 
-      var wrapperClassName = [tooltipClass, extraClass].filter(Boolean).join(' ');
+      var wrapperClassName = [tooltipClass, extraClass].filter(Boolean).join(" ");
 
       if (html) {
-        var htmlContent = "".concat(content, "\n<style>").concat(style, "</style>");
         return React.createElement(Wrapper, _extends({
-          className: "".concat(wrapperClassName),
+          className: wrapperClassName,
           id: this.props.id,
           ref: function ref(_ref) {
-            return _this9.tooltipRef = _ref;
+            return _this8.tooltipRef = _ref;
           }
         }, ariaProps, {
           "data-id": "tooltip",
           dangerouslySetInnerHTML: {
-            __html: htmlContent
+            __html: placeholder
           }
         }));
       } else {
         return React.createElement(Wrapper, _extends({
-          className: "".concat(wrapperClassName),
+          className: wrapperClassName,
           id: this.props.id
         }, ariaProps, {
           ref: function ref(_ref2) {
-            return _this9.tooltipRef = _ref2;
+            return _this8.tooltipRef = _ref2;
           },
           "data-id": "tooltip"
-        }), React.createElement("style", {
-          dangerouslySetInnerHTML: {
-            __html: style
-          }
-        }), content);
+        }), placeholder);
       }
     }
   }], [{
@@ -74423,18 +74489,52 @@ function (_React$Component) {
   }]);
 
   return ReactTooltip;
-}(React.Component), _defineProperty(_class2, "defaultProps", {
+}(React.Component), _defineProperty(_class2, "propTypes", {
+  children: propTypes.any,
+  place: propTypes.string,
+  type: propTypes.string,
+  effect: propTypes.string,
+  offset: propTypes.object,
+  multiline: propTypes.bool,
+  border: propTypes.bool,
+  insecure: propTypes.bool,
+  "class": propTypes.string,
+  className: propTypes.string,
+  id: propTypes.string,
+  html: propTypes.bool,
+  delayHide: propTypes.number,
+  delayUpdate: propTypes.number,
+  delayShow: propTypes.number,
+  event: propTypes.string,
+  eventOff: propTypes.string,
+  watchWindow: propTypes.bool,
+  isCapture: propTypes.bool,
+  globalEventOff: propTypes.string,
+  getContent: propTypes.any,
+  afterShow: propTypes.func,
+  afterHide: propTypes.func,
+  overridePosition: propTypes.func,
+  disable: propTypes.bool,
+  scrollHide: propTypes.bool,
+  resizeHide: propTypes.bool,
+  wrapper: propTypes.string,
+  bodyMode: propTypes.bool,
+  possibleCustomEvents: propTypes.string,
+  possibleCustomEventsOff: propTypes.string,
+  clickable: propTypes.bool
+}), _defineProperty(_class2, "defaultProps", {
   insecure: true,
   resizeHide: true,
-  wrapper: 'div',
+  wrapper: "div",
   clickable: false
-}), _defineProperty(_class2, "supportedWrappers", ['div', 'span']), _defineProperty(_class2, "displayName", 'ReactTooltip'), _temp)) || _class) || _class) || _class) || _class) || _class) || _class) || _class;
+}), _defineProperty(_class2, "supportedWrappers", ["div", "span"]), _defineProperty(_class2, "displayName", "ReactTooltip"), _temp)) || _class) || _class) || _class) || _class) || _class) || _class) || _class;
 
 module.exports = ReactTooltip;
 
 
-},{"prop-types":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/index.js","react":"react","uuid":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react/cjs/react.development.js":[function(require,module,exports){
-/** @license React v16.14.0
+}).call(this,require('_process'))
+},{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","react":"react"}],"/usr/local/lib/node_modules/idyll/node_modules/react/cjs/react.development.js":[function(require,module,exports){
+/** @license React v16.13.1
  * react.development.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -74454,7 +74554,7 @@ if ("development" !== "production") {
 var _assign = require('object-assign');
 var checkPropTypes = require('prop-types/checkPropTypes');
 
-var ReactVersion = '16.14.0';
+var ReactVersion = '16.13.1';
 
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
@@ -76348,7 +76448,7 @@ exports.version = ReactVersion;
 }
 
 },{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js","prop-types/checkPropTypes":"/usr/local/lib/node_modules/idyll/node_modules/prop-types/checkPropTypes.js"}],"/usr/local/lib/node_modules/idyll/node_modules/react/cjs/react.production.min.js":[function(require,module,exports){
-/** @license React v16.14.0
+/** @license React v16.13.1
  * react.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
@@ -76372,9 +76472,2295 @@ exports.Component=F;exports.Fragment=r;exports.Profiler=u;exports.PureComponent=
 exports.cloneElement=function(a,b,c){if(null===a||void 0===a)throw Error(C(267,a));var e=l({},a.props),d=a.key,g=a.ref,k=a._owner;if(null!=b){void 0!==b.ref&&(g=b.ref,k=J.current);void 0!==b.key&&(d=""+b.key);if(a.type&&a.type.defaultProps)var f=a.type.defaultProps;for(h in b)K.call(b,h)&&!L.hasOwnProperty(h)&&(e[h]=void 0===b[h]&&void 0!==f?f[h]:b[h])}var h=arguments.length-2;if(1===h)e.children=c;else if(1<h){f=Array(h);for(var m=0;m<h;m++)f[m]=arguments[m+2];e.children=f}return{$$typeof:p,type:a.type,
 key:d,ref:g,props:e,_owner:k}};exports.createContext=function(a,b){void 0===b&&(b=null);a={$$typeof:w,_calculateChangedBits:b,_currentValue:a,_currentValue2:a,_threadCount:0,Provider:null,Consumer:null};a.Provider={$$typeof:v,_context:a};return a.Consumer=a};exports.createElement=M;exports.createFactory=function(a){var b=M.bind(null,a);b.type=a;return b};exports.createRef=function(){return{current:null}};exports.forwardRef=function(a){return{$$typeof:x,render:a}};exports.isValidElement=O;
 exports.lazy=function(a){return{$$typeof:A,_ctor:a,_status:-1,_result:null}};exports.memo=function(a,b){return{$$typeof:z,type:a,compare:void 0===b?null:b}};exports.useCallback=function(a,b){return Z().useCallback(a,b)};exports.useContext=function(a,b){return Z().useContext(a,b)};exports.useDebugValue=function(){};exports.useEffect=function(a,b){return Z().useEffect(a,b)};exports.useImperativeHandle=function(a,b,c){return Z().useImperativeHandle(a,b,c)};
-exports.useLayoutEffect=function(a,b){return Z().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return Z().useMemo(a,b)};exports.useReducer=function(a,b,c){return Z().useReducer(a,b,c)};exports.useRef=function(a){return Z().useRef(a)};exports.useState=function(a){return Z().useState(a)};exports.version="16.14.0";
+exports.useLayoutEffect=function(a,b){return Z().useLayoutEffect(a,b)};exports.useMemo=function(a,b){return Z().useMemo(a,b)};exports.useReducer=function(a,b,c){return Z().useReducer(a,b,c)};exports.useRef=function(a){return Z().useRef(a)};exports.useState=function(a){return Z().useState(a)};exports.version="16.13.1";
 
-},{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/regenerator-runtime/runtime.js":[function(require,module,exports){
+},{"object-assign":"/usr/local/lib/node_modules/idyll/node_modules/object-assign/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/duplex-browser.js":[function(require,module,exports){
+module.exports = require('./lib/_stream_duplex.js');
+
+},{"./lib/_stream_duplex.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// a duplex stream is just a stream that is both readable and writable.
+// Since JS doesn't have multiple prototypal inheritance, this class
+// prototypally inherits from Readable, and then parasitically from
+// Writable.
+
+'use strict';
+
+/*<replacement>*/
+
+var pna = require('process-nextick-args');
+/*</replacement>*/
+
+/*<replacement>*/
+var objectKeys = Object.keys || function (obj) {
+  var keys = [];
+  for (var key in obj) {
+    keys.push(key);
+  }return keys;
+};
+/*</replacement>*/
+
+module.exports = Duplex;
+
+/*<replacement>*/
+var util = Object.create(require('core-util-is'));
+util.inherits = require('inherits');
+/*</replacement>*/
+
+var Readable = require('./_stream_readable');
+var Writable = require('./_stream_writable');
+
+util.inherits(Duplex, Readable);
+
+{
+  // avoid scope creep, the keys array can then be collected
+  var keys = objectKeys(Writable.prototype);
+  for (var v = 0; v < keys.length; v++) {
+    var method = keys[v];
+    if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
+  }
+}
+
+function Duplex(options) {
+  if (!(this instanceof Duplex)) return new Duplex(options);
+
+  Readable.call(this, options);
+  Writable.call(this, options);
+
+  if (options && options.readable === false) this.readable = false;
+
+  if (options && options.writable === false) this.writable = false;
+
+  this.allowHalfOpen = true;
+  if (options && options.allowHalfOpen === false) this.allowHalfOpen = false;
+
+  this.once('end', onend);
+}
+
+Object.defineProperty(Duplex.prototype, 'writableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function () {
+    return this._writableState.highWaterMark;
+  }
+});
+
+// the no-half-open enforcer
+function onend() {
+  // if we allow half-open state, or if the writable side ended,
+  // then we're ok.
+  if (this.allowHalfOpen || this._writableState.ended) return;
+
+  // no more data can be written.
+  // But allow more writes to happen in this tick.
+  pna.nextTick(onEndNT, this);
+}
+
+function onEndNT(self) {
+  self.end();
+}
+
+Object.defineProperty(Duplex.prototype, 'destroyed', {
+  get: function () {
+    if (this._readableState === undefined || this._writableState === undefined) {
+      return false;
+    }
+    return this._readableState.destroyed && this._writableState.destroyed;
+  },
+  set: function (value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (this._readableState === undefined || this._writableState === undefined) {
+      return;
+    }
+
+    // backward compatibility, the user is explicitly
+    // managing destroyed
+    this._readableState.destroyed = value;
+    this._writableState.destroyed = value;
+  }
+});
+
+Duplex.prototype._destroy = function (err, cb) {
+  this.push(null);
+  this.end();
+
+  pna.nextTick(cb, err);
+};
+},{"./_stream_readable":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_writable.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","process-nextick-args":"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// a passthrough stream.
+// basically just the most minimal sort of Transform stream.
+// Every written chunk gets output as-is.
+
+'use strict';
+
+module.exports = PassThrough;
+
+var Transform = require('./_stream_transform');
+
+/*<replacement>*/
+var util = Object.create(require('core-util-is'));
+util.inherits = require('inherits');
+/*</replacement>*/
+
+util.inherits(PassThrough, Transform);
+
+function PassThrough(options) {
+  if (!(this instanceof PassThrough)) return new PassThrough(options);
+
+  Transform.call(this, options);
+}
+
+PassThrough.prototype._transform = function (chunk, encoding, cb) {
+  cb(null, chunk);
+};
+},{"./_stream_transform":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_transform.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
+(function (process,global){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+'use strict';
+
+/*<replacement>*/
+
+var pna = require('process-nextick-args');
+/*</replacement>*/
+
+module.exports = Readable;
+
+/*<replacement>*/
+var isArray = require('isarray');
+/*</replacement>*/
+
+/*<replacement>*/
+var Duplex;
+/*</replacement>*/
+
+Readable.ReadableState = ReadableState;
+
+/*<replacement>*/
+var EE = require('events').EventEmitter;
+
+var EElistenerCount = function (emitter, type) {
+  return emitter.listeners(type).length;
+};
+/*</replacement>*/
+
+/*<replacement>*/
+var Stream = require('./internal/streams/stream');
+/*</replacement>*/
+
+/*<replacement>*/
+
+var Buffer = require('safe-buffer').Buffer;
+var OurUint8Array = global.Uint8Array || function () {};
+function _uint8ArrayToBuffer(chunk) {
+  return Buffer.from(chunk);
+}
+function _isUint8Array(obj) {
+  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
+}
+
+/*</replacement>*/
+
+/*<replacement>*/
+var util = Object.create(require('core-util-is'));
+util.inherits = require('inherits');
+/*</replacement>*/
+
+/*<replacement>*/
+var debugUtil = require('util');
+var debug = void 0;
+if (debugUtil && debugUtil.debuglog) {
+  debug = debugUtil.debuglog('stream');
+} else {
+  debug = function () {};
+}
+/*</replacement>*/
+
+var BufferList = require('./internal/streams/BufferList');
+var destroyImpl = require('./internal/streams/destroy');
+var StringDecoder;
+
+util.inherits(Readable, Stream);
+
+var kProxyEvents = ['error', 'close', 'destroy', 'pause', 'resume'];
+
+function prependListener(emitter, event, fn) {
+  // Sadly this is not cacheable as some libraries bundle their own
+  // event emitter implementation with them.
+  if (typeof emitter.prependListener === 'function') return emitter.prependListener(event, fn);
+
+  // This is a hack to make sure that our error handler is attached before any
+  // userland ones.  NEVER DO THIS. This is here only because this code needs
+  // to continue to work with older versions of Node.js that do not include
+  // the prependListener() method. The goal is to eventually remove this hack.
+  if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
+}
+
+function ReadableState(options, stream) {
+  Duplex = Duplex || require('./_stream_duplex');
+
+  options = options || {};
+
+  // Duplex streams are both readable and writable, but share
+  // the same options object.
+  // However, some cases require setting options to different
+  // values for the readable and the writable sides of the duplex stream.
+  // These options can be provided separately as readableXXX and writableXXX.
+  var isDuplex = stream instanceof Duplex;
+
+  // object stream flag. Used to make read(n) ignore n and to
+  // make all the buffer merging and length checks go away
+  this.objectMode = !!options.objectMode;
+
+  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode;
+
+  // the point at which it stops calling _read() to fill the buffer
+  // Note: 0 is a valid value, means "don't call _read preemptively ever"
+  var hwm = options.highWaterMark;
+  var readableHwm = options.readableHighWaterMark;
+  var defaultHwm = this.objectMode ? 16 : 16 * 1024;
+
+  if (hwm || hwm === 0) this.highWaterMark = hwm;else if (isDuplex && (readableHwm || readableHwm === 0)) this.highWaterMark = readableHwm;else this.highWaterMark = defaultHwm;
+
+  // cast to ints.
+  this.highWaterMark = Math.floor(this.highWaterMark);
+
+  // A linked list is used to store data chunks instead of an array because the
+  // linked list can remove elements from the beginning faster than
+  // array.shift()
+  this.buffer = new BufferList();
+  this.length = 0;
+  this.pipes = null;
+  this.pipesCount = 0;
+  this.flowing = null;
+  this.ended = false;
+  this.endEmitted = false;
+  this.reading = false;
+
+  // a flag to be able to tell if the event 'readable'/'data' is emitted
+  // immediately, or on a later tick.  We set this to true at first, because
+  // any actions that shouldn't happen until "later" should generally also
+  // not happen before the first read call.
+  this.sync = true;
+
+  // whenever we return null, then we set a flag to say
+  // that we're awaiting a 'readable' event emission.
+  this.needReadable = false;
+  this.emittedReadable = false;
+  this.readableListening = false;
+  this.resumeScheduled = false;
+
+  // has it been destroyed
+  this.destroyed = false;
+
+  // Crypto is kind of old and crusty.  Historically, its default string
+  // encoding is 'binary' so we have to make this configurable.
+  // Everything else in the universe uses 'utf8', though.
+  this.defaultEncoding = options.defaultEncoding || 'utf8';
+
+  // the number of writers that are awaiting a drain event in .pipe()s
+  this.awaitDrain = 0;
+
+  // if true, a maybeReadMore has been scheduled
+  this.readingMore = false;
+
+  this.decoder = null;
+  this.encoding = null;
+  if (options.encoding) {
+    if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
+    this.decoder = new StringDecoder(options.encoding);
+    this.encoding = options.encoding;
+  }
+}
+
+function Readable(options) {
+  Duplex = Duplex || require('./_stream_duplex');
+
+  if (!(this instanceof Readable)) return new Readable(options);
+
+  this._readableState = new ReadableState(options, this);
+
+  // legacy
+  this.readable = true;
+
+  if (options) {
+    if (typeof options.read === 'function') this._read = options.read;
+
+    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+  }
+
+  Stream.call(this);
+}
+
+Object.defineProperty(Readable.prototype, 'destroyed', {
+  get: function () {
+    if (this._readableState === undefined) {
+      return false;
+    }
+    return this._readableState.destroyed;
+  },
+  set: function (value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (!this._readableState) {
+      return;
+    }
+
+    // backward compatibility, the user is explicitly
+    // managing destroyed
+    this._readableState.destroyed = value;
+  }
+});
+
+Readable.prototype.destroy = destroyImpl.destroy;
+Readable.prototype._undestroy = destroyImpl.undestroy;
+Readable.prototype._destroy = function (err, cb) {
+  this.push(null);
+  cb(err);
+};
+
+// Manually shove something into the read() buffer.
+// This returns true if the highWaterMark has not been hit yet,
+// similar to how Writable.write() returns true if you should
+// write() some more.
+Readable.prototype.push = function (chunk, encoding) {
+  var state = this._readableState;
+  var skipChunkCheck;
+
+  if (!state.objectMode) {
+    if (typeof chunk === 'string') {
+      encoding = encoding || state.defaultEncoding;
+      if (encoding !== state.encoding) {
+        chunk = Buffer.from(chunk, encoding);
+        encoding = '';
+      }
+      skipChunkCheck = true;
+    }
+  } else {
+    skipChunkCheck = true;
+  }
+
+  return readableAddChunk(this, chunk, encoding, false, skipChunkCheck);
+};
+
+// Unshift should *always* be something directly out of read()
+Readable.prototype.unshift = function (chunk) {
+  return readableAddChunk(this, chunk, null, true, false);
+};
+
+function readableAddChunk(stream, chunk, encoding, addToFront, skipChunkCheck) {
+  var state = stream._readableState;
+  if (chunk === null) {
+    state.reading = false;
+    onEofChunk(stream, state);
+  } else {
+    var er;
+    if (!skipChunkCheck) er = chunkInvalid(state, chunk);
+    if (er) {
+      stream.emit('error', er);
+    } else if (state.objectMode || chunk && chunk.length > 0) {
+      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer.prototype) {
+        chunk = _uint8ArrayToBuffer(chunk);
+      }
+
+      if (addToFront) {
+        if (state.endEmitted) stream.emit('error', new Error('stream.unshift() after end event'));else addChunk(stream, state, chunk, true);
+      } else if (state.ended) {
+        stream.emit('error', new Error('stream.push() after EOF'));
+      } else {
+        state.reading = false;
+        if (state.decoder && !encoding) {
+          chunk = state.decoder.write(chunk);
+          if (state.objectMode || chunk.length !== 0) addChunk(stream, state, chunk, false);else maybeReadMore(stream, state);
+        } else {
+          addChunk(stream, state, chunk, false);
+        }
+      }
+    } else if (!addToFront) {
+      state.reading = false;
+    }
+  }
+
+  return needMoreData(state);
+}
+
+function addChunk(stream, state, chunk, addToFront) {
+  if (state.flowing && state.length === 0 && !state.sync) {
+    stream.emit('data', chunk);
+    stream.read(0);
+  } else {
+    // update the buffer info.
+    state.length += state.objectMode ? 1 : chunk.length;
+    if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
+
+    if (state.needReadable) emitReadable(stream);
+  }
+  maybeReadMore(stream, state);
+}
+
+function chunkInvalid(state, chunk) {
+  var er;
+  if (!_isUint8Array(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
+    er = new TypeError('Invalid non-string/buffer chunk');
+  }
+  return er;
+}
+
+// if it's past the high water mark, we can push in some more.
+// Also, if we have no data yet, we can stand some
+// more bytes.  This is to work around cases where hwm=0,
+// such as the repl.  Also, if the push() triggered a
+// readable event, and the user called read(largeNumber) such that
+// needReadable was set, then we ought to push more, so that another
+// 'readable' event will be triggered.
+function needMoreData(state) {
+  return !state.ended && (state.needReadable || state.length < state.highWaterMark || state.length === 0);
+}
+
+Readable.prototype.isPaused = function () {
+  return this._readableState.flowing === false;
+};
+
+// backwards compatibility.
+Readable.prototype.setEncoding = function (enc) {
+  if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
+  this._readableState.decoder = new StringDecoder(enc);
+  this._readableState.encoding = enc;
+  return this;
+};
+
+// Don't raise the hwm > 8MB
+var MAX_HWM = 0x800000;
+function computeNewHighWaterMark(n) {
+  if (n >= MAX_HWM) {
+    n = MAX_HWM;
+  } else {
+    // Get the next highest power of 2 to prevent increasing hwm excessively in
+    // tiny amounts
+    n--;
+    n |= n >>> 1;
+    n |= n >>> 2;
+    n |= n >>> 4;
+    n |= n >>> 8;
+    n |= n >>> 16;
+    n++;
+  }
+  return n;
+}
+
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function howMuchToRead(n, state) {
+  if (n <= 0 || state.length === 0 && state.ended) return 0;
+  if (state.objectMode) return 1;
+  if (n !== n) {
+    // Only flow one buffer at a time
+    if (state.flowing && state.length) return state.buffer.head.data.length;else return state.length;
+  }
+  // If we're asking for more than the current hwm, then raise the hwm.
+  if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
+  if (n <= state.length) return n;
+  // Don't have enough
+  if (!state.ended) {
+    state.needReadable = true;
+    return 0;
+  }
+  return state.length;
+}
+
+// you can override either this method, or the async _read(n) below.
+Readable.prototype.read = function (n) {
+  debug('read', n);
+  n = parseInt(n, 10);
+  var state = this._readableState;
+  var nOrig = n;
+
+  if (n !== 0) state.emittedReadable = false;
+
+  // if we're doing read(0) to trigger a readable event, but we
+  // already have a bunch of data in the buffer, then just trigger
+  // the 'readable' event and move on.
+  if (n === 0 && state.needReadable && (state.length >= state.highWaterMark || state.ended)) {
+    debug('read: emitReadable', state.length, state.ended);
+    if (state.length === 0 && state.ended) endReadable(this);else emitReadable(this);
+    return null;
+  }
+
+  n = howMuchToRead(n, state);
+
+  // if we've ended, and we're now clear, then finish it up.
+  if (n === 0 && state.ended) {
+    if (state.length === 0) endReadable(this);
+    return null;
+  }
+
+  // All the actual chunk generation logic needs to be
+  // *below* the call to _read.  The reason is that in certain
+  // synthetic stream cases, such as passthrough streams, _read
+  // may be a completely synchronous operation which may change
+  // the state of the read buffer, providing enough data when
+  // before there was *not* enough.
+  //
+  // So, the steps are:
+  // 1. Figure out what the state of things will be after we do
+  // a read from the buffer.
+  //
+  // 2. If that resulting state will trigger a _read, then call _read.
+  // Note that this may be asynchronous, or synchronous.  Yes, it is
+  // deeply ugly to write APIs this way, but that still doesn't mean
+  // that the Readable class should behave improperly, as streams are
+  // designed to be sync/async agnostic.
+  // Take note if the _read call is sync or async (ie, if the read call
+  // has returned yet), so that we know whether or not it's safe to emit
+  // 'readable' etc.
+  //
+  // 3. Actually pull the requested chunks out of the buffer and return.
+
+  // if we need a readable event, then we need to do some reading.
+  var doRead = state.needReadable;
+  debug('need readable', doRead);
+
+  // if we currently have less than the highWaterMark, then also read some
+  if (state.length === 0 || state.length - n < state.highWaterMark) {
+    doRead = true;
+    debug('length less than watermark', doRead);
+  }
+
+  // however, if we've ended, then there's no point, and if we're already
+  // reading, then it's unnecessary.
+  if (state.ended || state.reading) {
+    doRead = false;
+    debug('reading or ended', doRead);
+  } else if (doRead) {
+    debug('do read');
+    state.reading = true;
+    state.sync = true;
+    // if the length is currently zero, then we *need* a readable event.
+    if (state.length === 0) state.needReadable = true;
+    // call internal read method
+    this._read(state.highWaterMark);
+    state.sync = false;
+    // If _read pushed data synchronously, then `reading` will be false,
+    // and we need to re-evaluate how much data we can return to the user.
+    if (!state.reading) n = howMuchToRead(nOrig, state);
+  }
+
+  var ret;
+  if (n > 0) ret = fromList(n, state);else ret = null;
+
+  if (ret === null) {
+    state.needReadable = true;
+    n = 0;
+  } else {
+    state.length -= n;
+  }
+
+  if (state.length === 0) {
+    // If we have nothing in the buffer, then we want to know
+    // as soon as we *do* get something into the buffer.
+    if (!state.ended) state.needReadable = true;
+
+    // If we tried to read() past the EOF, then emit end on the next tick.
+    if (nOrig !== n && state.ended) endReadable(this);
+  }
+
+  if (ret !== null) this.emit('data', ret);
+
+  return ret;
+};
+
+function onEofChunk(stream, state) {
+  if (state.ended) return;
+  if (state.decoder) {
+    var chunk = state.decoder.end();
+    if (chunk && chunk.length) {
+      state.buffer.push(chunk);
+      state.length += state.objectMode ? 1 : chunk.length;
+    }
+  }
+  state.ended = true;
+
+  // emit 'readable' now to make sure it gets picked up.
+  emitReadable(stream);
+}
+
+// Don't emit readable right away in sync mode, because this can trigger
+// another read() call => stack overflow.  This way, it might trigger
+// a nextTick recursion warning, but that's not so bad.
+function emitReadable(stream) {
+  var state = stream._readableState;
+  state.needReadable = false;
+  if (!state.emittedReadable) {
+    debug('emitReadable', state.flowing);
+    state.emittedReadable = true;
+    if (state.sync) pna.nextTick(emitReadable_, stream);else emitReadable_(stream);
+  }
+}
+
+function emitReadable_(stream) {
+  debug('emit readable');
+  stream.emit('readable');
+  flow(stream);
+}
+
+// at this point, the user has presumably seen the 'readable' event,
+// and called read() to consume some data.  that may have triggered
+// in turn another _read(n) call, in which case reading = true if
+// it's in progress.
+// However, if we're not ended, or reading, and the length < hwm,
+// then go ahead and try to read some more preemptively.
+function maybeReadMore(stream, state) {
+  if (!state.readingMore) {
+    state.readingMore = true;
+    pna.nextTick(maybeReadMore_, stream, state);
+  }
+}
+
+function maybeReadMore_(stream, state) {
+  var len = state.length;
+  while (!state.reading && !state.flowing && !state.ended && state.length < state.highWaterMark) {
+    debug('maybeReadMore read 0');
+    stream.read(0);
+    if (len === state.length)
+      // didn't get any data, stop spinning.
+      break;else len = state.length;
+  }
+  state.readingMore = false;
+}
+
+// abstract method.  to be overridden in specific implementation classes.
+// call cb(er, data) where data is <= n in length.
+// for virtual (non-string, non-buffer) streams, "length" is somewhat
+// arbitrary, and perhaps not very meaningful.
+Readable.prototype._read = function (n) {
+  this.emit('error', new Error('_read() is not implemented'));
+};
+
+Readable.prototype.pipe = function (dest, pipeOpts) {
+  var src = this;
+  var state = this._readableState;
+
+  switch (state.pipesCount) {
+    case 0:
+      state.pipes = dest;
+      break;
+    case 1:
+      state.pipes = [state.pipes, dest];
+      break;
+    default:
+      state.pipes.push(dest);
+      break;
+  }
+  state.pipesCount += 1;
+  debug('pipe count=%d opts=%j', state.pipesCount, pipeOpts);
+
+  var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
+
+  var endFn = doEnd ? onend : unpipe;
+  if (state.endEmitted) pna.nextTick(endFn);else src.once('end', endFn);
+
+  dest.on('unpipe', onunpipe);
+  function onunpipe(readable, unpipeInfo) {
+    debug('onunpipe');
+    if (readable === src) {
+      if (unpipeInfo && unpipeInfo.hasUnpiped === false) {
+        unpipeInfo.hasUnpiped = true;
+        cleanup();
+      }
+    }
+  }
+
+  function onend() {
+    debug('onend');
+    dest.end();
+  }
+
+  // when the dest drains, it reduces the awaitDrain counter
+  // on the source.  This would be more elegant with a .once()
+  // handler in flow(), but adding and removing repeatedly is
+  // too slow.
+  var ondrain = pipeOnDrain(src);
+  dest.on('drain', ondrain);
+
+  var cleanedUp = false;
+  function cleanup() {
+    debug('cleanup');
+    // cleanup event handlers once the pipe is broken
+    dest.removeListener('close', onclose);
+    dest.removeListener('finish', onfinish);
+    dest.removeListener('drain', ondrain);
+    dest.removeListener('error', onerror);
+    dest.removeListener('unpipe', onunpipe);
+    src.removeListener('end', onend);
+    src.removeListener('end', unpipe);
+    src.removeListener('data', ondata);
+
+    cleanedUp = true;
+
+    // if the reader is waiting for a drain event from this
+    // specific writer, then it would cause it to never start
+    // flowing again.
+    // So, if this is awaiting a drain, then we just call it now.
+    // If we don't know, then assume that we are waiting for one.
+    if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
+  }
+
+  // If the user pushes more data while we're writing to dest then we'll end up
+  // in ondata again. However, we only want to increase awaitDrain once because
+  // dest will only emit one 'drain' event for the multiple writes.
+  // => Introduce a guard on increasing awaitDrain.
+  var increasedAwaitDrain = false;
+  src.on('data', ondata);
+  function ondata(chunk) {
+    debug('ondata');
+    increasedAwaitDrain = false;
+    var ret = dest.write(chunk);
+    if (false === ret && !increasedAwaitDrain) {
+      // If the user unpiped during `dest.write()`, it is possible
+      // to get stuck in a permanently paused state if that write
+      // also returned false.
+      // => Check whether `dest` is still a piping destination.
+      if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
+        debug('false write response, pause', src._readableState.awaitDrain);
+        src._readableState.awaitDrain++;
+        increasedAwaitDrain = true;
+      }
+      src.pause();
+    }
+  }
+
+  // if the dest has an error, then stop piping into it.
+  // however, don't suppress the throwing behavior for this.
+  function onerror(er) {
+    debug('onerror', er);
+    unpipe();
+    dest.removeListener('error', onerror);
+    if (EElistenerCount(dest, 'error') === 0) dest.emit('error', er);
+  }
+
+  // Make sure our error handler is attached before userland ones.
+  prependListener(dest, 'error', onerror);
+
+  // Both close and finish should trigger unpipe, but only once.
+  function onclose() {
+    dest.removeListener('finish', onfinish);
+    unpipe();
+  }
+  dest.once('close', onclose);
+  function onfinish() {
+    debug('onfinish');
+    dest.removeListener('close', onclose);
+    unpipe();
+  }
+  dest.once('finish', onfinish);
+
+  function unpipe() {
+    debug('unpipe');
+    src.unpipe(dest);
+  }
+
+  // tell the dest that it's being piped to
+  dest.emit('pipe', src);
+
+  // start the flow if it hasn't been started already.
+  if (!state.flowing) {
+    debug('pipe resume');
+    src.resume();
+  }
+
+  return dest;
+};
+
+function pipeOnDrain(src) {
+  return function () {
+    var state = src._readableState;
+    debug('pipeOnDrain', state.awaitDrain);
+    if (state.awaitDrain) state.awaitDrain--;
+    if (state.awaitDrain === 0 && EElistenerCount(src, 'data')) {
+      state.flowing = true;
+      flow(src);
+    }
+  };
+}
+
+Readable.prototype.unpipe = function (dest) {
+  var state = this._readableState;
+  var unpipeInfo = { hasUnpiped: false };
+
+  // if we're not piping anywhere, then do nothing.
+  if (state.pipesCount === 0) return this;
+
+  // just one destination.  most common case.
+  if (state.pipesCount === 1) {
+    // passed in one, but it's not the right one.
+    if (dest && dest !== state.pipes) return this;
+
+    if (!dest) dest = state.pipes;
+
+    // got a match.
+    state.pipes = null;
+    state.pipesCount = 0;
+    state.flowing = false;
+    if (dest) dest.emit('unpipe', this, unpipeInfo);
+    return this;
+  }
+
+  // slow case. multiple pipe destinations.
+
+  if (!dest) {
+    // remove all.
+    var dests = state.pipes;
+    var len = state.pipesCount;
+    state.pipes = null;
+    state.pipesCount = 0;
+    state.flowing = false;
+
+    for (var i = 0; i < len; i++) {
+      dests[i].emit('unpipe', this, unpipeInfo);
+    }return this;
+  }
+
+  // try to find the right one.
+  var index = indexOf(state.pipes, dest);
+  if (index === -1) return this;
+
+  state.pipes.splice(index, 1);
+  state.pipesCount -= 1;
+  if (state.pipesCount === 1) state.pipes = state.pipes[0];
+
+  dest.emit('unpipe', this, unpipeInfo);
+
+  return this;
+};
+
+// set up data events if they are asked for
+// Ensure readable listeners eventually get something
+Readable.prototype.on = function (ev, fn) {
+  var res = Stream.prototype.on.call(this, ev, fn);
+
+  if (ev === 'data') {
+    // Start flowing on next tick if stream isn't explicitly paused
+    if (this._readableState.flowing !== false) this.resume();
+  } else if (ev === 'readable') {
+    var state = this._readableState;
+    if (!state.endEmitted && !state.readableListening) {
+      state.readableListening = state.needReadable = true;
+      state.emittedReadable = false;
+      if (!state.reading) {
+        pna.nextTick(nReadingNextTick, this);
+      } else if (state.length) {
+        emitReadable(this);
+      }
+    }
+  }
+
+  return res;
+};
+Readable.prototype.addListener = Readable.prototype.on;
+
+function nReadingNextTick(self) {
+  debug('readable nexttick read 0');
+  self.read(0);
+}
+
+// pause() and resume() are remnants of the legacy readable stream API
+// If the user uses them, then switch into old mode.
+Readable.prototype.resume = function () {
+  var state = this._readableState;
+  if (!state.flowing) {
+    debug('resume');
+    state.flowing = true;
+    resume(this, state);
+  }
+  return this;
+};
+
+function resume(stream, state) {
+  if (!state.resumeScheduled) {
+    state.resumeScheduled = true;
+    pna.nextTick(resume_, stream, state);
+  }
+}
+
+function resume_(stream, state) {
+  if (!state.reading) {
+    debug('resume read 0');
+    stream.read(0);
+  }
+
+  state.resumeScheduled = false;
+  state.awaitDrain = 0;
+  stream.emit('resume');
+  flow(stream);
+  if (state.flowing && !state.reading) stream.read(0);
+}
+
+Readable.prototype.pause = function () {
+  debug('call pause flowing=%j', this._readableState.flowing);
+  if (false !== this._readableState.flowing) {
+    debug('pause');
+    this._readableState.flowing = false;
+    this.emit('pause');
+  }
+  return this;
+};
+
+function flow(stream) {
+  var state = stream._readableState;
+  debug('flow', state.flowing);
+  while (state.flowing && stream.read() !== null) {}
+}
+
+// wrap an old-style stream as the async data source.
+// This is *not* part of the readable stream interface.
+// It is an ugly unfortunate mess of history.
+Readable.prototype.wrap = function (stream) {
+  var _this = this;
+
+  var state = this._readableState;
+  var paused = false;
+
+  stream.on('end', function () {
+    debug('wrapped end');
+    if (state.decoder && !state.ended) {
+      var chunk = state.decoder.end();
+      if (chunk && chunk.length) _this.push(chunk);
+    }
+
+    _this.push(null);
+  });
+
+  stream.on('data', function (chunk) {
+    debug('wrapped data');
+    if (state.decoder) chunk = state.decoder.write(chunk);
+
+    // don't skip over falsy values in objectMode
+    if (state.objectMode && (chunk === null || chunk === undefined)) return;else if (!state.objectMode && (!chunk || !chunk.length)) return;
+
+    var ret = _this.push(chunk);
+    if (!ret) {
+      paused = true;
+      stream.pause();
+    }
+  });
+
+  // proxy all the other methods.
+  // important when wrapping filters and duplexes.
+  for (var i in stream) {
+    if (this[i] === undefined && typeof stream[i] === 'function') {
+      this[i] = function (method) {
+        return function () {
+          return stream[method].apply(stream, arguments);
+        };
+      }(i);
+    }
+  }
+
+  // proxy certain important events.
+  for (var n = 0; n < kProxyEvents.length; n++) {
+    stream.on(kProxyEvents[n], this.emit.bind(this, kProxyEvents[n]));
+  }
+
+  // when we try to consume some more bytes, simply unpause the
+  // underlying stream.
+  this._read = function (n) {
+    debug('wrapped _read', n);
+    if (paused) {
+      paused = false;
+      stream.resume();
+    }
+  };
+
+  return this;
+};
+
+Object.defineProperty(Readable.prototype, 'readableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function () {
+    return this._readableState.highWaterMark;
+  }
+});
+
+// exposed for testing purposes only.
+Readable._fromList = fromList;
+
+// Pluck off n bytes from an array of buffers.
+// Length is the combined lengths of all the buffers in the list.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function fromList(n, state) {
+  // nothing buffered
+  if (state.length === 0) return null;
+
+  var ret;
+  if (state.objectMode) ret = state.buffer.shift();else if (!n || n >= state.length) {
+    // read it all, truncate the list
+    if (state.decoder) ret = state.buffer.join('');else if (state.buffer.length === 1) ret = state.buffer.head.data;else ret = state.buffer.concat(state.length);
+    state.buffer.clear();
+  } else {
+    // read part of list
+    ret = fromListPartial(n, state.buffer, state.decoder);
+  }
+
+  return ret;
+}
+
+// Extracts only enough buffered data to satisfy the amount requested.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function fromListPartial(n, list, hasStrings) {
+  var ret;
+  if (n < list.head.data.length) {
+    // slice is the same for buffers and strings
+    ret = list.head.data.slice(0, n);
+    list.head.data = list.head.data.slice(n);
+  } else if (n === list.head.data.length) {
+    // first chunk is a perfect match
+    ret = list.shift();
+  } else {
+    // result spans more than one buffer
+    ret = hasStrings ? copyFromBufferString(n, list) : copyFromBuffer(n, list);
+  }
+  return ret;
+}
+
+// Copies a specified amount of characters from the list of buffered data
+// chunks.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function copyFromBufferString(n, list) {
+  var p = list.head;
+  var c = 1;
+  var ret = p.data;
+  n -= ret.length;
+  while (p = p.next) {
+    var str = p.data;
+    var nb = n > str.length ? str.length : n;
+    if (nb === str.length) ret += str;else ret += str.slice(0, n);
+    n -= nb;
+    if (n === 0) {
+      if (nb === str.length) {
+        ++c;
+        if (p.next) list.head = p.next;else list.head = list.tail = null;
+      } else {
+        list.head = p;
+        p.data = str.slice(nb);
+      }
+      break;
+    }
+    ++c;
+  }
+  list.length -= c;
+  return ret;
+}
+
+// Copies a specified amount of bytes from the list of buffered data chunks.
+// This function is designed to be inlinable, so please take care when making
+// changes to the function body.
+function copyFromBuffer(n, list) {
+  var ret = Buffer.allocUnsafe(n);
+  var p = list.head;
+  var c = 1;
+  p.data.copy(ret);
+  n -= p.data.length;
+  while (p = p.next) {
+    var buf = p.data;
+    var nb = n > buf.length ? buf.length : n;
+    buf.copy(ret, ret.length - n, 0, nb);
+    n -= nb;
+    if (n === 0) {
+      if (nb === buf.length) {
+        ++c;
+        if (p.next) list.head = p.next;else list.head = list.tail = null;
+      } else {
+        list.head = p;
+        p.data = buf.slice(nb);
+      }
+      break;
+    }
+    ++c;
+  }
+  list.length -= c;
+  return ret;
+}
+
+function endReadable(stream) {
+  var state = stream._readableState;
+
+  // If we get here before consuming all the bytes, then that is a
+  // bug in node.  Should never happen.
+  if (state.length > 0) throw new Error('"endReadable()" called on non-empty stream');
+
+  if (!state.endEmitted) {
+    state.ended = true;
+    pna.nextTick(endReadableNT, state, stream);
+  }
+}
+
+function endReadableNT(state, stream) {
+  // Check that we didn't get one last unshift.
+  if (!state.endEmitted && state.length === 0) {
+    state.endEmitted = true;
+    stream.readable = false;
+    stream.emit('end');
+  }
+}
+
+function indexOf(xs, x) {
+  for (var i = 0, l = xs.length; i < l; i++) {
+    if (xs[i] === x) return i;
+  }
+  return -1;
+}
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/BufferList":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/BufferList.js","./internal/streams/destroy":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","isarray":"/usr/local/lib/node_modules/idyll/node_modules/isarray/index.js","process-nextick-args":"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js","safe-buffer":"/usr/local/lib/node_modules/idyll/node_modules/safe-buffer/index.js","string_decoder/":"/usr/local/lib/node_modules/idyll/node_modules/string_decoder/lib/string_decoder.js","util":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// a transform stream is a readable/writable stream where you do
+// something with the data.  Sometimes it's called a "filter",
+// but that's not a great name for it, since that implies a thing where
+// some bits pass through, and others are simply ignored.  (That would
+// be a valid example of a transform, of course.)
+//
+// While the output is causally related to the input, it's not a
+// necessarily symmetric or synchronous transformation.  For example,
+// a zlib stream might take multiple plain-text writes(), and then
+// emit a single compressed chunk some time in the future.
+//
+// Here's how this works:
+//
+// The Transform stream has all the aspects of the readable and writable
+// stream classes.  When you write(chunk), that calls _write(chunk,cb)
+// internally, and returns false if there's a lot of pending writes
+// buffered up.  When you call read(), that calls _read(n) until
+// there's enough pending readable data buffered up.
+//
+// In a transform stream, the written data is placed in a buffer.  When
+// _read(n) is called, it transforms the queued up data, calling the
+// buffered _write cb's as it consumes chunks.  If consuming a single
+// written chunk would result in multiple output chunks, then the first
+// outputted bit calls the readcb, and subsequent chunks just go into
+// the read buffer, and will cause it to emit 'readable' if necessary.
+//
+// This way, back-pressure is actually determined by the reading side,
+// since _read has to be called to start processing a new chunk.  However,
+// a pathological inflate type of transform can cause excessive buffering
+// here.  For example, imagine a stream where every byte of input is
+// interpreted as an integer from 0-255, and then results in that many
+// bytes of output.  Writing the 4 bytes {ff,ff,ff,ff} would result in
+// 1kb of data being output.  In this case, you could write a very small
+// amount of input, and end up with a very large amount of output.  In
+// such a pathological inflating mechanism, there'd be no way to tell
+// the system to stop doing the transform.  A single 4MB write could
+// cause the system to run out of memory.
+//
+// However, even in such a pathological case, only a single written chunk
+// would be consumed, and then the rest would wait (un-transformed) until
+// the results of the previous transformed chunk were consumed.
+
+'use strict';
+
+module.exports = Transform;
+
+var Duplex = require('./_stream_duplex');
+
+/*<replacement>*/
+var util = Object.create(require('core-util-is'));
+util.inherits = require('inherits');
+/*</replacement>*/
+
+util.inherits(Transform, Duplex);
+
+function afterTransform(er, data) {
+  var ts = this._transformState;
+  ts.transforming = false;
+
+  var cb = ts.writecb;
+
+  if (!cb) {
+    return this.emit('error', new Error('write callback called multiple times'));
+  }
+
+  ts.writechunk = null;
+  ts.writecb = null;
+
+  if (data != null) // single equals check for both `null` and `undefined`
+    this.push(data);
+
+  cb(er);
+
+  var rs = this._readableState;
+  rs.reading = false;
+  if (rs.needReadable || rs.length < rs.highWaterMark) {
+    this._read(rs.highWaterMark);
+  }
+}
+
+function Transform(options) {
+  if (!(this instanceof Transform)) return new Transform(options);
+
+  Duplex.call(this, options);
+
+  this._transformState = {
+    afterTransform: afterTransform.bind(this),
+    needTransform: false,
+    transforming: false,
+    writecb: null,
+    writechunk: null,
+    writeencoding: null
+  };
+
+  // start out asking for a readable event once data is transformed.
+  this._readableState.needReadable = true;
+
+  // we have implemented the _read method, and done the other things
+  // that Readable wants before the first _read call, so unset the
+  // sync guard flag.
+  this._readableState.sync = false;
+
+  if (options) {
+    if (typeof options.transform === 'function') this._transform = options.transform;
+
+    if (typeof options.flush === 'function') this._flush = options.flush;
+  }
+
+  // When the writable side finishes, then flush out anything remaining.
+  this.on('prefinish', prefinish);
+}
+
+function prefinish() {
+  var _this = this;
+
+  if (typeof this._flush === 'function') {
+    this._flush(function (er, data) {
+      done(_this, er, data);
+    });
+  } else {
+    done(this, null, null);
+  }
+}
+
+Transform.prototype.push = function (chunk, encoding) {
+  this._transformState.needTransform = false;
+  return Duplex.prototype.push.call(this, chunk, encoding);
+};
+
+// This is the part where you do stuff!
+// override this function in implementation classes.
+// 'chunk' is an input chunk.
+//
+// Call `push(newChunk)` to pass along transformed output
+// to the readable side.  You may call 'push' zero or more times.
+//
+// Call `cb(err)` when you are done with this chunk.  If you pass
+// an error, then that'll put the hurt on the whole operation.  If you
+// never call cb(), then you'll never get another chunk.
+Transform.prototype._transform = function (chunk, encoding, cb) {
+  throw new Error('_transform() is not implemented');
+};
+
+Transform.prototype._write = function (chunk, encoding, cb) {
+  var ts = this._transformState;
+  ts.writecb = cb;
+  ts.writechunk = chunk;
+  ts.writeencoding = encoding;
+  if (!ts.transforming) {
+    var rs = this._readableState;
+    if (ts.needTransform || rs.needReadable || rs.length < rs.highWaterMark) this._read(rs.highWaterMark);
+  }
+};
+
+// Doesn't matter what the args are here.
+// _transform does all the work.
+// That we got here means that the readable side wants more data.
+Transform.prototype._read = function (n) {
+  var ts = this._transformState;
+
+  if (ts.writechunk !== null && ts.writecb && !ts.transforming) {
+    ts.transforming = true;
+    this._transform(ts.writechunk, ts.writeencoding, ts.afterTransform);
+  } else {
+    // mark that we need a transform, so that any data that comes in
+    // will get processed, now that we've asked for it.
+    ts.needTransform = true;
+  }
+};
+
+Transform.prototype._destroy = function (err, cb) {
+  var _this2 = this;
+
+  Duplex.prototype._destroy.call(this, err, function (err2) {
+    cb(err2);
+    _this2.emit('close');
+  });
+};
+
+function done(stream, er, data) {
+  if (er) return stream.emit('error', er);
+
+  if (data != null) // single equals check for both `null` and `undefined`
+    stream.push(data);
+
+  // if there's nothing in the write buffer, then that means
+  // that nothing more will ever be provided
+  if (stream._writableState.length) throw new Error('Calling transform done when ws.length != 0');
+
+  if (stream._transformState.transforming) throw new Error('Calling transform done when still transforming');
+
+  return stream.push(null);
+}
+},{"./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
+(function (process,global,setImmediate){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// A bit simpler than readable streams.
+// Implement an async ._write(chunk, encoding, cb), and it'll handle all
+// the drain event emission and buffering.
+
+'use strict';
+
+/*<replacement>*/
+
+var pna = require('process-nextick-args');
+/*</replacement>*/
+
+module.exports = Writable;
+
+/* <replacement> */
+function WriteReq(chunk, encoding, cb) {
+  this.chunk = chunk;
+  this.encoding = encoding;
+  this.callback = cb;
+  this.next = null;
+}
+
+// It seems a linked list but it is not
+// there will be only 2 of these for each stream
+function CorkedRequest(state) {
+  var _this = this;
+
+  this.next = null;
+  this.entry = null;
+  this.finish = function () {
+    onCorkedFinish(_this, state);
+  };
+}
+/* </replacement> */
+
+/*<replacement>*/
+var asyncWrite = !process.browser && ['v0.10', 'v0.9.'].indexOf(process.version.slice(0, 5)) > -1 ? setImmediate : pna.nextTick;
+/*</replacement>*/
+
+/*<replacement>*/
+var Duplex;
+/*</replacement>*/
+
+Writable.WritableState = WritableState;
+
+/*<replacement>*/
+var util = Object.create(require('core-util-is'));
+util.inherits = require('inherits');
+/*</replacement>*/
+
+/*<replacement>*/
+var internalUtil = {
+  deprecate: require('util-deprecate')
+};
+/*</replacement>*/
+
+/*<replacement>*/
+var Stream = require('./internal/streams/stream');
+/*</replacement>*/
+
+/*<replacement>*/
+
+var Buffer = require('safe-buffer').Buffer;
+var OurUint8Array = global.Uint8Array || function () {};
+function _uint8ArrayToBuffer(chunk) {
+  return Buffer.from(chunk);
+}
+function _isUint8Array(obj) {
+  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
+}
+
+/*</replacement>*/
+
+var destroyImpl = require('./internal/streams/destroy');
+
+util.inherits(Writable, Stream);
+
+function nop() {}
+
+function WritableState(options, stream) {
+  Duplex = Duplex || require('./_stream_duplex');
+
+  options = options || {};
+
+  // Duplex streams are both readable and writable, but share
+  // the same options object.
+  // However, some cases require setting options to different
+  // values for the readable and the writable sides of the duplex stream.
+  // These options can be provided separately as readableXXX and writableXXX.
+  var isDuplex = stream instanceof Duplex;
+
+  // object stream flag to indicate whether or not this stream
+  // contains buffers or objects.
+  this.objectMode = !!options.objectMode;
+
+  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode;
+
+  // the point at which write() starts returning false
+  // Note: 0 is a valid value, means that we always return false if
+  // the entire buffer is not flushed immediately on write()
+  var hwm = options.highWaterMark;
+  var writableHwm = options.writableHighWaterMark;
+  var defaultHwm = this.objectMode ? 16 : 16 * 1024;
+
+  if (hwm || hwm === 0) this.highWaterMark = hwm;else if (isDuplex && (writableHwm || writableHwm === 0)) this.highWaterMark = writableHwm;else this.highWaterMark = defaultHwm;
+
+  // cast to ints.
+  this.highWaterMark = Math.floor(this.highWaterMark);
+
+  // if _final has been called
+  this.finalCalled = false;
+
+  // drain event flag.
+  this.needDrain = false;
+  // at the start of calling end()
+  this.ending = false;
+  // when end() has been called, and returned
+  this.ended = false;
+  // when 'finish' is emitted
+  this.finished = false;
+
+  // has it been destroyed
+  this.destroyed = false;
+
+  // should we decode strings into buffers before passing to _write?
+  // this is here so that some node-core streams can optimize string
+  // handling at a lower level.
+  var noDecode = options.decodeStrings === false;
+  this.decodeStrings = !noDecode;
+
+  // Crypto is kind of old and crusty.  Historically, its default string
+  // encoding is 'binary' so we have to make this configurable.
+  // Everything else in the universe uses 'utf8', though.
+  this.defaultEncoding = options.defaultEncoding || 'utf8';
+
+  // not an actual buffer we keep track of, but a measurement
+  // of how much we're waiting to get pushed to some underlying
+  // socket or file.
+  this.length = 0;
+
+  // a flag to see when we're in the middle of a write.
+  this.writing = false;
+
+  // when true all writes will be buffered until .uncork() call
+  this.corked = 0;
+
+  // a flag to be able to tell if the onwrite cb is called immediately,
+  // or on a later tick.  We set this to true at first, because any
+  // actions that shouldn't happen until "later" should generally also
+  // not happen before the first write call.
+  this.sync = true;
+
+  // a flag to know if we're processing previously buffered items, which
+  // may call the _write() callback in the same tick, so that we don't
+  // end up in an overlapped onwrite situation.
+  this.bufferProcessing = false;
+
+  // the callback that's passed to _write(chunk,cb)
+  this.onwrite = function (er) {
+    onwrite(stream, er);
+  };
+
+  // the callback that the user supplies to write(chunk,encoding,cb)
+  this.writecb = null;
+
+  // the amount that is being written when _write is called.
+  this.writelen = 0;
+
+  this.bufferedRequest = null;
+  this.lastBufferedRequest = null;
+
+  // number of pending user-supplied write callbacks
+  // this must be 0 before 'finish' can be emitted
+  this.pendingcb = 0;
+
+  // emit prefinish if the only thing we're waiting for is _write cbs
+  // This is relevant for synchronous Transform streams
+  this.prefinished = false;
+
+  // True if the error was already emitted and should not be thrown again
+  this.errorEmitted = false;
+
+  // count buffered requests
+  this.bufferedRequestCount = 0;
+
+  // allocate the first CorkedRequest, there is always
+  // one allocated and free to use, and we maintain at most two
+  this.corkedRequestsFree = new CorkedRequest(this);
+}
+
+WritableState.prototype.getBuffer = function getBuffer() {
+  var current = this.bufferedRequest;
+  var out = [];
+  while (current) {
+    out.push(current);
+    current = current.next;
+  }
+  return out;
+};
+
+(function () {
+  try {
+    Object.defineProperty(WritableState.prototype, 'buffer', {
+      get: internalUtil.deprecate(function () {
+        return this.getBuffer();
+      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
+    });
+  } catch (_) {}
+})();
+
+// Test _writableState for inheritance to account for Duplex streams,
+// whose prototype chain only points to Readable.
+var realHasInstance;
+if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
+  realHasInstance = Function.prototype[Symbol.hasInstance];
+  Object.defineProperty(Writable, Symbol.hasInstance, {
+    value: function (object) {
+      if (realHasInstance.call(this, object)) return true;
+      if (this !== Writable) return false;
+
+      return object && object._writableState instanceof WritableState;
+    }
+  });
+} else {
+  realHasInstance = function (object) {
+    return object instanceof this;
+  };
+}
+
+function Writable(options) {
+  Duplex = Duplex || require('./_stream_duplex');
+
+  // Writable ctor is applied to Duplexes, too.
+  // `realHasInstance` is necessary because using plain `instanceof`
+  // would return false, as no `_writableState` property is attached.
+
+  // Trying to use the custom `instanceof` for Writable here will also break the
+  // Node.js LazyTransform implementation, which has a non-trivial getter for
+  // `_writableState` that would lead to infinite recursion.
+  if (!realHasInstance.call(Writable, this) && !(this instanceof Duplex)) {
+    return new Writable(options);
+  }
+
+  this._writableState = new WritableState(options, this);
+
+  // legacy.
+  this.writable = true;
+
+  if (options) {
+    if (typeof options.write === 'function') this._write = options.write;
+
+    if (typeof options.writev === 'function') this._writev = options.writev;
+
+    if (typeof options.destroy === 'function') this._destroy = options.destroy;
+
+    if (typeof options.final === 'function') this._final = options.final;
+  }
+
+  Stream.call(this);
+}
+
+// Otherwise people can pipe Writable streams, which is just wrong.
+Writable.prototype.pipe = function () {
+  this.emit('error', new Error('Cannot pipe, not readable'));
+};
+
+function writeAfterEnd(stream, cb) {
+  var er = new Error('write after end');
+  // TODO: defer error events consistently everywhere, not just the cb
+  stream.emit('error', er);
+  pna.nextTick(cb, er);
+}
+
+// Checks that a user-supplied chunk is valid, especially for the particular
+// mode the stream is in. Currently this means that `null` is never accepted
+// and undefined/non-string values are only allowed in object mode.
+function validChunk(stream, state, chunk, cb) {
+  var valid = true;
+  var er = false;
+
+  if (chunk === null) {
+    er = new TypeError('May not write null values to stream');
+  } else if (typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
+    er = new TypeError('Invalid non-string/buffer chunk');
+  }
+  if (er) {
+    stream.emit('error', er);
+    pna.nextTick(cb, er);
+    valid = false;
+  }
+  return valid;
+}
+
+Writable.prototype.write = function (chunk, encoding, cb) {
+  var state = this._writableState;
+  var ret = false;
+  var isBuf = !state.objectMode && _isUint8Array(chunk);
+
+  if (isBuf && !Buffer.isBuffer(chunk)) {
+    chunk = _uint8ArrayToBuffer(chunk);
+  }
+
+  if (typeof encoding === 'function') {
+    cb = encoding;
+    encoding = null;
+  }
+
+  if (isBuf) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
+
+  if (typeof cb !== 'function') cb = nop;
+
+  if (state.ended) writeAfterEnd(this, cb);else if (isBuf || validChunk(this, state, chunk, cb)) {
+    state.pendingcb++;
+    ret = writeOrBuffer(this, state, isBuf, chunk, encoding, cb);
+  }
+
+  return ret;
+};
+
+Writable.prototype.cork = function () {
+  var state = this._writableState;
+
+  state.corked++;
+};
+
+Writable.prototype.uncork = function () {
+  var state = this._writableState;
+
+  if (state.corked) {
+    state.corked--;
+
+    if (!state.writing && !state.corked && !state.finished && !state.bufferProcessing && state.bufferedRequest) clearBuffer(this, state);
+  }
+};
+
+Writable.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
+  // node::ParseEncoding() requires lower case.
+  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
+  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new TypeError('Unknown encoding: ' + encoding);
+  this._writableState.defaultEncoding = encoding;
+  return this;
+};
+
+function decodeChunk(state, chunk, encoding) {
+  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
+    chunk = Buffer.from(chunk, encoding);
+  }
+  return chunk;
+}
+
+Object.defineProperty(Writable.prototype, 'writableHighWaterMark', {
+  // making it explicit this property is not enumerable
+  // because otherwise some prototype manipulation in
+  // userland will fail
+  enumerable: false,
+  get: function () {
+    return this._writableState.highWaterMark;
+  }
+});
+
+// if we're already writing something, then just put this
+// in the queue, and wait our turn.  Otherwise, call _write
+// If we return false, then we need a drain event, so set that flag.
+function writeOrBuffer(stream, state, isBuf, chunk, encoding, cb) {
+  if (!isBuf) {
+    var newChunk = decodeChunk(state, chunk, encoding);
+    if (chunk !== newChunk) {
+      isBuf = true;
+      encoding = 'buffer';
+      chunk = newChunk;
+    }
+  }
+  var len = state.objectMode ? 1 : chunk.length;
+
+  state.length += len;
+
+  var ret = state.length < state.highWaterMark;
+  // we must ensure that previous needDrain will not be reset to false.
+  if (!ret) state.needDrain = true;
+
+  if (state.writing || state.corked) {
+    var last = state.lastBufferedRequest;
+    state.lastBufferedRequest = {
+      chunk: chunk,
+      encoding: encoding,
+      isBuf: isBuf,
+      callback: cb,
+      next: null
+    };
+    if (last) {
+      last.next = state.lastBufferedRequest;
+    } else {
+      state.bufferedRequest = state.lastBufferedRequest;
+    }
+    state.bufferedRequestCount += 1;
+  } else {
+    doWrite(stream, state, false, len, chunk, encoding, cb);
+  }
+
+  return ret;
+}
+
+function doWrite(stream, state, writev, len, chunk, encoding, cb) {
+  state.writelen = len;
+  state.writecb = cb;
+  state.writing = true;
+  state.sync = true;
+  if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
+  state.sync = false;
+}
+
+function onwriteError(stream, state, sync, er, cb) {
+  --state.pendingcb;
+
+  if (sync) {
+    // defer the callback if we are being called synchronously
+    // to avoid piling up things on the stack
+    pna.nextTick(cb, er);
+    // this can emit finish, and it will always happen
+    // after error
+    pna.nextTick(finishMaybe, stream, state);
+    stream._writableState.errorEmitted = true;
+    stream.emit('error', er);
+  } else {
+    // the caller expect this to happen before if
+    // it is async
+    cb(er);
+    stream._writableState.errorEmitted = true;
+    stream.emit('error', er);
+    // this can emit finish, but finish must
+    // always follow error
+    finishMaybe(stream, state);
+  }
+}
+
+function onwriteStateUpdate(state) {
+  state.writing = false;
+  state.writecb = null;
+  state.length -= state.writelen;
+  state.writelen = 0;
+}
+
+function onwrite(stream, er) {
+  var state = stream._writableState;
+  var sync = state.sync;
+  var cb = state.writecb;
+
+  onwriteStateUpdate(state);
+
+  if (er) onwriteError(stream, state, sync, er, cb);else {
+    // Check if we're actually ready to finish, but don't emit yet
+    var finished = needFinish(state);
+
+    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
+      clearBuffer(stream, state);
+    }
+
+    if (sync) {
+      /*<replacement>*/
+      asyncWrite(afterWrite, stream, state, finished, cb);
+      /*</replacement>*/
+    } else {
+      afterWrite(stream, state, finished, cb);
+    }
+  }
+}
+
+function afterWrite(stream, state, finished, cb) {
+  if (!finished) onwriteDrain(stream, state);
+  state.pendingcb--;
+  cb();
+  finishMaybe(stream, state);
+}
+
+// Must force callback to be called on nextTick, so that we don't
+// emit 'drain' before the write() consumer gets the 'false' return
+// value, and has a chance to attach a 'drain' listener.
+function onwriteDrain(stream, state) {
+  if (state.length === 0 && state.needDrain) {
+    state.needDrain = false;
+    stream.emit('drain');
+  }
+}
+
+// if there's something in the buffer waiting, then process it
+function clearBuffer(stream, state) {
+  state.bufferProcessing = true;
+  var entry = state.bufferedRequest;
+
+  if (stream._writev && entry && entry.next) {
+    // Fast case, write everything using _writev()
+    var l = state.bufferedRequestCount;
+    var buffer = new Array(l);
+    var holder = state.corkedRequestsFree;
+    holder.entry = entry;
+
+    var count = 0;
+    var allBuffers = true;
+    while (entry) {
+      buffer[count] = entry;
+      if (!entry.isBuf) allBuffers = false;
+      entry = entry.next;
+      count += 1;
+    }
+    buffer.allBuffers = allBuffers;
+
+    doWrite(stream, state, true, state.length, buffer, '', holder.finish);
+
+    // doWrite is almost always async, defer these to save a bit of time
+    // as the hot path ends with doWrite
+    state.pendingcb++;
+    state.lastBufferedRequest = null;
+    if (holder.next) {
+      state.corkedRequestsFree = holder.next;
+      holder.next = null;
+    } else {
+      state.corkedRequestsFree = new CorkedRequest(state);
+    }
+    state.bufferedRequestCount = 0;
+  } else {
+    // Slow case, write chunks one-by-one
+    while (entry) {
+      var chunk = entry.chunk;
+      var encoding = entry.encoding;
+      var cb = entry.callback;
+      var len = state.objectMode ? 1 : chunk.length;
+
+      doWrite(stream, state, false, len, chunk, encoding, cb);
+      entry = entry.next;
+      state.bufferedRequestCount--;
+      // if we didn't call the onwrite immediately, then
+      // it means that we need to wait until it does.
+      // also, that means that the chunk and cb are currently
+      // being processed, so move the buffer counter past them.
+      if (state.writing) {
+        break;
+      }
+    }
+
+    if (entry === null) state.lastBufferedRequest = null;
+  }
+
+  state.bufferedRequest = entry;
+  state.bufferProcessing = false;
+}
+
+Writable.prototype._write = function (chunk, encoding, cb) {
+  cb(new Error('_write() is not implemented'));
+};
+
+Writable.prototype._writev = null;
+
+Writable.prototype.end = function (chunk, encoding, cb) {
+  var state = this._writableState;
+
+  if (typeof chunk === 'function') {
+    cb = chunk;
+    chunk = null;
+    encoding = null;
+  } else if (typeof encoding === 'function') {
+    cb = encoding;
+    encoding = null;
+  }
+
+  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding);
+
+  // .end() fully uncorks
+  if (state.corked) {
+    state.corked = 1;
+    this.uncork();
+  }
+
+  // ignore unnecessary end() calls.
+  if (!state.ending && !state.finished) endWritable(this, state, cb);
+};
+
+function needFinish(state) {
+  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
+}
+function callFinal(stream, state) {
+  stream._final(function (err) {
+    state.pendingcb--;
+    if (err) {
+      stream.emit('error', err);
+    }
+    state.prefinished = true;
+    stream.emit('prefinish');
+    finishMaybe(stream, state);
+  });
+}
+function prefinish(stream, state) {
+  if (!state.prefinished && !state.finalCalled) {
+    if (typeof stream._final === 'function') {
+      state.pendingcb++;
+      state.finalCalled = true;
+      pna.nextTick(callFinal, stream, state);
+    } else {
+      state.prefinished = true;
+      stream.emit('prefinish');
+    }
+  }
+}
+
+function finishMaybe(stream, state) {
+  var need = needFinish(state);
+  if (need) {
+    prefinish(stream, state);
+    if (state.pendingcb === 0) {
+      state.finished = true;
+      stream.emit('finish');
+    }
+  }
+  return need;
+}
+
+function endWritable(stream, state, cb) {
+  state.ending = true;
+  finishMaybe(stream, state);
+  if (cb) {
+    if (state.finished) pna.nextTick(cb);else stream.once('finish', cb);
+  }
+  state.ended = true;
+  stream.writable = false;
+}
+
+function onCorkedFinish(corkReq, state, err) {
+  var entry = corkReq.entry;
+  corkReq.entry = null;
+  while (entry) {
+    var cb = entry.callback;
+    state.pendingcb--;
+    cb(err);
+    entry = entry.next;
+  }
+  if (state.corkedRequestsFree) {
+    state.corkedRequestsFree.next = corkReq;
+  } else {
+    state.corkedRequestsFree = corkReq;
+  }
+}
+
+Object.defineProperty(Writable.prototype, 'destroyed', {
+  get: function () {
+    if (this._writableState === undefined) {
+      return false;
+    }
+    return this._writableState.destroyed;
+  },
+  set: function (value) {
+    // we ignore the value if the stream
+    // has not been initialized yet
+    if (!this._writableState) {
+      return;
+    }
+
+    // backward compatibility, the user is explicitly
+    // managing destroyed
+    this._writableState.destroyed = value;
+  }
+});
+
+Writable.prototype.destroy = destroyImpl.destroy;
+Writable.prototype._undestroy = destroyImpl.undestroy;
+Writable.prototype._destroy = function (err, cb) {
+  this.end();
+  cb(err);
+};
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
+},{"./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/destroy":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/stream":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","core-util-is":"/usr/local/lib/node_modules/idyll/node_modules/core-util-is/lib/util.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","process-nextick-args":"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js","safe-buffer":"/usr/local/lib/node_modules/idyll/node_modules/safe-buffer/index.js","timers":"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js","util-deprecate":"/usr/local/lib/node_modules/idyll/node_modules/util-deprecate/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/BufferList.js":[function(require,module,exports){
+'use strict';
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Buffer = require('safe-buffer').Buffer;
+var util = require('util');
+
+function copyBuffer(src, target, offset) {
+  src.copy(target, offset);
+}
+
+module.exports = function () {
+  function BufferList() {
+    _classCallCheck(this, BufferList);
+
+    this.head = null;
+    this.tail = null;
+    this.length = 0;
+  }
+
+  BufferList.prototype.push = function push(v) {
+    var entry = { data: v, next: null };
+    if (this.length > 0) this.tail.next = entry;else this.head = entry;
+    this.tail = entry;
+    ++this.length;
+  };
+
+  BufferList.prototype.unshift = function unshift(v) {
+    var entry = { data: v, next: this.head };
+    if (this.length === 0) this.tail = entry;
+    this.head = entry;
+    ++this.length;
+  };
+
+  BufferList.prototype.shift = function shift() {
+    if (this.length === 0) return;
+    var ret = this.head.data;
+    if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
+    --this.length;
+    return ret;
+  };
+
+  BufferList.prototype.clear = function clear() {
+    this.head = this.tail = null;
+    this.length = 0;
+  };
+
+  BufferList.prototype.join = function join(s) {
+    if (this.length === 0) return '';
+    var p = this.head;
+    var ret = '' + p.data;
+    while (p = p.next) {
+      ret += s + p.data;
+    }return ret;
+  };
+
+  BufferList.prototype.concat = function concat(n) {
+    if (this.length === 0) return Buffer.alloc(0);
+    if (this.length === 1) return this.head.data;
+    var ret = Buffer.allocUnsafe(n >>> 0);
+    var p = this.head;
+    var i = 0;
+    while (p) {
+      copyBuffer(p.data, ret, i);
+      i += p.data.length;
+      p = p.next;
+    }
+    return ret;
+  };
+
+  return BufferList;
+}();
+
+if (util && util.inspect && util.inspect.custom) {
+  module.exports.prototype[util.inspect.custom] = function () {
+    var obj = util.inspect({ length: this.length });
+    return this.constructor.name + ' ' + obj;
+  };
+}
+},{"safe-buffer":"/usr/local/lib/node_modules/idyll/node_modules/safe-buffer/index.js","util":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/destroy.js":[function(require,module,exports){
+'use strict';
+
+/*<replacement>*/
+
+var pna = require('process-nextick-args');
+/*</replacement>*/
+
+// undocumented cb() API, needed for core, not for public API
+function destroy(err, cb) {
+  var _this = this;
+
+  var readableDestroyed = this._readableState && this._readableState.destroyed;
+  var writableDestroyed = this._writableState && this._writableState.destroyed;
+
+  if (readableDestroyed || writableDestroyed) {
+    if (cb) {
+      cb(err);
+    } else if (err && (!this._writableState || !this._writableState.errorEmitted)) {
+      pna.nextTick(emitErrorNT, this, err);
+    }
+    return this;
+  }
+
+  // we set destroyed to true before firing error callbacks in order
+  // to make it re-entrance safe in case destroy() is called within callbacks
+
+  if (this._readableState) {
+    this._readableState.destroyed = true;
+  }
+
+  // if this is a duplex stream mark the writable part as destroyed as well
+  if (this._writableState) {
+    this._writableState.destroyed = true;
+  }
+
+  this._destroy(err || null, function (err) {
+    if (!cb && err) {
+      pna.nextTick(emitErrorNT, _this, err);
+      if (_this._writableState) {
+        _this._writableState.errorEmitted = true;
+      }
+    } else if (cb) {
+      cb(err);
+    }
+  });
+
+  return this;
+}
+
+function undestroy() {
+  if (this._readableState) {
+    this._readableState.destroyed = false;
+    this._readableState.reading = false;
+    this._readableState.ended = false;
+    this._readableState.endEmitted = false;
+  }
+
+  if (this._writableState) {
+    this._writableState.destroyed = false;
+    this._writableState.ended = false;
+    this._writableState.ending = false;
+    this._writableState.finished = false;
+    this._writableState.errorEmitted = false;
+  }
+}
+
+function emitErrorNT(self, err) {
+  self.emit('error', err);
+}
+
+module.exports = {
+  destroy: destroy,
+  undestroy: undestroy
+};
+},{"process-nextick-args":"/usr/local/lib/node_modules/idyll/node_modules/process-nextick-args/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/internal/streams/stream-browser.js":[function(require,module,exports){
+module.exports = require('events').EventEmitter;
+
+},{"events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/passthrough.js":[function(require,module,exports){
+module.exports = require('./readable').PassThrough
+
+},{"./readable":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/readable-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/readable-browser.js":[function(require,module,exports){
+exports = module.exports = require('./lib/_stream_readable.js');
+exports.Stream = exports;
+exports.Readable = exports;
+exports.Writable = require('./lib/_stream_writable.js');
+exports.Duplex = require('./lib/_stream_duplex.js');
+exports.Transform = require('./lib/_stream_transform.js');
+exports.PassThrough = require('./lib/_stream_passthrough.js');
+
+},{"./lib/_stream_duplex.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_duplex.js","./lib/_stream_passthrough.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_passthrough.js","./lib/_stream_readable.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_readable.js","./lib/_stream_transform.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_transform.js","./lib/_stream_writable.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_writable.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/transform.js":[function(require,module,exports){
+module.exports = require('./readable').Transform
+
+},{"./readable":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/readable-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/writable-browser.js":[function(require,module,exports){
+module.exports = require('./lib/_stream_writable.js');
+
+},{"./lib/_stream_writable.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/lib/_stream_writable.js"}],"/usr/local/lib/node_modules/idyll/node_modules/regenerator-runtime/runtime.js":[function(require,module,exports){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -76392,24 +78778,6 @@ var runtime = (function (exports) {
   var iteratorSymbol = $Symbol.iterator || "@@iterator";
   var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
   var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
-  function define(obj, key, value) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-    return obj[key];
-  }
-  try {
-    // IE 8 has a broken Object.defineProperty that only works on DOM objects.
-    define({}, "");
-  } catch (err) {
-    define = function(obj, key, value) {
-      return obj[key] = value;
-    };
-  }
 
   function wrap(innerFn, outerFn, self, tryLocsList) {
     // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
@@ -76463,9 +78831,9 @@ var runtime = (function (exports) {
   // This is a polyfill for %IteratorPrototype% for environments that
   // don't natively support it.
   var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
+  IteratorPrototype[iteratorSymbol] = function () {
     return this;
-  });
+  };
 
   var getProto = Object.getPrototypeOf;
   var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
@@ -76477,14 +78845,19 @@ var runtime = (function (exports) {
     IteratorPrototype = NativeIteratorPrototype;
   }
 
+  function ensureDefaultToStringTag(object, defaultValue) {
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1644581#c6
+    return toStringTagSymbol in object
+      ? object[toStringTagSymbol]
+      : object[toStringTagSymbol] = defaultValue;
+  }
+
   var Gp = GeneratorFunctionPrototype.prototype =
     Generator.prototype = Object.create(IteratorPrototype);
-  GeneratorFunction.prototype = GeneratorFunctionPrototype;
-  define(Gp, "constructor", GeneratorFunctionPrototype);
-  define(GeneratorFunctionPrototype, "constructor", GeneratorFunction);
-  GeneratorFunction.displayName = define(
+  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+  GeneratorFunctionPrototype.constructor = GeneratorFunction;
+  GeneratorFunction.displayName = ensureDefaultToStringTag(
     GeneratorFunctionPrototype,
-    toStringTagSymbol,
     "GeneratorFunction"
   );
 
@@ -76492,9 +78865,9 @@ var runtime = (function (exports) {
   // Iterator interface in terms of a single ._invoke method.
   function defineIteratorMethods(prototype) {
     ["next", "throw", "return"].forEach(function(method) {
-      define(prototype, method, function(arg) {
+      prototype[method] = function(arg) {
         return this._invoke(method, arg);
-      });
+      };
     });
   }
 
@@ -76513,7 +78886,7 @@ var runtime = (function (exports) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
       genFun.__proto__ = GeneratorFunctionPrototype;
-      define(genFun, toStringTagSymbol, "GeneratorFunction");
+      ensureDefaultToStringTag(genFun, "GeneratorFunction");
     }
     genFun.prototype = Object.create(Gp);
     return genFun;
@@ -76595,9 +78968,9 @@ var runtime = (function (exports) {
   }
 
   defineIteratorMethods(AsyncIterator.prototype);
-  define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
     return this;
-  });
+  };
   exports.AsyncIterator = AsyncIterator;
 
   // Note that simple async functions are implemented on top of
@@ -76783,20 +79156,20 @@ var runtime = (function (exports) {
   // unified ._invoke helper method.
   defineIteratorMethods(Gp);
 
-  define(Gp, toStringTagSymbol, "Generator");
+  ensureDefaultToStringTag(Gp, "Generator");
 
   // A Generator should always return itself as the iterator object when the
   // @@iterator function is called on it. Some browsers' implementations of the
   // iterator prototype chain incorrectly implement this, causing the Generator
   // object to not be returned from this call. This ensures that doesn't happen.
   // See https://github.com/facebook/regenerator/issues/274 for more details.
-  define(Gp, iteratorSymbol, function() {
+  Gp[iteratorSymbol] = function() {
     return this;
-  });
+  };
 
-  define(Gp, "toString", function() {
+  Gp.toString = function() {
     return "[object Generator]";
-  });
+  };
 
   function pushTryEntry(locs) {
     var entry = { tryLoc: locs[0] };
@@ -77115,19 +79488,14 @@ try {
 } catch (accidentalStrictMode) {
   // This module should not be running in strict mode, so the above
   // assignment should always work unless something is misconfigured. Just
-  // in case runtime.js accidentally runs in strict mode, in modern engines
-  // we can explicitly access globalThis. In older engines we can escape
+  // in case runtime.js accidentally runs in strict mode, we can escape
   // strict mode using a global Function call. This could conceivably fail
   // if a Content Security Policy forbids using Function, but in that case
   // the proper solution is to fix the accidental strict mode problem. If
   // you've misconfigured your bundler to force strict mode and applied a
   // CSP to forbid Function, and you're not willing to fix either of those
   // problems, please detail your unique predicament in a GitHub issue.
-  if (typeof globalThis === "object") {
-    globalThis.regeneratorRuntime = runtime;
-  } else {
-    Function("r", "regeneratorRuntime = r")(runtime);
-  }
+  Function("r", "regeneratorRuntime = r")(runtime);
 }
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/safe-buffer/index.js":[function(require,module,exports){
@@ -78526,7 +80894,7 @@ module.exports = function (value, locale) {
 }
 
 },{"no-case":"/usr/local/lib/node_modules/idyll/node_modules/no-case/no-case.js","upper-case-first":"/usr/local/lib/node_modules/idyll/node_modules/upper-case-first/upper-case-first.js"}],"/usr/local/lib/node_modules/idyll/node_modules/smartquotes/dist/smartquotes.js":[function(require,module,exports){
-(function(a,b){'object'==typeof exports&&'object'==typeof module?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.smartquotes=b():a.smartquotes=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=3)}([function(a,b,c){'use strict';var d=c(1);a.exports=function(a,b){return b=b||{},d.forEach(function(c){var d='function'==typeof c[1]?c[1](b.retainLength):c[1];a=a.replace(c[0],d)}),a}},function(a){'use strict';a.exports=[[/'''/g,function(a){return'\u2034'+(a?'\u2063\u2063':'')}],[/(\W|^)"(\w)/g,'$1\u201C$2'],[/(\u201c[^"]*)"([^"]*$|[^\u201c"]*\u201c)/g,'$1\u201D$2'],[/([^0-9])"/g,'$1\u201D'],[/''/g,function(a){return'\u2033'+(a?'\u2063':'')}],[/(\W|^)'(\S)/g,'$1\u2018$2'],[/([a-z0-9])'([a-z])/ig,'$1\u2019$2'],[/(\u2018)([0-9]{2}[^\u2019]*)(\u2018([^0-9]|$)|$|\u2019[a-z])/ig,'\u2019$2$3'],[/((\u2018[^']*)|[a-z])'([^0-9]|$)/ig,'$1\u2019$3'],[/(\B|^)\u2018(?=([^\u2018\u2019]*\u2019\b)*([^\u2018\u2019]*\B\W[\u2018\u2019]\b|[^\u2018\u2019]*$))/ig,'$1\u2019'],[/"/g,'\u2033'],[/'/g,'\u2032']]},function(a,b,c){'use strict';function d(a){if(-1===['CODE','PRE','SCRIPT','STYLE','NOSCRIPT'].indexOf(a.nodeName.toUpperCase())){var b,c,h,i='',j=a.childNodes,k=[];for(b=0;b<j.length;b++)c=j[b],c.nodeType===g||'#text'===c.nodeName?(k.push([c,i.length]),i+=c.nodeValue||c.value):c.childNodes&&c.childNodes.length&&(i+=d(c));for(b in i=f(i,{retainLength:!0}),k)h=k[b],h[0].nodeValue?h[0].nodeValue=e(i,h[0].nodeValue,h[1]):h[0].value&&(h[0].value=e(i,h[0].value,h[1]));return i}}function e(a,b,c){return a.substr(c,b.length).replace('\u2063','')}var f=c(0),g='undefined'!=typeof Element&&Element.TEXT_NODE||3;a.exports=function(a){return d(a),a}},function(a,b,c){'use strict';function d(a){return'undefined'!=typeof document&&'undefined'==typeof a?(g.runOnReady(function(){return f(document.body)}),d):'string'==typeof a?h(a):f(a)}var e=c(1),f=c(2),g=c(4),h=c(0);a.exports=d,a.exports.string=h,a.exports.element=f,a.exports.replacements=e,a.exports.listen=g},function(a,b,c){'use strict';function d(a){var b=new MutationObserver(function(a){a.forEach(function(a){var b,c=!0,d=!1;try{for(var f,g,h=a.addedNodes[Symbol.iterator]();!(c=(f=h.next()).done);c=!0)g=f.value,e(g)}catch(a){d=!0,b=a}finally{try{!c&&h.return&&h.return()}finally{if(d)throw b}}})});return d.runOnReady(function(){b.observe(a||document.body,{childList:!0,subtree:!0})}),b}var e=c(2),f=c(0);d.runOnReady=function(a){if('loading'!==document.readyState)a();else if(document.addEventListener)document.addEventListener('DOMContentLoaded',a,!1);else var b=setInterval(function(){'loading'!==document.readyState&&(clearInterval(b),a())},10)},a.exports=d}])});
+(function(a,b){'object'==typeof exports&&'object'==typeof module?module.exports=b():'function'==typeof define&&define.amd?define([],b):'object'==typeof exports?exports.smartquotes=b():a.smartquotes=b()})(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a['default']}:function(){return a};return b.d(c,'a',c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p='',b(b.s=3)}([function(a,b,c){'use strict';var d=c(1);a.exports=function(a,b){return b=b||{},d.forEach(function(c){var d='function'==typeof c[1]?c[1](b.retainLength):c[1];a=a.replace(c[0],d)}),a}},function(a){'use strict';a.exports=[[/'''/g,function(a){return'\u2034'+(a?'\u2063\u2063':'')}],[/(\W|^)"(\w)/g,'$1\u201C$2'],[/(\u201c[^"]*)"([^"]*$|[^\u201c"]*\u201c)/g,'$1\u201D$2'],[/([^0-9])"/g,'$1\u201D'],[/''/g,function(a){return'\u2033'+(a?'\u2063':'')}],[/(\W|^)'(\S)/g,'$1\u2018$2'],[/([a-z])'([a-z])/ig,'$1\u2019$2'],[/(\u2018)([0-9]{2}[^\u2019]*)(\u2018([^0-9]|$)|$|\u2019[a-z])/ig,'\u2019$2$3'],[/((\u2018[^']*)|[a-z])'([^0-9]|$)/ig,'$1\u2019$3'],[/(\B|^)\u2018(?=([^\u2018\u2019]*\u2019\b)*([^\u2018\u2019]*\B\W[\u2018\u2019]\b|[^\u2018\u2019]*$))/ig,'$1\u2019'],[/"/g,'\u2033'],[/'/g,'\u2032']]},function(a,b,c){'use strict';function d(a){if(-1===['CODE','PRE','SCRIPT','STYLE'].indexOf(a.nodeName.toUpperCase())){var b,c,h,i='',j=a.childNodes,k=[];for(b=0;b<j.length;b++)c=j[b],c.nodeType===g||'#text'===c.nodeName?(k.push([c,i.length]),i+=c.nodeValue||c.value):c.childNodes&&c.childNodes.length&&(i+=d(c));for(b in i=f(i,{retainLength:!0}),k)h=k[b],h[0].nodeValue?h[0].nodeValue=e(i,h[0].nodeValue,h[1]):h[0].value&&(h[0].value=e(i,h[0].value,h[1]));return i}}function e(a,b,c){return a.substr(c,b.length).replace('\u2063','')}var f=c(0),g='undefined'!=typeof Element&&Element.TEXT_NODE||3;a.exports=function(a){return d(a),a}},function(a,b,c){'use strict';function d(a){return'undefined'!=typeof document&&'undefined'==typeof a?(g.runOnReady(function(){return f(document.body)}),d):'string'==typeof a?h(a):f(a)}var e=c(1),f=c(2),g=c(4),h=c(0);a.exports=d,a.exports.string=h,a.exports.element=f,a.exports.replacements=e,a.exports.listen=g},function(a,b,c){'use strict';function d(a){var b=new MutationObserver(function(a){a.forEach(function(a){var b,c=!0,d=!1;try{for(var f,g,h=a.addedNodes[Symbol.iterator]();!(c=(f=h.next()).done);c=!0)g=f.value,e(g)}catch(a){d=!0,b=a}finally{try{!c&&h.return&&h.return()}finally{if(d)throw b}}})});return d.runOnReady(function(){b.observe(a||document.body,{childList:!0,subtree:!0})}),b}var e=c(2),f=c(0);d.runOnReady=function(a){if('loading'!==document.readyState)a();else if(document.addEventListener)document.addEventListener('DOMContentLoaded',a,!1);else var b=setInterval(function(){'loading'!==document.readyState&&(clearInterval(b),a())},10)},a.exports=d}])});
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/snake-case/snake-case.js":[function(require,module,exports){
 var noCase = require('no-case')
@@ -78570,13 +80938,11 @@ var EE = require('events').EventEmitter;
 var inherits = require('inherits');
 
 inherits(Stream, EE);
-Stream.Readable = require('readable-stream/lib/_stream_readable.js');
-Stream.Writable = require('readable-stream/lib/_stream_writable.js');
-Stream.Duplex = require('readable-stream/lib/_stream_duplex.js');
-Stream.Transform = require('readable-stream/lib/_stream_transform.js');
-Stream.PassThrough = require('readable-stream/lib/_stream_passthrough.js');
-Stream.finished = require('readable-stream/lib/internal/streams/end-of-stream.js')
-Stream.pipeline = require('readable-stream/lib/internal/streams/pipeline.js')
+Stream.Readable = require('readable-stream/readable.js');
+Stream.Writable = require('readable-stream/writable.js');
+Stream.Duplex = require('readable-stream/duplex.js');
+Stream.Transform = require('readable-stream/transform.js');
+Stream.PassThrough = require('readable-stream/passthrough.js');
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -78673,3115 +81039,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","readable-stream/lib/_stream_duplex.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_duplex.js","readable-stream/lib/_stream_passthrough.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_passthrough.js","readable-stream/lib/_stream_readable.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_readable.js","readable-stream/lib/_stream_transform.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_transform.js","readable-stream/lib/_stream_writable.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_writable.js","readable-stream/lib/internal/streams/end-of-stream.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/end-of-stream.js","readable-stream/lib/internal/streams/pipeline.js":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/pipeline.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js":[function(require,module,exports){
-'use strict';
-
-function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
-
-var codes = {};
-
-function createErrorType(code, message, Base) {
-  if (!Base) {
-    Base = Error;
-  }
-
-  function getMessage(arg1, arg2, arg3) {
-    if (typeof message === 'string') {
-      return message;
-    } else {
-      return message(arg1, arg2, arg3);
-    }
-  }
-
-  var NodeError =
-  /*#__PURE__*/
-  function (_Base) {
-    _inheritsLoose(NodeError, _Base);
-
-    function NodeError(arg1, arg2, arg3) {
-      return _Base.call(this, getMessage(arg1, arg2, arg3)) || this;
-    }
-
-    return NodeError;
-  }(Base);
-
-  NodeError.prototype.name = Base.name;
-  NodeError.prototype.code = code;
-  codes[code] = NodeError;
-} // https://github.com/nodejs/node/blob/v10.8.0/lib/internal/errors.js
-
-
-function oneOf(expected, thing) {
-  if (Array.isArray(expected)) {
-    var len = expected.length;
-    expected = expected.map(function (i) {
-      return String(i);
-    });
-
-    if (len > 2) {
-      return "one of ".concat(thing, " ").concat(expected.slice(0, len - 1).join(', '), ", or ") + expected[len - 1];
-    } else if (len === 2) {
-      return "one of ".concat(thing, " ").concat(expected[0], " or ").concat(expected[1]);
-    } else {
-      return "of ".concat(thing, " ").concat(expected[0]);
-    }
-  } else {
-    return "of ".concat(thing, " ").concat(String(expected));
-  }
-} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
-
-
-function startsWith(str, search, pos) {
-  return str.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
-} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
-
-
-function endsWith(str, search, this_len) {
-  if (this_len === undefined || this_len > str.length) {
-    this_len = str.length;
-  }
-
-  return str.substring(this_len - search.length, this_len) === search;
-} // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes
-
-
-function includes(str, search, start) {
-  if (typeof start !== 'number') {
-    start = 0;
-  }
-
-  if (start + search.length > str.length) {
-    return false;
-  } else {
-    return str.indexOf(search, start) !== -1;
-  }
-}
-
-createErrorType('ERR_INVALID_OPT_VALUE', function (name, value) {
-  return 'The value "' + value + '" is invalid for option "' + name + '"';
-}, TypeError);
-createErrorType('ERR_INVALID_ARG_TYPE', function (name, expected, actual) {
-  // determiner: 'must be' or 'must not be'
-  var determiner;
-
-  if (typeof expected === 'string' && startsWith(expected, 'not ')) {
-    determiner = 'must not be';
-    expected = expected.replace(/^not /, '');
-  } else {
-    determiner = 'must be';
-  }
-
-  var msg;
-
-  if (endsWith(name, ' argument')) {
-    // For cases like 'first argument'
-    msg = "The ".concat(name, " ").concat(determiner, " ").concat(oneOf(expected, 'type'));
-  } else {
-    var type = includes(name, '.') ? 'property' : 'argument';
-    msg = "The \"".concat(name, "\" ").concat(type, " ").concat(determiner, " ").concat(oneOf(expected, 'type'));
-  }
-
-  msg += ". Received type ".concat(typeof actual);
-  return msg;
-}, TypeError);
-createErrorType('ERR_STREAM_PUSH_AFTER_EOF', 'stream.push() after EOF');
-createErrorType('ERR_METHOD_NOT_IMPLEMENTED', function (name) {
-  return 'The ' + name + ' method is not implemented';
-});
-createErrorType('ERR_STREAM_PREMATURE_CLOSE', 'Premature close');
-createErrorType('ERR_STREAM_DESTROYED', function (name) {
-  return 'Cannot call ' + name + ' after a stream was destroyed';
-});
-createErrorType('ERR_MULTIPLE_CALLBACK', 'Callback called multiple times');
-createErrorType('ERR_STREAM_CANNOT_PIPE', 'Cannot pipe, not readable');
-createErrorType('ERR_STREAM_WRITE_AFTER_END', 'write after end');
-createErrorType('ERR_STREAM_NULL_VALUES', 'May not write null values to stream', TypeError);
-createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
-  return 'Unknown encoding: ' + arg;
-}, TypeError);
-createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
-module.exports.codes = codes;
-
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_duplex.js":[function(require,module,exports){
-(function (process){(function (){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-// a duplex stream is just a stream that is both readable and writable.
-// Since JS doesn't have multiple prototypal inheritance, this class
-// prototypally inherits from Readable, and then parasitically from
-// Writable.
-'use strict';
-/*<replacement>*/
-
-var objectKeys = Object.keys || function (obj) {
-  var keys = [];
-
-  for (var key in obj) {
-    keys.push(key);
-  }
-
-  return keys;
-};
-/*</replacement>*/
-
-
-module.exports = Duplex;
-
-var Readable = require('./_stream_readable');
-
-var Writable = require('./_stream_writable');
-
-require('inherits')(Duplex, Readable);
-
-{
-  // Allow the keys array to be GC'ed.
-  var keys = objectKeys(Writable.prototype);
-
-  for (var v = 0; v < keys.length; v++) {
-    var method = keys[v];
-    if (!Duplex.prototype[method]) Duplex.prototype[method] = Writable.prototype[method];
-  }
-}
-
-function Duplex(options) {
-  if (!(this instanceof Duplex)) return new Duplex(options);
-  Readable.call(this, options);
-  Writable.call(this, options);
-  this.allowHalfOpen = true;
-
-  if (options) {
-    if (options.readable === false) this.readable = false;
-    if (options.writable === false) this.writable = false;
-
-    if (options.allowHalfOpen === false) {
-      this.allowHalfOpen = false;
-      this.once('end', onend);
-    }
-  }
-}
-
-Object.defineProperty(Duplex.prototype, 'writableHighWaterMark', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._writableState.highWaterMark;
-  }
-});
-Object.defineProperty(Duplex.prototype, 'writableBuffer', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._writableState && this._writableState.getBuffer();
-  }
-});
-Object.defineProperty(Duplex.prototype, 'writableLength', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._writableState.length;
-  }
-}); // the no-half-open enforcer
-
-function onend() {
-  // If the writable side ended, then we're ok.
-  if (this._writableState.ended) return; // no more data can be written.
-  // But allow more writes to happen in this tick.
-
-  process.nextTick(onEndNT, this);
-}
-
-function onEndNT(self) {
-  self.end();
-}
-
-Object.defineProperty(Duplex.prototype, 'destroyed', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    if (this._readableState === undefined || this._writableState === undefined) {
-      return false;
-    }
-
-    return this._readableState.destroyed && this._writableState.destroyed;
-  },
-  set: function set(value) {
-    // we ignore the value if the stream
-    // has not been initialized yet
-    if (this._readableState === undefined || this._writableState === undefined) {
-      return;
-    } // backward compatibility, the user is explicitly
-    // managing destroyed
-
-
-    this._readableState.destroyed = value;
-    this._writableState.destroyed = value;
-  }
-});
-}).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_readable.js","./_stream_writable":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_writable.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_passthrough.js":[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-// a passthrough stream.
-// basically just the most minimal sort of Transform stream.
-// Every written chunk gets output as-is.
-'use strict';
-
-module.exports = PassThrough;
-
-var Transform = require('./_stream_transform');
-
-require('inherits')(PassThrough, Transform);
-
-function PassThrough(options) {
-  if (!(this instanceof PassThrough)) return new PassThrough(options);
-  Transform.call(this, options);
-}
-
-PassThrough.prototype._transform = function (chunk, encoding, cb) {
-  cb(null, chunk);
-};
-},{"./_stream_transform":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_transform.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_readable.js":[function(require,module,exports){
-(function (process,global){(function (){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-'use strict';
-
-module.exports = Readable;
-/*<replacement>*/
-
-var Duplex;
-/*</replacement>*/
-
-Readable.ReadableState = ReadableState;
-/*<replacement>*/
-
-var EE = require('events').EventEmitter;
-
-var EElistenerCount = function EElistenerCount(emitter, type) {
-  return emitter.listeners(type).length;
-};
-/*</replacement>*/
-
-/*<replacement>*/
-
-
-var Stream = require('./internal/streams/stream');
-/*</replacement>*/
-
-
-var Buffer = require('buffer').Buffer;
-
-var OurUint8Array = global.Uint8Array || function () {};
-
-function _uint8ArrayToBuffer(chunk) {
-  return Buffer.from(chunk);
-}
-
-function _isUint8Array(obj) {
-  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
-}
-/*<replacement>*/
-
-
-var debugUtil = require('util');
-
-var debug;
-
-if (debugUtil && debugUtil.debuglog) {
-  debug = debugUtil.debuglog('stream');
-} else {
-  debug = function debug() {};
-}
-/*</replacement>*/
-
-
-var BufferList = require('./internal/streams/buffer_list');
-
-var destroyImpl = require('./internal/streams/destroy');
-
-var _require = require('./internal/streams/state'),
-    getHighWaterMark = _require.getHighWaterMark;
-
-var _require$codes = require('../errors').codes,
-    ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
-    ERR_STREAM_PUSH_AFTER_EOF = _require$codes.ERR_STREAM_PUSH_AFTER_EOF,
-    ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
-    ERR_STREAM_UNSHIFT_AFTER_END_EVENT = _require$codes.ERR_STREAM_UNSHIFT_AFTER_END_EVENT; // Lazy loaded to improve the startup performance.
-
-
-var StringDecoder;
-var createReadableStreamAsyncIterator;
-var from;
-
-require('inherits')(Readable, Stream);
-
-var errorOrDestroy = destroyImpl.errorOrDestroy;
-var kProxyEvents = ['error', 'close', 'destroy', 'pause', 'resume'];
-
-function prependListener(emitter, event, fn) {
-  // Sadly this is not cacheable as some libraries bundle their own
-  // event emitter implementation with them.
-  if (typeof emitter.prependListener === 'function') return emitter.prependListener(event, fn); // This is a hack to make sure that our error handler is attached before any
-  // userland ones.  NEVER DO THIS. This is here only because this code needs
-  // to continue to work with older versions of Node.js that do not include
-  // the prependListener() method. The goal is to eventually remove this hack.
-
-  if (!emitter._events || !emitter._events[event]) emitter.on(event, fn);else if (Array.isArray(emitter._events[event])) emitter._events[event].unshift(fn);else emitter._events[event] = [fn, emitter._events[event]];
-}
-
-function ReadableState(options, stream, isDuplex) {
-  Duplex = Duplex || require('./_stream_duplex');
-  options = options || {}; // Duplex streams are both readable and writable, but share
-  // the same options object.
-  // However, some cases require setting options to different
-  // values for the readable and the writable sides of the duplex stream.
-  // These options can be provided separately as readableXXX and writableXXX.
-
-  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex; // object stream flag. Used to make read(n) ignore n and to
-  // make all the buffer merging and length checks go away
-
-  this.objectMode = !!options.objectMode;
-  if (isDuplex) this.objectMode = this.objectMode || !!options.readableObjectMode; // the point at which it stops calling _read() to fill the buffer
-  // Note: 0 is a valid value, means "don't call _read preemptively ever"
-
-  this.highWaterMark = getHighWaterMark(this, options, 'readableHighWaterMark', isDuplex); // A linked list is used to store data chunks instead of an array because the
-  // linked list can remove elements from the beginning faster than
-  // array.shift()
-
-  this.buffer = new BufferList();
-  this.length = 0;
-  this.pipes = null;
-  this.pipesCount = 0;
-  this.flowing = null;
-  this.ended = false;
-  this.endEmitted = false;
-  this.reading = false; // a flag to be able to tell if the event 'readable'/'data' is emitted
-  // immediately, or on a later tick.  We set this to true at first, because
-  // any actions that shouldn't happen until "later" should generally also
-  // not happen before the first read call.
-
-  this.sync = true; // whenever we return null, then we set a flag to say
-  // that we're awaiting a 'readable' event emission.
-
-  this.needReadable = false;
-  this.emittedReadable = false;
-  this.readableListening = false;
-  this.resumeScheduled = false;
-  this.paused = true; // Should close be emitted on destroy. Defaults to true.
-
-  this.emitClose = options.emitClose !== false; // Should .destroy() be called after 'end' (and potentially 'finish')
-
-  this.autoDestroy = !!options.autoDestroy; // has it been destroyed
-
-  this.destroyed = false; // Crypto is kind of old and crusty.  Historically, its default string
-  // encoding is 'binary' so we have to make this configurable.
-  // Everything else in the universe uses 'utf8', though.
-
-  this.defaultEncoding = options.defaultEncoding || 'utf8'; // the number of writers that are awaiting a drain event in .pipe()s
-
-  this.awaitDrain = 0; // if true, a maybeReadMore has been scheduled
-
-  this.readingMore = false;
-  this.decoder = null;
-  this.encoding = null;
-
-  if (options.encoding) {
-    if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
-    this.decoder = new StringDecoder(options.encoding);
-    this.encoding = options.encoding;
-  }
-}
-
-function Readable(options) {
-  Duplex = Duplex || require('./_stream_duplex');
-  if (!(this instanceof Readable)) return new Readable(options); // Checking for a Stream.Duplex instance is faster here instead of inside
-  // the ReadableState constructor, at least with V8 6.5
-
-  var isDuplex = this instanceof Duplex;
-  this._readableState = new ReadableState(options, this, isDuplex); // legacy
-
-  this.readable = true;
-
-  if (options) {
-    if (typeof options.read === 'function') this._read = options.read;
-    if (typeof options.destroy === 'function') this._destroy = options.destroy;
-  }
-
-  Stream.call(this);
-}
-
-Object.defineProperty(Readable.prototype, 'destroyed', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    if (this._readableState === undefined) {
-      return false;
-    }
-
-    return this._readableState.destroyed;
-  },
-  set: function set(value) {
-    // we ignore the value if the stream
-    // has not been initialized yet
-    if (!this._readableState) {
-      return;
-    } // backward compatibility, the user is explicitly
-    // managing destroyed
-
-
-    this._readableState.destroyed = value;
-  }
-});
-Readable.prototype.destroy = destroyImpl.destroy;
-Readable.prototype._undestroy = destroyImpl.undestroy;
-
-Readable.prototype._destroy = function (err, cb) {
-  cb(err);
-}; // Manually shove something into the read() buffer.
-// This returns true if the highWaterMark has not been hit yet,
-// similar to how Writable.write() returns true if you should
-// write() some more.
-
-
-Readable.prototype.push = function (chunk, encoding) {
-  var state = this._readableState;
-  var skipChunkCheck;
-
-  if (!state.objectMode) {
-    if (typeof chunk === 'string') {
-      encoding = encoding || state.defaultEncoding;
-
-      if (encoding !== state.encoding) {
-        chunk = Buffer.from(chunk, encoding);
-        encoding = '';
-      }
-
-      skipChunkCheck = true;
-    }
-  } else {
-    skipChunkCheck = true;
-  }
-
-  return readableAddChunk(this, chunk, encoding, false, skipChunkCheck);
-}; // Unshift should *always* be something directly out of read()
-
-
-Readable.prototype.unshift = function (chunk) {
-  return readableAddChunk(this, chunk, null, true, false);
-};
-
-function readableAddChunk(stream, chunk, encoding, addToFront, skipChunkCheck) {
-  debug('readableAddChunk', chunk);
-  var state = stream._readableState;
-
-  if (chunk === null) {
-    state.reading = false;
-    onEofChunk(stream, state);
-  } else {
-    var er;
-    if (!skipChunkCheck) er = chunkInvalid(state, chunk);
-
-    if (er) {
-      errorOrDestroy(stream, er);
-    } else if (state.objectMode || chunk && chunk.length > 0) {
-      if (typeof chunk !== 'string' && !state.objectMode && Object.getPrototypeOf(chunk) !== Buffer.prototype) {
-        chunk = _uint8ArrayToBuffer(chunk);
-      }
-
-      if (addToFront) {
-        if (state.endEmitted) errorOrDestroy(stream, new ERR_STREAM_UNSHIFT_AFTER_END_EVENT());else addChunk(stream, state, chunk, true);
-      } else if (state.ended) {
-        errorOrDestroy(stream, new ERR_STREAM_PUSH_AFTER_EOF());
-      } else if (state.destroyed) {
-        return false;
-      } else {
-        state.reading = false;
-
-        if (state.decoder && !encoding) {
-          chunk = state.decoder.write(chunk);
-          if (state.objectMode || chunk.length !== 0) addChunk(stream, state, chunk, false);else maybeReadMore(stream, state);
-        } else {
-          addChunk(stream, state, chunk, false);
-        }
-      }
-    } else if (!addToFront) {
-      state.reading = false;
-      maybeReadMore(stream, state);
-    }
-  } // We can push more data if we are below the highWaterMark.
-  // Also, if we have no data yet, we can stand some more bytes.
-  // This is to work around cases where hwm=0, such as the repl.
-
-
-  return !state.ended && (state.length < state.highWaterMark || state.length === 0);
-}
-
-function addChunk(stream, state, chunk, addToFront) {
-  if (state.flowing && state.length === 0 && !state.sync) {
-    state.awaitDrain = 0;
-    stream.emit('data', chunk);
-  } else {
-    // update the buffer info.
-    state.length += state.objectMode ? 1 : chunk.length;
-    if (addToFront) state.buffer.unshift(chunk);else state.buffer.push(chunk);
-    if (state.needReadable) emitReadable(stream);
-  }
-
-  maybeReadMore(stream, state);
-}
-
-function chunkInvalid(state, chunk) {
-  var er;
-
-  if (!_isUint8Array(chunk) && typeof chunk !== 'string' && chunk !== undefined && !state.objectMode) {
-    er = new ERR_INVALID_ARG_TYPE('chunk', ['string', 'Buffer', 'Uint8Array'], chunk);
-  }
-
-  return er;
-}
-
-Readable.prototype.isPaused = function () {
-  return this._readableState.flowing === false;
-}; // backwards compatibility.
-
-
-Readable.prototype.setEncoding = function (enc) {
-  if (!StringDecoder) StringDecoder = require('string_decoder/').StringDecoder;
-  var decoder = new StringDecoder(enc);
-  this._readableState.decoder = decoder; // If setEncoding(null), decoder.encoding equals utf8
-
-  this._readableState.encoding = this._readableState.decoder.encoding; // Iterate over current buffer to convert already stored Buffers:
-
-  var p = this._readableState.buffer.head;
-  var content = '';
-
-  while (p !== null) {
-    content += decoder.write(p.data);
-    p = p.next;
-  }
-
-  this._readableState.buffer.clear();
-
-  if (content !== '') this._readableState.buffer.push(content);
-  this._readableState.length = content.length;
-  return this;
-}; // Don't raise the hwm > 1GB
-
-
-var MAX_HWM = 0x40000000;
-
-function computeNewHighWaterMark(n) {
-  if (n >= MAX_HWM) {
-    // TODO(ronag): Throw ERR_VALUE_OUT_OF_RANGE.
-    n = MAX_HWM;
-  } else {
-    // Get the next highest power of 2 to prevent increasing hwm excessively in
-    // tiny amounts
-    n--;
-    n |= n >>> 1;
-    n |= n >>> 2;
-    n |= n >>> 4;
-    n |= n >>> 8;
-    n |= n >>> 16;
-    n++;
-  }
-
-  return n;
-} // This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-
-
-function howMuchToRead(n, state) {
-  if (n <= 0 || state.length === 0 && state.ended) return 0;
-  if (state.objectMode) return 1;
-
-  if (n !== n) {
-    // Only flow one buffer at a time
-    if (state.flowing && state.length) return state.buffer.head.data.length;else return state.length;
-  } // If we're asking for more than the current hwm, then raise the hwm.
-
-
-  if (n > state.highWaterMark) state.highWaterMark = computeNewHighWaterMark(n);
-  if (n <= state.length) return n; // Don't have enough
-
-  if (!state.ended) {
-    state.needReadable = true;
-    return 0;
-  }
-
-  return state.length;
-} // you can override either this method, or the async _read(n) below.
-
-
-Readable.prototype.read = function (n) {
-  debug('read', n);
-  n = parseInt(n, 10);
-  var state = this._readableState;
-  var nOrig = n;
-  if (n !== 0) state.emittedReadable = false; // if we're doing read(0) to trigger a readable event, but we
-  // already have a bunch of data in the buffer, then just trigger
-  // the 'readable' event and move on.
-
-  if (n === 0 && state.needReadable && ((state.highWaterMark !== 0 ? state.length >= state.highWaterMark : state.length > 0) || state.ended)) {
-    debug('read: emitReadable', state.length, state.ended);
-    if (state.length === 0 && state.ended) endReadable(this);else emitReadable(this);
-    return null;
-  }
-
-  n = howMuchToRead(n, state); // if we've ended, and we're now clear, then finish it up.
-
-  if (n === 0 && state.ended) {
-    if (state.length === 0) endReadable(this);
-    return null;
-  } // All the actual chunk generation logic needs to be
-  // *below* the call to _read.  The reason is that in certain
-  // synthetic stream cases, such as passthrough streams, _read
-  // may be a completely synchronous operation which may change
-  // the state of the read buffer, providing enough data when
-  // before there was *not* enough.
-  //
-  // So, the steps are:
-  // 1. Figure out what the state of things will be after we do
-  // a read from the buffer.
-  //
-  // 2. If that resulting state will trigger a _read, then call _read.
-  // Note that this may be asynchronous, or synchronous.  Yes, it is
-  // deeply ugly to write APIs this way, but that still doesn't mean
-  // that the Readable class should behave improperly, as streams are
-  // designed to be sync/async agnostic.
-  // Take note if the _read call is sync or async (ie, if the read call
-  // has returned yet), so that we know whether or not it's safe to emit
-  // 'readable' etc.
-  //
-  // 3. Actually pull the requested chunks out of the buffer and return.
-  // if we need a readable event, then we need to do some reading.
-
-
-  var doRead = state.needReadable;
-  debug('need readable', doRead); // if we currently have less than the highWaterMark, then also read some
-
-  if (state.length === 0 || state.length - n < state.highWaterMark) {
-    doRead = true;
-    debug('length less than watermark', doRead);
-  } // however, if we've ended, then there's no point, and if we're already
-  // reading, then it's unnecessary.
-
-
-  if (state.ended || state.reading) {
-    doRead = false;
-    debug('reading or ended', doRead);
-  } else if (doRead) {
-    debug('do read');
-    state.reading = true;
-    state.sync = true; // if the length is currently zero, then we *need* a readable event.
-
-    if (state.length === 0) state.needReadable = true; // call internal read method
-
-    this._read(state.highWaterMark);
-
-    state.sync = false; // If _read pushed data synchronously, then `reading` will be false,
-    // and we need to re-evaluate how much data we can return to the user.
-
-    if (!state.reading) n = howMuchToRead(nOrig, state);
-  }
-
-  var ret;
-  if (n > 0) ret = fromList(n, state);else ret = null;
-
-  if (ret === null) {
-    state.needReadable = state.length <= state.highWaterMark;
-    n = 0;
-  } else {
-    state.length -= n;
-    state.awaitDrain = 0;
-  }
-
-  if (state.length === 0) {
-    // If we have nothing in the buffer, then we want to know
-    // as soon as we *do* get something into the buffer.
-    if (!state.ended) state.needReadable = true; // If we tried to read() past the EOF, then emit end on the next tick.
-
-    if (nOrig !== n && state.ended) endReadable(this);
-  }
-
-  if (ret !== null) this.emit('data', ret);
-  return ret;
-};
-
-function onEofChunk(stream, state) {
-  debug('onEofChunk');
-  if (state.ended) return;
-
-  if (state.decoder) {
-    var chunk = state.decoder.end();
-
-    if (chunk && chunk.length) {
-      state.buffer.push(chunk);
-      state.length += state.objectMode ? 1 : chunk.length;
-    }
-  }
-
-  state.ended = true;
-
-  if (state.sync) {
-    // if we are sync, wait until next tick to emit the data.
-    // Otherwise we risk emitting data in the flow()
-    // the readable code triggers during a read() call
-    emitReadable(stream);
-  } else {
-    // emit 'readable' now to make sure it gets picked up.
-    state.needReadable = false;
-
-    if (!state.emittedReadable) {
-      state.emittedReadable = true;
-      emitReadable_(stream);
-    }
-  }
-} // Don't emit readable right away in sync mode, because this can trigger
-// another read() call => stack overflow.  This way, it might trigger
-// a nextTick recursion warning, but that's not so bad.
-
-
-function emitReadable(stream) {
-  var state = stream._readableState;
-  debug('emitReadable', state.needReadable, state.emittedReadable);
-  state.needReadable = false;
-
-  if (!state.emittedReadable) {
-    debug('emitReadable', state.flowing);
-    state.emittedReadable = true;
-    process.nextTick(emitReadable_, stream);
-  }
-}
-
-function emitReadable_(stream) {
-  var state = stream._readableState;
-  debug('emitReadable_', state.destroyed, state.length, state.ended);
-
-  if (!state.destroyed && (state.length || state.ended)) {
-    stream.emit('readable');
-    state.emittedReadable = false;
-  } // The stream needs another readable event if
-  // 1. It is not flowing, as the flow mechanism will take
-  //    care of it.
-  // 2. It is not ended.
-  // 3. It is below the highWaterMark, so we can schedule
-  //    another readable later.
-
-
-  state.needReadable = !state.flowing && !state.ended && state.length <= state.highWaterMark;
-  flow(stream);
-} // at this point, the user has presumably seen the 'readable' event,
-// and called read() to consume some data.  that may have triggered
-// in turn another _read(n) call, in which case reading = true if
-// it's in progress.
-// However, if we're not ended, or reading, and the length < hwm,
-// then go ahead and try to read some more preemptively.
-
-
-function maybeReadMore(stream, state) {
-  if (!state.readingMore) {
-    state.readingMore = true;
-    process.nextTick(maybeReadMore_, stream, state);
-  }
-}
-
-function maybeReadMore_(stream, state) {
-  // Attempt to read more data if we should.
-  //
-  // The conditions for reading more data are (one of):
-  // - Not enough data buffered (state.length < state.highWaterMark). The loop
-  //   is responsible for filling the buffer with enough data if such data
-  //   is available. If highWaterMark is 0 and we are not in the flowing mode
-  //   we should _not_ attempt to buffer any extra data. We'll get more data
-  //   when the stream consumer calls read() instead.
-  // - No data in the buffer, and the stream is in flowing mode. In this mode
-  //   the loop below is responsible for ensuring read() is called. Failing to
-  //   call read here would abort the flow and there's no other mechanism for
-  //   continuing the flow if the stream consumer has just subscribed to the
-  //   'data' event.
-  //
-  // In addition to the above conditions to keep reading data, the following
-  // conditions prevent the data from being read:
-  // - The stream has ended (state.ended).
-  // - There is already a pending 'read' operation (state.reading). This is a
-  //   case where the the stream has called the implementation defined _read()
-  //   method, but they are processing the call asynchronously and have _not_
-  //   called push() with new data. In this case we skip performing more
-  //   read()s. The execution ends in this method again after the _read() ends
-  //   up calling push() with more data.
-  while (!state.reading && !state.ended && (state.length < state.highWaterMark || state.flowing && state.length === 0)) {
-    var len = state.length;
-    debug('maybeReadMore read 0');
-    stream.read(0);
-    if (len === state.length) // didn't get any data, stop spinning.
-      break;
-  }
-
-  state.readingMore = false;
-} // abstract method.  to be overridden in specific implementation classes.
-// call cb(er, data) where data is <= n in length.
-// for virtual (non-string, non-buffer) streams, "length" is somewhat
-// arbitrary, and perhaps not very meaningful.
-
-
-Readable.prototype._read = function (n) {
-  errorOrDestroy(this, new ERR_METHOD_NOT_IMPLEMENTED('_read()'));
-};
-
-Readable.prototype.pipe = function (dest, pipeOpts) {
-  var src = this;
-  var state = this._readableState;
-
-  switch (state.pipesCount) {
-    case 0:
-      state.pipes = dest;
-      break;
-
-    case 1:
-      state.pipes = [state.pipes, dest];
-      break;
-
-    default:
-      state.pipes.push(dest);
-      break;
-  }
-
-  state.pipesCount += 1;
-  debug('pipe count=%d opts=%j', state.pipesCount, pipeOpts);
-  var doEnd = (!pipeOpts || pipeOpts.end !== false) && dest !== process.stdout && dest !== process.stderr;
-  var endFn = doEnd ? onend : unpipe;
-  if (state.endEmitted) process.nextTick(endFn);else src.once('end', endFn);
-  dest.on('unpipe', onunpipe);
-
-  function onunpipe(readable, unpipeInfo) {
-    debug('onunpipe');
-
-    if (readable === src) {
-      if (unpipeInfo && unpipeInfo.hasUnpiped === false) {
-        unpipeInfo.hasUnpiped = true;
-        cleanup();
-      }
-    }
-  }
-
-  function onend() {
-    debug('onend');
-    dest.end();
-  } // when the dest drains, it reduces the awaitDrain counter
-  // on the source.  This would be more elegant with a .once()
-  // handler in flow(), but adding and removing repeatedly is
-  // too slow.
-
-
-  var ondrain = pipeOnDrain(src);
-  dest.on('drain', ondrain);
-  var cleanedUp = false;
-
-  function cleanup() {
-    debug('cleanup'); // cleanup event handlers once the pipe is broken
-
-    dest.removeListener('close', onclose);
-    dest.removeListener('finish', onfinish);
-    dest.removeListener('drain', ondrain);
-    dest.removeListener('error', onerror);
-    dest.removeListener('unpipe', onunpipe);
-    src.removeListener('end', onend);
-    src.removeListener('end', unpipe);
-    src.removeListener('data', ondata);
-    cleanedUp = true; // if the reader is waiting for a drain event from this
-    // specific writer, then it would cause it to never start
-    // flowing again.
-    // So, if this is awaiting a drain, then we just call it now.
-    // If we don't know, then assume that we are waiting for one.
-
-    if (state.awaitDrain && (!dest._writableState || dest._writableState.needDrain)) ondrain();
-  }
-
-  src.on('data', ondata);
-
-  function ondata(chunk) {
-    debug('ondata');
-    var ret = dest.write(chunk);
-    debug('dest.write', ret);
-
-    if (ret === false) {
-      // If the user unpiped during `dest.write()`, it is possible
-      // to get stuck in a permanently paused state if that write
-      // also returned false.
-      // => Check whether `dest` is still a piping destination.
-      if ((state.pipesCount === 1 && state.pipes === dest || state.pipesCount > 1 && indexOf(state.pipes, dest) !== -1) && !cleanedUp) {
-        debug('false write response, pause', state.awaitDrain);
-        state.awaitDrain++;
-      }
-
-      src.pause();
-    }
-  } // if the dest has an error, then stop piping into it.
-  // however, don't suppress the throwing behavior for this.
-
-
-  function onerror(er) {
-    debug('onerror', er);
-    unpipe();
-    dest.removeListener('error', onerror);
-    if (EElistenerCount(dest, 'error') === 0) errorOrDestroy(dest, er);
-  } // Make sure our error handler is attached before userland ones.
-
-
-  prependListener(dest, 'error', onerror); // Both close and finish should trigger unpipe, but only once.
-
-  function onclose() {
-    dest.removeListener('finish', onfinish);
-    unpipe();
-  }
-
-  dest.once('close', onclose);
-
-  function onfinish() {
-    debug('onfinish');
-    dest.removeListener('close', onclose);
-    unpipe();
-  }
-
-  dest.once('finish', onfinish);
-
-  function unpipe() {
-    debug('unpipe');
-    src.unpipe(dest);
-  } // tell the dest that it's being piped to
-
-
-  dest.emit('pipe', src); // start the flow if it hasn't been started already.
-
-  if (!state.flowing) {
-    debug('pipe resume');
-    src.resume();
-  }
-
-  return dest;
-};
-
-function pipeOnDrain(src) {
-  return function pipeOnDrainFunctionResult() {
-    var state = src._readableState;
-    debug('pipeOnDrain', state.awaitDrain);
-    if (state.awaitDrain) state.awaitDrain--;
-
-    if (state.awaitDrain === 0 && EElistenerCount(src, 'data')) {
-      state.flowing = true;
-      flow(src);
-    }
-  };
-}
-
-Readable.prototype.unpipe = function (dest) {
-  var state = this._readableState;
-  var unpipeInfo = {
-    hasUnpiped: false
-  }; // if we're not piping anywhere, then do nothing.
-
-  if (state.pipesCount === 0) return this; // just one destination.  most common case.
-
-  if (state.pipesCount === 1) {
-    // passed in one, but it's not the right one.
-    if (dest && dest !== state.pipes) return this;
-    if (!dest) dest = state.pipes; // got a match.
-
-    state.pipes = null;
-    state.pipesCount = 0;
-    state.flowing = false;
-    if (dest) dest.emit('unpipe', this, unpipeInfo);
-    return this;
-  } // slow case. multiple pipe destinations.
-
-
-  if (!dest) {
-    // remove all.
-    var dests = state.pipes;
-    var len = state.pipesCount;
-    state.pipes = null;
-    state.pipesCount = 0;
-    state.flowing = false;
-
-    for (var i = 0; i < len; i++) {
-      dests[i].emit('unpipe', this, {
-        hasUnpiped: false
-      });
-    }
-
-    return this;
-  } // try to find the right one.
-
-
-  var index = indexOf(state.pipes, dest);
-  if (index === -1) return this;
-  state.pipes.splice(index, 1);
-  state.pipesCount -= 1;
-  if (state.pipesCount === 1) state.pipes = state.pipes[0];
-  dest.emit('unpipe', this, unpipeInfo);
-  return this;
-}; // set up data events if they are asked for
-// Ensure readable listeners eventually get something
-
-
-Readable.prototype.on = function (ev, fn) {
-  var res = Stream.prototype.on.call(this, ev, fn);
-  var state = this._readableState;
-
-  if (ev === 'data') {
-    // update readableListening so that resume() may be a no-op
-    // a few lines down. This is needed to support once('readable').
-    state.readableListening = this.listenerCount('readable') > 0; // Try start flowing on next tick if stream isn't explicitly paused
-
-    if (state.flowing !== false) this.resume();
-  } else if (ev === 'readable') {
-    if (!state.endEmitted && !state.readableListening) {
-      state.readableListening = state.needReadable = true;
-      state.flowing = false;
-      state.emittedReadable = false;
-      debug('on readable', state.length, state.reading);
-
-      if (state.length) {
-        emitReadable(this);
-      } else if (!state.reading) {
-        process.nextTick(nReadingNextTick, this);
-      }
-    }
-  }
-
-  return res;
-};
-
-Readable.prototype.addListener = Readable.prototype.on;
-
-Readable.prototype.removeListener = function (ev, fn) {
-  var res = Stream.prototype.removeListener.call(this, ev, fn);
-
-  if (ev === 'readable') {
-    // We need to check if there is someone still listening to
-    // readable and reset the state. However this needs to happen
-    // after readable has been emitted but before I/O (nextTick) to
-    // support once('readable', fn) cycles. This means that calling
-    // resume within the same tick will have no
-    // effect.
-    process.nextTick(updateReadableListening, this);
-  }
-
-  return res;
-};
-
-Readable.prototype.removeAllListeners = function (ev) {
-  var res = Stream.prototype.removeAllListeners.apply(this, arguments);
-
-  if (ev === 'readable' || ev === undefined) {
-    // We need to check if there is someone still listening to
-    // readable and reset the state. However this needs to happen
-    // after readable has been emitted but before I/O (nextTick) to
-    // support once('readable', fn) cycles. This means that calling
-    // resume within the same tick will have no
-    // effect.
-    process.nextTick(updateReadableListening, this);
-  }
-
-  return res;
-};
-
-function updateReadableListening(self) {
-  var state = self._readableState;
-  state.readableListening = self.listenerCount('readable') > 0;
-
-  if (state.resumeScheduled && !state.paused) {
-    // flowing needs to be set to true now, otherwise
-    // the upcoming resume will not flow.
-    state.flowing = true; // crude way to check if we should resume
-  } else if (self.listenerCount('data') > 0) {
-    self.resume();
-  }
-}
-
-function nReadingNextTick(self) {
-  debug('readable nexttick read 0');
-  self.read(0);
-} // pause() and resume() are remnants of the legacy readable stream API
-// If the user uses them, then switch into old mode.
-
-
-Readable.prototype.resume = function () {
-  var state = this._readableState;
-
-  if (!state.flowing) {
-    debug('resume'); // we flow only if there is no one listening
-    // for readable, but we still have to call
-    // resume()
-
-    state.flowing = !state.readableListening;
-    resume(this, state);
-  }
-
-  state.paused = false;
-  return this;
-};
-
-function resume(stream, state) {
-  if (!state.resumeScheduled) {
-    state.resumeScheduled = true;
-    process.nextTick(resume_, stream, state);
-  }
-}
-
-function resume_(stream, state) {
-  debug('resume', state.reading);
-
-  if (!state.reading) {
-    stream.read(0);
-  }
-
-  state.resumeScheduled = false;
-  stream.emit('resume');
-  flow(stream);
-  if (state.flowing && !state.reading) stream.read(0);
-}
-
-Readable.prototype.pause = function () {
-  debug('call pause flowing=%j', this._readableState.flowing);
-
-  if (this._readableState.flowing !== false) {
-    debug('pause');
-    this._readableState.flowing = false;
-    this.emit('pause');
-  }
-
-  this._readableState.paused = true;
-  return this;
-};
-
-function flow(stream) {
-  var state = stream._readableState;
-  debug('flow', state.flowing);
-
-  while (state.flowing && stream.read() !== null) {
-    ;
-  }
-} // wrap an old-style stream as the async data source.
-// This is *not* part of the readable stream interface.
-// It is an ugly unfortunate mess of history.
-
-
-Readable.prototype.wrap = function (stream) {
-  var _this = this;
-
-  var state = this._readableState;
-  var paused = false;
-  stream.on('end', function () {
-    debug('wrapped end');
-
-    if (state.decoder && !state.ended) {
-      var chunk = state.decoder.end();
-      if (chunk && chunk.length) _this.push(chunk);
-    }
-
-    _this.push(null);
-  });
-  stream.on('data', function (chunk) {
-    debug('wrapped data');
-    if (state.decoder) chunk = state.decoder.write(chunk); // don't skip over falsy values in objectMode
-
-    if (state.objectMode && (chunk === null || chunk === undefined)) return;else if (!state.objectMode && (!chunk || !chunk.length)) return;
-
-    var ret = _this.push(chunk);
-
-    if (!ret) {
-      paused = true;
-      stream.pause();
-    }
-  }); // proxy all the other methods.
-  // important when wrapping filters and duplexes.
-
-  for (var i in stream) {
-    if (this[i] === undefined && typeof stream[i] === 'function') {
-      this[i] = function methodWrap(method) {
-        return function methodWrapReturnFunction() {
-          return stream[method].apply(stream, arguments);
-        };
-      }(i);
-    }
-  } // proxy certain important events.
-
-
-  for (var n = 0; n < kProxyEvents.length; n++) {
-    stream.on(kProxyEvents[n], this.emit.bind(this, kProxyEvents[n]));
-  } // when we try to consume some more bytes, simply unpause the
-  // underlying stream.
-
-
-  this._read = function (n) {
-    debug('wrapped _read', n);
-
-    if (paused) {
-      paused = false;
-      stream.resume();
-    }
-  };
-
-  return this;
-};
-
-if (typeof Symbol === 'function') {
-  Readable.prototype[Symbol.asyncIterator] = function () {
-    if (createReadableStreamAsyncIterator === undefined) {
-      createReadableStreamAsyncIterator = require('./internal/streams/async_iterator');
-    }
-
-    return createReadableStreamAsyncIterator(this);
-  };
-}
-
-Object.defineProperty(Readable.prototype, 'readableHighWaterMark', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._readableState.highWaterMark;
-  }
-});
-Object.defineProperty(Readable.prototype, 'readableBuffer', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._readableState && this._readableState.buffer;
-  }
-});
-Object.defineProperty(Readable.prototype, 'readableFlowing', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._readableState.flowing;
-  },
-  set: function set(state) {
-    if (this._readableState) {
-      this._readableState.flowing = state;
-    }
-  }
-}); // exposed for testing purposes only.
-
-Readable._fromList = fromList;
-Object.defineProperty(Readable.prototype, 'readableLength', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._readableState.length;
-  }
-}); // Pluck off n bytes from an array of buffers.
-// Length is the combined lengths of all the buffers in the list.
-// This function is designed to be inlinable, so please take care when making
-// changes to the function body.
-
-function fromList(n, state) {
-  // nothing buffered
-  if (state.length === 0) return null;
-  var ret;
-  if (state.objectMode) ret = state.buffer.shift();else if (!n || n >= state.length) {
-    // read it all, truncate the list
-    if (state.decoder) ret = state.buffer.join('');else if (state.buffer.length === 1) ret = state.buffer.first();else ret = state.buffer.concat(state.length);
-    state.buffer.clear();
-  } else {
-    // read part of list
-    ret = state.buffer.consume(n, state.decoder);
-  }
-  return ret;
-}
-
-function endReadable(stream) {
-  var state = stream._readableState;
-  debug('endReadable', state.endEmitted);
-
-  if (!state.endEmitted) {
-    state.ended = true;
-    process.nextTick(endReadableNT, state, stream);
-  }
-}
-
-function endReadableNT(state, stream) {
-  debug('endReadableNT', state.endEmitted, state.length); // Check that we didn't get one last unshift.
-
-  if (!state.endEmitted && state.length === 0) {
-    state.endEmitted = true;
-    stream.readable = false;
-    stream.emit('end');
-
-    if (state.autoDestroy) {
-      // In case of duplex streams we need a way to detect
-      // if the writable side is ready for autoDestroy as well
-      var wState = stream._writableState;
-
-      if (!wState || wState.autoDestroy && wState.finished) {
-        stream.destroy();
-      }
-    }
-  }
-}
-
-if (typeof Symbol === 'function') {
-  Readable.from = function (iterable, opts) {
-    if (from === undefined) {
-      from = require('./internal/streams/from');
-    }
-
-    return from(Readable, iterable, opts);
-  };
-}
-
-function indexOf(xs, x) {
-  for (var i = 0, l = xs.length; i < l; i++) {
-    if (xs[i] === x) return i;
-  }
-
-  return -1;
-}
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js","./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/async_iterator":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/async_iterator.js","./internal/streams/buffer_list":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/buffer_list.js","./internal/streams/destroy":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/from":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/from-browser.js","./internal/streams/state":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/state.js","./internal/streams/stream":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","string_decoder/":"/usr/local/lib/node_modules/idyll/node_modules/string_decoder/lib/string_decoder.js","util":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_transform.js":[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-// a transform stream is a readable/writable stream where you do
-// something with the data.  Sometimes it's called a "filter",
-// but that's not a great name for it, since that implies a thing where
-// some bits pass through, and others are simply ignored.  (That would
-// be a valid example of a transform, of course.)
-//
-// While the output is causally related to the input, it's not a
-// necessarily symmetric or synchronous transformation.  For example,
-// a zlib stream might take multiple plain-text writes(), and then
-// emit a single compressed chunk some time in the future.
-//
-// Here's how this works:
-//
-// The Transform stream has all the aspects of the readable and writable
-// stream classes.  When you write(chunk), that calls _write(chunk,cb)
-// internally, and returns false if there's a lot of pending writes
-// buffered up.  When you call read(), that calls _read(n) until
-// there's enough pending readable data buffered up.
-//
-// In a transform stream, the written data is placed in a buffer.  When
-// _read(n) is called, it transforms the queued up data, calling the
-// buffered _write cb's as it consumes chunks.  If consuming a single
-// written chunk would result in multiple output chunks, then the first
-// outputted bit calls the readcb, and subsequent chunks just go into
-// the read buffer, and will cause it to emit 'readable' if necessary.
-//
-// This way, back-pressure is actually determined by the reading side,
-// since _read has to be called to start processing a new chunk.  However,
-// a pathological inflate type of transform can cause excessive buffering
-// here.  For example, imagine a stream where every byte of input is
-// interpreted as an integer from 0-255, and then results in that many
-// bytes of output.  Writing the 4 bytes {ff,ff,ff,ff} would result in
-// 1kb of data being output.  In this case, you could write a very small
-// amount of input, and end up with a very large amount of output.  In
-// such a pathological inflating mechanism, there'd be no way to tell
-// the system to stop doing the transform.  A single 4MB write could
-// cause the system to run out of memory.
-//
-// However, even in such a pathological case, only a single written chunk
-// would be consumed, and then the rest would wait (un-transformed) until
-// the results of the previous transformed chunk were consumed.
-'use strict';
-
-module.exports = Transform;
-
-var _require$codes = require('../errors').codes,
-    ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
-    ERR_MULTIPLE_CALLBACK = _require$codes.ERR_MULTIPLE_CALLBACK,
-    ERR_TRANSFORM_ALREADY_TRANSFORMING = _require$codes.ERR_TRANSFORM_ALREADY_TRANSFORMING,
-    ERR_TRANSFORM_WITH_LENGTH_0 = _require$codes.ERR_TRANSFORM_WITH_LENGTH_0;
-
-var Duplex = require('./_stream_duplex');
-
-require('inherits')(Transform, Duplex);
-
-function afterTransform(er, data) {
-  var ts = this._transformState;
-  ts.transforming = false;
-  var cb = ts.writecb;
-
-  if (cb === null) {
-    return this.emit('error', new ERR_MULTIPLE_CALLBACK());
-  }
-
-  ts.writechunk = null;
-  ts.writecb = null;
-  if (data != null) // single equals check for both `null` and `undefined`
-    this.push(data);
-  cb(er);
-  var rs = this._readableState;
-  rs.reading = false;
-
-  if (rs.needReadable || rs.length < rs.highWaterMark) {
-    this._read(rs.highWaterMark);
-  }
-}
-
-function Transform(options) {
-  if (!(this instanceof Transform)) return new Transform(options);
-  Duplex.call(this, options);
-  this._transformState = {
-    afterTransform: afterTransform.bind(this),
-    needTransform: false,
-    transforming: false,
-    writecb: null,
-    writechunk: null,
-    writeencoding: null
-  }; // start out asking for a readable event once data is transformed.
-
-  this._readableState.needReadable = true; // we have implemented the _read method, and done the other things
-  // that Readable wants before the first _read call, so unset the
-  // sync guard flag.
-
-  this._readableState.sync = false;
-
-  if (options) {
-    if (typeof options.transform === 'function') this._transform = options.transform;
-    if (typeof options.flush === 'function') this._flush = options.flush;
-  } // When the writable side finishes, then flush out anything remaining.
-
-
-  this.on('prefinish', prefinish);
-}
-
-function prefinish() {
-  var _this = this;
-
-  if (typeof this._flush === 'function' && !this._readableState.destroyed) {
-    this._flush(function (er, data) {
-      done(_this, er, data);
-    });
-  } else {
-    done(this, null, null);
-  }
-}
-
-Transform.prototype.push = function (chunk, encoding) {
-  this._transformState.needTransform = false;
-  return Duplex.prototype.push.call(this, chunk, encoding);
-}; // This is the part where you do stuff!
-// override this function in implementation classes.
-// 'chunk' is an input chunk.
-//
-// Call `push(newChunk)` to pass along transformed output
-// to the readable side.  You may call 'push' zero or more times.
-//
-// Call `cb(err)` when you are done with this chunk.  If you pass
-// an error, then that'll put the hurt on the whole operation.  If you
-// never call cb(), then you'll never get another chunk.
-
-
-Transform.prototype._transform = function (chunk, encoding, cb) {
-  cb(new ERR_METHOD_NOT_IMPLEMENTED('_transform()'));
-};
-
-Transform.prototype._write = function (chunk, encoding, cb) {
-  var ts = this._transformState;
-  ts.writecb = cb;
-  ts.writechunk = chunk;
-  ts.writeencoding = encoding;
-
-  if (!ts.transforming) {
-    var rs = this._readableState;
-    if (ts.needTransform || rs.needReadable || rs.length < rs.highWaterMark) this._read(rs.highWaterMark);
-  }
-}; // Doesn't matter what the args are here.
-// _transform does all the work.
-// That we got here means that the readable side wants more data.
-
-
-Transform.prototype._read = function (n) {
-  var ts = this._transformState;
-
-  if (ts.writechunk !== null && !ts.transforming) {
-    ts.transforming = true;
-
-    this._transform(ts.writechunk, ts.writeencoding, ts.afterTransform);
-  } else {
-    // mark that we need a transform, so that any data that comes in
-    // will get processed, now that we've asked for it.
-    ts.needTransform = true;
-  }
-};
-
-Transform.prototype._destroy = function (err, cb) {
-  Duplex.prototype._destroy.call(this, err, function (err2) {
-    cb(err2);
-  });
-};
-
-function done(stream, er, data) {
-  if (er) return stream.emit('error', er);
-  if (data != null) // single equals check for both `null` and `undefined`
-    stream.push(data); // TODO(BridgeAR): Write a test for these two error cases
-  // if there's nothing in the write buffer, then that means
-  // that nothing more will ever be provided
-
-  if (stream._writableState.length) throw new ERR_TRANSFORM_WITH_LENGTH_0();
-  if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
-  return stream.push(null);
-}
-},{"../errors":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js","./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_duplex.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_writable.js":[function(require,module,exports){
-(function (process,global){(function (){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-// A bit simpler than readable streams.
-// Implement an async ._write(chunk, encoding, cb), and it'll handle all
-// the drain event emission and buffering.
-'use strict';
-
-module.exports = Writable;
-/* <replacement> */
-
-function WriteReq(chunk, encoding, cb) {
-  this.chunk = chunk;
-  this.encoding = encoding;
-  this.callback = cb;
-  this.next = null;
-} // It seems a linked list but it is not
-// there will be only 2 of these for each stream
-
-
-function CorkedRequest(state) {
-  var _this = this;
-
-  this.next = null;
-  this.entry = null;
-
-  this.finish = function () {
-    onCorkedFinish(_this, state);
-  };
-}
-/* </replacement> */
-
-/*<replacement>*/
-
-
-var Duplex;
-/*</replacement>*/
-
-Writable.WritableState = WritableState;
-/*<replacement>*/
-
-var internalUtil = {
-  deprecate: require('util-deprecate')
-};
-/*</replacement>*/
-
-/*<replacement>*/
-
-var Stream = require('./internal/streams/stream');
-/*</replacement>*/
-
-
-var Buffer = require('buffer').Buffer;
-
-var OurUint8Array = global.Uint8Array || function () {};
-
-function _uint8ArrayToBuffer(chunk) {
-  return Buffer.from(chunk);
-}
-
-function _isUint8Array(obj) {
-  return Buffer.isBuffer(obj) || obj instanceof OurUint8Array;
-}
-
-var destroyImpl = require('./internal/streams/destroy');
-
-var _require = require('./internal/streams/state'),
-    getHighWaterMark = _require.getHighWaterMark;
-
-var _require$codes = require('../errors').codes,
-    ERR_INVALID_ARG_TYPE = _require$codes.ERR_INVALID_ARG_TYPE,
-    ERR_METHOD_NOT_IMPLEMENTED = _require$codes.ERR_METHOD_NOT_IMPLEMENTED,
-    ERR_MULTIPLE_CALLBACK = _require$codes.ERR_MULTIPLE_CALLBACK,
-    ERR_STREAM_CANNOT_PIPE = _require$codes.ERR_STREAM_CANNOT_PIPE,
-    ERR_STREAM_DESTROYED = _require$codes.ERR_STREAM_DESTROYED,
-    ERR_STREAM_NULL_VALUES = _require$codes.ERR_STREAM_NULL_VALUES,
-    ERR_STREAM_WRITE_AFTER_END = _require$codes.ERR_STREAM_WRITE_AFTER_END,
-    ERR_UNKNOWN_ENCODING = _require$codes.ERR_UNKNOWN_ENCODING;
-
-var errorOrDestroy = destroyImpl.errorOrDestroy;
-
-require('inherits')(Writable, Stream);
-
-function nop() {}
-
-function WritableState(options, stream, isDuplex) {
-  Duplex = Duplex || require('./_stream_duplex');
-  options = options || {}; // Duplex streams are both readable and writable, but share
-  // the same options object.
-  // However, some cases require setting options to different
-  // values for the readable and the writable sides of the duplex stream,
-  // e.g. options.readableObjectMode vs. options.writableObjectMode, etc.
-
-  if (typeof isDuplex !== 'boolean') isDuplex = stream instanceof Duplex; // object stream flag to indicate whether or not this stream
-  // contains buffers or objects.
-
-  this.objectMode = !!options.objectMode;
-  if (isDuplex) this.objectMode = this.objectMode || !!options.writableObjectMode; // the point at which write() starts returning false
-  // Note: 0 is a valid value, means that we always return false if
-  // the entire buffer is not flushed immediately on write()
-
-  this.highWaterMark = getHighWaterMark(this, options, 'writableHighWaterMark', isDuplex); // if _final has been called
-
-  this.finalCalled = false; // drain event flag.
-
-  this.needDrain = false; // at the start of calling end()
-
-  this.ending = false; // when end() has been called, and returned
-
-  this.ended = false; // when 'finish' is emitted
-
-  this.finished = false; // has it been destroyed
-
-  this.destroyed = false; // should we decode strings into buffers before passing to _write?
-  // this is here so that some node-core streams can optimize string
-  // handling at a lower level.
-
-  var noDecode = options.decodeStrings === false;
-  this.decodeStrings = !noDecode; // Crypto is kind of old and crusty.  Historically, its default string
-  // encoding is 'binary' so we have to make this configurable.
-  // Everything else in the universe uses 'utf8', though.
-
-  this.defaultEncoding = options.defaultEncoding || 'utf8'; // not an actual buffer we keep track of, but a measurement
-  // of how much we're waiting to get pushed to some underlying
-  // socket or file.
-
-  this.length = 0; // a flag to see when we're in the middle of a write.
-
-  this.writing = false; // when true all writes will be buffered until .uncork() call
-
-  this.corked = 0; // a flag to be able to tell if the onwrite cb is called immediately,
-  // or on a later tick.  We set this to true at first, because any
-  // actions that shouldn't happen until "later" should generally also
-  // not happen before the first write call.
-
-  this.sync = true; // a flag to know if we're processing previously buffered items, which
-  // may call the _write() callback in the same tick, so that we don't
-  // end up in an overlapped onwrite situation.
-
-  this.bufferProcessing = false; // the callback that's passed to _write(chunk,cb)
-
-  this.onwrite = function (er) {
-    onwrite(stream, er);
-  }; // the callback that the user supplies to write(chunk,encoding,cb)
-
-
-  this.writecb = null; // the amount that is being written when _write is called.
-
-  this.writelen = 0;
-  this.bufferedRequest = null;
-  this.lastBufferedRequest = null; // number of pending user-supplied write callbacks
-  // this must be 0 before 'finish' can be emitted
-
-  this.pendingcb = 0; // emit prefinish if the only thing we're waiting for is _write cbs
-  // This is relevant for synchronous Transform streams
-
-  this.prefinished = false; // True if the error was already emitted and should not be thrown again
-
-  this.errorEmitted = false; // Should close be emitted on destroy. Defaults to true.
-
-  this.emitClose = options.emitClose !== false; // Should .destroy() be called after 'finish' (and potentially 'end')
-
-  this.autoDestroy = !!options.autoDestroy; // count buffered requests
-
-  this.bufferedRequestCount = 0; // allocate the first CorkedRequest, there is always
-  // one allocated and free to use, and we maintain at most two
-
-  this.corkedRequestsFree = new CorkedRequest(this);
-}
-
-WritableState.prototype.getBuffer = function getBuffer() {
-  var current = this.bufferedRequest;
-  var out = [];
-
-  while (current) {
-    out.push(current);
-    current = current.next;
-  }
-
-  return out;
-};
-
-(function () {
-  try {
-    Object.defineProperty(WritableState.prototype, 'buffer', {
-      get: internalUtil.deprecate(function writableStateBufferGetter() {
-        return this.getBuffer();
-      }, '_writableState.buffer is deprecated. Use _writableState.getBuffer ' + 'instead.', 'DEP0003')
-    });
-  } catch (_) {}
-})(); // Test _writableState for inheritance to account for Duplex streams,
-// whose prototype chain only points to Readable.
-
-
-var realHasInstance;
-
-if (typeof Symbol === 'function' && Symbol.hasInstance && typeof Function.prototype[Symbol.hasInstance] === 'function') {
-  realHasInstance = Function.prototype[Symbol.hasInstance];
-  Object.defineProperty(Writable, Symbol.hasInstance, {
-    value: function value(object) {
-      if (realHasInstance.call(this, object)) return true;
-      if (this !== Writable) return false;
-      return object && object._writableState instanceof WritableState;
-    }
-  });
-} else {
-  realHasInstance = function realHasInstance(object) {
-    return object instanceof this;
-  };
-}
-
-function Writable(options) {
-  Duplex = Duplex || require('./_stream_duplex'); // Writable ctor is applied to Duplexes, too.
-  // `realHasInstance` is necessary because using plain `instanceof`
-  // would return false, as no `_writableState` property is attached.
-  // Trying to use the custom `instanceof` for Writable here will also break the
-  // Node.js LazyTransform implementation, which has a non-trivial getter for
-  // `_writableState` that would lead to infinite recursion.
-  // Checking for a Stream.Duplex instance is faster here instead of inside
-  // the WritableState constructor, at least with V8 6.5
-
-  var isDuplex = this instanceof Duplex;
-  if (!isDuplex && !realHasInstance.call(Writable, this)) return new Writable(options);
-  this._writableState = new WritableState(options, this, isDuplex); // legacy.
-
-  this.writable = true;
-
-  if (options) {
-    if (typeof options.write === 'function') this._write = options.write;
-    if (typeof options.writev === 'function') this._writev = options.writev;
-    if (typeof options.destroy === 'function') this._destroy = options.destroy;
-    if (typeof options.final === 'function') this._final = options.final;
-  }
-
-  Stream.call(this);
-} // Otherwise people can pipe Writable streams, which is just wrong.
-
-
-Writable.prototype.pipe = function () {
-  errorOrDestroy(this, new ERR_STREAM_CANNOT_PIPE());
-};
-
-function writeAfterEnd(stream, cb) {
-  var er = new ERR_STREAM_WRITE_AFTER_END(); // TODO: defer error events consistently everywhere, not just the cb
-
-  errorOrDestroy(stream, er);
-  process.nextTick(cb, er);
-} // Checks that a user-supplied chunk is valid, especially for the particular
-// mode the stream is in. Currently this means that `null` is never accepted
-// and undefined/non-string values are only allowed in object mode.
-
-
-function validChunk(stream, state, chunk, cb) {
-  var er;
-
-  if (chunk === null) {
-    er = new ERR_STREAM_NULL_VALUES();
-  } else if (typeof chunk !== 'string' && !state.objectMode) {
-    er = new ERR_INVALID_ARG_TYPE('chunk', ['string', 'Buffer'], chunk);
-  }
-
-  if (er) {
-    errorOrDestroy(stream, er);
-    process.nextTick(cb, er);
-    return false;
-  }
-
-  return true;
-}
-
-Writable.prototype.write = function (chunk, encoding, cb) {
-  var state = this._writableState;
-  var ret = false;
-
-  var isBuf = !state.objectMode && _isUint8Array(chunk);
-
-  if (isBuf && !Buffer.isBuffer(chunk)) {
-    chunk = _uint8ArrayToBuffer(chunk);
-  }
-
-  if (typeof encoding === 'function') {
-    cb = encoding;
-    encoding = null;
-  }
-
-  if (isBuf) encoding = 'buffer';else if (!encoding) encoding = state.defaultEncoding;
-  if (typeof cb !== 'function') cb = nop;
-  if (state.ending) writeAfterEnd(this, cb);else if (isBuf || validChunk(this, state, chunk, cb)) {
-    state.pendingcb++;
-    ret = writeOrBuffer(this, state, isBuf, chunk, encoding, cb);
-  }
-  return ret;
-};
-
-Writable.prototype.cork = function () {
-  this._writableState.corked++;
-};
-
-Writable.prototype.uncork = function () {
-  var state = this._writableState;
-
-  if (state.corked) {
-    state.corked--;
-    if (!state.writing && !state.corked && !state.bufferProcessing && state.bufferedRequest) clearBuffer(this, state);
-  }
-};
-
-Writable.prototype.setDefaultEncoding = function setDefaultEncoding(encoding) {
-  // node::ParseEncoding() requires lower case.
-  if (typeof encoding === 'string') encoding = encoding.toLowerCase();
-  if (!(['hex', 'utf8', 'utf-8', 'ascii', 'binary', 'base64', 'ucs2', 'ucs-2', 'utf16le', 'utf-16le', 'raw'].indexOf((encoding + '').toLowerCase()) > -1)) throw new ERR_UNKNOWN_ENCODING(encoding);
-  this._writableState.defaultEncoding = encoding;
-  return this;
-};
-
-Object.defineProperty(Writable.prototype, 'writableBuffer', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._writableState && this._writableState.getBuffer();
-  }
-});
-
-function decodeChunk(state, chunk, encoding) {
-  if (!state.objectMode && state.decodeStrings !== false && typeof chunk === 'string') {
-    chunk = Buffer.from(chunk, encoding);
-  }
-
-  return chunk;
-}
-
-Object.defineProperty(Writable.prototype, 'writableHighWaterMark', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._writableState.highWaterMark;
-  }
-}); // if we're already writing something, then just put this
-// in the queue, and wait our turn.  Otherwise, call _write
-// If we return false, then we need a drain event, so set that flag.
-
-function writeOrBuffer(stream, state, isBuf, chunk, encoding, cb) {
-  if (!isBuf) {
-    var newChunk = decodeChunk(state, chunk, encoding);
-
-    if (chunk !== newChunk) {
-      isBuf = true;
-      encoding = 'buffer';
-      chunk = newChunk;
-    }
-  }
-
-  var len = state.objectMode ? 1 : chunk.length;
-  state.length += len;
-  var ret = state.length < state.highWaterMark; // we must ensure that previous needDrain will not be reset to false.
-
-  if (!ret) state.needDrain = true;
-
-  if (state.writing || state.corked) {
-    var last = state.lastBufferedRequest;
-    state.lastBufferedRequest = {
-      chunk: chunk,
-      encoding: encoding,
-      isBuf: isBuf,
-      callback: cb,
-      next: null
-    };
-
-    if (last) {
-      last.next = state.lastBufferedRequest;
-    } else {
-      state.bufferedRequest = state.lastBufferedRequest;
-    }
-
-    state.bufferedRequestCount += 1;
-  } else {
-    doWrite(stream, state, false, len, chunk, encoding, cb);
-  }
-
-  return ret;
-}
-
-function doWrite(stream, state, writev, len, chunk, encoding, cb) {
-  state.writelen = len;
-  state.writecb = cb;
-  state.writing = true;
-  state.sync = true;
-  if (state.destroyed) state.onwrite(new ERR_STREAM_DESTROYED('write'));else if (writev) stream._writev(chunk, state.onwrite);else stream._write(chunk, encoding, state.onwrite);
-  state.sync = false;
-}
-
-function onwriteError(stream, state, sync, er, cb) {
-  --state.pendingcb;
-
-  if (sync) {
-    // defer the callback if we are being called synchronously
-    // to avoid piling up things on the stack
-    process.nextTick(cb, er); // this can emit finish, and it will always happen
-    // after error
-
-    process.nextTick(finishMaybe, stream, state);
-    stream._writableState.errorEmitted = true;
-    errorOrDestroy(stream, er);
-  } else {
-    // the caller expect this to happen before if
-    // it is async
-    cb(er);
-    stream._writableState.errorEmitted = true;
-    errorOrDestroy(stream, er); // this can emit finish, but finish must
-    // always follow error
-
-    finishMaybe(stream, state);
-  }
-}
-
-function onwriteStateUpdate(state) {
-  state.writing = false;
-  state.writecb = null;
-  state.length -= state.writelen;
-  state.writelen = 0;
-}
-
-function onwrite(stream, er) {
-  var state = stream._writableState;
-  var sync = state.sync;
-  var cb = state.writecb;
-  if (typeof cb !== 'function') throw new ERR_MULTIPLE_CALLBACK();
-  onwriteStateUpdate(state);
-  if (er) onwriteError(stream, state, sync, er, cb);else {
-    // Check if we're actually ready to finish, but don't emit yet
-    var finished = needFinish(state) || stream.destroyed;
-
-    if (!finished && !state.corked && !state.bufferProcessing && state.bufferedRequest) {
-      clearBuffer(stream, state);
-    }
-
-    if (sync) {
-      process.nextTick(afterWrite, stream, state, finished, cb);
-    } else {
-      afterWrite(stream, state, finished, cb);
-    }
-  }
-}
-
-function afterWrite(stream, state, finished, cb) {
-  if (!finished) onwriteDrain(stream, state);
-  state.pendingcb--;
-  cb();
-  finishMaybe(stream, state);
-} // Must force callback to be called on nextTick, so that we don't
-// emit 'drain' before the write() consumer gets the 'false' return
-// value, and has a chance to attach a 'drain' listener.
-
-
-function onwriteDrain(stream, state) {
-  if (state.length === 0 && state.needDrain) {
-    state.needDrain = false;
-    stream.emit('drain');
-  }
-} // if there's something in the buffer waiting, then process it
-
-
-function clearBuffer(stream, state) {
-  state.bufferProcessing = true;
-  var entry = state.bufferedRequest;
-
-  if (stream._writev && entry && entry.next) {
-    // Fast case, write everything using _writev()
-    var l = state.bufferedRequestCount;
-    var buffer = new Array(l);
-    var holder = state.corkedRequestsFree;
-    holder.entry = entry;
-    var count = 0;
-    var allBuffers = true;
-
-    while (entry) {
-      buffer[count] = entry;
-      if (!entry.isBuf) allBuffers = false;
-      entry = entry.next;
-      count += 1;
-    }
-
-    buffer.allBuffers = allBuffers;
-    doWrite(stream, state, true, state.length, buffer, '', holder.finish); // doWrite is almost always async, defer these to save a bit of time
-    // as the hot path ends with doWrite
-
-    state.pendingcb++;
-    state.lastBufferedRequest = null;
-
-    if (holder.next) {
-      state.corkedRequestsFree = holder.next;
-      holder.next = null;
-    } else {
-      state.corkedRequestsFree = new CorkedRequest(state);
-    }
-
-    state.bufferedRequestCount = 0;
-  } else {
-    // Slow case, write chunks one-by-one
-    while (entry) {
-      var chunk = entry.chunk;
-      var encoding = entry.encoding;
-      var cb = entry.callback;
-      var len = state.objectMode ? 1 : chunk.length;
-      doWrite(stream, state, false, len, chunk, encoding, cb);
-      entry = entry.next;
-      state.bufferedRequestCount--; // if we didn't call the onwrite immediately, then
-      // it means that we need to wait until it does.
-      // also, that means that the chunk and cb are currently
-      // being processed, so move the buffer counter past them.
-
-      if (state.writing) {
-        break;
-      }
-    }
-
-    if (entry === null) state.lastBufferedRequest = null;
-  }
-
-  state.bufferedRequest = entry;
-  state.bufferProcessing = false;
-}
-
-Writable.prototype._write = function (chunk, encoding, cb) {
-  cb(new ERR_METHOD_NOT_IMPLEMENTED('_write()'));
-};
-
-Writable.prototype._writev = null;
-
-Writable.prototype.end = function (chunk, encoding, cb) {
-  var state = this._writableState;
-
-  if (typeof chunk === 'function') {
-    cb = chunk;
-    chunk = null;
-    encoding = null;
-  } else if (typeof encoding === 'function') {
-    cb = encoding;
-    encoding = null;
-  }
-
-  if (chunk !== null && chunk !== undefined) this.write(chunk, encoding); // .end() fully uncorks
-
-  if (state.corked) {
-    state.corked = 1;
-    this.uncork();
-  } // ignore unnecessary end() calls.
-
-
-  if (!state.ending) endWritable(this, state, cb);
-  return this;
-};
-
-Object.defineProperty(Writable.prototype, 'writableLength', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    return this._writableState.length;
-  }
-});
-
-function needFinish(state) {
-  return state.ending && state.length === 0 && state.bufferedRequest === null && !state.finished && !state.writing;
-}
-
-function callFinal(stream, state) {
-  stream._final(function (err) {
-    state.pendingcb--;
-
-    if (err) {
-      errorOrDestroy(stream, err);
-    }
-
-    state.prefinished = true;
-    stream.emit('prefinish');
-    finishMaybe(stream, state);
-  });
-}
-
-function prefinish(stream, state) {
-  if (!state.prefinished && !state.finalCalled) {
-    if (typeof stream._final === 'function' && !state.destroyed) {
-      state.pendingcb++;
-      state.finalCalled = true;
-      process.nextTick(callFinal, stream, state);
-    } else {
-      state.prefinished = true;
-      stream.emit('prefinish');
-    }
-  }
-}
-
-function finishMaybe(stream, state) {
-  var need = needFinish(state);
-
-  if (need) {
-    prefinish(stream, state);
-
-    if (state.pendingcb === 0) {
-      state.finished = true;
-      stream.emit('finish');
-
-      if (state.autoDestroy) {
-        // In case of duplex streams we need a way to detect
-        // if the readable side is ready for autoDestroy as well
-        var rState = stream._readableState;
-
-        if (!rState || rState.autoDestroy && rState.endEmitted) {
-          stream.destroy();
-        }
-      }
-    }
-  }
-
-  return need;
-}
-
-function endWritable(stream, state, cb) {
-  state.ending = true;
-  finishMaybe(stream, state);
-
-  if (cb) {
-    if (state.finished) process.nextTick(cb);else stream.once('finish', cb);
-  }
-
-  state.ended = true;
-  stream.writable = false;
-}
-
-function onCorkedFinish(corkReq, state, err) {
-  var entry = corkReq.entry;
-  corkReq.entry = null;
-
-  while (entry) {
-    var cb = entry.callback;
-    state.pendingcb--;
-    cb(err);
-    entry = entry.next;
-  } // reuse the free corkReq.
-
-
-  state.corkedRequestsFree.next = corkReq;
-}
-
-Object.defineProperty(Writable.prototype, 'destroyed', {
-  // making it explicit this property is not enumerable
-  // because otherwise some prototype manipulation in
-  // userland will fail
-  enumerable: false,
-  get: function get() {
-    if (this._writableState === undefined) {
-      return false;
-    }
-
-    return this._writableState.destroyed;
-  },
-  set: function set(value) {
-    // we ignore the value if the stream
-    // has not been initialized yet
-    if (!this._writableState) {
-      return;
-    } // backward compatibility, the user is explicitly
-    // managing destroyed
-
-
-    this._writableState.destroyed = value;
-  }
-});
-Writable.prototype.destroy = destroyImpl.destroy;
-Writable.prototype._undestroy = destroyImpl.undestroy;
-
-Writable.prototype._destroy = function (err, cb) {
-  cb(err);
-};
-}).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js","./_stream_duplex":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_duplex.js","./internal/streams/destroy":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/destroy.js","./internal/streams/state":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/state.js","./internal/streams/stream":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/stream-browser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","util-deprecate":"/usr/local/lib/node_modules/idyll/node_modules/util-deprecate/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/async_iterator.js":[function(require,module,exports){
-(function (process){(function (){
-'use strict';
-
-var _Object$setPrototypeO;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var finished = require('./end-of-stream');
-
-var kLastResolve = Symbol('lastResolve');
-var kLastReject = Symbol('lastReject');
-var kError = Symbol('error');
-var kEnded = Symbol('ended');
-var kLastPromise = Symbol('lastPromise');
-var kHandlePromise = Symbol('handlePromise');
-var kStream = Symbol('stream');
-
-function createIterResult(value, done) {
-  return {
-    value: value,
-    done: done
-  };
-}
-
-function readAndResolve(iter) {
-  var resolve = iter[kLastResolve];
-
-  if (resolve !== null) {
-    var data = iter[kStream].read(); // we defer if data is null
-    // we can be expecting either 'end' or
-    // 'error'
-
-    if (data !== null) {
-      iter[kLastPromise] = null;
-      iter[kLastResolve] = null;
-      iter[kLastReject] = null;
-      resolve(createIterResult(data, false));
-    }
-  }
-}
-
-function onReadable(iter) {
-  // we wait for the next tick, because it might
-  // emit an error with process.nextTick
-  process.nextTick(readAndResolve, iter);
-}
-
-function wrapForNext(lastPromise, iter) {
-  return function (resolve, reject) {
-    lastPromise.then(function () {
-      if (iter[kEnded]) {
-        resolve(createIterResult(undefined, true));
-        return;
-      }
-
-      iter[kHandlePromise](resolve, reject);
-    }, reject);
-  };
-}
-
-var AsyncIteratorPrototype = Object.getPrototypeOf(function () {});
-var ReadableStreamAsyncIteratorPrototype = Object.setPrototypeOf((_Object$setPrototypeO = {
-  get stream() {
-    return this[kStream];
-  },
-
-  next: function next() {
-    var _this = this;
-
-    // if we have detected an error in the meanwhile
-    // reject straight away
-    var error = this[kError];
-
-    if (error !== null) {
-      return Promise.reject(error);
-    }
-
-    if (this[kEnded]) {
-      return Promise.resolve(createIterResult(undefined, true));
-    }
-
-    if (this[kStream].destroyed) {
-      // We need to defer via nextTick because if .destroy(err) is
-      // called, the error will be emitted via nextTick, and
-      // we cannot guarantee that there is no error lingering around
-      // waiting to be emitted.
-      return new Promise(function (resolve, reject) {
-        process.nextTick(function () {
-          if (_this[kError]) {
-            reject(_this[kError]);
-          } else {
-            resolve(createIterResult(undefined, true));
-          }
-        });
-      });
-    } // if we have multiple next() calls
-    // we will wait for the previous Promise to finish
-    // this logic is optimized to support for await loops,
-    // where next() is only called once at a time
-
-
-    var lastPromise = this[kLastPromise];
-    var promise;
-
-    if (lastPromise) {
-      promise = new Promise(wrapForNext(lastPromise, this));
-    } else {
-      // fast path needed to support multiple this.push()
-      // without triggering the next() queue
-      var data = this[kStream].read();
-
-      if (data !== null) {
-        return Promise.resolve(createIterResult(data, false));
-      }
-
-      promise = new Promise(this[kHandlePromise]);
-    }
-
-    this[kLastPromise] = promise;
-    return promise;
-  }
-}, _defineProperty(_Object$setPrototypeO, Symbol.asyncIterator, function () {
-  return this;
-}), _defineProperty(_Object$setPrototypeO, "return", function _return() {
-  var _this2 = this;
-
-  // destroy(err, cb) is a private API
-  // we can guarantee we have that here, because we control the
-  // Readable class this is attached to
-  return new Promise(function (resolve, reject) {
-    _this2[kStream].destroy(null, function (err) {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve(createIterResult(undefined, true));
-    });
-  });
-}), _Object$setPrototypeO), AsyncIteratorPrototype);
-
-var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterator(stream) {
-  var _Object$create;
-
-  var iterator = Object.create(ReadableStreamAsyncIteratorPrototype, (_Object$create = {}, _defineProperty(_Object$create, kStream, {
-    value: stream,
-    writable: true
-  }), _defineProperty(_Object$create, kLastResolve, {
-    value: null,
-    writable: true
-  }), _defineProperty(_Object$create, kLastReject, {
-    value: null,
-    writable: true
-  }), _defineProperty(_Object$create, kError, {
-    value: null,
-    writable: true
-  }), _defineProperty(_Object$create, kEnded, {
-    value: stream._readableState.endEmitted,
-    writable: true
-  }), _defineProperty(_Object$create, kHandlePromise, {
-    value: function value(resolve, reject) {
-      var data = iterator[kStream].read();
-
-      if (data) {
-        iterator[kLastPromise] = null;
-        iterator[kLastResolve] = null;
-        iterator[kLastReject] = null;
-        resolve(createIterResult(data, false));
-      } else {
-        iterator[kLastResolve] = resolve;
-        iterator[kLastReject] = reject;
-      }
-    },
-    writable: true
-  }), _Object$create));
-  iterator[kLastPromise] = null;
-  finished(stream, function (err) {
-    if (err && err.code !== 'ERR_STREAM_PREMATURE_CLOSE') {
-      var reject = iterator[kLastReject]; // reject if we are waiting for data in the Promise
-      // returned by next() and store the error
-
-      if (reject !== null) {
-        iterator[kLastPromise] = null;
-        iterator[kLastResolve] = null;
-        iterator[kLastReject] = null;
-        reject(err);
-      }
-
-      iterator[kError] = err;
-      return;
-    }
-
-    var resolve = iterator[kLastResolve];
-
-    if (resolve !== null) {
-      iterator[kLastPromise] = null;
-      iterator[kLastResolve] = null;
-      iterator[kLastReject] = null;
-      resolve(createIterResult(undefined, true));
-    }
-
-    iterator[kEnded] = true;
-  });
-  stream.on('readable', onReadable.bind(null, iterator));
-  return iterator;
-};
-
-module.exports = createReadableStreamAsyncIterator;
-}).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/end-of-stream.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/buffer_list.js":[function(require,module,exports){
-'use strict';
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var _require = require('buffer'),
-    Buffer = _require.Buffer;
-
-var _require2 = require('util'),
-    inspect = _require2.inspect;
-
-var custom = inspect && inspect.custom || 'inspect';
-
-function copyBuffer(src, target, offset) {
-  Buffer.prototype.copy.call(src, target, offset);
-}
-
-module.exports =
-/*#__PURE__*/
-function () {
-  function BufferList() {
-    _classCallCheck(this, BufferList);
-
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
-  }
-
-  _createClass(BufferList, [{
-    key: "push",
-    value: function push(v) {
-      var entry = {
-        data: v,
-        next: null
-      };
-      if (this.length > 0) this.tail.next = entry;else this.head = entry;
-      this.tail = entry;
-      ++this.length;
-    }
-  }, {
-    key: "unshift",
-    value: function unshift(v) {
-      var entry = {
-        data: v,
-        next: this.head
-      };
-      if (this.length === 0) this.tail = entry;
-      this.head = entry;
-      ++this.length;
-    }
-  }, {
-    key: "shift",
-    value: function shift() {
-      if (this.length === 0) return;
-      var ret = this.head.data;
-      if (this.length === 1) this.head = this.tail = null;else this.head = this.head.next;
-      --this.length;
-      return ret;
-    }
-  }, {
-    key: "clear",
-    value: function clear() {
-      this.head = this.tail = null;
-      this.length = 0;
-    }
-  }, {
-    key: "join",
-    value: function join(s) {
-      if (this.length === 0) return '';
-      var p = this.head;
-      var ret = '' + p.data;
-
-      while (p = p.next) {
-        ret += s + p.data;
-      }
-
-      return ret;
-    }
-  }, {
-    key: "concat",
-    value: function concat(n) {
-      if (this.length === 0) return Buffer.alloc(0);
-      var ret = Buffer.allocUnsafe(n >>> 0);
-      var p = this.head;
-      var i = 0;
-
-      while (p) {
-        copyBuffer(p.data, ret, i);
-        i += p.data.length;
-        p = p.next;
-      }
-
-      return ret;
-    } // Consumes a specified amount of bytes or characters from the buffered data.
-
-  }, {
-    key: "consume",
-    value: function consume(n, hasStrings) {
-      var ret;
-
-      if (n < this.head.data.length) {
-        // `slice` is the same for buffers and strings.
-        ret = this.head.data.slice(0, n);
-        this.head.data = this.head.data.slice(n);
-      } else if (n === this.head.data.length) {
-        // First chunk is a perfect match.
-        ret = this.shift();
-      } else {
-        // Result spans more than one buffer.
-        ret = hasStrings ? this._getString(n) : this._getBuffer(n);
-      }
-
-      return ret;
-    }
-  }, {
-    key: "first",
-    value: function first() {
-      return this.head.data;
-    } // Consumes a specified amount of characters from the buffered data.
-
-  }, {
-    key: "_getString",
-    value: function _getString(n) {
-      var p = this.head;
-      var c = 1;
-      var ret = p.data;
-      n -= ret.length;
-
-      while (p = p.next) {
-        var str = p.data;
-        var nb = n > str.length ? str.length : n;
-        if (nb === str.length) ret += str;else ret += str.slice(0, n);
-        n -= nb;
-
-        if (n === 0) {
-          if (nb === str.length) {
-            ++c;
-            if (p.next) this.head = p.next;else this.head = this.tail = null;
-          } else {
-            this.head = p;
-            p.data = str.slice(nb);
-          }
-
-          break;
-        }
-
-        ++c;
-      }
-
-      this.length -= c;
-      return ret;
-    } // Consumes a specified amount of bytes from the buffered data.
-
-  }, {
-    key: "_getBuffer",
-    value: function _getBuffer(n) {
-      var ret = Buffer.allocUnsafe(n);
-      var p = this.head;
-      var c = 1;
-      p.data.copy(ret);
-      n -= p.data.length;
-
-      while (p = p.next) {
-        var buf = p.data;
-        var nb = n > buf.length ? buf.length : n;
-        buf.copy(ret, ret.length - n, 0, nb);
-        n -= nb;
-
-        if (n === 0) {
-          if (nb === buf.length) {
-            ++c;
-            if (p.next) this.head = p.next;else this.head = this.tail = null;
-          } else {
-            this.head = p;
-            p.data = buf.slice(nb);
-          }
-
-          break;
-        }
-
-        ++c;
-      }
-
-      this.length -= c;
-      return ret;
-    } // Make sure the linked list only shows the minimal necessary information.
-
-  }, {
-    key: custom,
-    value: function value(_, options) {
-      return inspect(this, _objectSpread({}, options, {
-        // Only inspect one level.
-        depth: 0,
-        // It should not recurse.
-        customInspect: false
-      }));
-    }
-  }]);
-
-  return BufferList;
-}();
-},{"buffer":"/usr/local/lib/node_modules/idyll/node_modules/buffer/index.js","util":"/usr/local/lib/node_modules/idyll/node_modules/browser-resolve/empty.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/destroy.js":[function(require,module,exports){
-(function (process){(function (){
-'use strict'; // undocumented cb() API, needed for core, not for public API
-
-function destroy(err, cb) {
-  var _this = this;
-
-  var readableDestroyed = this._readableState && this._readableState.destroyed;
-  var writableDestroyed = this._writableState && this._writableState.destroyed;
-
-  if (readableDestroyed || writableDestroyed) {
-    if (cb) {
-      cb(err);
-    } else if (err) {
-      if (!this._writableState) {
-        process.nextTick(emitErrorNT, this, err);
-      } else if (!this._writableState.errorEmitted) {
-        this._writableState.errorEmitted = true;
-        process.nextTick(emitErrorNT, this, err);
-      }
-    }
-
-    return this;
-  } // we set destroyed to true before firing error callbacks in order
-  // to make it re-entrance safe in case destroy() is called within callbacks
-
-
-  if (this._readableState) {
-    this._readableState.destroyed = true;
-  } // if this is a duplex stream mark the writable part as destroyed as well
-
-
-  if (this._writableState) {
-    this._writableState.destroyed = true;
-  }
-
-  this._destroy(err || null, function (err) {
-    if (!cb && err) {
-      if (!_this._writableState) {
-        process.nextTick(emitErrorAndCloseNT, _this, err);
-      } else if (!_this._writableState.errorEmitted) {
-        _this._writableState.errorEmitted = true;
-        process.nextTick(emitErrorAndCloseNT, _this, err);
-      } else {
-        process.nextTick(emitCloseNT, _this);
-      }
-    } else if (cb) {
-      process.nextTick(emitCloseNT, _this);
-      cb(err);
-    } else {
-      process.nextTick(emitCloseNT, _this);
-    }
-  });
-
-  return this;
-}
-
-function emitErrorAndCloseNT(self, err) {
-  emitErrorNT(self, err);
-  emitCloseNT(self);
-}
-
-function emitCloseNT(self) {
-  if (self._writableState && !self._writableState.emitClose) return;
-  if (self._readableState && !self._readableState.emitClose) return;
-  self.emit('close');
-}
-
-function undestroy() {
-  if (this._readableState) {
-    this._readableState.destroyed = false;
-    this._readableState.reading = false;
-    this._readableState.ended = false;
-    this._readableState.endEmitted = false;
-  }
-
-  if (this._writableState) {
-    this._writableState.destroyed = false;
-    this._writableState.ended = false;
-    this._writableState.ending = false;
-    this._writableState.finalCalled = false;
-    this._writableState.prefinished = false;
-    this._writableState.finished = false;
-    this._writableState.errorEmitted = false;
-  }
-}
-
-function emitErrorNT(self, err) {
-  self.emit('error', err);
-}
-
-function errorOrDestroy(stream, err) {
-  // We have tests that rely on errors being emitted
-  // in the same tick, so changing this is semver major.
-  // For now when you opt-in to autoDestroy we allow
-  // the error to be emitted nextTick. In a future
-  // semver major update we should change the default to this.
-  var rState = stream._readableState;
-  var wState = stream._writableState;
-  if (rState && rState.autoDestroy || wState && wState.autoDestroy) stream.destroy(err);else stream.emit('error', err);
-}
-
-module.exports = {
-  destroy: destroy,
-  undestroy: undestroy,
-  errorOrDestroy: errorOrDestroy
-};
-}).call(this)}).call(this,require('_process'))
-},{"_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/end-of-stream.js":[function(require,module,exports){
-// Ported from https://github.com/mafintosh/end-of-stream with
-// permission from the author, Mathias Buus (@mafintosh).
-'use strict';
-
-var ERR_STREAM_PREMATURE_CLOSE = require('../../../errors').codes.ERR_STREAM_PREMATURE_CLOSE;
-
-function once(callback) {
-  var called = false;
-  return function () {
-    if (called) return;
-    called = true;
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    callback.apply(this, args);
-  };
-}
-
-function noop() {}
-
-function isRequest(stream) {
-  return stream.setHeader && typeof stream.abort === 'function';
-}
-
-function eos(stream, opts, callback) {
-  if (typeof opts === 'function') return eos(stream, null, opts);
-  if (!opts) opts = {};
-  callback = once(callback || noop);
-  var readable = opts.readable || opts.readable !== false && stream.readable;
-  var writable = opts.writable || opts.writable !== false && stream.writable;
-
-  var onlegacyfinish = function onlegacyfinish() {
-    if (!stream.writable) onfinish();
-  };
-
-  var writableEnded = stream._writableState && stream._writableState.finished;
-
-  var onfinish = function onfinish() {
-    writable = false;
-    writableEnded = true;
-    if (!readable) callback.call(stream);
-  };
-
-  var readableEnded = stream._readableState && stream._readableState.endEmitted;
-
-  var onend = function onend() {
-    readable = false;
-    readableEnded = true;
-    if (!writable) callback.call(stream);
-  };
-
-  var onerror = function onerror(err) {
-    callback.call(stream, err);
-  };
-
-  var onclose = function onclose() {
-    var err;
-
-    if (readable && !readableEnded) {
-      if (!stream._readableState || !stream._readableState.ended) err = new ERR_STREAM_PREMATURE_CLOSE();
-      return callback.call(stream, err);
-    }
-
-    if (writable && !writableEnded) {
-      if (!stream._writableState || !stream._writableState.ended) err = new ERR_STREAM_PREMATURE_CLOSE();
-      return callback.call(stream, err);
-    }
-  };
-
-  var onrequest = function onrequest() {
-    stream.req.on('finish', onfinish);
-  };
-
-  if (isRequest(stream)) {
-    stream.on('complete', onfinish);
-    stream.on('abort', onclose);
-    if (stream.req) onrequest();else stream.on('request', onrequest);
-  } else if (writable && !stream._writableState) {
-    // legacy streams
-    stream.on('end', onlegacyfinish);
-    stream.on('close', onlegacyfinish);
-  }
-
-  stream.on('end', onend);
-  stream.on('finish', onfinish);
-  if (opts.error !== false) stream.on('error', onerror);
-  stream.on('close', onclose);
-  return function () {
-    stream.removeListener('complete', onfinish);
-    stream.removeListener('abort', onclose);
-    stream.removeListener('request', onrequest);
-    if (stream.req) stream.req.removeListener('finish', onfinish);
-    stream.removeListener('end', onlegacyfinish);
-    stream.removeListener('close', onlegacyfinish);
-    stream.removeListener('finish', onfinish);
-    stream.removeListener('end', onend);
-    stream.removeListener('error', onerror);
-    stream.removeListener('close', onclose);
-  };
-}
-
-module.exports = eos;
-},{"../../../errors":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/from-browser.js":[function(require,module,exports){
-module.exports = function () {
-  throw new Error('Readable.from is not available in the browser')
-};
-
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/pipeline.js":[function(require,module,exports){
-// Ported from https://github.com/mafintosh/pump with
-// permission from the author, Mathias Buus (@mafintosh).
-'use strict';
-
-var eos;
-
-function once(callback) {
-  var called = false;
-  return function () {
-    if (called) return;
-    called = true;
-    callback.apply(void 0, arguments);
-  };
-}
-
-var _require$codes = require('../../../errors').codes,
-    ERR_MISSING_ARGS = _require$codes.ERR_MISSING_ARGS,
-    ERR_STREAM_DESTROYED = _require$codes.ERR_STREAM_DESTROYED;
-
-function noop(err) {
-  // Rethrow the error if it exists to avoid swallowing it
-  if (err) throw err;
-}
-
-function isRequest(stream) {
-  return stream.setHeader && typeof stream.abort === 'function';
-}
-
-function destroyer(stream, reading, writing, callback) {
-  callback = once(callback);
-  var closed = false;
-  stream.on('close', function () {
-    closed = true;
-  });
-  if (eos === undefined) eos = require('./end-of-stream');
-  eos(stream, {
-    readable: reading,
-    writable: writing
-  }, function (err) {
-    if (err) return callback(err);
-    closed = true;
-    callback();
-  });
-  var destroyed = false;
-  return function (err) {
-    if (closed) return;
-    if (destroyed) return;
-    destroyed = true; // request.destroy just do .end - .abort is what we want
-
-    if (isRequest(stream)) return stream.abort();
-    if (typeof stream.destroy === 'function') return stream.destroy();
-    callback(err || new ERR_STREAM_DESTROYED('pipe'));
-  };
-}
-
-function call(fn) {
-  fn();
-}
-
-function pipe(from, to) {
-  return from.pipe(to);
-}
-
-function popCallback(streams) {
-  if (!streams.length) return noop;
-  if (typeof streams[streams.length - 1] !== 'function') return noop;
-  return streams.pop();
-}
-
-function pipeline() {
-  for (var _len = arguments.length, streams = new Array(_len), _key = 0; _key < _len; _key++) {
-    streams[_key] = arguments[_key];
-  }
-
-  var callback = popCallback(streams);
-  if (Array.isArray(streams[0])) streams = streams[0];
-
-  if (streams.length < 2) {
-    throw new ERR_MISSING_ARGS('streams');
-  }
-
-  var error;
-  var destroys = streams.map(function (stream, i) {
-    var reading = i < streams.length - 1;
-    var writing = i > 0;
-    return destroyer(stream, reading, writing, function (err) {
-      if (!error) error = err;
-      if (err) destroys.forEach(call);
-      if (reading) return;
-      destroys.forEach(call);
-      callback(error);
-    });
-  });
-  return streams.reduce(pipe);
-}
-
-module.exports = pipeline;
-},{"../../../errors":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js","./end-of-stream":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/end-of-stream.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/state.js":[function(require,module,exports){
-'use strict';
-
-var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
-
-function highWaterMarkFrom(options, isDuplex, duplexKey) {
-  return options.highWaterMark != null ? options.highWaterMark : isDuplex ? options[duplexKey] : null;
-}
-
-function getHighWaterMark(state, options, duplexKey, isDuplex) {
-  var hwm = highWaterMarkFrom(options, isDuplex, duplexKey);
-
-  if (hwm != null) {
-    if (!(isFinite(hwm) && Math.floor(hwm) === hwm) || hwm < 0) {
-      var name = isDuplex ? duplexKey : 'highWaterMark';
-      throw new ERR_INVALID_OPT_VALUE(name, hwm);
-    }
-
-    return Math.floor(hwm);
-  } // Default value
-
-
-  return state.objectMode ? 16 : 16 * 1024;
-}
-
-module.exports = {
-  getHighWaterMark: getHighWaterMark
-};
-},{"../../../errors":"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/errors-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/stream-browser.js":[function(require,module,exports){
-module.exports = require('events').EventEmitter;
-
-},{"events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js"}],"/usr/local/lib/node_modules/idyll/node_modules/string_decoder/lib/string_decoder.js":[function(require,module,exports){
+},{"events":"/usr/local/lib/node_modules/idyll/node_modules/events/events.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js","readable-stream/duplex.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/duplex-browser.js","readable-stream/passthrough.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/passthrough.js","readable-stream/readable.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/readable-browser.js","readable-stream/transform.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/transform.js","readable-stream/writable.js":"/usr/local/lib/node_modules/idyll/node_modules/readable-stream/writable-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/string_decoder/lib/string_decoder.js":[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -82125,7 +81383,7 @@ module.exports = function (str, locale) {
 }
 
 },{"lower-case":"/usr/local/lib/node_modules/idyll/node_modules/lower-case/lower-case.js","upper-case":"/usr/local/lib/node_modules/idyll/node_modules/upper-case/upper-case.js"}],"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js":[function(require,module,exports){
-(function (setImmediate,clearImmediate){(function (){
+(function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
 var slice = Array.prototype.slice;
@@ -82202,7 +81460,7 @@ exports.setImmediate = typeof setImmediate === "function" ? setImmediate : funct
 exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
   delete immediateIds[id];
 };
-}).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
+}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
 },{"process/browser.js":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","timers":"/usr/local/lib/node_modules/idyll/node_modules/timers-browserify/main.js"}],"/usr/local/lib/node_modules/idyll/node_modules/title-case/title-case.js":[function(require,module,exports){
 var noCase = require('no-case')
 var upperCase = require('upper-case')
@@ -82292,7 +81550,7 @@ module.exports = function (str, locale) {
 }
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/uri-js/dist/es5/uri.all.js":[function(require,module,exports){
-/** @license URI.js v4.4.1 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */
+/** @license URI.js v4.2.1 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -83255,9 +82513,9 @@ function _recomposeAuthority(components, options) {
             return "[" + $1 + ($2 ? "%25" + $2 : "") + "]";
         }));
     }
-    if (typeof components.port === "number" || typeof components.port === "string") {
+    if (typeof components.port === "number") {
         uriTokens.push(":");
-        uriTokens.push(String(components.port));
+        uriTokens.push(components.port.toString(10));
     }
     return uriTokens.length ? uriTokens.join("") : undefined;
 }
@@ -83460,9 +82718,8 @@ var handler = {
         return components;
     },
     serialize: function serialize(components, options) {
-        var secure = String(components.scheme).toLowerCase() === "https";
         //normalize the default port
-        if (components.port === (secure ? 443 : 80) || components.port === "") {
+        if (components.port === (String(components.scheme).toLowerCase() !== "https" ? 80 : 443) || components.port === "") {
             components.port = undefined;
         }
         //normalize the empty path
@@ -83481,57 +82738,6 @@ var handler$1 = {
     domainHost: handler.domainHost,
     parse: handler.parse,
     serialize: handler.serialize
-};
-
-function isSecure(wsComponents) {
-    return typeof wsComponents.secure === 'boolean' ? wsComponents.secure : String(wsComponents.scheme).toLowerCase() === "wss";
-}
-//RFC 6455
-var handler$2 = {
-    scheme: "ws",
-    domainHost: true,
-    parse: function parse(components, options) {
-        var wsComponents = components;
-        //indicate if the secure flag is set
-        wsComponents.secure = isSecure(wsComponents);
-        //construct resouce name
-        wsComponents.resourceName = (wsComponents.path || '/') + (wsComponents.query ? '?' + wsComponents.query : '');
-        wsComponents.path = undefined;
-        wsComponents.query = undefined;
-        return wsComponents;
-    },
-    serialize: function serialize(wsComponents, options) {
-        //normalize the default port
-        if (wsComponents.port === (isSecure(wsComponents) ? 443 : 80) || wsComponents.port === "") {
-            wsComponents.port = undefined;
-        }
-        //ensure scheme matches secure flag
-        if (typeof wsComponents.secure === 'boolean') {
-            wsComponents.scheme = wsComponents.secure ? 'wss' : 'ws';
-            wsComponents.secure = undefined;
-        }
-        //reconstruct path from resource name
-        if (wsComponents.resourceName) {
-            var _wsComponents$resourc = wsComponents.resourceName.split('?'),
-                _wsComponents$resourc2 = slicedToArray(_wsComponents$resourc, 2),
-                path = _wsComponents$resourc2[0],
-                query = _wsComponents$resourc2[1];
-
-            wsComponents.path = path && path !== '/' ? path : undefined;
-            wsComponents.query = query;
-            wsComponents.resourceName = undefined;
-        }
-        //forbid fragment component
-        wsComponents.fragment = undefined;
-        return wsComponents;
-    }
-};
-
-var handler$3 = {
-    scheme: "wss",
-    domainHost: handler$2.domainHost,
-    parse: handler$2.parse,
-    serialize: handler$2.serialize
 };
 
 var O = {};
@@ -83564,7 +82770,7 @@ function decodeUnreserved(str) {
     var decStr = pctDecChars(str);
     return !decStr.match(UNRESERVED) ? str : decStr;
 }
-var handler$4 = {
+var handler$2 = {
     scheme: "mailto",
     parse: function parse$$1(components, options) {
         var mailtoComponents = components;
@@ -83652,7 +82858,7 @@ var handler$4 = {
 
 var URN_PARSE = /^([^\:]+)\:(.*)/;
 //RFC 2141
-var handler$5 = {
+var handler$3 = {
     scheme: "urn",
     parse: function parse$$1(components, options) {
         var matches = components.path && components.path.match(URN_PARSE);
@@ -83691,7 +82897,7 @@ var handler$5 = {
 
 var UUID = /^[0-9A-Fa-f]{8}(?:\-[0-9A-Fa-f]{4}){3}\-[0-9A-Fa-f]{12}$/;
 //RFC 4122
-var handler$6 = {
+var handler$4 = {
     scheme: "urn:uuid",
     parse: function parse(urnComponents, options) {
         var uuidComponents = urnComponents;
@@ -83715,8 +82921,6 @@ SCHEMES[handler$1.scheme] = handler$1;
 SCHEMES[handler$2.scheme] = handler$2;
 SCHEMES[handler$3.scheme] = handler$3;
 SCHEMES[handler$4.scheme] = handler$4;
-SCHEMES[handler$5.scheme] = handler$5;
-SCHEMES[handler$6.scheme] = handler$6;
 
 exports.SCHEMES = SCHEMES;
 exports.pctEncChar = pctEncChar;
@@ -83737,7 +82941,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/util-deprecate/browser.js":[function(require,module,exports){
-(function (global){(function (){
+(function (global){
 
 /**
  * Module exports.
@@ -83806,7 +83010,32 @@ function config (name) {
   return String(val).toLowerCase() === 'true';
 }
 
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/util/node_modules/inherits/inherits_browser.js":[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
 },{}],"/usr/local/lib/node_modules/idyll/node_modules/util/support/isBufferBrowser.js":[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
@@ -83814,344 +83043,8 @@ module.exports = function isBuffer(arg) {
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/util/support/types.js":[function(require,module,exports){
-// Currently in sync with Node.js lib/internal/util/types.js
-// https://github.com/nodejs/node/commit/112cc7c27551254aa2b17098fb774867f05ed0d9
-
-'use strict';
-
-var isArgumentsObject = require('is-arguments');
-var isGeneratorFunction = require('is-generator-function');
-var whichTypedArray = require('which-typed-array');
-var isTypedArray = require('is-typed-array');
-
-function uncurryThis(f) {
-  return f.call.bind(f);
-}
-
-var BigIntSupported = typeof BigInt !== 'undefined';
-var SymbolSupported = typeof Symbol !== 'undefined';
-
-var ObjectToString = uncurryThis(Object.prototype.toString);
-
-var numberValue = uncurryThis(Number.prototype.valueOf);
-var stringValue = uncurryThis(String.prototype.valueOf);
-var booleanValue = uncurryThis(Boolean.prototype.valueOf);
-
-if (BigIntSupported) {
-  var bigIntValue = uncurryThis(BigInt.prototype.valueOf);
-}
-
-if (SymbolSupported) {
-  var symbolValue = uncurryThis(Symbol.prototype.valueOf);
-}
-
-function checkBoxedPrimitive(value, prototypeValueOf) {
-  if (typeof value !== 'object') {
-    return false;
-  }
-  try {
-    prototypeValueOf(value);
-    return true;
-  } catch(e) {
-    return false;
-  }
-}
-
-exports.isArgumentsObject = isArgumentsObject;
-exports.isGeneratorFunction = isGeneratorFunction;
-exports.isTypedArray = isTypedArray;
-
-// Taken from here and modified for better browser support
-// https://github.com/sindresorhus/p-is-promise/blob/cda35a513bda03f977ad5cde3a079d237e82d7ef/index.js
-function isPromise(input) {
-	return (
-		(
-			typeof Promise !== 'undefined' &&
-			input instanceof Promise
-		) ||
-		(
-			input !== null &&
-			typeof input === 'object' &&
-			typeof input.then === 'function' &&
-			typeof input.catch === 'function'
-		)
-	);
-}
-exports.isPromise = isPromise;
-
-function isArrayBufferView(value) {
-  if (typeof ArrayBuffer !== 'undefined' && ArrayBuffer.isView) {
-    return ArrayBuffer.isView(value);
-  }
-
-  return (
-    isTypedArray(value) ||
-    isDataView(value)
-  );
-}
-exports.isArrayBufferView = isArrayBufferView;
-
-
-function isUint8Array(value) {
-  return whichTypedArray(value) === 'Uint8Array';
-}
-exports.isUint8Array = isUint8Array;
-
-function isUint8ClampedArray(value) {
-  return whichTypedArray(value) === 'Uint8ClampedArray';
-}
-exports.isUint8ClampedArray = isUint8ClampedArray;
-
-function isUint16Array(value) {
-  return whichTypedArray(value) === 'Uint16Array';
-}
-exports.isUint16Array = isUint16Array;
-
-function isUint32Array(value) {
-  return whichTypedArray(value) === 'Uint32Array';
-}
-exports.isUint32Array = isUint32Array;
-
-function isInt8Array(value) {
-  return whichTypedArray(value) === 'Int8Array';
-}
-exports.isInt8Array = isInt8Array;
-
-function isInt16Array(value) {
-  return whichTypedArray(value) === 'Int16Array';
-}
-exports.isInt16Array = isInt16Array;
-
-function isInt32Array(value) {
-  return whichTypedArray(value) === 'Int32Array';
-}
-exports.isInt32Array = isInt32Array;
-
-function isFloat32Array(value) {
-  return whichTypedArray(value) === 'Float32Array';
-}
-exports.isFloat32Array = isFloat32Array;
-
-function isFloat64Array(value) {
-  return whichTypedArray(value) === 'Float64Array';
-}
-exports.isFloat64Array = isFloat64Array;
-
-function isBigInt64Array(value) {
-  return whichTypedArray(value) === 'BigInt64Array';
-}
-exports.isBigInt64Array = isBigInt64Array;
-
-function isBigUint64Array(value) {
-  return whichTypedArray(value) === 'BigUint64Array';
-}
-exports.isBigUint64Array = isBigUint64Array;
-
-function isMapToString(value) {
-  return ObjectToString(value) === '[object Map]';
-}
-isMapToString.working = (
-  typeof Map !== 'undefined' &&
-  isMapToString(new Map())
-);
-
-function isMap(value) {
-  if (typeof Map === 'undefined') {
-    return false;
-  }
-
-  return isMapToString.working
-    ? isMapToString(value)
-    : value instanceof Map;
-}
-exports.isMap = isMap;
-
-function isSetToString(value) {
-  return ObjectToString(value) === '[object Set]';
-}
-isSetToString.working = (
-  typeof Set !== 'undefined' &&
-  isSetToString(new Set())
-);
-function isSet(value) {
-  if (typeof Set === 'undefined') {
-    return false;
-  }
-
-  return isSetToString.working
-    ? isSetToString(value)
-    : value instanceof Set;
-}
-exports.isSet = isSet;
-
-function isWeakMapToString(value) {
-  return ObjectToString(value) === '[object WeakMap]';
-}
-isWeakMapToString.working = (
-  typeof WeakMap !== 'undefined' &&
-  isWeakMapToString(new WeakMap())
-);
-function isWeakMap(value) {
-  if (typeof WeakMap === 'undefined') {
-    return false;
-  }
-
-  return isWeakMapToString.working
-    ? isWeakMapToString(value)
-    : value instanceof WeakMap;
-}
-exports.isWeakMap = isWeakMap;
-
-function isWeakSetToString(value) {
-  return ObjectToString(value) === '[object WeakSet]';
-}
-isWeakSetToString.working = (
-  typeof WeakSet !== 'undefined' &&
-  isWeakSetToString(new WeakSet())
-);
-function isWeakSet(value) {
-  return isWeakSetToString(value);
-}
-exports.isWeakSet = isWeakSet;
-
-function isArrayBufferToString(value) {
-  return ObjectToString(value) === '[object ArrayBuffer]';
-}
-isArrayBufferToString.working = (
-  typeof ArrayBuffer !== 'undefined' &&
-  isArrayBufferToString(new ArrayBuffer())
-);
-function isArrayBuffer(value) {
-  if (typeof ArrayBuffer === 'undefined') {
-    return false;
-  }
-
-  return isArrayBufferToString.working
-    ? isArrayBufferToString(value)
-    : value instanceof ArrayBuffer;
-}
-exports.isArrayBuffer = isArrayBuffer;
-
-function isDataViewToString(value) {
-  return ObjectToString(value) === '[object DataView]';
-}
-isDataViewToString.working = (
-  typeof ArrayBuffer !== 'undefined' &&
-  typeof DataView !== 'undefined' &&
-  isDataViewToString(new DataView(new ArrayBuffer(1), 0, 1))
-);
-function isDataView(value) {
-  if (typeof DataView === 'undefined') {
-    return false;
-  }
-
-  return isDataViewToString.working
-    ? isDataViewToString(value)
-    : value instanceof DataView;
-}
-exports.isDataView = isDataView;
-
-// Store a copy of SharedArrayBuffer in case it's deleted elsewhere
-var SharedArrayBufferCopy = typeof SharedArrayBuffer !== 'undefined' ? SharedArrayBuffer : undefined;
-function isSharedArrayBufferToString(value) {
-  return ObjectToString(value) === '[object SharedArrayBuffer]';
-}
-function isSharedArrayBuffer(value) {
-  if (typeof SharedArrayBufferCopy === 'undefined') {
-    return false;
-  }
-
-  if (typeof isSharedArrayBufferToString.working === 'undefined') {
-    isSharedArrayBufferToString.working = isSharedArrayBufferToString(new SharedArrayBufferCopy());
-  }
-
-  return isSharedArrayBufferToString.working
-    ? isSharedArrayBufferToString(value)
-    : value instanceof SharedArrayBufferCopy;
-}
-exports.isSharedArrayBuffer = isSharedArrayBuffer;
-
-function isAsyncFunction(value) {
-  return ObjectToString(value) === '[object AsyncFunction]';
-}
-exports.isAsyncFunction = isAsyncFunction;
-
-function isMapIterator(value) {
-  return ObjectToString(value) === '[object Map Iterator]';
-}
-exports.isMapIterator = isMapIterator;
-
-function isSetIterator(value) {
-  return ObjectToString(value) === '[object Set Iterator]';
-}
-exports.isSetIterator = isSetIterator;
-
-function isGeneratorObject(value) {
-  return ObjectToString(value) === '[object Generator]';
-}
-exports.isGeneratorObject = isGeneratorObject;
-
-function isWebAssemblyCompiledModule(value) {
-  return ObjectToString(value) === '[object WebAssembly.Module]';
-}
-exports.isWebAssemblyCompiledModule = isWebAssemblyCompiledModule;
-
-function isNumberObject(value) {
-  return checkBoxedPrimitive(value, numberValue);
-}
-exports.isNumberObject = isNumberObject;
-
-function isStringObject(value) {
-  return checkBoxedPrimitive(value, stringValue);
-}
-exports.isStringObject = isStringObject;
-
-function isBooleanObject(value) {
-  return checkBoxedPrimitive(value, booleanValue);
-}
-exports.isBooleanObject = isBooleanObject;
-
-function isBigIntObject(value) {
-  return BigIntSupported && checkBoxedPrimitive(value, bigIntValue);
-}
-exports.isBigIntObject = isBigIntObject;
-
-function isSymbolObject(value) {
-  return SymbolSupported && checkBoxedPrimitive(value, symbolValue);
-}
-exports.isSymbolObject = isSymbolObject;
-
-function isBoxedPrimitive(value) {
-  return (
-    isNumberObject(value) ||
-    isStringObject(value) ||
-    isBooleanObject(value) ||
-    isBigIntObject(value) ||
-    isSymbolObject(value)
-  );
-}
-exports.isBoxedPrimitive = isBoxedPrimitive;
-
-function isAnyArrayBuffer(value) {
-  return typeof Uint8Array !== 'undefined' && (
-    isArrayBuffer(value) ||
-    isSharedArrayBuffer(value)
-  );
-}
-exports.isAnyArrayBuffer = isAnyArrayBuffer;
-
-['isProxy', 'isExternal', 'isModuleNamespaceObject'].forEach(function(method) {
-  Object.defineProperty(exports, method, {
-    enumerable: false,
-    value: function() {
-      throw new Error(method + ' is not supported in userland');
-    }
-  });
-});
-
-},{"is-arguments":"/usr/local/lib/node_modules/idyll/node_modules/is-arguments/index.js","is-generator-function":"/usr/local/lib/node_modules/idyll/node_modules/is-generator-function/index.js","is-typed-array":"/usr/local/lib/node_modules/idyll/node_modules/is-typed-array/index.js","which-typed-array":"/usr/local/lib/node_modules/idyll/node_modules/which-typed-array/index.js"}],"/usr/local/lib/node_modules/idyll/node_modules/util/util.js":[function(require,module,exports){
-(function (process){(function (){
+},{}],"/usr/local/lib/node_modules/idyll/node_modules/util/util.js":[function(require,module,exports){
+(function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -84172,16 +83065,6 @@ exports.isAnyArrayBuffer = isAnyArrayBuffer;
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var getOwnPropertyDescriptors = Object.getOwnPropertyDescriptors ||
-  function getOwnPropertyDescriptors(obj) {
-    var keys = Object.keys(obj);
-    var descriptors = {};
-    for (var i = 0; i < keys.length; i++) {
-      descriptors[keys[i]] = Object.getOwnPropertyDescriptor(obj, keys[i]);
-    }
-    return descriptors;
-  };
 
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
@@ -84227,15 +83110,15 @@ exports.format = function(f) {
 // Returns a modified function which warns once by default.
 // If --no-deprecation is set, then it is a no-op.
 exports.deprecate = function(fn, msg) {
-  if (typeof process !== 'undefined' && process.noDeprecation === true) {
-    return fn;
-  }
-
   // Allow for deprecating things in the process of starting up.
-  if (typeof process === 'undefined') {
+  if (isUndefined(global.process)) {
     return function() {
       return exports.deprecate(fn, msg).apply(this, arguments);
     };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
   }
 
   var warned = false;
@@ -84258,20 +83141,13 @@ exports.deprecate = function(fn, msg) {
 
 
 var debugs = {};
-var debugEnvRegex = /^$/;
-
-if (process.env.NODE_DEBUG) {
-  var debugEnv = process.env.NODE_DEBUG;
-  debugEnv = debugEnv.replace(/[|\\{}()[\]^$+?.]/g, '\\$&')
-    .replace(/\*/g, '.*')
-    .replace(/,/g, '$|^')
-    .toUpperCase();
-  debugEnvRegex = new RegExp('^' + debugEnv + '$', 'i');
-}
+var debugEnviron;
 exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
   set = set.toUpperCase();
   if (!debugs[set]) {
-    if (debugEnvRegex.test(set)) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
       var pid = process.pid;
       debugs[set] = function() {
         var msg = exports.format.apply(exports, arguments);
@@ -84618,8 +83494,6 @@ function reduceToSingleString(output, base, braces) {
 
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
-exports.types = require('./support/types');
-
 function isArray(ar) {
   return Array.isArray(ar);
 }
@@ -84664,7 +83538,6 @@ function isRegExp(re) {
   return isObject(re) && objectToString(re) === '[object RegExp]';
 }
 exports.isRegExp = isRegExp;
-exports.types.isRegExp = isRegExp;
 
 function isObject(arg) {
   return typeof arg === 'object' && arg !== null;
@@ -84675,14 +83548,12 @@ function isDate(d) {
   return isObject(d) && objectToString(d) === '[object Date]';
 }
 exports.isDate = isDate;
-exports.types.isDate = isDate;
 
 function isError(e) {
   return isObject(e) &&
       (objectToString(e) === '[object Error]' || e instanceof Error);
 }
 exports.isError = isError;
-exports.types.isNativeError = isError;
 
 function isFunction(arg) {
   return typeof arg === 'function';
@@ -84761,846 +83632,8 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-var kCustomPromisifiedSymbol = typeof Symbol !== 'undefined' ? Symbol('util.promisify.custom') : undefined;
-
-exports.promisify = function promisify(original) {
-  if (typeof original !== 'function')
-    throw new TypeError('The "original" argument must be of type Function');
-
-  if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
-    var fn = original[kCustomPromisifiedSymbol];
-    if (typeof fn !== 'function') {
-      throw new TypeError('The "util.promisify.custom" argument must be of type Function');
-    }
-    Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-      value: fn, enumerable: false, writable: false, configurable: true
-    });
-    return fn;
-  }
-
-  function fn() {
-    var promiseResolve, promiseReject;
-    var promise = new Promise(function (resolve, reject) {
-      promiseResolve = resolve;
-      promiseReject = reject;
-    });
-
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-    args.push(function (err, value) {
-      if (err) {
-        promiseReject(err);
-      } else {
-        promiseResolve(value);
-      }
-    });
-
-    try {
-      original.apply(this, args);
-    } catch (err) {
-      promiseReject(err);
-    }
-
-    return promise;
-  }
-
-  Object.setPrototypeOf(fn, Object.getPrototypeOf(original));
-
-  if (kCustomPromisifiedSymbol) Object.defineProperty(fn, kCustomPromisifiedSymbol, {
-    value: fn, enumerable: false, writable: false, configurable: true
-  });
-  return Object.defineProperties(
-    fn,
-    getOwnPropertyDescriptors(original)
-  );
-}
-
-exports.promisify.custom = kCustomPromisifiedSymbol
-
-function callbackifyOnRejected(reason, cb) {
-  // `!reason` guard inspired by bluebird (Ref: https://goo.gl/t5IS6M).
-  // Because `null` is a special error value in callbacks which means "no error
-  // occurred", we error-wrap so the callback consumer can distinguish between
-  // "the promise rejected with null" or "the promise fulfilled with undefined".
-  if (!reason) {
-    var newReason = new Error('Promise was rejected with a falsy value');
-    newReason.reason = reason;
-    reason = newReason;
-  }
-  return cb(reason);
-}
-
-function callbackify(original) {
-  if (typeof original !== 'function') {
-    throw new TypeError('The "original" argument must be of type Function');
-  }
-
-  // We DO NOT return the promise as it gives the user a false sense that
-  // the promise is actually somehow related to the callback's execution
-  // and that the callback throwing will reject the promise.
-  function callbackified() {
-    var args = [];
-    for (var i = 0; i < arguments.length; i++) {
-      args.push(arguments[i]);
-    }
-
-    var maybeCb = args.pop();
-    if (typeof maybeCb !== 'function') {
-      throw new TypeError('The last argument must be of type Function');
-    }
-    var self = this;
-    var cb = function() {
-      return maybeCb.apply(self, arguments);
-    };
-    // In true node style we process the callback on `nextTick` with all the
-    // implications (stack, `uncaughtException`, `async_hooks`)
-    original.apply(this, args)
-      .then(function(ret) { process.nextTick(cb.bind(null, null, ret)) },
-            function(rej) { process.nextTick(callbackifyOnRejected.bind(null, rej, cb)) });
-  }
-
-  Object.setPrototypeOf(callbackified, Object.getPrototypeOf(original));
-  Object.defineProperties(callbackified,
-                          getOwnPropertyDescriptors(original));
-  return callbackified;
-}
-exports.callbackify = callbackify;
-
-}).call(this)}).call(this,require('_process'))
-},{"./support/isBuffer":"/usr/local/lib/node_modules/idyll/node_modules/util/support/isBufferBrowser.js","./support/types":"/usr/local/lib/node_modules/idyll/node_modules/util/support/types.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/bytesToUuid.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-var byteToHex = [];
-
-for (var i = 0; i < 256; ++i) {
-  byteToHex[i] = (i + 0x100).toString(16).substr(1);
-}
-
-function bytesToUuid(buf, offset) {
-  var i = offset || 0;
-  var bth = byteToHex; // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
-
-  return [bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], '-', bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]], bth[buf[i++]]].join('');
-}
-
-var _default = bytesToUuid;
-exports.default = _default;
-module.exports = exports.default;
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/index.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "v1", {
-  enumerable: true,
-  get: function () {
-    return _v.default;
-  }
-});
-Object.defineProperty(exports, "v3", {
-  enumerable: true,
-  get: function () {
-    return _v2.default;
-  }
-});
-Object.defineProperty(exports, "v4", {
-  enumerable: true,
-  get: function () {
-    return _v3.default;
-  }
-});
-Object.defineProperty(exports, "v5", {
-  enumerable: true,
-  get: function () {
-    return _v4.default;
-  }
-});
-
-var _v = _interopRequireDefault(require("./v1.js"));
-
-var _v2 = _interopRequireDefault(require("./v3.js"));
-
-var _v3 = _interopRequireDefault(require("./v4.js"));
-
-var _v4 = _interopRequireDefault(require("./v5.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./v1.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v1.js","./v3.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v3.js","./v4.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v4.js","./v5.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v5.js"}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/md5-browser.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/*
- * Browser-compatible JavaScript MD5
- *
- * Modification of JavaScript MD5
- * https://github.com/blueimp/JavaScript-MD5
- *
- * Copyright 2011, Sebastian Tschan
- * https://blueimp.net
- *
- * Licensed under the MIT license:
- * https://opensource.org/licenses/MIT
- *
- * Based on
- * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
- * Digest Algorithm, as defined in RFC 1321.
- * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
- * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
- * Distributed under the BSD License
- * See http://pajhome.org.uk/crypt/md5 for more info.
- */
-function md5(bytes) {
-  if (typeof bytes == 'string') {
-    var msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
-
-    bytes = new Array(msg.length);
-
-    for (var i = 0; i < msg.length; i++) bytes[i] = msg.charCodeAt(i);
-  }
-
-  return md5ToHexEncodedArray(wordsToMd5(bytesToWords(bytes), bytes.length * 8));
-}
-/*
- * Convert an array of little-endian words to an array of bytes
- */
-
-
-function md5ToHexEncodedArray(input) {
-  var i;
-  var x;
-  var output = [];
-  var length32 = input.length * 32;
-  var hexTab = '0123456789abcdef';
-  var hex;
-
-  for (i = 0; i < length32; i += 8) {
-    x = input[i >> 5] >>> i % 32 & 0xff;
-    hex = parseInt(hexTab.charAt(x >>> 4 & 0x0f) + hexTab.charAt(x & 0x0f), 16);
-    output.push(hex);
-  }
-
-  return output;
-}
-/*
- * Calculate the MD5 of an array of little-endian words, and a bit length.
- */
-
-
-function wordsToMd5(x, len) {
-  /* append padding */
-  x[len >> 5] |= 0x80 << len % 32;
-  x[(len + 64 >>> 9 << 4) + 14] = len;
-  var i;
-  var olda;
-  var oldb;
-  var oldc;
-  var oldd;
-  var a = 1732584193;
-  var b = -271733879;
-  var c = -1732584194;
-  var d = 271733878;
-
-  for (i = 0; i < x.length; i += 16) {
-    olda = a;
-    oldb = b;
-    oldc = c;
-    oldd = d;
-    a = md5ff(a, b, c, d, x[i], 7, -680876936);
-    d = md5ff(d, a, b, c, x[i + 1], 12, -389564586);
-    c = md5ff(c, d, a, b, x[i + 2], 17, 606105819);
-    b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330);
-    a = md5ff(a, b, c, d, x[i + 4], 7, -176418897);
-    d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426);
-    c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341);
-    b = md5ff(b, c, d, a, x[i + 7], 22, -45705983);
-    a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416);
-    d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417);
-    c = md5ff(c, d, a, b, x[i + 10], 17, -42063);
-    b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162);
-    a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682);
-    d = md5ff(d, a, b, c, x[i + 13], 12, -40341101);
-    c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290);
-    b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329);
-    a = md5gg(a, b, c, d, x[i + 1], 5, -165796510);
-    d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632);
-    c = md5gg(c, d, a, b, x[i + 11], 14, 643717713);
-    b = md5gg(b, c, d, a, x[i], 20, -373897302);
-    a = md5gg(a, b, c, d, x[i + 5], 5, -701558691);
-    d = md5gg(d, a, b, c, x[i + 10], 9, 38016083);
-    c = md5gg(c, d, a, b, x[i + 15], 14, -660478335);
-    b = md5gg(b, c, d, a, x[i + 4], 20, -405537848);
-    a = md5gg(a, b, c, d, x[i + 9], 5, 568446438);
-    d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690);
-    c = md5gg(c, d, a, b, x[i + 3], 14, -187363961);
-    b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501);
-    a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467);
-    d = md5gg(d, a, b, c, x[i + 2], 9, -51403784);
-    c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473);
-    b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734);
-    a = md5hh(a, b, c, d, x[i + 5], 4, -378558);
-    d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463);
-    c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562);
-    b = md5hh(b, c, d, a, x[i + 14], 23, -35309556);
-    a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060);
-    d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353);
-    c = md5hh(c, d, a, b, x[i + 7], 16, -155497632);
-    b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640);
-    a = md5hh(a, b, c, d, x[i + 13], 4, 681279174);
-    d = md5hh(d, a, b, c, x[i], 11, -358537222);
-    c = md5hh(c, d, a, b, x[i + 3], 16, -722521979);
-    b = md5hh(b, c, d, a, x[i + 6], 23, 76029189);
-    a = md5hh(a, b, c, d, x[i + 9], 4, -640364487);
-    d = md5hh(d, a, b, c, x[i + 12], 11, -421815835);
-    c = md5hh(c, d, a, b, x[i + 15], 16, 530742520);
-    b = md5hh(b, c, d, a, x[i + 2], 23, -995338651);
-    a = md5ii(a, b, c, d, x[i], 6, -198630844);
-    d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415);
-    c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905);
-    b = md5ii(b, c, d, a, x[i + 5], 21, -57434055);
-    a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571);
-    d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606);
-    c = md5ii(c, d, a, b, x[i + 10], 15, -1051523);
-    b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799);
-    a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359);
-    d = md5ii(d, a, b, c, x[i + 15], 10, -30611744);
-    c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380);
-    b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649);
-    a = md5ii(a, b, c, d, x[i + 4], 6, -145523070);
-    d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379);
-    c = md5ii(c, d, a, b, x[i + 2], 15, 718787259);
-    b = md5ii(b, c, d, a, x[i + 9], 21, -343485551);
-    a = safeAdd(a, olda);
-    b = safeAdd(b, oldb);
-    c = safeAdd(c, oldc);
-    d = safeAdd(d, oldd);
-  }
-
-  return [a, b, c, d];
-}
-/*
- * Convert an array bytes to an array of little-endian words
- * Characters >255 have their high-byte silently ignored.
- */
-
-
-function bytesToWords(input) {
-  var i;
-  var output = [];
-  output[(input.length >> 2) - 1] = undefined;
-
-  for (i = 0; i < output.length; i += 1) {
-    output[i] = 0;
-  }
-
-  var length8 = input.length * 8;
-
-  for (i = 0; i < length8; i += 8) {
-    output[i >> 5] |= (input[i / 8] & 0xff) << i % 32;
-  }
-
-  return output;
-}
-/*
- * Add integers, wrapping at 2^32. This uses 16-bit operations internally
- * to work around bugs in some JS interpreters.
- */
-
-
-function safeAdd(x, y) {
-  var lsw = (x & 0xffff) + (y & 0xffff);
-  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-  return msw << 16 | lsw & 0xffff;
-}
-/*
- * Bitwise rotate a 32-bit number to the left.
- */
-
-
-function bitRotateLeft(num, cnt) {
-  return num << cnt | num >>> 32 - cnt;
-}
-/*
- * These functions implement the four basic operations the algorithm uses.
- */
-
-
-function md5cmn(q, a, b, x, s, t) {
-  return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b);
-}
-
-function md5ff(a, b, c, d, x, s, t) {
-  return md5cmn(b & c | ~b & d, a, b, x, s, t);
-}
-
-function md5gg(a, b, c, d, x, s, t) {
-  return md5cmn(b & d | c & ~d, a, b, x, s, t);
-}
-
-function md5hh(a, b, c, d, x, s, t) {
-  return md5cmn(b ^ c ^ d, a, b, x, s, t);
-}
-
-function md5ii(a, b, c, d, x, s, t) {
-  return md5cmn(c ^ (b | ~d), a, b, x, s, t);
-}
-
-var _default = md5;
-exports.default = _default;
-module.exports = exports.default;
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/rng-browser.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = rng;
-// Unique ID creation requires a high quality random # generator. In the browser we therefore
-// require the crypto API and do not support built-in fallback to lower quality random number
-// generators (like Math.random()).
-// getRandomValues needs to be invoked in a context where "this" is a Crypto implementation. Also,
-// find the complete implementation of crypto (msCrypto) on IE11.
-var getRandomValues = typeof crypto != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto) || typeof msCrypto != 'undefined' && typeof msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto);
-var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
-
-function rng() {
-  if (!getRandomValues) {
-    throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
-  }
-
-  return getRandomValues(rnds8);
-}
-
-module.exports = exports.default;
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/sha1-browser.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-// Adapted from Chris Veness' SHA1 code at
-// http://www.movable-type.co.uk/scripts/sha1.html
-function f(s, x, y, z) {
-  switch (s) {
-    case 0:
-      return x & y ^ ~x & z;
-
-    case 1:
-      return x ^ y ^ z;
-
-    case 2:
-      return x & y ^ x & z ^ y & z;
-
-    case 3:
-      return x ^ y ^ z;
-  }
-}
-
-function ROTL(x, n) {
-  return x << n | x >>> 32 - n;
-}
-
-function sha1(bytes) {
-  var K = [0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6];
-  var H = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
-
-  if (typeof bytes == 'string') {
-    var msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
-
-    bytes = new Array(msg.length);
-
-    for (var i = 0; i < msg.length; i++) bytes[i] = msg.charCodeAt(i);
-  }
-
-  bytes.push(0x80);
-  var l = bytes.length / 4 + 2;
-  var N = Math.ceil(l / 16);
-  var M = new Array(N);
-
-  for (var i = 0; i < N; i++) {
-    M[i] = new Array(16);
-
-    for (var j = 0; j < 16; j++) {
-      M[i][j] = bytes[i * 64 + j * 4] << 24 | bytes[i * 64 + j * 4 + 1] << 16 | bytes[i * 64 + j * 4 + 2] << 8 | bytes[i * 64 + j * 4 + 3];
-    }
-  }
-
-  M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
-  M[N - 1][14] = Math.floor(M[N - 1][14]);
-  M[N - 1][15] = (bytes.length - 1) * 8 & 0xffffffff;
-
-  for (var i = 0; i < N; i++) {
-    var W = new Array(80);
-
-    for (var t = 0; t < 16; t++) W[t] = M[i][t];
-
-    for (var t = 16; t < 80; t++) {
-      W[t] = ROTL(W[t - 3] ^ W[t - 8] ^ W[t - 14] ^ W[t - 16], 1);
-    }
-
-    var a = H[0];
-    var b = H[1];
-    var c = H[2];
-    var d = H[3];
-    var e = H[4];
-
-    for (var t = 0; t < 80; t++) {
-      var s = Math.floor(t / 20);
-      var T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[t] >>> 0;
-      e = d;
-      d = c;
-      c = ROTL(b, 30) >>> 0;
-      b = a;
-      a = T;
-    }
-
-    H[0] = H[0] + a >>> 0;
-    H[1] = H[1] + b >>> 0;
-    H[2] = H[2] + c >>> 0;
-    H[3] = H[3] + d >>> 0;
-    H[4] = H[4] + e >>> 0;
-  }
-
-  return [H[0] >> 24 & 0xff, H[0] >> 16 & 0xff, H[0] >> 8 & 0xff, H[0] & 0xff, H[1] >> 24 & 0xff, H[1] >> 16 & 0xff, H[1] >> 8 & 0xff, H[1] & 0xff, H[2] >> 24 & 0xff, H[2] >> 16 & 0xff, H[2] >> 8 & 0xff, H[2] & 0xff, H[3] >> 24 & 0xff, H[3] >> 16 & 0xff, H[3] >> 8 & 0xff, H[3] & 0xff, H[4] >> 24 & 0xff, H[4] >> 16 & 0xff, H[4] >> 8 & 0xff, H[4] & 0xff];
-}
-
-var _default = sha1;
-exports.default = _default;
-module.exports = exports.default;
-},{}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v1.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _rng = _interopRequireDefault(require("./rng.js"));
-
-var _bytesToUuid = _interopRequireDefault(require("./bytesToUuid.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// **`v1()` - Generate time-based UUID**
-//
-// Inspired by https://github.com/LiosK/UUID.js
-// and http://docs.python.org/library/uuid.html
-var _nodeId;
-
-var _clockseq; // Previous uuid creation time
-
-
-var _lastMSecs = 0;
-var _lastNSecs = 0; // See https://github.com/uuidjs/uuid for API details
-
-function v1(options, buf, offset) {
-  var i = buf && offset || 0;
-  var b = buf || [];
-  options = options || {};
-  var node = options.node || _nodeId;
-  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq; // node and clockseq need to be initialized to random values if they're not
-  // specified.  We do this lazily to minimize issues related to insufficient
-  // system entropy.  See #189
-
-  if (node == null || clockseq == null) {
-    var seedBytes = options.random || (options.rng || _rng.default)();
-
-    if (node == null) {
-      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
-      node = _nodeId = [seedBytes[0] | 0x01, seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]];
-    }
-
-    if (clockseq == null) {
-      // Per 4.2.2, randomize (14 bit) clockseq
-      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
-    }
-  } // UUID timestamps are 100 nano-second units since the Gregorian epoch,
-  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
-  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
-  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
-
-
-  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime(); // Per 4.2.1.2, use count of uuid's generated during the current clock
-  // cycle to simulate higher resolution clock
-
-  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1; // Time since last uuid creation (in msecs)
-
-  var dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 10000; // Per 4.2.1.2, Bump clockseq on clock regression
-
-  if (dt < 0 && options.clockseq === undefined) {
-    clockseq = clockseq + 1 & 0x3fff;
-  } // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
-  // time interval
-
-
-  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
-    nsecs = 0;
-  } // Per 4.2.1.2 Throw error if too many uuids are requested
-
-
-  if (nsecs >= 10000) {
-    throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
-  }
-
-  _lastMSecs = msecs;
-  _lastNSecs = nsecs;
-  _clockseq = clockseq; // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
-
-  msecs += 12219292800000; // `time_low`
-
-  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
-  b[i++] = tl >>> 24 & 0xff;
-  b[i++] = tl >>> 16 & 0xff;
-  b[i++] = tl >>> 8 & 0xff;
-  b[i++] = tl & 0xff; // `time_mid`
-
-  var tmh = msecs / 0x100000000 * 10000 & 0xfffffff;
-  b[i++] = tmh >>> 8 & 0xff;
-  b[i++] = tmh & 0xff; // `time_high_and_version`
-
-  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
-
-  b[i++] = tmh >>> 16 & 0xff; // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
-
-  b[i++] = clockseq >>> 8 | 0x80; // `clock_seq_low`
-
-  b[i++] = clockseq & 0xff; // `node`
-
-  for (var n = 0; n < 6; ++n) {
-    b[i + n] = node[n];
-  }
-
-  return buf ? buf : (0, _bytesToUuid.default)(b);
-}
-
-var _default = v1;
-exports.default = _default;
-module.exports = exports.default;
-},{"./bytesToUuid.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/bytesToUuid.js","./rng.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/rng-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v3.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _v = _interopRequireDefault(require("./v35.js"));
-
-var _md = _interopRequireDefault(require("./md5.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const v3 = (0, _v.default)('v3', 0x30, _md.default);
-var _default = v3;
-exports.default = _default;
-module.exports = exports.default;
-},{"./md5.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/md5-browser.js","./v35.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v35.js"}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v35.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = _default;
-exports.URL = exports.DNS = void 0;
-
-var _bytesToUuid = _interopRequireDefault(require("./bytesToUuid.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function uuidToBytes(uuid) {
-  // Note: We assume we're being passed a valid uuid string
-  var bytes = [];
-  uuid.replace(/[a-fA-F0-9]{2}/g, function (hex) {
-    bytes.push(parseInt(hex, 16));
-  });
-  return bytes;
-}
-
-function stringToBytes(str) {
-  str = unescape(encodeURIComponent(str)); // UTF8 escape
-
-  var bytes = new Array(str.length);
-
-  for (var i = 0; i < str.length; i++) {
-    bytes[i] = str.charCodeAt(i);
-  }
-
-  return bytes;
-}
-
-const DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
-exports.DNS = DNS;
-const URL = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
-exports.URL = URL;
-
-function _default(name, version, hashfunc) {
-  var generateUUID = function (value, namespace, buf, offset) {
-    var off = buf && offset || 0;
-    if (typeof value == 'string') value = stringToBytes(value);
-    if (typeof namespace == 'string') namespace = uuidToBytes(namespace);
-    if (!Array.isArray(value)) throw TypeError('value must be an array of bytes');
-    if (!Array.isArray(namespace) || namespace.length !== 16) throw TypeError('namespace must be uuid string or an Array of 16 byte values'); // Per 4.3
-
-    var bytes = hashfunc(namespace.concat(value));
-    bytes[6] = bytes[6] & 0x0f | version;
-    bytes[8] = bytes[8] & 0x3f | 0x80;
-
-    if (buf) {
-      for (var idx = 0; idx < 16; ++idx) {
-        buf[off + idx] = bytes[idx];
-      }
-    }
-
-    return buf || (0, _bytesToUuid.default)(bytes);
-  }; // Function#name is not settable on some platforms (#270)
-
-
-  try {
-    generateUUID.name = name;
-  } catch (err) {} // For CommonJS default export support
-
-
-  generateUUID.DNS = DNS;
-  generateUUID.URL = URL;
-  return generateUUID;
-}
-},{"./bytesToUuid.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/bytesToUuid.js"}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v4.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _rng = _interopRequireDefault(require("./rng.js"));
-
-var _bytesToUuid = _interopRequireDefault(require("./bytesToUuid.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function v4(options, buf, offset) {
-  var i = buf && offset || 0;
-
-  if (typeof options == 'string') {
-    buf = options === 'binary' ? new Array(16) : null;
-    options = null;
-  }
-
-  options = options || {};
-
-  var rnds = options.random || (options.rng || _rng.default)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-
-
-  rnds[6] = rnds[6] & 0x0f | 0x40;
-  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
-
-  if (buf) {
-    for (var ii = 0; ii < 16; ++ii) {
-      buf[i + ii] = rnds[ii];
-    }
-  }
-
-  return buf || (0, _bytesToUuid.default)(rnds);
-}
-
-var _default = v4;
-exports.default = _default;
-module.exports = exports.default;
-},{"./bytesToUuid.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/bytesToUuid.js","./rng.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/rng-browser.js"}],"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v5.js":[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _v = _interopRequireDefault(require("./v35.js"));
-
-var _sha = _interopRequireDefault(require("./sha1.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const v5 = (0, _v.default)('v5', 0x50, _sha.default);
-var _default = v5;
-exports.default = _default;
-module.exports = exports.default;
-},{"./sha1.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/sha1-browser.js","./v35.js":"/usr/local/lib/node_modules/idyll/node_modules/uuid/dist/v35.js"}],"/usr/local/lib/node_modules/idyll/node_modules/which-typed-array/index.js":[function(require,module,exports){
-(function (global){(function (){
-'use strict';
-
-var forEach = require('foreach');
-var availableTypedArrays = require('available-typed-arrays');
-var callBound = require('call-bind/callBound');
-
-var $toString = callBound('Object.prototype.toString');
-var hasToStringTag = require('has-tostringtag/shams')();
-
-var g = typeof globalThis === 'undefined' ? global : globalThis;
-var typedArrays = availableTypedArrays();
-
-var $slice = callBound('String.prototype.slice');
-var toStrTags = {};
-var gOPD = require('es-abstract/helpers/getOwnPropertyDescriptor');
-var getPrototypeOf = Object.getPrototypeOf; // require('getprototypeof');
-if (hasToStringTag && gOPD && getPrototypeOf) {
-	forEach(typedArrays, function (typedArray) {
-		if (typeof g[typedArray] === 'function') {
-			var arr = new g[typedArray]();
-			if (Symbol.toStringTag in arr) {
-				var proto = getPrototypeOf(arr);
-				var descriptor = gOPD(proto, Symbol.toStringTag);
-				if (!descriptor) {
-					var superProto = getPrototypeOf(proto);
-					descriptor = gOPD(superProto, Symbol.toStringTag);
-				}
-				toStrTags[typedArray] = descriptor.get;
-			}
-		}
-	});
-}
-
-var tryTypedArrays = function tryAllTypedArrays(value) {
-	var foundName = false;
-	forEach(toStrTags, function (getter, typedArray) {
-		if (!foundName) {
-			try {
-				var name = getter.call(value);
-				if (name === typedArray) {
-					foundName = name;
-				}
-			} catch (e) {}
-		}
-	});
-	return foundName;
-};
-
-var isTypedArray = require('is-typed-array');
-
-module.exports = function whichTypedArray(value) {
-	if (!isTypedArray(value)) { return false; }
-	if (!hasToStringTag || !(Symbol.toStringTag in value)) { return $slice($toString(value), 8, -1); }
-	return tryTypedArrays(value);
-};
-
-}).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"available-typed-arrays":"/usr/local/lib/node_modules/idyll/node_modules/available-typed-arrays/index.js","call-bind/callBound":"/usr/local/lib/node_modules/idyll/node_modules/call-bind/callBound.js","es-abstract/helpers/getOwnPropertyDescriptor":"/usr/local/lib/node_modules/idyll/node_modules/es-abstract/helpers/getOwnPropertyDescriptor.js","foreach":"/usr/local/lib/node_modules/idyll/node_modules/foreach/index.js","has-tostringtag/shams":"/usr/local/lib/node_modules/idyll/node_modules/has-tostringtag/shams.js","is-typed-array":"/usr/local/lib/node_modules/idyll/node_modules/is-typed-array/index.js"}],"/usr/local/lib/node_modules/idyll/src/client/build.js":[function(require,module,exports){
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":"/usr/local/lib/node_modules/idyll/node_modules/util/support/isBufferBrowser.js","_process":"/usr/local/lib/node_modules/idyll/node_modules/process/browser.js","inherits":"/usr/local/lib/node_modules/idyll/node_modules/util/node_modules/inherits/inherits_browser.js"}],"/usr/local/lib/node_modules/idyll/src/client/build.js":[function(require,module,exports){
 'use strict';
 
 /**
@@ -85646,7 +83679,7 @@ ReactDOM[mountMethod](React.createElement(IdyllDocument, {
 },{"__IDYLL_AST__":"__IDYLL_AST__","__IDYLL_COMPONENTS__":"__IDYLL_COMPONENTS__","__IDYLL_CONTEXT__":"__IDYLL_CONTEXT__","__IDYLL_DATA__":"__IDYLL_DATA__","__IDYLL_OPTS__":"__IDYLL_OPTS__","__IDYLL_SYNTAX_HIGHLIGHT__":"__IDYLL_SYNTAX_HIGHLIGHT__","idyll-document":"/usr/local/lib/node_modules/idyll/node_modules/idyll-document/dist/cjs/index.js","react":"react","react-dom":"react-dom","regenerator-runtime/runtime":"/usr/local/lib/node_modules/idyll/node_modules/regenerator-runtime/runtime.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1934" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1936" }, "value": { "type": "value", "value": "" } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1938" }, "value": { "type": "value", "value": "" } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1940" }, "value": { "type": "value", "value": "" } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1944" }, "value": { "type": "value", "value": "" } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1956" }, "value": { "type": "value", "value": "" } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1650" }, "value": { "type": "value", "value": "" } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1664" }, "value": { "type": "value", "value": "" } } }, { "id": 11, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1976" }, "value": { "type": "value", "value": "" } } }, { "id": 12, "type": "component", "name": "TextContainer", "children": [{ "id": 13, "type": "meta", "properties": { "title": { "type": "value", "value": "Wiley_HW_5" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 14, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "WileyPlus Homework 5" }, "subtitle": { "type": "value", "value": "Solving problems with Python" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0B465F" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 15, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 16, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 17, "type": "textnode", "value": "Content" }] }, { "id": 18, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.50\"" } }, "children": [{ "id": 19, "type": "textnode", "value": "Q1" }] }, { "id": 20, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.64\"" } }, "children": [{ "id": 21, "type": "textnode", "value": "Q2" }] }, { "id": 22, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.34\"" } }, "children": [{ "id": 23, "type": "textnode", "value": "Q3" }] }, { "id": 24, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.36\"" } }, "children": [{ "id": 25, "type": "textnode", "value": "Q4" }] }, { "id": 26, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.38\"" } }, "children": [{ "id": 27, "type": "textnode", "value": "Q5" }] }, { "id": 28, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.40\"" } }, "children": [{ "id": 29, "type": "textnode", "value": "Q6" }] }, { "id": 30, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.44\"" } }, "children": [{ "id": 31, "type": "textnode", "value": "Q7" }] }, { "id": 32, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.56\"" } }, "children": [{ "id": 33, "type": "textnode", "value": "Q8" }] }, { "id": 34, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.76\"" } }, "children": [{ "id": 35, "type": "textnode", "value": "Q9" }] }] }, { "id": 36, "type": "component", "name": "TextContainer", "children": [{ "id": 37, "type": "component", "name": "br", "children": [] }, { "id": 38, "type": "component", "name": "br", "children": [] }] }, { "id": 39, "type": "component", "name": "hr", "children": [] }, { "id": 40, "type": "component", "name": "TextContainer", "children": [{ "id": 41, "type": "component", "name": "br", "children": [] }] }, { "id": 42, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "value", "value": "100%" } }, "children": [{ "id": 43, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 44, "type": "component", "name": "Default", "children": [{ "id": 45, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 46, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 47, "type": "component", "name": "h1", "children": [{ "id": 48, "type": "textnode", "value": "Homework " }, { "id": 49, "type": "textnode", "value": "5 " }, { "id": 50, "type": "textnode", "value": "Content" }] }] }, { "id": 51, "type": "component", "name": "h2", "children": [{ "id": 52, "type": "textnode", "value": "Chapter PowerPoint" }] }, { "id": 53, "type": "component", "name": "p", "children": [{ "id": 54, "type": "textnode", "value": "The following PowerPoint highlights the key ideas from Chapter 19: Circuit Elements\n      in Matter and Interactions. See HW 3 for a review of Chapter 16.\n      For more details or examples, navigate to the eBook through\n      your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab)." }] }, { "id": 55, "type": "component", "name": "p", "children": [{ "id": 56, "type": "textnode", "value": "Click through the slides below using the left and right arrow buttons or by clicking\n      on the slides. To download a copy, click the Menu button on the bottom right." }] }, { "id": 57, "type": "component", "name": "p", "children": [{ "id": 58, "type": "textnode", "value": "Want extra credit? Fill out the " }, { "id": 59, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 60, "type": "textnode", "value": "Feedback Form" }] }, { "id": 61, "type": "textnode", "value": "." }] }, { "id": 62, "type": "component", "name": "br", "children": [] }, { "id": 63, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218480&authkey=AOQwyICHJI1TCEw&em=2&wdAr=1.7777777777777777" }, "width": { "type": "value", "value": "1186px" }, "height": { "type": "value", "value": "691px" }, "frameBorder": { "type": "value", "value": "0" } }, "children": [] }, { "id": 64, "type": "component", "name": "hr", "children": [] }, { "id": 65, "type": "component", "name": "h2", "children": [{ "id": 66, "type": "textnode", "value": "Helpful Videos" }] }, { "id": 67, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "mainNote" } }, "children": [] }, { "id": 68, "type": "component", "name": "hr", "children": [] }, { "id": 69, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 70, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 71, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 72, "type": "textnode", "value": "Physics Department" }] }, { "id": 73, "type": "component", "name": "br", "children": [] }, { "id": 74, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 75, "type": "textnode", "value": "Feedback Form" }] }] }] }] }, { "id": 76, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.34" } }, "children": [{ "id": 77, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 78, "type": "component", "name": "h2", "children": [{ "id": 79, "type": "textnode", "value": "Q" }, { "id": 80, "type": "textnode", "value": "3" }] }, { "id": 81, "type": "component", "name": "hr", "children": [] }, { "id": 82, "type": "component", "name": "h3", "children": [{ "id": 83, "type": "textnode", "value": "Problem" }] }, { "id": 84, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.34a.png" }, "title": { "type": "value", "value": "Problem 19.34 - Matter and Interactions" } }, "children": [] }, { "id": 85, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.34b.png" }, "title": { "type": "value", "value": "Problem 19.34 - Matter and Interactions" } }, "children": [] }, { "id": 86, "type": "component", "name": "br", "children": [] }, { "id": 87, "type": "component", "name": "h4", "children": [{ "id": 88, "type": "textnode", "value": "Questions" }] }, { "id": 89, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 90, "type": "component", "name": "p", "children": [{ "id": 91, "type": "textnode", "value": "a) Which of the diagrams best indicates the electron current at three locations in this circuit?" }] }, { "id": 92, "type": "component", "name": "p", "children": [{ "id": 93, "type": "textnode", "value": "b) Which of the diagrams best indicates the electric field inside the wire at three locations in this circuit?" }] }] }, { "id": 94, "type": "component", "name": "hr", "children": [] }, { "id": 95, "type": "component", "name": "h3", "children": [{ "id": 96, "type": "textnode", "value": "Computation" }] }, { "id": 97, "type": "component", "name": "p", "children": [{ "id": 98, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n         above. Need help with python? See Physics Fundamentals (" }, { "id": 99, "type": "component", "name": "em", "children": [{ "id": 100, "type": "textnode", "value": "NEED LINK" }] }, { "id": 101, "type": "textnode", "value": ") for\n         ideas on how to solve this problem with python. Reveal the answer by\n         clicking the button below to see if you got the right answer!" }] }, { "id": 102, "type": "component", "name": "ul", "children": [{ "id": 103, "type": "component", "name": "li", "children": [{ "id": 104, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 105, "type": "component", "name": "li", "children": [{ "id": 106, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 107, "type": "component", "name": "li", "children": [{ "id": 108, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n           given in WileyPLUS before submitting the answers." }] }] }, { "id": 109, "type": "component", "name": "br", "children": [] }, { "id": 110, "type": "component", "name": "p", "children": [{ "id": 111, "type": "textnode", "value": "Input trinket for graphing answers." }] }] }, { "id": 112, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 113, "type": "component", "name": "h3", "children": [{ "id": 114, "type": "textnode", "value": "About this Problem" }] }, { "id": 115, "type": "component", "name": "hr", "children": [] }, { "id": 116, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 117, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"\"" } }, "children": [{ "id": 118, "type": "textnode", "value": "Skills Involved" }] }, { "id": 119, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"Objective\"" } }, "children": [{ "id": 120, "type": "textnode", "value": "Objective" }] }, { "id": 121, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"GivenInfo\"" } }, "children": [{ "id": 122, "type": "textnode", "value": "Given Information" }] }, { "id": 123, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"KeyEq\"" } }, "children": [{ "id": 124, "type": "textnode", "value": "Key Equations" }] }, { "id": 125, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"Ref\"" } }, "children": [{ "id": 126, "type": "textnode", "value": "References" }] }] }, { "id": 127, "type": "component", "name": "br", "children": [] }, { "id": 128, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 129, "type": "component", "name": "br", "children": [] }, { "id": 130, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1934" } }, "children": [{ "id": 131, "type": "component", "name": "Default", "children": [{ "id": 132, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 133, "type": "component", "name": "ul", "children": [{ "id": 134, "type": "component", "name": "li", "children": [{ "id": 135, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 136, "type": "component", "name": "li", "children": [{ "id": 137, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 138, "type": "component", "name": "li", "children": [{ "id": 139, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 140, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 141, "type": "textnode", "value": "Identify the graphs for electric field and drift speed." }] }, { "id": 142, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 143, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 144, "type": "component", "name": "ul", "children": [{ "id": 145, "type": "component", "name": "li", "children": [{ "id": 146, "type": "textnode", "value": " Circuit with a resistor." }] }] }] }] }, { "id": 147, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 148, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 149, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 150, "type": "textnode", "value": "\\vec{E} = \\frac{V}{m}" }] }] }] }, { "id": 151, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 152, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 153, "type": "component", "name": "ul", "children": [{ "id": 154, "type": "component", "name": "li", "children": [{ "id": 155, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 156, "type": "component", "name": "li", "children": [{ "id": 157, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 158, "type": "component", "name": "li", "children": [{ "id": 159, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 160, "type": "component", "name": "li", "children": [{ "id": 161, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 162, "type": "component", "name": "li", "children": [{ "id": 163, "type": "textnode", "value": " " }, { "id": 164, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 165, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 166, "type": "component", "name": "hr", "children": [] }, { "id": 167, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 168, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 169, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 170, "type": "textnode", "value": "Physics Department" }] }, { "id": 171, "type": "component", "name": "br", "children": [] }, { "id": 172, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 173, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 174, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.36" } }, "children": [{ "id": 175, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 176, "type": "component", "name": "h2", "children": [{ "id": 177, "type": "textnode", "value": "Q" }, { "id": 178, "type": "textnode", "value": "4" }] }, { "id": 179, "type": "component", "name": "hr", "children": [] }, { "id": 180, "type": "component", "name": "h3", "children": [{ "id": 181, "type": "textnode", "value": "Problem" }] }, { "id": 182, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.36.png" }, "title": { "type": "value", "value": "Problem 19.36 - Matter and Interactions" } }, "children": [] }, { "id": 183, "type": "component", "name": "br", "children": [] }, { "id": 184, "type": "component", "name": "hr", "children": [] }, { "id": 185, "type": "component", "name": "h3", "children": [{ "id": 186, "type": "textnode", "value": "Computation" }] }, { "id": 187, "type": "component", "name": "p", "children": [{ "id": 188, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 189, "type": "component", "name": "em", "children": [{ "id": 190, "type": "textnode", "value": "NEED LINK" }] }, { "id": 191, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 192, "type": "component", "name": "br", "children": [] }, { "id": 193, "type": "component", "name": "p", "children": [{ "id": 194, "type": "textnode", "value": "Insert something." }] }] }, { "id": 195, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 196, "type": "component", "name": "h3", "children": [{ "id": 197, "type": "textnode", "value": "About this Problem" }] }, { "id": 198, "type": "component", "name": "hr", "children": [] }, { "id": 199, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 200, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"\"" } }, "children": [{ "id": 201, "type": "textnode", "value": "Skills Involved" }] }, { "id": 202, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"Objective\"" } }, "children": [{ "id": 203, "type": "textnode", "value": "Objective" }] }, { "id": 204, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"GivenInfo\"" } }, "children": [{ "id": 205, "type": "textnode", "value": "Given Information" }] }, { "id": 206, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"KeyEq\"" } }, "children": [{ "id": 207, "type": "textnode", "value": "Key Equations" }] }, { "id": 208, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"Ref\"" } }, "children": [{ "id": 209, "type": "textnode", "value": "References" }] }] }, { "id": 210, "type": "component", "name": "br", "children": [] }, { "id": 211, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 212, "type": "component", "name": "br", "children": [] }, { "id": 213, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1936" } }, "children": [{ "id": 214, "type": "component", "name": "Default", "children": [{ "id": 215, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 216, "type": "component", "name": "ul", "children": [{ "id": 217, "type": "component", "name": "li", "children": [{ "id": 218, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 219, "type": "component", "name": "li", "children": [{ "id": 220, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 221, "type": "component", "name": "li", "children": [{ "id": 222, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 223, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 224, "type": "textnode", "value": "Calculate outward-going conventional current." }] }, { "id": 225, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 226, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 227, "type": "component", "name": "ul", "children": [{ "id": 228, "type": "component", "name": "li", "children": [{ "id": 229, "type": "textnode", "value": " Max electric field without a spark." }] }, { "id": 230, "type": "component", "name": "li", "children": [{ "id": 231, "type": "textnode", "value": " Capacitor gap distance." }] }] }] }] }, { "id": 232, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 233, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 234, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 235, "type": "textnode", "value": "\\vec{E} = \\frac{1}{4\\pi\\epsilon_{0}} \\frac{q}{|\\vec{r}|^{2}} \\hat{r}" }] }] }] }, { "id": 236, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 237, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 238, "type": "component", "name": "ul", "children": [{ "id": 239, "type": "component", "name": "li", "children": [{ "id": 240, "type": "textnode", "value": " Electric Field of a Point Charge (Matter and Interactions, p. 519)" }] }, { "id": 241, "type": "component", "name": "li", "children": [{ "id": 242, "type": "textnode", "value": " Magnitude of Electric Field (Matter and Interactions, p. 520)" }] }, { "id": 243, "type": "component", "name": "li", "children": [{ "id": 244, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }] }] }] }] }] }, { "id": 245, "type": "component", "name": "hr", "children": [] }, { "id": 246, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 247, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 248, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 249, "type": "textnode", "value": "Physics Department" }] }, { "id": 250, "type": "component", "name": "br", "children": [] }, { "id": 251, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 252, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 253, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.38" } }, "children": [{ "id": 254, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 255, "type": "component", "name": "h2", "children": [{ "id": 256, "type": "textnode", "value": "Q" }, { "id": 257, "type": "textnode", "value": "5" }] }, { "id": 258, "type": "component", "name": "hr", "children": [] }, { "id": 259, "type": "component", "name": "h3", "children": [{ "id": 260, "type": "textnode", "value": "Problem" }] }, { "id": 261, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 262, "type": "textnode", "value": "\n            A certain capacitor has rectangular plates 43 cm by 23 cm, and the gap width is 0.31 mm.\n            What is its capacitance? We see that typical capacitances are very small when measured\n            in farads. A one-farad capacitor is quite extraordinary! Apparently it has a very large\n            area A (all wrapped up in a small package), and a very small gap s.\n          " }] }, { "id": 263, "type": "component", "name": "br", "children": [] }, { "id": 264, "type": "component", "name": "hr", "children": [] }, { "id": 265, "type": "component", "name": "h3", "children": [{ "id": 266, "type": "textnode", "value": "Computation" }] }, { "id": 267, "type": "component", "name": "p", "children": [{ "id": 268, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 269, "type": "component", "name": "em", "children": [{ "id": 270, "type": "textnode", "value": "NEED LINK" }] }, { "id": 271, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 272, "type": "component", "name": "p", "children": [{ "id": 273, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 274, "type": "component", "name": "br", "children": [] }, { "id": 275, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/19267e71e5?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 276, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 277, "type": "component", "name": "h3", "children": [{ "id": 278, "type": "textnode", "value": "About this Problem" }] }, { "id": 279, "type": "component", "name": "hr", "children": [] }, { "id": 280, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 281, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"\"" } }, "children": [{ "id": 282, "type": "textnode", "value": "Skills Involved" }] }, { "id": 283, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"Objective\"" } }, "children": [{ "id": 284, "type": "textnode", "value": "Objective" }] }, { "id": 285, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"GivenInfo\"" } }, "children": [{ "id": 286, "type": "textnode", "value": "Given Information" }] }, { "id": 287, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"KeyEq\"" } }, "children": [{ "id": 288, "type": "textnode", "value": "Key Equations" }] }, { "id": 289, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"Ref\"" } }, "children": [{ "id": 290, "type": "textnode", "value": "References" }] }] }, { "id": 291, "type": "component", "name": "br", "children": [] }, { "id": 292, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 293, "type": "component", "name": "br", "children": [] }, { "id": 294, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1938" } }, "children": [{ "id": 295, "type": "component", "name": "Default", "children": [{ "id": 296, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 297, "type": "component", "name": "ul", "children": [{ "id": 298, "type": "component", "name": "li", "children": [{ "id": 299, "type": "textnode", "value": "Force" }] }, { "id": 300, "type": "component", "name": "li", "children": [{ "id": 301, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 302, "type": "component", "name": "li", "children": [{ "id": 303, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 304, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 305, "type": "textnode", "value": "Calculate how many hours the flashlight will be lit." }] }, { "id": 306, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 307, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 308, "type": "component", "name": "ul", "children": [{ "id": 309, "type": "component", "name": "li", "children": [{ "id": 310, "type": "textnode", "value": " Length and width of capacitor plates. " }] }, { "id": 311, "type": "component", "name": "li", "children": [{ "id": 312, "type": "textnode", "value": " Gap width." }] }] }] }] }, { "id": 313, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 314, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 315, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 316, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 317, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 318, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 319, "type": "component", "name": "ul", "children": [{ "id": 320, "type": "component", "name": "li", "children": [{ "id": 321, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 322, "type": "component", "name": "li", "children": [{ "id": 323, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 324, "type": "component", "name": "li", "children": [{ "id": 325, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 326, "type": "component", "name": "hr", "children": [] }, { "id": 327, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 328, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 329, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 330, "type": "textnode", "value": "Physics Department" }] }, { "id": 331, "type": "component", "name": "br", "children": [] }, { "id": 332, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 333, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 334, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.40" } }, "children": [{ "id": 335, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 336, "type": "component", "name": "h2", "children": [{ "id": 337, "type": "textnode", "value": "Q" }, { "id": 338, "type": "textnode", "value": "6" }] }, { "id": 339, "type": "component", "name": "hr", "children": [] }, { "id": 340, "type": "component", "name": "h3", "children": [{ "id": 341, "type": "textnode", "value": "Problem" }] }, { "id": 342, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 343, "type": "textnode", "value": "\n            Suppose you charge a 1.0 F capacitor with two 1.5 volt batteries.\n          " }] }, { "id": 344, "type": "component", "name": "br", "children": [] }, { "id": 345, "type": "component", "name": "h4", "children": [{ "id": 346, "type": "textnode", "value": "Questions" }] }, { "id": 347, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 348, "type": "component", "name": "p", "children": [{ "id": 349, "type": "textnode", "value": "a) How much charge is on each plate?" }] }, { "id": 350, "type": "component", "name": "p", "children": [{ "id": 351, "type": "textnode", "value": "b) How many excess electrons were on the negative plate?" }] }] }, { "id": 352, "type": "component", "name": "hr", "children": [] }, { "id": 353, "type": "component", "name": "h3", "children": [{ "id": 354, "type": "textnode", "value": "Computation" }] }, { "id": 355, "type": "component", "name": "p", "children": [{ "id": 356, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n         above. Need help with python? See Physics Fundamentals (" }, { "id": 357, "type": "component", "name": "em", "children": [{ "id": 358, "type": "textnode", "value": "NEED LINK" }] }, { "id": 359, "type": "textnode", "value": ") for\n         ideas on how to solve this problem with python. Reveal the answer by\n         clicking the button below to see if you got the right answer!" }] }, { "id": 360, "type": "component", "name": "p", "children": [{ "id": 361, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n         Try calculating the answer with the SciPy constants and the constants listed in\n         Matter and Interactions to see the differences in the answer." }] }, { "id": 362, "type": "component", "name": "br", "children": [] }, { "id": 363, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/2bab40dadc?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 364, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 365, "type": "component", "name": "h3", "children": [{ "id": 366, "type": "textnode", "value": "About this Problem" }] }, { "id": 367, "type": "component", "name": "hr", "children": [] }, { "id": 368, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 369, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"\"" } }, "children": [{ "id": 370, "type": "textnode", "value": "Skills Involved" }] }, { "id": 371, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"Objective\"" } }, "children": [{ "id": 372, "type": "textnode", "value": "Objective" }] }, { "id": 373, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"GivenInfo\"" } }, "children": [{ "id": 374, "type": "textnode", "value": "Given Information" }] }, { "id": 375, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"KeyEq\"" } }, "children": [{ "id": 376, "type": "textnode", "value": "Key Equations" }] }, { "id": 377, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"Ref\"" } }, "children": [{ "id": 378, "type": "textnode", "value": "References" }] }] }, { "id": 379, "type": "component", "name": "br", "children": [] }, { "id": 380, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 381, "type": "component", "name": "br", "children": [] }, { "id": 382, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1940" } }, "children": [{ "id": 383, "type": "component", "name": "Default", "children": [{ "id": 384, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 385, "type": "component", "name": "ul", "children": [{ "id": 386, "type": "component", "name": "li", "children": [{ "id": 387, "type": "textnode", "value": "Force" }] }, { "id": 388, "type": "component", "name": "li", "children": [{ "id": 389, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 390, "type": "component", "name": "li", "children": [{ "id": 391, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 392, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 393, "type": "textnode", "value": "Select the correct circuit statements." }] }, { "id": 394, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 395, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 396, "type": "component", "name": "ul", "children": [{ "id": 397, "type": "component", "name": "li", "children": [{ "id": 398, "type": "textnode", "value": " Capacitance. " }] }, { "id": 399, "type": "component", "name": "li", "children": [{ "id": 400, "type": "textnode", "value": " Voltage of batteries." }] }] }] }] }, { "id": 401, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 402, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 403, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 404, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 405, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 406, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 407, "type": "component", "name": "ul", "children": [{ "id": 408, "type": "component", "name": "li", "children": [{ "id": 409, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 410, "type": "component", "name": "li", "children": [{ "id": 411, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 412, "type": "component", "name": "li", "children": [{ "id": 413, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 414, "type": "component", "name": "hr", "children": [] }, { "id": 415, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 416, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 417, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 418, "type": "textnode", "value": "Physics Department" }] }, { "id": 419, "type": "component", "name": "br", "children": [] }, { "id": 420, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 421, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 422, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.44" } }, "children": [{ "id": 423, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 424, "type": "component", "name": "h2", "children": [{ "id": 425, "type": "textnode", "value": "Q" }, { "id": 426, "type": "textnode", "value": "7" }] }, { "id": 427, "type": "component", "name": "hr", "children": [] }, { "id": 428, "type": "component", "name": "h3", "children": [{ "id": 429, "type": "textnode", "value": "Problem" }] }, { "id": 430, "type": "component", "name": "h3", "children": [{ "id": 431, "type": "textnode", "value": "Problem" }] }, { "id": 432, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.44.png" }, "title": { "type": "value", "value": "Problem 19.44 - Matter and Interactions" } }, "children": [] }, { "id": 433, "type": "component", "name": "br", "children": [] }, { "id": 434, "type": "component", "name": "hr", "children": [] }] }, { "id": 435, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 436, "type": "component", "name": "h3", "children": [{ "id": 437, "type": "textnode", "value": "About this Problem" }] }, { "id": 438, "type": "component", "name": "hr", "children": [] }, { "id": 439, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 440, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"\"" } }, "children": [{ "id": 441, "type": "textnode", "value": "Skills Involved" }] }, { "id": 442, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"Objective\"" } }, "children": [{ "id": 443, "type": "textnode", "value": "Objective" }] }, { "id": 444, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"GivenInfo\"" } }, "children": [{ "id": 445, "type": "textnode", "value": "Given Information" }] }, { "id": 446, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"KeyEq\"" } }, "children": [{ "id": 447, "type": "textnode", "value": "Key Equations" }] }, { "id": 448, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"Ref\"" } }, "children": [{ "id": 449, "type": "textnode", "value": "References" }] }] }, { "id": 450, "type": "component", "name": "br", "children": [] }, { "id": 451, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 452, "type": "component", "name": "br", "children": [] }, { "id": 453, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1944" } }, "children": [{ "id": 454, "type": "component", "name": "Default", "children": [{ "id": 455, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 456, "type": "component", "name": "ul", "children": [{ "id": 457, "type": "component", "name": "li", "children": [{ "id": 458, "type": "textnode", "value": "Force" }] }, { "id": 459, "type": "component", "name": "li", "children": [{ "id": 460, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 461, "type": "component", "name": "li", "children": [{ "id": 462, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 463, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 464, "type": "textnode", "value": "Construct an equation to find the capacitance of a spherical capacitor." }] }, { "id": 465, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 466, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 467, "type": "component", "name": "ul", "children": [{ "id": 468, "type": "component", "name": "li", "children": [{ "id": 469, "type": "textnode", "value": " Radius of capacitor disks. " }] }, { "id": 470, "type": "component", "name": "li", "children": [{ "id": 471, "type": "textnode", "value": " Distance between disks." }] }, { "id": 472, "type": "component", "name": "li", "children": [{ "id": 473, "type": "textnode", "value": " Magnitude of the charge on each disk." }] }, { "id": 474, "type": "component", "name": "li", "children": [{ "id": 475, "type": "textnode", "value": " Vertical and horizontal distances between points." }] }] }] }] }, { "id": 476, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 477, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 478, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 479, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 480, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 481, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 482, "type": "component", "name": "ul", "children": [{ "id": 483, "type": "component", "name": "li", "children": [{ "id": 484, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 485, "type": "component", "name": "li", "children": [{ "id": 486, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 487, "type": "component", "name": "li", "children": [{ "id": 488, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 489, "type": "component", "name": "hr", "children": [] }, { "id": 490, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 491, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 492, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 493, "type": "textnode", "value": "Physics Department" }] }, { "id": 494, "type": "component", "name": "br", "children": [] }, { "id": 495, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 496, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 497, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.56" } }, "children": [{ "id": 498, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 499, "type": "component", "name": "h2", "children": [{ "id": 500, "type": "textnode", "value": "Q" }, { "id": 501, "type": "textnode", "value": "8" }] }, { "id": 502, "type": "component", "name": "hr", "children": [] }, { "id": 503, "type": "component", "name": "h3", "children": [{ "id": 504, "type": "textnode", "value": "Problem" }] }, { "id": 505, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.56.png" }, "title": { "type": "value", "value": "Problem 19.56 - Matter and Interactions" } }, "children": [] }, { "id": 506, "type": "component", "name": "br", "children": [] }, { "id": 507, "type": "component", "name": "h4", "children": [{ "id": 508, "type": "textnode", "value": "Questions" }] }, { "id": 509, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 510, "type": "component", "name": "p", "children": [{ "id": 511, "type": "textnode", "value": "a) What is the equivalent resistance of " }, { "id": 512, "type": "component", "name": "equation", "children": [{ "id": 513, "type": "textnode", "value": "R_{1}" }] }, { "id": 514, "type": "textnode", "value": " and " }, { "id": 515, "type": "component", "name": "equation", "children": [{ "id": 516, "type": "textnode", "value": "R_{2}" }] }, { "id": 517, "type": "textnode", "value": "?" }] }, { "id": 518, "type": "component", "name": "p", "children": [{ "id": 519, "type": "textnode", "value": "b) What is the equivalent resistance of all three resistors?" }] }, { "id": 520, "type": "component", "name": "p", "children": [{ "id": 521, "type": "textnode", "value": "c) What is the conventional current through " }, { "id": 522, "type": "component", "name": "equation", "children": [{ "id": 523, "type": "textnode", "value": "R_{3}" }] }, { "id": 524, "type": "textnode", "value": "?" }] }] }, { "id": 525, "type": "component", "name": "hr", "children": [] }, { "id": 526, "type": "component", "name": "h3", "children": [{ "id": 527, "type": "textnode", "value": "Computation" }] }, { "id": 528, "type": "component", "name": "p", "children": [{ "id": 529, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 530, "type": "component", "name": "em", "children": [{ "id": 531, "type": "textnode", "value": "NEED LINK" }] }, { "id": 532, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 533, "type": "component", "name": "p", "children": [{ "id": 534, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 535, "type": "component", "name": "br", "children": [] }, { "id": 536, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/869ffd0c79?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 537, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 538, "type": "component", "name": "h3", "children": [{ "id": 539, "type": "textnode", "value": "About this Problem" }] }, { "id": 540, "type": "component", "name": "hr", "children": [] }, { "id": 541, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 542, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"\"" } }, "children": [{ "id": 543, "type": "textnode", "value": "Skills Involved" }] }, { "id": 544, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"Objective\"" } }, "children": [{ "id": 545, "type": "textnode", "value": "Objective" }] }, { "id": 546, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"GivenInfo\"" } }, "children": [{ "id": 547, "type": "textnode", "value": "Given Information" }] }, { "id": 548, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"KeyEq\"" } }, "children": [{ "id": 549, "type": "textnode", "value": "Key Equations" }] }, { "id": 550, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"Ref\"" } }, "children": [{ "id": 551, "type": "textnode", "value": "References" }] }] }, { "id": 552, "type": "component", "name": "br", "children": [] }, { "id": 553, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 554, "type": "component", "name": "br", "children": [] }, { "id": 555, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1956" } }, "children": [{ "id": 556, "type": "component", "name": "Default", "children": [{ "id": 557, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 558, "type": "component", "name": "ul", "children": [{ "id": 559, "type": "component", "name": "li", "children": [{ "id": 560, "type": "textnode", "value": "Force" }] }, { "id": 561, "type": "component", "name": "li", "children": [{ "id": 562, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 563, "type": "component", "name": "li", "children": [{ "id": 564, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 565, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 566, "type": "textnode", "value": "Find the resistance of the circuit and current through " }, { "id": 567, "type": "component", "name": "equation", "children": [{ "id": 568, "type": "textnode", "value": "R_{3}" }] }, { "id": 569, "type": "textnode", "value": "." }] }, { "id": 570, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 571, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 572, "type": "component", "name": "ul", "children": [{ "id": 573, "type": "component", "name": "li", "children": [{ "id": 574, "type": "textnode", "value": " EMF of the battery. " }] }, { "id": 575, "type": "component", "name": "li", "children": [{ "id": 576, "type": "textnode", "value": " Resistance of each resistor. " }] }] }] }] }, { "id": 577, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 578, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 579, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 580, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 581, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 582, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 583, "type": "component", "name": "ul", "children": [{ "id": 584, "type": "component", "name": "li", "children": [{ "id": 585, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 586, "type": "component", "name": "li", "children": [{ "id": 587, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 588, "type": "component", "name": "li", "children": [{ "id": 589, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 590, "type": "component", "name": "hr", "children": [] }, { "id": 591, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 592, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 593, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 594, "type": "textnode", "value": "Physics Department" }] }, { "id": 595, "type": "component", "name": "br", "children": [] }, { "id": 596, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 597, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 598, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.50" } }, "children": [{ "id": 599, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 600, "type": "component", "name": "h2", "children": [{ "id": 601, "type": "textnode", "value": "Q" }, { "id": 602, "type": "textnode", "value": "1" }] }, { "id": 603, "type": "component", "name": "hr", "children": [] }, { "id": 604, "type": "component", "name": "h3", "children": [{ "id": 605, "type": "textnode", "value": "Problem" }] }, { "id": 606, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p16.50.png" }, "title": { "type": "value", "value": "Problem 16.50 - Matter and Interactions" } }, "children": [] }, { "id": 607, "type": "component", "name": "hr", "children": [] }, { "id": 608, "type": "component", "name": "h3", "children": [{ "id": 609, "type": "textnode", "value": "Computation" }] }, { "id": 610, "type": "component", "name": "p", "children": [{ "id": 611, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 612, "type": "component", "name": "em", "children": [{ "id": 613, "type": "textnode", "value": "NEED LINK" }] }, { "id": 614, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 615, "type": "component", "name": "p", "children": [{ "id": 616, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 617, "type": "component", "name": "br", "children": [] }, { "id": 618, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitLeft" } }, "children": [{ "id": 619, "type": "component", "name": "h4", "children": [{ "id": 620, "type": "textnode", "value": "Instructions" }] }, { "id": 621, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "./static/HW5_q1.html" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameBorder": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 622, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitRight" } }, "children": [{ "id": 623, "type": "component", "name": "h4", "children": [{ "id": 624, "type": "textnode", "value": "Trinket" }] }, { "id": 625, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/7d11d0df30?toggleCode=true" }, "width": { "type": "value", "value": "40%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }] }, { "id": 626, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 627, "type": "component", "name": "h3", "children": [{ "id": 628, "type": "textnode", "value": "About this Problem" }] }, { "id": 629, "type": "component", "name": "hr", "children": [] }, { "id": 630, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 631, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"\"" } }, "children": [{ "id": 632, "type": "textnode", "value": "Skills Involved" }] }, { "id": 633, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"Objective\"" } }, "children": [{ "id": 634, "type": "textnode", "value": "Objective" }] }, { "id": 635, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"GivenInfo\"" } }, "children": [{ "id": 636, "type": "textnode", "value": "Given Information" }] }, { "id": 637, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"KeyEq\"" } }, "children": [{ "id": 638, "type": "textnode", "value": "Key Equations" }] }, { "id": 639, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"Ref\"" } }, "children": [{ "id": 640, "type": "textnode", "value": "References" }] }] }, { "id": 641, "type": "component", "name": "br", "children": [] }, { "id": 642, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 643, "type": "component", "name": "br", "children": [] }, { "id": 644, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1650" } }, "children": [{ "id": 645, "type": "component", "name": "Default", "children": [{ "id": 646, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 647, "type": "component", "name": "ul", "children": [{ "id": 648, "type": "component", "name": "li", "children": [{ "id": 649, "type": "textnode", "value": "Force" }] }, { "id": 650, "type": "component", "name": "li", "children": [{ "id": 651, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 652, "type": "component", "name": "li", "children": [{ "id": 653, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 654, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 655, "type": "textnode", "value": "Find the potential difference " }, { "id": 656, "type": "component", "name": "equation", "children": [{ "id": 657, "type": "textnode", "value": "V_{2}-V_{1}" }] }, { "id": 658, "type": "textnode", "value": "." }] }, { "id": 659, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 660, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 661, "type": "component", "name": "ul", "children": [{ "id": 662, "type": "component", "name": "li", "children": [{ "id": 663, "type": "textnode", "value": " Radius of each disk." }] }, { "id": 664, "type": "component", "name": "li", "children": [{ "id": 665, "type": "textnode", "value": " Gap between the disks." }] }, { "id": 666, "type": "component", "name": "li", "children": [{ "id": 667, "type": "textnode", "value": " Charge of the disks." }] }] }] }] }, { "id": 668, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 669, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 670, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 671, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 672, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 673, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 674, "type": "component", "name": "ul", "children": [{ "id": 675, "type": "component", "name": "li", "children": [{ "id": 676, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 677, "type": "component", "name": "li", "children": [{ "id": 678, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 679, "type": "component", "name": "li", "children": [{ "id": 680, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 681, "type": "component", "name": "hr", "children": [] }, { "id": 682, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 683, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 684, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 685, "type": "textnode", "value": "Physics Department" }] }, { "id": 686, "type": "component", "name": "br", "children": [] }, { "id": 687, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 688, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 689, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.64" } }, "children": [{ "id": 690, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 691, "type": "component", "name": "h2", "children": [{ "id": 692, "type": "textnode", "value": "Q" }, { "id": 693, "type": "textnode", "value": "2" }] }, { "id": 694, "type": "component", "name": "hr", "children": [] }, { "id": 695, "type": "component", "name": "h3", "children": [{ "id": 696, "type": "textnode", "value": "Problem" }] }, { "id": 697, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p16.64.png" }, "title": { "type": "value", "value": "Problem 16.64 - Matter and Interactions" } }, "children": [] }, { "id": 698, "type": "component", "name": "br", "children": [] }, { "id": 699, "type": "component", "name": "h4", "children": [{ "id": 700, "type": "textnode", "value": "Questions" }] }, { "id": 701, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 702, "type": "component", "name": "p", "children": [{ "id": 703, "type": "textnode", "value": "a) The electric field in the space between the wire and the outer\n            tube is due only to the wire (the contribution due to the charges on the outer\n            tube adds up to zero). When the electric field at any location in air reaches\n            3e6 volts/meter, the air ionizes and becomes a conductor. For the tube shown,\n            the length L = 87 cm, the inner radius r = 0.6 mm, and the outer radius R = 3.0 cm.\n            How much charge would there need to be on the inner wire in order to ionize the\n            air near the wire (where the field is largest)?" }] }, { "id": 704, "type": "component", "name": "p", "children": [{ "id": 705, "type": "textnode", "value": "b) When there is enough charge on the wire to ionize the air, you see a glow\n            in the air very near the inner wire. When this happens, what is the absolute value of the\n            potential difference along a path from the inner wire to the outer tube? (Note that the\n            electric field in this region is not uniform.)" }] }, { "id": 706, "type": "component", "name": "p", "children": [{ "id": 707, "type": "textnode", "value": "The Geiger tube was one of the first electronic particle detectors. The voltage\n            is set just below the threshold for making the air glow near the wire (part b). A\n            charged particle that passes near the center wire can trigger ionization of the air,\n            leading to a large current that can be easily measured." }] }] }, { "id": 708, "type": "component", "name": "hr", "children": [] }, { "id": 709, "type": "component", "name": "h3", "children": [{ "id": 710, "type": "textnode", "value": "Computation" }] }, { "id": 711, "type": "component", "name": "p", "children": [{ "id": 712, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n           above. Need help with python? See Physics Fundamentals (" }, { "id": 713, "type": "component", "name": "em", "children": [{ "id": 714, "type": "textnode", "value": "NEED LINK" }] }, { "id": 715, "type": "textnode", "value": ") for\n           ideas on how to solve this problem with python. Reveal the answer by\n           clicking the button below to see if you got the right answer!" }] }, { "id": 716, "type": "component", "name": "p", "children": [{ "id": 717, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 718, "type": "component", "name": "br", "children": [] }, { "id": 719, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/9a75e4c92a?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 720, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 721, "type": "component", "name": "h3", "children": [{ "id": 722, "type": "textnode", "value": "About this Problem" }] }, { "id": 723, "type": "component", "name": "hr", "children": [] }, { "id": 724, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 725, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"\"" } }, "children": [{ "id": 726, "type": "textnode", "value": "Skills Involved" }] }, { "id": 727, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"Objective\"" } }, "children": [{ "id": 728, "type": "textnode", "value": "Objective" }] }, { "id": 729, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"GivenInfo\"" } }, "children": [{ "id": 730, "type": "textnode", "value": "Given Information" }] }, { "id": 731, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"KeyEq\"" } }, "children": [{ "id": 732, "type": "textnode", "value": "Key Equations" }] }, { "id": 733, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"Ref\"" } }, "children": [{ "id": 734, "type": "textnode", "value": "References" }] }] }, { "id": 735, "type": "component", "name": "br", "children": [] }, { "id": 736, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 737, "type": "component", "name": "br", "children": [] }, { "id": 738, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1664" } }, "children": [{ "id": 739, "type": "component", "name": "Default", "children": [{ "id": 740, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 741, "type": "component", "name": "ul", "children": [{ "id": 742, "type": "component", "name": "li", "children": [{ "id": 743, "type": "textnode", "value": "Force" }] }, { "id": 744, "type": "component", "name": "li", "children": [{ "id": 745, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 746, "type": "component", "name": "li", "children": [{ "id": 747, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 748, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 749, "type": "textnode", "value": "Find the charge needed on the inner wire and the potential difference along\n           a path from the inner wire to the outer tube." }] }, { "id": 750, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 751, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 752, "type": "component", "name": "ul", "children": [{ "id": 753, "type": "component", "name": "li", "children": [{ "id": 754, "type": "textnode", "value": " Electric field when the air ionizes." }] }, { "id": 755, "type": "component", "name": "li", "children": [{ "id": 756, "type": "textnode", "value": " Length of tube." }] }, { "id": 757, "type": "component", "name": "li", "children": [{ "id": 758, "type": "textnode", "value": " Inner radius." }] }, { "id": 759, "type": "component", "name": "li", "children": [{ "id": 760, "type": "textnode", "value": " Outer radius." }] }] }] }] }, { "id": 761, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 762, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 763, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 764, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 765, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 766, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 767, "type": "component", "name": "ul", "children": [{ "id": 768, "type": "component", "name": "li", "children": [{ "id": 769, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 770, "type": "component", "name": "li", "children": [{ "id": 771, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 772, "type": "component", "name": "li", "children": [{ "id": 773, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 774, "type": "component", "name": "hr", "children": [] }, { "id": 775, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 776, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 777, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 778, "type": "textnode", "value": "Physics Department" }] }, { "id": 779, "type": "component", "name": "br", "children": [] }, { "id": 780, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 781, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 782, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.76" } }, "children": [{ "id": 783, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 784, "type": "component", "name": "h2", "children": [{ "id": 785, "type": "textnode", "value": "Q" }, { "id": 786, "type": "textnode", "value": "9" }] }, { "id": 787, "type": "component", "name": "hr", "children": [] }, { "id": 788, "type": "component", "name": "h3", "children": [{ "id": 789, "type": "textnode", "value": "Problem" }] }, { "id": 790, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 791, "type": "textnode", "value": "\n            The deflection plates in an oscilloscope are 10 cm by 2 cm with a gap distance\n            of 1 mm. A 100 volt potential difference is suddenly applied to the initially\n            uncharged plates through a 1000 ohm resistor in series with the deflection\n            plates. How long does it take for the potential difference between the deflection\n            plates to reach 75 volts?\n          " }] }, { "id": 792, "type": "component", "name": "hr", "children": [] }, { "id": 793, "type": "component", "name": "h3", "children": [{ "id": 794, "type": "textnode", "value": "Computation" }] }, { "id": 795, "type": "component", "name": "p", "children": [{ "id": 796, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed\n         above. Need help with python? See Physics Fundamentals (" }, { "id": 797, "type": "component", "name": "em", "children": [{ "id": 798, "type": "textnode", "value": "NEED LINK" }] }, { "id": 799, "type": "textnode", "value": ") for\n         ideas on how to solve this problem with python. Reveal the answer by\n         clicking the button below to see if you got the right answer!" }] }, { "id": 800, "type": "component", "name": "p", "children": [{ "id": 801, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n         Try calculating the answer with the SciPy constants and the constants listed in\n         Matter and Interactions to see the differences in the answer." }] }, { "id": 802, "type": "component", "name": "br", "children": [] }, { "id": 803, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/96ae0837bc?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 804, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 805, "type": "component", "name": "h3", "children": [{ "id": 806, "type": "textnode", "value": "About this Problem" }] }, { "id": 807, "type": "component", "name": "hr", "children": [] }, { "id": 808, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 809, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"\"" } }, "children": [{ "id": 810, "type": "textnode", "value": "Skills Involved" }] }, { "id": 811, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"Objective\"" } }, "children": [{ "id": 812, "type": "textnode", "value": "Objective" }] }, { "id": 813, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"GivenInfo\"" } }, "children": [{ "id": 814, "type": "textnode", "value": "Given Information" }] }, { "id": 815, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"KeyEq\"" } }, "children": [{ "id": 816, "type": "textnode", "value": "Key Equations" }] }, { "id": 817, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"Ref\"" } }, "children": [{ "id": 818, "type": "textnode", "value": "References" }] }] }, { "id": 819, "type": "component", "name": "br", "children": [] }, { "id": 820, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 821, "type": "component", "name": "br", "children": [] }, { "id": 822, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1976" } }, "children": [{ "id": 823, "type": "component", "name": "Default", "children": [{ "id": 824, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 825, "type": "component", "name": "ul", "children": [{ "id": 826, "type": "component", "name": "li", "children": [{ "id": 827, "type": "textnode", "value": "Force" }] }, { "id": 828, "type": "component", "name": "li", "children": [{ "id": 829, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 830, "type": "component", "name": "li", "children": [{ "id": 831, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 832, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 833, "type": "textnode", "value": "Find the time in seconds it takes for the potential difference between the\n           deflection plates to reach a smaller voltage." }] }, { "id": 834, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 835, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 836, "type": "component", "name": "ul", "children": [{ "id": 837, "type": "component", "name": "li", "children": [{ "id": 838, "type": "textnode", "value": " Length and width of the deflection plates. " }] }, { "id": 839, "type": "component", "name": "li", "children": [{ "id": 840, "type": "textnode", "value": " Gap distance between the deflection plates." }] }, { "id": 841, "type": "component", "name": "li", "children": [{ "id": 842, "type": "textnode", "value": " Initial potential difference." }] }, { "id": 843, "type": "component", "name": "li", "children": [{ "id": 844, "type": "textnode", "value": " Final potential difference." }] }, { "id": 845, "type": "component", "name": "li", "children": [{ "id": 846, "type": "textnode", "value": " Resistance." }] }] }] }] }, { "id": 847, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 848, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 849, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 850, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 851, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 852, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 853, "type": "component", "name": "ul", "children": [{ "id": 854, "type": "component", "name": "li", "children": [{ "id": 855, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 856, "type": "component", "name": "li", "children": [{ "id": 857, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 858, "type": "component", "name": "li", "children": [{ "id": 859, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 860, "type": "component", "name": "hr", "children": [] }, { "id": 861, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 862, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 863, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 864, "type": "textnode", "value": "Physics Department" }] }, { "id": 865, "type": "component", "name": "br", "children": [] }, { "id": 866, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 867, "type": "textnode", "value": "Feedback Form" }] }] }] }] }] }] };
+module.exports = { "id": 0, "type": "component", "name": "div", "children": [{ "id": 2, "type": "var", "properties": { "name": { "type": "value", "value": "currentValue" }, "value": { "type": "value", "value": "" } } }, { "id": 3, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1934" }, "value": { "type": "value", "value": "" } } }, { "id": 4, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1936" }, "value": { "type": "value", "value": "" } } }, { "id": 5, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1938" }, "value": { "type": "value", "value": "" } } }, { "id": 6, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1940" }, "value": { "type": "value", "value": "" } } }, { "id": 7, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1944" }, "value": { "type": "value", "value": "" } } }, { "id": 8, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1956" }, "value": { "type": "value", "value": "" } } }, { "id": 9, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1650" }, "value": { "type": "value", "value": "" } } }, { "id": 10, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1664" }, "value": { "type": "value", "value": "" } } }, { "id": 11, "type": "var", "properties": { "name": { "type": "value", "value": "extraInfo1976" }, "value": { "type": "value", "value": "" } } }, { "id": 12, "type": "component", "name": "TextContainer", "children": [{ "id": 13, "type": "meta", "properties": { "title": { "type": "value", "value": "Wiley_HW_5" }, "description": { "type": "value", "value": "Short description of your project" } } }] }, { "id": 14, "type": "component", "name": "Header", "properties": { "title": { "type": "value", "value": "WileyPlus Homework 5" }, "subtitle": { "type": "value", "value": "Solving problems with Python" }, "date": { "type": "expression", "value": "(new Date()).toDateString()" }, "background": { "type": "value", "value": "#0B465F" }, "color": { "type": "value", "value": "#FFFFFF" } }, "children": [] }, { "id": 15, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLook" } }, "children": [{ "id": 16, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"\"" } }, "children": [{ "id": 17, "type": "textnode", "value": "Content" }] }, { "id": 18, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.50\"" } }, "children": [{ "id": 19, "type": "textnode", "value": "Q1" }] }, { "id": 20, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"16.64\"" } }, "children": [{ "id": 21, "type": "textnode", "value": "Q2" }] }, { "id": 22, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.34\"" } }, "children": [{ "id": 23, "type": "textnode", "value": "Q3" }] }, { "id": 24, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.36\"" } }, "children": [{ "id": 25, "type": "textnode", "value": "Q4" }] }, { "id": 26, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.38\"" } }, "children": [{ "id": 27, "type": "textnode", "value": "Q5" }] }, { "id": 28, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.40\"" } }, "children": [{ "id": 29, "type": "textnode", "value": "Q6" }] }, { "id": 30, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.44\"" } }, "children": [{ "id": 31, "type": "textnode", "value": "Q7" }] }, { "id": 32, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.56\"" } }, "children": [{ "id": 33, "type": "textnode", "value": "Q8" }] }, { "id": 34, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "currentValue = \"19.76\"" } }, "children": [{ "id": 35, "type": "textnode", "value": "Q9" }] }] }, { "id": 36, "type": "component", "name": "TextContainer", "children": [{ "id": 37, "type": "component", "name": "br", "children": [] }, { "id": 38, "type": "component", "name": "br", "children": [] }] }, { "id": 39, "type": "component", "name": "hr", "children": [] }, { "id": 40, "type": "component", "name": "TextContainer", "children": [{ "id": 41, "type": "component", "name": "br", "children": [] }] }, { "id": 42, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "problemBody" }, "padding-left": { "type": "value", "value": "100%" } }, "children": [{ "id": 43, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "currentValue" } }, "children": [{ "id": 44, "type": "component", "name": "Default", "children": [{ "id": 45, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 46, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 47, "type": "component", "name": "h1", "children": [{ "id": 48, "type": "textnode", "value": "Homework " }, { "id": 49, "type": "textnode", "value": "5 " }, { "id": 50, "type": "textnode", "value": "Content" }] }] }, { "id": 51, "type": "component", "name": "h2", "children": [{ "id": 52, "type": "textnode", "value": "Chapter PowerPoint" }] }, { "id": 53, "type": "component", "name": "p", "children": [{ "id": 54, "type": "textnode", "value": "The following PowerPoint highlights the key ideas from Chapter 19: Circuit Elements\n      in Matter and Interactions. See HW 3 for a review of Chapter 16.\n      For more details or examples, navigate to the eBook through\n      your WileyPLUS account (Read, Study, & Practice tab OR Downloadable eTextbook tab)." }] }, { "id": 55, "type": "component", "name": "p", "children": [{ "id": 56, "type": "textnode", "value": "Click through the slides below using the left and right arrow buttons or by clicking\n      on the slides. To download a copy, click the Menu button on the bottom right." }] }, { "id": 57, "type": "component", "name": "p", "children": [{ "id": 58, "type": "textnode", "value": "Want extra credit? Fill out the " }, { "id": 59, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 60, "type": "textnode", "value": "Feedback Form" }] }, { "id": 61, "type": "textnode", "value": "." }] }, { "id": 62, "type": "component", "name": "br", "children": [] }, { "id": 63, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://onedrive.live.com/embed?cid=FA0DBF36E679630E&resid=FA0DBF36E679630E%218480&authkey=AOQwyICHJI1TCEw&em=2&wdAr=1.7777777777777777" }, "width": { "type": "value", "value": "1186px" }, "height": { "type": "value", "value": "691px" }, "frameBorder": { "type": "value", "value": "0" } }, "children": [] }, { "id": 64, "type": "component", "name": "hr", "children": [] }, { "id": 65, "type": "component", "name": "h2", "children": [{ "id": 66, "type": "textnode", "value": "Helpful Videos" }] }, { "id": 67, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "mainNote" } }, "children": [] }, { "id": 68, "type": "component", "name": "hr", "children": [] }, { "id": 69, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 70, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 71, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 72, "type": "textnode", "value": "Physics Department" }] }, { "id": 73, "type": "component", "name": "br", "children": [] }, { "id": 74, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 75, "type": "textnode", "value": "Feedback Form" }] }] }] }] }, { "id": 76, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.34" } }, "children": [{ "id": 77, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead" } }, "children": [{ "id": 78, "type": "component", "name": "h2", "children": [{ "id": 79, "type": "textnode", "value": "Q" }, { "id": 80, "type": "textnode", "value": "3" }] }, { "id": 81, "type": "component", "name": "hr", "children": [] }, { "id": 82, "type": "component", "name": "h3", "children": [{ "id": 83, "type": "textnode", "value": "Problem" }] }, { "id": 84, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.34a.png" }, "title": { "type": "value", "value": "Problem 19.34 - Matter and Interactions" } }, "children": [] }, { "id": 85, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.34b.png" }, "title": { "type": "value", "value": "Problem 19.34 - Matter and Interactions" } }, "children": [] }, { "id": 86, "type": "component", "name": "br", "children": [] }, { "id": 87, "type": "component", "name": "h4", "children": [{ "id": 88, "type": "textnode", "value": "Questions" }] }, { "id": 89, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 90, "type": "component", "name": "p", "children": [{ "id": 91, "type": "textnode", "value": "a) Which of the diagrams best indicates the electron current at three locations in this circuit?" }] }, { "id": 92, "type": "component", "name": "p", "children": [{ "id": 93, "type": "textnode", "value": "b) Which of the diagrams best indicates the electric field inside the wire at three locations in this circuit?" }] }] }, { "id": 94, "type": "component", "name": "hr", "children": [] }, { "id": 95, "type": "component", "name": "h3", "children": [{ "id": 96, "type": "textnode", "value": "Computation" }] }, { "id": 97, "type": "component", "name": "p", "children": [{ "id": 98, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 99, "type": "component", "name": "ul", "children": [{ "id": 100, "type": "component", "name": "li", "children": [{ "id": 101, "type": "textnode", "value": "View the Instructions tab and type the code as listed, replacing values as necessary." }] }, { "id": 102, "type": "component", "name": "li", "children": [{ "id": 103, "type": "textnode", "value": "Click the Run button to output the answers!" }] }, { "id": 104, "type": "component", "name": "li", "children": [{ "id": 105, "type": "textnode", "value": "If using numbers from this page, make sure to switch them with the numbers\n           given in WileyPLUS before submitting the answers." }] }] }, { "id": 106, "type": "component", "name": "br", "children": [] }, { "id": 107, "type": "component", "name": "p", "children": [{ "id": 108, "type": "textnode", "value": "Input trinket for graphing answers." }] }] }, { "id": 109, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 110, "type": "component", "name": "h3", "children": [{ "id": 111, "type": "textnode", "value": "About this Problem" }] }, { "id": 112, "type": "component", "name": "hr", "children": [] }, { "id": 113, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 114, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"\"" } }, "children": [{ "id": 115, "type": "textnode", "value": "Skills Involved" }] }, { "id": 116, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"Objective\"" } }, "children": [{ "id": 117, "type": "textnode", "value": "Objective" }] }, { "id": 118, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"GivenInfo\"" } }, "children": [{ "id": 119, "type": "textnode", "value": "Given Information" }] }, { "id": 120, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"KeyEq\"" } }, "children": [{ "id": 121, "type": "textnode", "value": "Key Equations" }] }, { "id": 122, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1934 = \"Ref\"" } }, "children": [{ "id": 123, "type": "textnode", "value": "References" }] }] }, { "id": 124, "type": "component", "name": "br", "children": [] }, { "id": 125, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 126, "type": "component", "name": "br", "children": [] }, { "id": 127, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1934" } }, "children": [{ "id": 128, "type": "component", "name": "Default", "children": [{ "id": 129, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 130, "type": "component", "name": "ul", "children": [{ "id": 131, "type": "component", "name": "li", "children": [{ "id": 132, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 133, "type": "component", "name": "li", "children": [{ "id": 134, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 135, "type": "component", "name": "li", "children": [{ "id": 136, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 137, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 138, "type": "textnode", "value": "Identify the graphs for electric field and drift speed." }] }, { "id": 139, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 140, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 141, "type": "component", "name": "ul", "children": [{ "id": 142, "type": "component", "name": "li", "children": [{ "id": 143, "type": "textnode", "value": " Circuit with a resistor." }] }] }] }] }, { "id": 144, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 145, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 146, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 147, "type": "textnode", "value": "\\vec{E} = \\frac{V}{m}" }] }] }] }, { "id": 148, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 149, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 150, "type": "component", "name": "ul", "children": [{ "id": 151, "type": "component", "name": "li", "children": [{ "id": 152, "type": "textnode", "value": " Figure 13.12 (Matter and Interactions, p. 517)" }] }, { "id": 153, "type": "component", "name": "li", "children": [{ "id": 154, "type": "textnode", "value": " Figure 13.19 (Matter and Interactions, p. 520)" }] }, { "id": 155, "type": "component", "name": "li", "children": [{ "id": 156, "type": "textnode", "value": " Figure 13.30 (Matter and Interactions, p. 517)" }] }, { "id": 157, "type": "component", "name": "li", "children": [{ "id": 158, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }, { "id": 159, "type": "component", "name": "li", "children": [{ "id": 160, "type": "textnode", "value": " " }, { "id": 161, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "./../../../../Physics_2_Resources/Vectors_Guide" } }, "children": [{ "id": 162, "type": "textnode", "value": "Vector’s Guide" }] }] }] }] }] }] }] }, { "id": 163, "type": "component", "name": "hr", "children": [] }, { "id": 164, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 165, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 166, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 167, "type": "textnode", "value": "Physics Department" }] }, { "id": 168, "type": "component", "name": "br", "children": [] }, { "id": 169, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 170, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 171, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.36" } }, "children": [{ "id": 172, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 173, "type": "component", "name": "h2", "children": [{ "id": 174, "type": "textnode", "value": "Q" }, { "id": 175, "type": "textnode", "value": "4" }] }, { "id": 176, "type": "component", "name": "hr", "children": [] }, { "id": 177, "type": "component", "name": "h3", "children": [{ "id": 178, "type": "textnode", "value": "Problem" }] }, { "id": 179, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.36.png" }, "title": { "type": "value", "value": "Problem 19.36 - Matter and Interactions" } }, "children": [] }, { "id": 180, "type": "component", "name": "br", "children": [] }, { "id": 181, "type": "component", "name": "hr", "children": [] }, { "id": 182, "type": "component", "name": "h3", "children": [{ "id": 183, "type": "textnode", "value": "Computation" }] }, { "id": 184, "type": "component", "name": "p", "children": [{ "id": 185, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 186, "type": "component", "name": "br", "children": [] }, { "id": 187, "type": "component", "name": "p", "children": [{ "id": 188, "type": "textnode", "value": "Insert something." }] }] }, { "id": 189, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 190, "type": "component", "name": "h3", "children": [{ "id": 191, "type": "textnode", "value": "About this Problem" }] }, { "id": 192, "type": "component", "name": "hr", "children": [] }, { "id": 193, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 194, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"\"" } }, "children": [{ "id": 195, "type": "textnode", "value": "Skills Involved" }] }, { "id": 196, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"Objective\"" } }, "children": [{ "id": 197, "type": "textnode", "value": "Objective" }] }, { "id": 198, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"GivenInfo\"" } }, "children": [{ "id": 199, "type": "textnode", "value": "Given Information" }] }, { "id": 200, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"KeyEq\"" } }, "children": [{ "id": 201, "type": "textnode", "value": "Key Equations" }] }, { "id": 202, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1936 = \"Ref\"" } }, "children": [{ "id": 203, "type": "textnode", "value": "References" }] }] }, { "id": 204, "type": "component", "name": "br", "children": [] }, { "id": 205, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 206, "type": "component", "name": "br", "children": [] }, { "id": 207, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1936" } }, "children": [{ "id": 208, "type": "component", "name": "Default", "children": [{ "id": 209, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 210, "type": "component", "name": "ul", "children": [{ "id": 211, "type": "component", "name": "li", "children": [{ "id": 212, "type": "textnode", "value": "Vectors: Direction" }] }, { "id": 213, "type": "component", "name": "li", "children": [{ "id": 214, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 215, "type": "component", "name": "li", "children": [{ "id": 216, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 217, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 218, "type": "textnode", "value": "Calculate outward-going conventional current." }] }, { "id": 219, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 220, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 221, "type": "component", "name": "ul", "children": [{ "id": 222, "type": "component", "name": "li", "children": [{ "id": 223, "type": "textnode", "value": " Max electric field without a spark." }] }, { "id": 224, "type": "component", "name": "li", "children": [{ "id": 225, "type": "textnode", "value": " Capacitor gap distance." }] }] }] }] }, { "id": 226, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 227, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 228, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 229, "type": "textnode", "value": "\\vec{E} = \\frac{1}{4\\pi\\epsilon_{0}} \\frac{q}{|\\vec{r}|^{2}} \\hat{r}" }] }] }] }, { "id": 230, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 231, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 232, "type": "component", "name": "ul", "children": [{ "id": 233, "type": "component", "name": "li", "children": [{ "id": 234, "type": "textnode", "value": " Electric Field of a Point Charge (Matter and Interactions, p. 519)" }] }, { "id": 235, "type": "component", "name": "li", "children": [{ "id": 236, "type": "textnode", "value": " Magnitude of Electric Field (Matter and Interactions, p. 520)" }] }, { "id": 237, "type": "component", "name": "li", "children": [{ "id": 238, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }] }] }] }] }] }, { "id": 239, "type": "component", "name": "hr", "children": [] }, { "id": 240, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 241, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 242, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 243, "type": "textnode", "value": "Physics Department" }] }, { "id": 244, "type": "component", "name": "br", "children": [] }, { "id": 245, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 246, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 247, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.38" } }, "children": [{ "id": 248, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 249, "type": "component", "name": "h2", "children": [{ "id": 250, "type": "textnode", "value": "Q" }, { "id": 251, "type": "textnode", "value": "5" }] }, { "id": 252, "type": "component", "name": "hr", "children": [] }, { "id": 253, "type": "component", "name": "h3", "children": [{ "id": 254, "type": "textnode", "value": "Problem" }] }, { "id": 255, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 256, "type": "textnode", "value": "\n            A certain capacitor has rectangular plates 43 cm by 23 cm, and the gap width is 0.31 mm.\n            What is its capacitance? We see that typical capacitances are very small when measured\n            in farads. A one-farad capacitor is quite extraordinary! Apparently it has a very large\n            area A (all wrapped up in a small package), and a very small gap s.\n          " }] }, { "id": 257, "type": "component", "name": "br", "children": [] }, { "id": 258, "type": "component", "name": "hr", "children": [] }, { "id": 259, "type": "component", "name": "h3", "children": [{ "id": 260, "type": "textnode", "value": "Computation" }] }, { "id": 261, "type": "component", "name": "p", "children": [{ "id": 262, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 263, "type": "component", "name": "p", "children": [{ "id": 264, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 265, "type": "component", "name": "br", "children": [] }, { "id": 266, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/19267e71e5?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 267, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 268, "type": "component", "name": "h3", "children": [{ "id": 269, "type": "textnode", "value": "About this Problem" }] }, { "id": 270, "type": "component", "name": "hr", "children": [] }, { "id": 271, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 272, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"\"" } }, "children": [{ "id": 273, "type": "textnode", "value": "Skills Involved" }] }, { "id": 274, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"Objective\"" } }, "children": [{ "id": 275, "type": "textnode", "value": "Objective" }] }, { "id": 276, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"GivenInfo\"" } }, "children": [{ "id": 277, "type": "textnode", "value": "Given Information" }] }, { "id": 278, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"KeyEq\"" } }, "children": [{ "id": 279, "type": "textnode", "value": "Key Equations" }] }, { "id": 280, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1938 = \"Ref\"" } }, "children": [{ "id": 281, "type": "textnode", "value": "References" }] }] }, { "id": 282, "type": "component", "name": "br", "children": [] }, { "id": 283, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 284, "type": "component", "name": "br", "children": [] }, { "id": 285, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1938" } }, "children": [{ "id": 286, "type": "component", "name": "Default", "children": [{ "id": 287, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 288, "type": "component", "name": "ul", "children": [{ "id": 289, "type": "component", "name": "li", "children": [{ "id": 290, "type": "textnode", "value": "Force" }] }, { "id": 291, "type": "component", "name": "li", "children": [{ "id": 292, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 293, "type": "component", "name": "li", "children": [{ "id": 294, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 295, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 296, "type": "textnode", "value": "Calculate how many hours the flashlight will be lit." }] }, { "id": 297, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 298, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 299, "type": "component", "name": "ul", "children": [{ "id": 300, "type": "component", "name": "li", "children": [{ "id": 301, "type": "textnode", "value": " Length and width of capacitor plates. " }] }, { "id": 302, "type": "component", "name": "li", "children": [{ "id": 303, "type": "textnode", "value": " Gap width." }] }] }] }] }, { "id": 304, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 305, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 306, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 307, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 308, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 309, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 310, "type": "component", "name": "ul", "children": [{ "id": 311, "type": "component", "name": "li", "children": [{ "id": 312, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 313, "type": "component", "name": "li", "children": [{ "id": 314, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 315, "type": "component", "name": "li", "children": [{ "id": 316, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 317, "type": "component", "name": "hr", "children": [] }, { "id": 318, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 319, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 320, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 321, "type": "textnode", "value": "Physics Department" }] }, { "id": 322, "type": "component", "name": "br", "children": [] }, { "id": 323, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 324, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 325, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.40" } }, "children": [{ "id": 326, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 327, "type": "component", "name": "h2", "children": [{ "id": 328, "type": "textnode", "value": "Q" }, { "id": 329, "type": "textnode", "value": "6" }] }, { "id": 330, "type": "component", "name": "hr", "children": [] }, { "id": 331, "type": "component", "name": "h3", "children": [{ "id": 332, "type": "textnode", "value": "Problem" }] }, { "id": 333, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 334, "type": "textnode", "value": "\n            Suppose you charge a 1.0 F capacitor with two 1.5 volt batteries.\n          " }] }, { "id": 335, "type": "component", "name": "br", "children": [] }, { "id": 336, "type": "component", "name": "h4", "children": [{ "id": 337, "type": "textnode", "value": "Questions" }] }, { "id": 338, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 339, "type": "component", "name": "p", "children": [{ "id": 340, "type": "textnode", "value": "a) How much charge is on each plate?" }] }, { "id": 341, "type": "component", "name": "p", "children": [{ "id": 342, "type": "textnode", "value": "b) How many excess electrons were on the negative plate?" }] }] }, { "id": 343, "type": "component", "name": "hr", "children": [] }, { "id": 344, "type": "component", "name": "h3", "children": [{ "id": 345, "type": "textnode", "value": "Computation" }] }, { "id": 346, "type": "component", "name": "p", "children": [{ "id": 347, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 348, "type": "component", "name": "p", "children": [{ "id": 349, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n         Try calculating the answer with the SciPy constants and the constants listed in\n         Matter and Interactions to see the differences in the answer." }] }, { "id": 350, "type": "component", "name": "br", "children": [] }, { "id": 351, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/2bab40dadc?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 352, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 353, "type": "component", "name": "h3", "children": [{ "id": 354, "type": "textnode", "value": "About this Problem" }] }, { "id": 355, "type": "component", "name": "hr", "children": [] }, { "id": 356, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 357, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"\"" } }, "children": [{ "id": 358, "type": "textnode", "value": "Skills Involved" }] }, { "id": 359, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"Objective\"" } }, "children": [{ "id": 360, "type": "textnode", "value": "Objective" }] }, { "id": 361, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"GivenInfo\"" } }, "children": [{ "id": 362, "type": "textnode", "value": "Given Information" }] }, { "id": 363, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"KeyEq\"" } }, "children": [{ "id": 364, "type": "textnode", "value": "Key Equations" }] }, { "id": 365, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1940 = \"Ref\"" } }, "children": [{ "id": 366, "type": "textnode", "value": "References" }] }] }, { "id": 367, "type": "component", "name": "br", "children": [] }, { "id": 368, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 369, "type": "component", "name": "br", "children": [] }, { "id": 370, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1940" } }, "children": [{ "id": 371, "type": "component", "name": "Default", "children": [{ "id": 372, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 373, "type": "component", "name": "ul", "children": [{ "id": 374, "type": "component", "name": "li", "children": [{ "id": 375, "type": "textnode", "value": "Force" }] }, { "id": 376, "type": "component", "name": "li", "children": [{ "id": 377, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 378, "type": "component", "name": "li", "children": [{ "id": 379, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 380, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 381, "type": "textnode", "value": "Select the correct circuit statements." }] }, { "id": 382, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 383, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 384, "type": "component", "name": "ul", "children": [{ "id": 385, "type": "component", "name": "li", "children": [{ "id": 386, "type": "textnode", "value": " Capacitance. " }] }, { "id": 387, "type": "component", "name": "li", "children": [{ "id": 388, "type": "textnode", "value": " Voltage of batteries." }] }] }] }] }, { "id": 389, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 390, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 391, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 392, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 393, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 394, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 395, "type": "component", "name": "ul", "children": [{ "id": 396, "type": "component", "name": "li", "children": [{ "id": 397, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 398, "type": "component", "name": "li", "children": [{ "id": 399, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 400, "type": "component", "name": "li", "children": [{ "id": 401, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 402, "type": "component", "name": "hr", "children": [] }, { "id": 403, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 404, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 405, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 406, "type": "textnode", "value": "Physics Department" }] }, { "id": 407, "type": "component", "name": "br", "children": [] }, { "id": 408, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 409, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 410, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.44" } }, "children": [{ "id": 411, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 412, "type": "component", "name": "h2", "children": [{ "id": 413, "type": "textnode", "value": "Q" }, { "id": 414, "type": "textnode", "value": "7" }] }, { "id": 415, "type": "component", "name": "hr", "children": [] }, { "id": 416, "type": "component", "name": "h3", "children": [{ "id": 417, "type": "textnode", "value": "Problem" }] }, { "id": 418, "type": "component", "name": "h3", "children": [{ "id": 419, "type": "textnode", "value": "Problem" }] }, { "id": 420, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.44.png" }, "title": { "type": "value", "value": "Problem 19.44 - Matter and Interactions" } }, "children": [] }, { "id": 421, "type": "component", "name": "br", "children": [] }, { "id": 422, "type": "component", "name": "hr", "children": [] }] }, { "id": 423, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 424, "type": "component", "name": "h3", "children": [{ "id": 425, "type": "textnode", "value": "About this Problem" }] }, { "id": 426, "type": "component", "name": "hr", "children": [] }, { "id": 427, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 428, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"\"" } }, "children": [{ "id": 429, "type": "textnode", "value": "Skills Involved" }] }, { "id": 430, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"Objective\"" } }, "children": [{ "id": 431, "type": "textnode", "value": "Objective" }] }, { "id": 432, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"GivenInfo\"" } }, "children": [{ "id": 433, "type": "textnode", "value": "Given Information" }] }, { "id": 434, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"KeyEq\"" } }, "children": [{ "id": 435, "type": "textnode", "value": "Key Equations" }] }, { "id": 436, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1944 = \"Ref\"" } }, "children": [{ "id": 437, "type": "textnode", "value": "References" }] }] }, { "id": 438, "type": "component", "name": "br", "children": [] }, { "id": 439, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 440, "type": "component", "name": "br", "children": [] }, { "id": 441, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1944" } }, "children": [{ "id": 442, "type": "component", "name": "Default", "children": [{ "id": 443, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 444, "type": "component", "name": "ul", "children": [{ "id": 445, "type": "component", "name": "li", "children": [{ "id": 446, "type": "textnode", "value": "Force" }] }, { "id": 447, "type": "component", "name": "li", "children": [{ "id": 448, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 449, "type": "component", "name": "li", "children": [{ "id": 450, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 451, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 452, "type": "textnode", "value": "Construct an equation to find the capacitance of a spherical capacitor." }] }, { "id": 453, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 454, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 455, "type": "component", "name": "ul", "children": [{ "id": 456, "type": "component", "name": "li", "children": [{ "id": 457, "type": "textnode", "value": " Radius of capacitor disks. " }] }, { "id": 458, "type": "component", "name": "li", "children": [{ "id": 459, "type": "textnode", "value": " Distance between disks." }] }, { "id": 460, "type": "component", "name": "li", "children": [{ "id": 461, "type": "textnode", "value": " Magnitude of the charge on each disk." }] }, { "id": 462, "type": "component", "name": "li", "children": [{ "id": 463, "type": "textnode", "value": " Vertical and horizontal distances between points." }] }] }] }] }, { "id": 464, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 465, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 466, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 467, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 468, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 469, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 470, "type": "component", "name": "ul", "children": [{ "id": 471, "type": "component", "name": "li", "children": [{ "id": 472, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 473, "type": "component", "name": "li", "children": [{ "id": 474, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 475, "type": "component", "name": "li", "children": [{ "id": 476, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 477, "type": "component", "name": "hr", "children": [] }, { "id": 478, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 479, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 480, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 481, "type": "textnode", "value": "Physics Department" }] }, { "id": 482, "type": "component", "name": "br", "children": [] }, { "id": 483, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 484, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 485, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.56" } }, "children": [{ "id": 486, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 487, "type": "component", "name": "h2", "children": [{ "id": 488, "type": "textnode", "value": "Q" }, { "id": 489, "type": "textnode", "value": "8" }] }, { "id": 490, "type": "component", "name": "hr", "children": [] }, { "id": 491, "type": "component", "name": "h3", "children": [{ "id": 492, "type": "textnode", "value": "Problem" }] }, { "id": 493, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p19.56.png" }, "title": { "type": "value", "value": "Problem 19.56 - Matter and Interactions" } }, "children": [] }, { "id": 494, "type": "component", "name": "br", "children": [] }, { "id": 495, "type": "component", "name": "h4", "children": [{ "id": 496, "type": "textnode", "value": "Questions" }] }, { "id": 497, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 498, "type": "component", "name": "p", "children": [{ "id": 499, "type": "textnode", "value": "a) What is the equivalent resistance of " }, { "id": 500, "type": "component", "name": "equation", "children": [{ "id": 501, "type": "textnode", "value": "R_{1}" }] }, { "id": 502, "type": "textnode", "value": " and " }, { "id": 503, "type": "component", "name": "equation", "children": [{ "id": 504, "type": "textnode", "value": "R_{2}" }] }, { "id": 505, "type": "textnode", "value": "?" }] }, { "id": 506, "type": "component", "name": "p", "children": [{ "id": 507, "type": "textnode", "value": "b) What is the equivalent resistance of all three resistors?" }] }, { "id": 508, "type": "component", "name": "p", "children": [{ "id": 509, "type": "textnode", "value": "c) What is the conventional current through " }, { "id": 510, "type": "component", "name": "equation", "children": [{ "id": 511, "type": "textnode", "value": "R_{3}" }] }, { "id": 512, "type": "textnode", "value": "?" }] }] }, { "id": 513, "type": "component", "name": "hr", "children": [] }, { "id": 514, "type": "component", "name": "h3", "children": [{ "id": 515, "type": "textnode", "value": "Computation" }] }, { "id": 516, "type": "component", "name": "p", "children": [{ "id": 517, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 518, "type": "component", "name": "p", "children": [{ "id": 519, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 520, "type": "component", "name": "br", "children": [] }, { "id": 521, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/869ffd0c79?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 522, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 523, "type": "component", "name": "h3", "children": [{ "id": 524, "type": "textnode", "value": "About this Problem" }] }, { "id": 525, "type": "component", "name": "hr", "children": [] }, { "id": 526, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 527, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"\"" } }, "children": [{ "id": 528, "type": "textnode", "value": "Skills Involved" }] }, { "id": 529, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"Objective\"" } }, "children": [{ "id": 530, "type": "textnode", "value": "Objective" }] }, { "id": 531, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"GivenInfo\"" } }, "children": [{ "id": 532, "type": "textnode", "value": "Given Information" }] }, { "id": 533, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"KeyEq\"" } }, "children": [{ "id": 534, "type": "textnode", "value": "Key Equations" }] }, { "id": 535, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1956 = \"Ref\"" } }, "children": [{ "id": 536, "type": "textnode", "value": "References" }] }] }, { "id": 537, "type": "component", "name": "br", "children": [] }, { "id": 538, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 539, "type": "component", "name": "br", "children": [] }, { "id": 540, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1956" } }, "children": [{ "id": 541, "type": "component", "name": "Default", "children": [{ "id": 542, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 543, "type": "component", "name": "ul", "children": [{ "id": 544, "type": "component", "name": "li", "children": [{ "id": 545, "type": "textnode", "value": "Force" }] }, { "id": 546, "type": "component", "name": "li", "children": [{ "id": 547, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 548, "type": "component", "name": "li", "children": [{ "id": 549, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 550, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 551, "type": "textnode", "value": "Find the resistance of the circuit and current through " }, { "id": 552, "type": "component", "name": "equation", "children": [{ "id": 553, "type": "textnode", "value": "R_{3}" }] }, { "id": 554, "type": "textnode", "value": "." }] }, { "id": 555, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 556, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 557, "type": "component", "name": "ul", "children": [{ "id": 558, "type": "component", "name": "li", "children": [{ "id": 559, "type": "textnode", "value": " EMF of the battery. " }] }, { "id": 560, "type": "component", "name": "li", "children": [{ "id": 561, "type": "textnode", "value": " Resistance of each resistor. " }] }] }] }] }, { "id": 562, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 563, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 564, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 565, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 566, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 567, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 568, "type": "component", "name": "ul", "children": [{ "id": 569, "type": "component", "name": "li", "children": [{ "id": 570, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 571, "type": "component", "name": "li", "children": [{ "id": 572, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 573, "type": "component", "name": "li", "children": [{ "id": 574, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 575, "type": "component", "name": "hr", "children": [] }, { "id": 576, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 577, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 578, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 579, "type": "textnode", "value": "Physics Department" }] }, { "id": 580, "type": "component", "name": "br", "children": [] }, { "id": 581, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 582, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 583, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.50" } }, "children": [{ "id": 584, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 585, "type": "component", "name": "h2", "children": [{ "id": 586, "type": "textnode", "value": "Q" }, { "id": 587, "type": "textnode", "value": "1" }] }, { "id": 588, "type": "component", "name": "hr", "children": [] }, { "id": 589, "type": "component", "name": "h3", "children": [{ "id": 590, "type": "textnode", "value": "Problem" }] }, { "id": 591, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p16.50.png" }, "title": { "type": "value", "value": "Problem 16.50 - Matter and Interactions" } }, "children": [] }, { "id": 592, "type": "component", "name": "hr", "children": [] }, { "id": 593, "type": "component", "name": "h3", "children": [{ "id": 594, "type": "textnode", "value": "Computation" }] }, { "id": 595, "type": "component", "name": "p", "children": [{ "id": 596, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 597, "type": "component", "name": "p", "children": [{ "id": 598, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 599, "type": "component", "name": "br", "children": [] }, { "id": 600, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitLeft" } }, "children": [{ "id": 601, "type": "component", "name": "h4", "children": [{ "id": 602, "type": "textnode", "value": "Instructions" }] }, { "id": 603, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "./static/HW5_q1.html" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameBorder": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 604, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "splitRight" } }, "children": [{ "id": 605, "type": "component", "name": "h4", "children": [{ "id": 606, "type": "textnode", "value": "Trinket" }] }, { "id": 607, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/7d11d0df30?toggleCode=true" }, "width": { "type": "value", "value": "40%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }] }, { "id": 608, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 609, "type": "component", "name": "h3", "children": [{ "id": 610, "type": "textnode", "value": "About this Problem" }] }, { "id": 611, "type": "component", "name": "hr", "children": [] }, { "id": 612, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 613, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"\"" } }, "children": [{ "id": 614, "type": "textnode", "value": "Skills Involved" }] }, { "id": 615, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"Objective\"" } }, "children": [{ "id": 616, "type": "textnode", "value": "Objective" }] }, { "id": 617, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"GivenInfo\"" } }, "children": [{ "id": 618, "type": "textnode", "value": "Given Information" }] }, { "id": 619, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"KeyEq\"" } }, "children": [{ "id": 620, "type": "textnode", "value": "Key Equations" }] }, { "id": 621, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1650 = \"Ref\"" } }, "children": [{ "id": 622, "type": "textnode", "value": "References" }] }] }, { "id": 623, "type": "component", "name": "br", "children": [] }, { "id": 624, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 625, "type": "component", "name": "br", "children": [] }, { "id": 626, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1650" } }, "children": [{ "id": 627, "type": "component", "name": "Default", "children": [{ "id": 628, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 629, "type": "component", "name": "ul", "children": [{ "id": 630, "type": "component", "name": "li", "children": [{ "id": 631, "type": "textnode", "value": "Force" }] }, { "id": 632, "type": "component", "name": "li", "children": [{ "id": 633, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 634, "type": "component", "name": "li", "children": [{ "id": 635, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 636, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 637, "type": "textnode", "value": "Find the potential difference " }, { "id": 638, "type": "component", "name": "equation", "children": [{ "id": 639, "type": "textnode", "value": "V_{2}-V_{1}" }] }, { "id": 640, "type": "textnode", "value": "." }] }, { "id": 641, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 642, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 643, "type": "component", "name": "ul", "children": [{ "id": 644, "type": "component", "name": "li", "children": [{ "id": 645, "type": "textnode", "value": " Radius of each disk." }] }, { "id": 646, "type": "component", "name": "li", "children": [{ "id": 647, "type": "textnode", "value": " Gap between the disks." }] }, { "id": 648, "type": "component", "name": "li", "children": [{ "id": 649, "type": "textnode", "value": " Charge of the disks." }] }] }] }] }, { "id": 650, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 651, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 652, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 653, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 654, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 655, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 656, "type": "component", "name": "ul", "children": [{ "id": 657, "type": "component", "name": "li", "children": [{ "id": 658, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 659, "type": "component", "name": "li", "children": [{ "id": 660, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 661, "type": "component", "name": "li", "children": [{ "id": 662, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 663, "type": "component", "name": "hr", "children": [] }, { "id": 664, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 665, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 666, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 667, "type": "textnode", "value": "Physics Department" }] }, { "id": 668, "type": "component", "name": "br", "children": [] }, { "id": 669, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 670, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 671, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "16.64" } }, "children": [{ "id": 672, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 673, "type": "component", "name": "h2", "children": [{ "id": 674, "type": "textnode", "value": "Q" }, { "id": 675, "type": "textnode", "value": "2" }] }, { "id": 676, "type": "component", "name": "hr", "children": [] }, { "id": 677, "type": "component", "name": "h3", "children": [{ "id": 678, "type": "textnode", "value": "Problem" }] }, { "id": 679, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/p16.64.png" }, "title": { "type": "value", "value": "Problem 16.64 - Matter and Interactions" } }, "children": [] }, { "id": 680, "type": "component", "name": "br", "children": [] }, { "id": 681, "type": "component", "name": "h4", "children": [{ "id": 682, "type": "textnode", "value": "Questions" }] }, { "id": 683, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 684, "type": "component", "name": "p", "children": [{ "id": 685, "type": "textnode", "value": "a) The electric field in the space between the wire and the outer\n            tube is due only to the wire (the contribution due to the charges on the outer\n            tube adds up to zero). When the electric field at any location in air reaches\n            3e6 volts/meter, the air ionizes and becomes a conductor. For the tube shown,\n            the length L = 87 cm, the inner radius r = 0.6 mm, and the outer radius R = 3.0 cm.\n            How much charge would there need to be on the inner wire in order to ionize the\n            air near the wire (where the field is largest)?" }] }, { "id": 686, "type": "component", "name": "p", "children": [{ "id": 687, "type": "textnode", "value": "b) When there is enough charge on the wire to ionize the air, you see a glow\n            in the air very near the inner wire. When this happens, what is the absolute value of the\n            potential difference along a path from the inner wire to the outer tube? (Note that the\n            electric field in this region is not uniform.)" }] }, { "id": 688, "type": "component", "name": "p", "children": [{ "id": 689, "type": "textnode", "value": "The Geiger tube was one of the first electronic particle detectors. The voltage\n            is set just below the threshold for making the air glow near the wire (part b). A\n            charged particle that passes near the center wire can trigger ionization of the air,\n            leading to a large current that can be easily measured." }] }] }, { "id": 690, "type": "component", "name": "hr", "children": [] }, { "id": 691, "type": "component", "name": "h3", "children": [{ "id": 692, "type": "textnode", "value": "Computation" }] }, { "id": 693, "type": "component", "name": "p", "children": [{ "id": 694, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 695, "type": "component", "name": "p", "children": [{ "id": 696, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n           Try calculating the answer with the SciPy constants and the constants listed in\n           Matter and Interactions to see the differences in the answer." }] }, { "id": 697, "type": "component", "name": "br", "children": [] }, { "id": 698, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/9a75e4c92a?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 699, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 700, "type": "component", "name": "h3", "children": [{ "id": 701, "type": "textnode", "value": "About this Problem" }] }, { "id": 702, "type": "component", "name": "hr", "children": [] }, { "id": 703, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 704, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"\"" } }, "children": [{ "id": 705, "type": "textnode", "value": "Skills Involved" }] }, { "id": 706, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"Objective\"" } }, "children": [{ "id": 707, "type": "textnode", "value": "Objective" }] }, { "id": 708, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"GivenInfo\"" } }, "children": [{ "id": 709, "type": "textnode", "value": "Given Information" }] }, { "id": 710, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"KeyEq\"" } }, "children": [{ "id": 711, "type": "textnode", "value": "Key Equations" }] }, { "id": 712, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1664 = \"Ref\"" } }, "children": [{ "id": 713, "type": "textnode", "value": "References" }] }] }, { "id": 714, "type": "component", "name": "br", "children": [] }, { "id": 715, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 716, "type": "component", "name": "br", "children": [] }, { "id": 717, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1664" } }, "children": [{ "id": 718, "type": "component", "name": "Default", "children": [{ "id": 719, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 720, "type": "component", "name": "ul", "children": [{ "id": 721, "type": "component", "name": "li", "children": [{ "id": 722, "type": "textnode", "value": "Force" }] }, { "id": 723, "type": "component", "name": "li", "children": [{ "id": 724, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 725, "type": "component", "name": "li", "children": [{ "id": 726, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 727, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 728, "type": "textnode", "value": "Find the charge needed on the inner wire and the potential difference along\n           a path from the inner wire to the outer tube." }] }, { "id": 729, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 730, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 731, "type": "component", "name": "ul", "children": [{ "id": 732, "type": "component", "name": "li", "children": [{ "id": 733, "type": "textnode", "value": " Electric field when the air ionizes." }] }, { "id": 734, "type": "component", "name": "li", "children": [{ "id": 735, "type": "textnode", "value": " Length of tube." }] }, { "id": 736, "type": "component", "name": "li", "children": [{ "id": 737, "type": "textnode", "value": " Inner radius." }] }, { "id": 738, "type": "component", "name": "li", "children": [{ "id": 739, "type": "textnode", "value": " Outer radius." }] }] }] }] }, { "id": 740, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 741, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 742, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 743, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 744, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 745, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 746, "type": "component", "name": "ul", "children": [{ "id": 747, "type": "component", "name": "li", "children": [{ "id": 748, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 749, "type": "component", "name": "li", "children": [{ "id": 750, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 751, "type": "component", "name": "li", "children": [{ "id": 752, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 753, "type": "component", "name": "hr", "children": [] }, { "id": 754, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 755, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 756, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 757, "type": "textnode", "value": "Physics Department" }] }, { "id": 758, "type": "component", "name": "br", "children": [] }, { "id": 759, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 760, "type": "textnode", "value": "Feedback Form" }] }] }] }, { "id": 761, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "19.76" } }, "children": [{ "id": 762, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerHead pBwithAside" } }, "children": [{ "id": 763, "type": "component", "name": "h2", "children": [{ "id": 764, "type": "textnode", "value": "Q" }, { "id": 765, "type": "textnode", "value": "9" }] }, { "id": 766, "type": "component", "name": "hr", "children": [] }, { "id": 767, "type": "component", "name": "h3", "children": [{ "id": 768, "type": "textnode", "value": "Problem" }] }, { "id": 769, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "questionBody" } }, "children": [{ "id": 770, "type": "textnode", "value": "\n            The deflection plates in an oscilloscope are 10 cm by 2 cm with a gap distance\n            of 1 mm. A 100 volt potential difference is suddenly applied to the initially\n            uncharged plates through a 1000 ohm resistor in series with the deflection\n            plates. How long does it take for the potential difference between the deflection\n            plates to reach 75 volts?\n          " }] }, { "id": 771, "type": "component", "name": "hr", "children": [] }, { "id": 772, "type": "component", "name": "h3", "children": [{ "id": 773, "type": "textnode", "value": "Computation" }] }, { "id": 774, "type": "component", "name": "p", "children": [{ "id": 775, "type": "textnode", "value": "Use the Trinket below to solve the problem using the values listed above." }] }, { "id": 776, "type": "component", "name": "p", "children": [{ "id": 777, "type": "textnode", "value": "Note that the SciPy constants are more exact than the constants listed in the book.\n         Try calculating the answer with the SciPy constants and the constants listed in\n         Matter and Interactions to see the differences in the answer." }] }, { "id": 778, "type": "component", "name": "br", "children": [] }, { "id": 779, "type": "component", "name": "iframe", "properties": { "src": { "type": "value", "value": "https://trinket.io/embed/python3/96ae0837bc?showInstructions:true" }, "width": { "type": "value", "value": "100%" }, "height": { "type": "value", "value": "600" }, "frameborder": { "type": "value", "value": "0" }, "marginwidth": { "type": "value", "value": "0" }, "marginheight": { "type": "value", "value": "0" } }, "children": [] }] }, { "id": 780, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfo centerHead" } }, "children": [{ "id": 781, "type": "component", "name": "h3", "children": [{ "id": 782, "type": "textnode", "value": "About this Problem" }] }, { "id": 783, "type": "component", "name": "hr", "children": [] }, { "id": 784, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "tabLookProbs" }, "fullWidth": { "type": "value", "value": true } }, "children": [{ "id": 785, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"\"" } }, "children": [{ "id": 786, "type": "textnode", "value": "Skills Involved" }] }, { "id": 787, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"Objective\"" } }, "children": [{ "id": 788, "type": "textnode", "value": "Objective" }] }, { "id": 789, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"GivenInfo\"" } }, "children": [{ "id": 790, "type": "textnode", "value": "Given Information" }] }, { "id": 791, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"KeyEq\"" } }, "children": [{ "id": 792, "type": "textnode", "value": "Key Equations" }] }, { "id": 793, "type": "component", "name": "button", "properties": { "onClick": { "type": "expression", "value": "extraInfo1976 = \"Ref\"" } }, "children": [{ "id": 794, "type": "textnode", "value": "References" }] }] }, { "id": 795, "type": "component", "name": "br", "children": [] }, { "id": 796, "type": "component", "name": "hr", "properties": { "fullWidth": { "type": "value", "value": true } }, "children": [] }, { "id": 797, "type": "component", "name": "br", "children": [] }, { "id": 798, "type": "component", "name": "Switch", "properties": { "value": { "type": "variable", "value": "extraInfo1976" } }, "children": [{ "id": 799, "type": "component", "name": "Default", "children": [{ "id": 800, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 801, "type": "component", "name": "ul", "children": [{ "id": 802, "type": "component", "name": "li", "children": [{ "id": 803, "type": "textnode", "value": "Force" }] }, { "id": 804, "type": "component", "name": "li", "children": [{ "id": 805, "type": "textnode", "value": "Vectors: Fields" }] }, { "id": 806, "type": "component", "name": "li", "children": [{ "id": 807, "type": "textnode", "value": "Electric field: Due to Point Charges" }] }] }] }] }, { "id": 808, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Objective" } }, "children": [{ "id": 809, "type": "textnode", "value": "Find the time in seconds it takes for the potential difference between the\n           deflection plates to reach a smaller voltage." }] }, { "id": 810, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "GivenInfo" } }, "children": [{ "id": 811, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 812, "type": "component", "name": "ul", "children": [{ "id": 813, "type": "component", "name": "li", "children": [{ "id": 814, "type": "textnode", "value": " Length and width of the deflection plates. " }] }, { "id": 815, "type": "component", "name": "li", "children": [{ "id": 816, "type": "textnode", "value": " Gap distance between the deflection plates." }] }, { "id": 817, "type": "component", "name": "li", "children": [{ "id": 818, "type": "textnode", "value": " Initial potential difference." }] }, { "id": 819, "type": "component", "name": "li", "children": [{ "id": 820, "type": "textnode", "value": " Final potential difference." }] }, { "id": 821, "type": "component", "name": "li", "children": [{ "id": 822, "type": "textnode", "value": " Resistance." }] }] }] }] }, { "id": 823, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "KeyEq" } }, "children": [{ "id": 824, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "equations" } }, "children": [{ "id": 825, "type": "component", "name": "equation", "properties": { "text-align": { "type": "variable", "value": "center" } }, "children": [{ "id": 826, "type": "textnode", "value": "\\vec{F} = q\\vec{E}" }] }] }] }, { "id": 827, "type": "component", "name": "Case", "properties": { "test": { "type": "value", "value": "Ref" } }, "children": [{ "id": 828, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "extraInfoBullets" } }, "children": [{ "id": 829, "type": "component", "name": "ul", "children": [{ "id": 830, "type": "component", "name": "li", "children": [{ "id": 831, "type": "textnode", "value": " Charged Particles (Matter and Interactions, p. 514)" }] }, { "id": 832, "type": "component", "name": "li", "children": [{ "id": 833, "type": "textnode", "value": " 13.3 The Concept of “Electric Field” (Matter and Interactions, p. 515)" }] }, { "id": 834, "type": "component", "name": "li", "children": [{ "id": 835, "type": "textnode", "value": " Definition of Electric Field (Matter and Interactions, p. 517)" }] }] }] }] }] }] }, { "id": 836, "type": "component", "name": "hr", "children": [] }, { "id": 837, "type": "component", "name": "div", "properties": { "className": { "type": "value", "value": "centerPara" } }, "children": [{ "id": 838, "type": "component", "name": "img", "properties": { "src": { "type": "value", "value": "./static/images/ucdenverlogo2.png" }, "title": { "type": "value", "value": "UC Denver" } }, "children": [] }, { "id": 839, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://clas.ucdenver.edu/physics/" } }, "children": [{ "id": 840, "type": "textnode", "value": "Physics Department" }] }, { "id": 841, "type": "component", "name": "br", "children": [] }, { "id": 842, "type": "component", "name": "a", "properties": { "href": { "type": "value", "value": "https://forms.gle/z4ooNHbMG6RLRKRe6" }, "target": { "type": "value", "value": "_blank" } }, "children": [{ "id": 843, "type": "textnode", "value": "Feedback Form" }] }] }] }] }] }] };
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';

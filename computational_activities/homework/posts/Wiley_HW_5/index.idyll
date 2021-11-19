@@ -98,10 +98,7 @@
 
          ### Computation
 
-         Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed above.
 
          [ul]
            [li]View the Instructions tab and type the code as listed, replacing values as necessary.[/li]
@@ -210,10 +207,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           Use the Trinket below to solve the problem using the values listed above.
 
            [br /]
 
@@ -326,10 +320,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           Use the Trinket below to solve the problem using the values listed above.
 
            Note that the SciPy constants are more exact than the constants listed in the book.
            Try calculating the answer with the SciPy constants and the constants listed in
@@ -453,10 +444,7 @@
 
        ### Computation
 
-         Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed above.
 
          Note that the SciPy constants are more exact than the constants listed in the book.
          Try calculating the answer with the SciPy constants and the constants listed in
@@ -682,10 +670,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           Use the Trinket below to solve the problem using the values listed above.
 
            Note that the SciPy constants are more exact than the constants listed in the book.
            Try calculating the answer with the SciPy constants and the constants listed in
@@ -795,10 +780,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           Use the Trinket below to solve the problem using the values listed above.
 
            Note that the SciPy constants are more exact than the constants listed in the book.
            Try calculating the answer with the SciPy constants and the constants listed in
@@ -813,7 +795,7 @@
 
 
           [div className:"splitRight"]
-          #### Trinket 
+          #### Trinket
            [iframe src:"https://trinket.io/embed/python3/7d11d0df30?toggleCode=true" width:"40%" height:"600" frameborder:"0" marginwidth:"0" marginheight:"0"][/iframe]
           [/div]
 
@@ -941,10 +923,7 @@
 
          ### Computation
 
-           Use the Trinket below to solve the problem using the values listed
-           above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-           ideas on how to solve this problem with python. Reveal the answer by
-           clicking the button below to see if you got the right answer!
+           Use the Trinket below to solve the problem using the values listed above.
 
            Note that the SciPy constants are more exact than the constants listed in the book.
            Try calculating the answer with the SciPy constants and the constants listed in
@@ -1062,10 +1041,7 @@
 
        ### Computation
 
-         Use the Trinket below to solve the problem using the values listed
-         above. Need help with python? See Physics Fundamentals (*NEED LINK*) for
-         ideas on how to solve this problem with python. Reveal the answer by
-         clicking the button below to see if you got the right answer!
+         Use the Trinket below to solve the problem using the values listed above.
 
          Note that the SciPy constants are more exact than the constants listed in the book.
          Try calculating the answer with the SciPy constants and the constants listed in
