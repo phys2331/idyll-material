@@ -494,7 +494,7 @@
                  [ul]
                    [li]Force[/li]
                    [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Magnetic field: Due to a(n) (infinitely) Long Wire[/li]
                  [/ul]
 
                [/div]
@@ -521,7 +521,7 @@
                  [div className:"equations"]
 
                    [Equation text-align:center]
-                    \vec{F} = q\vec{E}
+                    B = \frac{\mu_0}{2\pi{a})
                    [/equation]
 
                  [/div]
