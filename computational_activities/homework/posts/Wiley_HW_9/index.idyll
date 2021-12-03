@@ -368,9 +368,9 @@
                [div className:"extraInfoBullets"]
 
                  [ul]
-                   [li]Force[/li]
-                   [li]Vectors: Fields[/li]
-                   [li]Electric field: Due to Point Charges[/li]
+                   [li]Flux[/li]
+                   [li]Common Current Distributions and Magnetic Fields: Solenoid[/li]
+                   [li]Concentric (This is like the picture in HW9-Q1)[/li]
                  [/ul]
 
                [/div]
