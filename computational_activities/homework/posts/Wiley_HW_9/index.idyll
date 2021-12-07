@@ -150,7 +150,7 @@
 
                [div className:"equations"]
                  [Equation text-align:center]
-                 \vec{B_{axis}}\approx\frac{\mu_{0}}{4\pi{}}\frac{2NIA/r^{3}}
+                 \vec{B}_{axis}\approx\frac{\mu_{0}}{4\pi{}}\frac{2NIA/r^{3}}
                  N := Number of Loops ["dimension-less"]
                  I := Current [A]
                  A := Area (i.e. for a circle A=\pi{}r^{2}) [m^2]
