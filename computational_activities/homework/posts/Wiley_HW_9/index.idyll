@@ -524,7 +524,7 @@
                  [div className:"equations"]
 
                    [Equation text-align:center]
-                    B = \frac{\mu_0}{2\pi{a})
+                    B = \frac{\mu_0}{2\pi a}
                    [/equation]
 
                  [/div]
