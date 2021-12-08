@@ -124,7 +124,7 @@
                [ul]
                  [li]Vectors: Direction[/li]
                  [li]Vectors: Fields[/li]
-                 [li]Electric field: Due to Point Charges[/li]
+                 [li]Magnetic Field of a Solenoid[/li]
                [/ul]
              [/div]
 
@@ -150,7 +150,10 @@
 
                [div className:"equations"]
                  [Equation text-align:center]
-                 \hat{r} = \frac{\vec{r}}{|\vec{r}|} = \frac{\lt x, y, z \gt}{\sqrt{x^{2} + y^{2} + z^{2}}}
+                 \vec{B}_{axis}\approx\frac{\mu_{0}}{4\pi{}}\frac{2NIA/r^{3}}
+                 N := Number of Loops ["dimension-less"]
+                 I := Current [A]
+                 A := Area (i.e. for a circle A=\pi{}r^{2}) [m^2]
                  [/equation]
 
                  [br /]
